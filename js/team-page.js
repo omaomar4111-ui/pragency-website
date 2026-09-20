@@ -12,16 +12,25 @@
   }
   
   function renderMember(m) {
-    const initial = (m.name || '?').charAt(0).toUpperCase();
-    const photoHtml = m.photo_url
-      ? `<img src="${escapeHtml(m.photo_url)}" alt="${escapeHtml(m.name)}" loading="lazy" onerror="this.parentElement.innerHTML='${initial}'" />`
-      : initial;
-    
     return `
-      <article class="team-member-card" data-id="${m.id}">
-        <div class="team-member-photo">${photoHtml}</div>
-        <h3 class="team-member-name">${escapeHtml(m.name)}</h3>
-        ${m.bio ? `<p class="team-member-bio">${escapeHtml(m.bio)}</p>` : ''}
+      <article class="role-card" data-id="${m.id}">
+        <div class="role-image-wrap">
+          <div class="role-image">
+            ${m.photo_url 
+              ? `<picture>
+                   <source srcset="${escapeHtml(m.photo_url)}" type="image/webp">
+                   <img src="${escapeHtml(m.photo_url.replace('.webp', '.png'))}" alt="${escapeHtml(m.name)}" loading="lazy" width="300" height="300" onerror="this.src='${escapeHtml(m.photo_url)}'" />
+                 </picture>`
+              : `<div style="font-size:32px;font-weight:900;color:#fff">${escapeHtml((m.name||'?').charAt(0))}</div>`
+            }
+          </div>
+        </div>
+        <div class="role-info">
+          <h3 class="role-name-en">${escapeHtml(m.name)}</h3>
+          <p class="role-name-ar">${escapeHtml(m.role || '')}</p>
+          <p class="role-desc">${escapeHtml(m.bio || '')}</p>
+        </div>
+        <div class="role-line"></div>
       </article>
     `;
   }
@@ -42,7 +51,7 @@
       grid.innerHTML = data.data.map(renderMember).join('');
 
       if (typeof gsap !== 'undefined') {
-        gsap.from('.team-member-card', {
+        gsap.from('.role-card', {
           opacity: 0,
           y: 40,
           duration: 0.6,
@@ -52,10 +61,6 @@
             trigger: '.team-grid',
             start: 'top 80%'
           }
-        });
-      } else {
-        document.querySelectorAll('.team-member-card').forEach(function(el) {
-          el.classList.add('visible');
         });
       }
     } catch (err) {
