@@ -51,17 +51,10 @@
       grid.innerHTML = data.data.map(renderMember).join('');
 
       if (typeof gsap !== 'undefined') {
-        gsap.from('.role-card', {
-          opacity: 0,
-          y: 40,
-          duration: 0.6,
-          stagger: 0.08,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.team-grid',
-            start: 'top 80%'
-          }
-        });
+        gsap.fromTo('.team-page .role-card', 
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }
+        );
       }
     } catch (err) {
       console.error('Team load error:', err);
