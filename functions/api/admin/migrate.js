@@ -1,81 +1,57 @@
-function checkAuth(request, env) {
+﻿function checkAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
-  const authHeader = request.headers.get('Authorization') || '';
-  if (!authHeader.startsWith('Basic ')) return false;
+  const auth = request.headers.get('Authorization') || '';
+  if (!auth.startsWith('Basic ')) return false;
   try {
-    const base64 = authHeader.slice(6).trim();
-    const decoded = atob(base64);
-    const colonIdx = decoded.indexOf(':');
-    if (colonIdx === -1) return false;
-    return decoded.slice(colonIdx + 1) === PASS;
-  } catch (e) {
-    return false;
-  }
+    const decoded = atob(auth.slice(6).trim());
+    const idx = decoded.indexOf(':');
+    if (idx === -1) return false;
+    return decoded.slice(idx + 1) === PASS;
+  } catch (e) { return false; }
 }
 
-export async function onRequest(context) {
+export async function onRequestPost(context) {
   const { request, env } = context;
-
   if (!checkAuth(request, env)) {
     return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
-        'Content-Type': 'application/json; charset=utf-8'
-      }
+      status: 401, headers: { 'Content-Type': 'application/json' }
     });
   }
-
   if (!env.DB) {
     return new Response(JSON.stringify({ success: false, error: 'DB not configured' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      status: 500, headers: { 'Content-Type': 'application/json' }
     });
   }
 
-  const results = [];
-  const queries = [
-    "ALTER TABLE contacts ADD COLUMN status TEXT DEFAULT 'new'",
-    "ALTER TABLE contacts ADD COLUMN notes TEXT DEFAULT ''",
-    "ALTER TABLE contacts ADD COLUMN starred INTEGER DEFAULT 0",
-    "CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)",
-    "CREATE INDEX IF NOT EXISTS idx_contacts_starred ON contacts(starred)",
-    "ALTER TABLE contacts ADD COLUMN utm_source TEXT DEFAULT ''",
-    "ALTER TABLE contacts ADD COLUMN utm_medium TEXT DEFAULT ''",
-    "ALTER TABLE contacts ADD COLUMN utm_campaign TEXT DEFAULT ''",
-    "ALTER TABLE contacts ADD COLUMN utm_content TEXT DEFAULT ''",
-    "ALTER TABLE contacts ADD COLUMN lead_source TEXT DEFAULT 'website'",
-    "ALTER TABLE contacts ADD COLUMN meta_lead_id TEXT DEFAULT ''",
-    "CREATE INDEX IF NOT EXISTS idx_contacts_utm_campaign ON contacts(utm_campaign)",
-    "CREATE INDEX IF NOT EXISTS idx_contacts_lead_source ON contacts(lead_source)"
+  const statements = [
+    `CREATE TABLE IF NOT EXISTS site_content (id INTEGER PRIMARY KEY AUTOINCREMENT, section TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, UNIQUE(section, key))`,
+    `CREATE TABLE IF NOT EXISTS clients (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, logo_url TEXT NOT NULL, website_url TEXT, order_index INTEGER DEFAULT 0, is_active INTEGER DEFAULT 1, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`,
+    `CREATE TABLE IF NOT EXISTS team_members (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT NOT NULL, bio TEXT, photo_url TEXT, linkedin_url TEXT, order_index INTEGER DEFAULT 0, is_active INTEGER DEFAULT 1, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`,
+    `CREATE TABLE IF NOT EXISTS site_theme (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT NOT NULL UNIQUE, value TEXT NOT NULL, label TEXT, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)`,
+    `CREATE TABLE IF NOT EXISTS site_layout (id INTEGER PRIMARY KEY AUTOINCREMENT, section_id TEXT NOT NULL UNIQUE, label TEXT NOT NULL, order_index INTEGER DEFAULT 0, is_visible INTEGER DEFAULT 1, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)`,
+    `INSERT OR IGNORE INTO site_theme (key, value, label) VALUES ('primary_color', '#8B5CF6', 'اللون الرئيسي')`,
+    `INSERT OR IGNORE INTO site_theme (key, value, label) VALUES ('secondary_color', '#6D28D9', 'اللون الثانوي')`,
+    `INSERT OR IGNORE INTO site_theme (key, value, label) VALUES ('accent_color', '#A78BFA', 'لون التمييز')`,
+    `INSERT OR IGNORE INTO site_theme (key, value, label) VALUES ('bg_dark', '#0A0612', 'خلفية داكنة')`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('hero', 'Hero Section', 1, 1)`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('clients', 'Client Logos', 2, 1)`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('services', 'Our Services', 3, 1)`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('about', 'About Us', 4, 1)`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('team', 'Our Team', 5, 1)`,
+    `INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) VALUES ('contact', 'Contact Form', 6, 1)`
   ];
 
-  for (const q of queries) {
+  const results = [];
+  for (const sql of statements) {
     try {
-      await env.DB.prepare(q).run();
-      results.push({ query: q, success: true });
-    } catch (e) {
-      results.push({ query: q, success: false, error: e.message });
+      await env.DB.prepare(sql).run();
+      results.push({ sql: sql.substring(0, 50) + '...', status: 'OK' });
+    } catch (err) {
+      results.push({ sql: sql.substring(0, 50) + '...', status: 'ERROR', error: err.message });
     }
   }
 
-  let tableInfo = [];
-  try {
-    const info = await env.DB.prepare("PRAGMA table_info(contacts)").all();
-    tableInfo = info.results || [];
-  } catch (e) {
-    tableInfo = [{ error: e.message }];
-  }
-
-  return new Response(JSON.stringify({
-    success: true,
-    migration: results,
-    columns: tableInfo
-  }, null, 2), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'no-store'
-    }
+  return new Response(JSON.stringify({ success: true, results }), {
+    status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8' }
   });
 }
