@@ -21,7 +21,6 @@
       <article class="team-member-card" data-id="${m.id}">
         <div class="team-member-photo">${photoHtml}</div>
         <h3 class="team-member-name">${escapeHtml(m.name)}</h3>
-        <p class="team-member-role">${escapeHtml(m.role)}</p>
         ${m.bio ? `<p class="team-member-bio">${escapeHtml(m.bio)}</p>` : ''}
       </article>
     `;

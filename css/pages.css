@@ -1535,10 +1535,7 @@ body {
 }
 
 .team-member-role {
-  font-size: 14px;
-  color: var(--c-purple-l);
-  margin: 0 0 16px;
-  font-weight: 600;
+  display: none !important;
 }
 
 .team-member-bio {
