@@ -1,4 +1,4 @@
-﻿# PR Agency — AI Agent Rules
+# PR Agency — AI Agent Rules
 
 ## Project Overview
 - Domain: https://pragency.pages.dev
@@ -80,3 +80,22 @@ node deploy_pragency.cjs
 - Tone: Direct, concise, professional
 - Format: Bullet points > paragraphs
 - Response: Max 200 words unless asked for details
+
+## Token Optimization (ENFORCED)
+
+### Active Tools
+- token-saviour: Global skill (reads code, compresses output)
+- mcp-memory-service: Global MCP (persistent memory across sessions)
+- Suber Agent Team: PR Agency (fan-out parallel sub-agents)
+- Argos: PR Agency (local-first project memory)
+
+### Rules
+1. Always run `/clear` before new features
+2. Use `@token-saviour` for code reads
+3. Store decisions via memory MCP after each feature
+4. Use Suber fan-out for parallel tasks
+5. Target: 70% token reduction
+
+### Workflow
+- Stage 1-7 (Specify → Deploy) with 3 Human Gates
+- All artifacts in `features/[feature-name]/`
