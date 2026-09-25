@@ -7,4 +7,10 @@
 scratch/
 node_modules/
 deploy_*.cjs
+dns_preload.cjs
+.tools/
+.gemini/
+.agents/
+features/
+
 
