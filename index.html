@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="no-js">
 <head>
 <meta charset="UTF-8"/>
@@ -113,6 +113,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "yjs9vg1xxe");
 </script>
+<link rel="stylesheet" href="css/multi-step-form.css?v=1"/>
 </head>
 
 <body>
@@ -738,46 +739,78 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       <!-- العمود الشمال في العربي (الفورم) -->
       <div class="register-right">
         
-        <form id="registerForm" class="register-form" novalidate>
-          
-          <div class="register-row">
+        <form id="registerForm" class="register-form multi-step-form" novalidate>
+          <div class="form-progress">
+            <div class="form-progress-bar" data-step="1"></div>
+            <div class="form-progress-step active" data-step="1">
+              <span class="step-num">1</span>
+              <span class="step-label">معلوماتك</span>
+            </div>
+            <div class="form-progress-step" data-step="2">
+              <span class="step-num">2</span>
+              <span class="step-label">التفاصيل</span>
+            </div>
+          </div>
+
+          <div class="form-step active" data-step="1">
             <div class="register-field">
               <label for="reg-name">الاسم *</label>
               <input type="text" id="reg-name" name="name" required placeholder="اسمك الكامل" autocomplete="name"/>
             </div>
-            
             <div class="register-field">
               <label for="reg-phone">رقم الموبايل *</label>
               <input type="tel" id="reg-phone" name="phone" required placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel"/>
             </div>
-          </div>
-          
-          <div class="register-row">
             <div class="register-field">
-              <label for="reg-business">نوع النشاط</label>
-              <input type="text" id="reg-business" name="business" placeholder="عيادة / جيم / عقارات / متجر"/>
+              <label for="reg-business">نوع النشاط *</label>
+              <select id="reg-business" name="business" required>
+                <option value="">اختر نوع نشاطك</option>
+                <option value="عيادة">عيادة / مركز طبي</option>
+                <option value="جيم">جيم / نادي رياضي</option>
+                <option value="عقارات">شركة عقارية</option>
+                <option value="متجر">متجر إلكتروني</option>
+                <option value="مطعم">مطعم / كافيه</option>
+                <option value="خدمات">خدمات أخرى</option>
+              </select>
             </div>
-            
+            <button type="button" class="register-submit form-next-btn" id="formNextBtn">
+              <span>التالي</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="form-step" data-step="2">
             <div class="register-field">
-              <label for="reg-budget">الميزانية الشهرية</label>
-              <input type="text" id="reg-budget" name="budget" placeholder="مثال: 15,000 EGP"/>
+              <label for="reg-budget">الميزانية الشهرية (اختياري)</label>
+              <select id="reg-budget" name="budget">
+                <option value="">اختر الميزانية</option>
+                <option value="أقل من 10,000">أقل من 10,000 ج.م</option>
+                <option value="10,000 - 25,000">10,000 - 25,000 ج.م</option>
+                <option value="25,000 - 50,000">25,000 - 50,000 ج.م</option>
+                <option value="50,000 - 100,000">50,000 - 100,000 ج.م</option>
+                <option value="أكثر من 100,000">أكثر من 100,000 ج.م</option>
+              </select>
+            </div>
+            <div class="register-field">
+              <label for="reg-message">رسالتك (اختياري)</label>
+              <textarea id="reg-message" name="message" rows="3" placeholder="عايز تقولنا إيه؟"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="register-submit form-prev-btn" id="formPrevBtn" style="background:transparent;border:1px solid rgba(168,85,247,0.4);color:#A78BFA">
+                السابق
+              </button>
+              <button type="submit" class="register-submit" id="registerSubmit">
+                <span>احصل على استشارة مجانية</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
             </div>
           </div>
-          
-          <div class="register-field register-field-full">
-            <label for="reg-message">رسالتك</label>
-            <textarea id="reg-message" name="message" rows="4" placeholder="عايز تقولنا إيه؟ اكتب هنا..."></textarea>
-          </div>
-          
-          <button type="submit" class="register-submit" id="registerSubmit">
-            <span>ابعت الرسالة</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
-          
+
           <div class="register-status" id="registerStatus" role="status" aria-live="polite"></div>
-          
         </form>
         
       </div>
@@ -947,6 +980,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <script src="js/contact-form.js?v=3" defer></script>
 
   <script src="js/cms-loader.js?v=1" defer></script>
+  <script src="js/multi-step.js?v=1" defer></script>
 </body>
 </html>
 

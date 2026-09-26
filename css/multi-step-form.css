@@ -1,0 +1,19 @@
+.multi-step-form { position: relative; }
+.form-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; position: relative; padding: 0 20px; }
+.form-progress::before { content: ''; position: absolute; top: 20px; left: 40px; right: 40px; height: 2px; background: rgba(109, 40, 217, 0.15); z-index: 1; }
+.form-progress-bar { position: absolute; top: 20px; right: 40px; height: 2px; background: linear-gradient(90deg, #6D28D9, #A78BFA); z-index: 2; transition: width 0.4s ease; width: 0; }
+.form-progress-bar[data-step="2"] { width: calc(100% - 80px); }
+.form-progress-step { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 3; position: relative; }
+.step-num { width: 40px; height: 40px; border-radius: 50%; background: rgba(10, 6, 18, 0.9); border: 2px solid rgba(109, 40, 217, 0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; color: rgba(196, 181, 253, 0.5); transition: all 0.3s ease; }
+.form-progress-step.active .step-num { background: linear-gradient(135deg, #6D28D9, #A78BFA); border-color: #A78BFA; color: #fff; box-shadow: 0 0 20px rgba(109, 40, 217, 0.6); }
+.step-label { font-size: 13px; color: rgba(196, 181, 253, 0.5); font-weight: 600; }
+.form-progress-step.active .step-label { color: #A78BFA; }
+.form-step { display: none; animation: fadeIn 0.3s ease; }
+.form-step.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.form-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 16px; }
+.form-actions .register-submit { width: 100%; justify-content: center; }
+.form-next-btn { width: 100%; justify-content: center; margin-top: 8px; }
+select#reg-business, select#reg-budget { width: 100%; padding: 14px 16px; background: rgba(10, 6, 18, 0.6); border: 1px solid rgba(109, 40, 217, 0.2); border-radius: 10px; color: #fff; font-family: inherit; font-size: 15px; cursor: pointer; transition: all 0.3s ease; }
+select#reg-business:focus, select#reg-budget:focus { border-color: #A78BFA; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); outline: none; }
+@media (max-width: 600px) { .form-actions { grid-template-columns: 1fr; } .form-progress { padding: 0 10px; } .form-progress::before, .form-progress-bar { left: 30px; right: 30px; } .form-progress-bar[data-step="2"] { width: calc(100% - 60px); } }
