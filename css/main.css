@@ -785,3 +785,22 @@ h3{font-size:var(--t-xl);font-weight:800}
   #particle-canvas,#cursor,#cursor-ring{display:none}
   .rv{opacity:1;transform:none}
 }
+
+/* ═══ Scroll Progress & Content Visibility ═══ */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #c084fc);
+  z-index: 99999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.7);
+  pointer-events: none;
+}
+
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}

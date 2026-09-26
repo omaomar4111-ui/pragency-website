@@ -1050,6 +1050,132 @@ export async function onRequestGet(context) {
       margin-bottom: 5px;
     }
 
+    /* ═══ Admin v2 Enhancements ═══ */
+    .bulk-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+    .bulk-bar.active { display: flex; }
+    .bulk-bar-info { font-weight: 700; color: #e9d5ff; font-size: 13.5px; }
+    .bulk-bar-actions { display: flex; align-items: center; gap: 8px; }
+
+    .chart-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+    .chart-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      height: 180px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 10px;
+    }
+    .chart-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .chart-bar-fill {
+      width: 100%;
+      max-width: 44px;
+      background: linear-gradient(180deg, var(--red-hover), var(--red));
+      border-radius: 6px 6px 0 0;
+      min-height: 4px;
+      transition: height 0.4s ease;
+      position: relative;
+    }
+    .chart-bar-fill:hover {
+      background: linear-gradient(180deg, #c084fc, #9333ea);
+    }
+    .chart-bar-val {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .chart-col-label {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .analytics-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .analytics-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 13.5px;
+    }
+    .analytics-item:last-child { border-bottom: none; }
+    .analytics-name { font-weight: 600; color: #fff; }
+    .analytics-count {
+      font-weight: 800;
+      color: #a855f7;
+      background: rgba(168, 85, 247, 0.15);
+      padding: 2px 10px;
+      border-radius: 99px;
+    }
+
+    .settings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .settings-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .settings-table tr td:first-child {
+      color: var(--text-muted);
+      font-weight: 700;
+      width: 200px;
+    }
+    .settings-table tr td:last-child {
+      color: #fff;
+      font-family: monospace;
+    }
+
     @media (max-width: 860px) {
       body { padding: 14px; }
       .brand-title { font-size: 18px; }
@@ -1092,7 +1218,10 @@ export async function onRequestGet(context) {
 
   <!-- ═══ CMS Tab Navigation ═══ -->
   <nav class="cms-tabs-nav">
-    <button class="cms-tab-btn active" onclick="switchTab('messages')">📨 الرسائل</button>
+    <button class="cms-tab-btn active" onclick="switchTab('dashboard')">📊 لوحة المؤشرات</button>
+    <button class="cms-tab-btn" onclick="switchTab('messages')">📨 الرسائل</button>
+    <button class="cms-tab-btn" onclick="switchTab('analytics')">📈 التحليلات</button>
+    <button class="cms-tab-btn" onclick="switchTab('settings')">⚙️ الإعدادات</button>
     <button class="cms-tab-btn" onclick="switchTab('content')">📝 المحتوى</button>
     <button class="cms-tab-btn" onclick="switchTab('clients')">👥 العملاء</button>
     <button class="cms-tab-btn" onclick="switchTab('team')">👤 الفريق</button>
@@ -1101,9 +1230,59 @@ export async function onRequestGet(context) {
   </nav>
 
   <!-- ═══════════════════════════════════ -->
-  <!-- TAB: MESSAGES (existing content)   -->
+  <!-- TAB: DASHBOARD                      -->
   <!-- ═══════════════════════════════════ -->
-  <div class="cms-tab-panel active" id="panel-messages">
+  <div class="cms-tab-panel active" id="panel-dashboard">
+    <section class="stats-grid">
+      <div class="stat-card today">
+        <div class="stat-header">
+          <span>رسائل اليوم</span>
+          <span>🟢</span>
+        </div>
+        <div class="stat-value" id="dashStatToday">0</div>
+        <div class="stat-desc">خلال آخر 24 ساعة</div>
+      </div>
+      <div class="stat-card week">
+        <div class="stat-header">
+          <span>رسائل الأسبوع</span>
+          <span>🟡</span>
+        </div>
+        <div class="stat-value" id="dashStatWeek">0</div>
+        <div class="stat-desc">آخر 7 أيام</div>
+      </div>
+      <div class="stat-card month">
+        <div class="stat-header">
+          <span>رسائل هذا الشهر</span>
+          <span>🔴</span>
+        </div>
+        <div class="stat-value" id="dashStatMonth">0</div>
+        <div class="stat-desc">خلال الشهر الحالي</div>
+      </div>
+      <div class="stat-card total">
+        <div class="stat-header">
+          <span>إجمالي الرسائل</span>
+          <span>⚪</span>
+        </div>
+        <div class="stat-value" id="dashStatTotal">0</div>
+        <div class="stat-desc">إجمالي الوارد في D1</div>
+      </div>
+    </section>
+
+    <!-- Chart: Last 7 Days -->
+    <div class="chart-container">
+      <div class="chart-title">
+        <span>📊</span> حجم الرسائل اليومي (آخر 7 أيام)
+      </div>
+      <div class="chart-bars" id="dashboardBars">
+        <div style="width:100%;text-align:center;color:var(--text-muted);padding-top:60px">جارٍ تحميل الرسم البياني...</div>
+      </div>
+    </div>
+  </div><!-- end #panel-dashboard -->
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- TAB: MESSAGES                       -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="cms-tab-panel" id="panel-messages">
 
   <!-- Stats Grid -->
   <section class="stats-grid">
@@ -1215,12 +1394,29 @@ export async function onRequestGet(context) {
     <div class="counter-tag" id="counterTag">جارٍ تحميل الرسائل...</div>
   </div>
 
+  <!-- Bulk Action Bar -->
+  <div class="bulk-bar" id="bulkBar">
+    <div class="bulk-bar-info" id="bulkInfo">تم تحديد 0 رسالة</div>
+    <div class="bulk-bar-actions">
+      <select id="bulkStatusSelect" class="filter-select" style="padding:6px 12px;font-size:12.5px">
+        <option value="">تغيير الحالة إلى...</option>
+        <option value="new">🟢 جديد</option>
+        <option value="contacted">🟡 تم التواصل</option>
+        <option value="closed">⚪ مغلق</option>
+      </select>
+      <button class="btn btn-secondary" onclick="applyBulkStatus()" style="padding:6px 12px;font-size:12.5px">تطبيق</button>
+      <button class="btn btn-primary" onclick="applyBulkDelete()" style="padding:6px 12px;font-size:12.5px;background:#ef4444">🗑️ حذف المحدد</button>
+      <button class="btn btn-secondary" onclick="deselectAll()" style="padding:6px 12px;font-size:12.5px">إلغاء التحديد</button>
+    </div>
+  </div>
+
   <!-- Messages Table -->
   <div class="table-wrap">
     <div class="table-container">
       <table>
         <thead>
           <tr>
+            <th style="width:36px;text-align:center"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" style="cursor:pointer"/></th>
             <th style="width:36px;text-align:center">⭐</th>
             <th style="width:40px">#</th>
             <th>التاريخ والوقت</th>
@@ -1236,13 +1432,96 @@ export async function onRequestGet(context) {
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr><td colspan="12" class="empty-state">جارٍ الاتصال بقاعدة البيانات...</td></tr>
+          <tr><td colspan="13" class="empty-state">جارٍ الاتصال بقاعدة البيانات...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
   </div><!-- end #panel-messages -->
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- TAB: ANALYTICS                      -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="cms-tab-panel" id="panel-analytics">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:18px;font-weight:800;color:#fff">📈 تحليلات الحملات ومصادر العملاء</h2>
+      <button class="btn btn-secondary" onclick="fetchAnalyticsData()">🔄 تحديث التحليلات</button>
+    </div>
+
+    <div class="analytics-grid">
+      <!-- UTM Campaigns -->
+      <div class="analytics-card">
+        <div class="cms-section-title">📢 الحملات الإعلانية (UTM Campaign)</div>
+        <div id="analyticsCampaigns">
+          <p style="color:var(--text-muted);font-size:13px">جارٍ التحميل...</p>
+        </div>
+      </div>
+
+      <!-- Business Breakdown -->
+      <div class="analytics-card">
+        <div class="cms-section-title">🏢 مجالات الأنشطة التجارية</div>
+        <div id="analyticsBusiness">
+          <p style="color:var(--text-muted);font-size:13px">جارٍ التحميل...</p>
+        </div>
+      </div>
+
+      <!-- Budget Breakdown -->
+      <div class="analytics-card">
+        <div class="cms-section-title">💰 الميزانيات المقترحة</div>
+        <div id="analyticsBudget">
+          <p style="color:var(--text-muted);font-size:13px">جارٍ التحميل...</p>
+        </div>
+      </div>
+
+      <!-- Source Breakdown -->
+      <div class="analytics-card">
+        <div class="cms-section-title">🌐 مصادر الرسائل (Lead Sources)</div>
+        <div id="analyticsSource">
+          <p style="color:var(--text-muted);font-size:13px">جارٍ التحميل...</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- end #panel-analytics -->
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- TAB: SETTINGS                       -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="cms-tab-panel" id="panel-settings">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:18px;font-weight:800;color:#fff">⚙️ إعدادات النظام ومعلومات التشغيل</h2>
+    </div>
+
+    <div class="cms-section-card">
+      <div class="cms-section-title">معلومات البيئة وقاعدة البيانات</div>
+      <table class="settings-table">
+        <tr>
+          <td>نظام الإدارة:</td>
+          <td>PR Agency Production Admin v2.0</td>
+        </tr>
+        <tr>
+          <td>قاعدة البيانات:</td>
+          <td>Cloudflare D1 (Serverless SQLite) — Contacts Table</td>
+        </tr>
+        <tr>
+          <td>حالة السيرفر:</td>
+          <td><span style="color:#10b981;font-weight:700">🟢 Live &amp; Operational</span></td>
+        </tr>
+        <tr>
+          <td>إصدار التخزين المؤقت (Cache):</td>
+          <td>CSS: v19 / JS: v17 / Multi-step: v2 / Pages: v47</td>
+        </tr>
+        <tr>
+          <td>رابط الموقع الحي:</td>
+          <td><a href="https://pragency.pages.dev" target="_blank" style="color:#a855f7;text-decoration:none">https://pragency.pages.dev</a></td>
+        </tr>
+        <tr>
+          <td>مسارات الصفحات المستقلة:</td>
+          <td>/about, /services, /clients</td>
+        </tr>
+      </table>
+    </div>
+  </div><!-- end #panel-settings -->
 
   <!-- ═══════════════════════════════════ -->
   <!-- TAB: CONTENT                        -->
@@ -1439,6 +1718,7 @@ export async function onRequestGet(context) {
 
 <script>
   let allMessages = [];
+  let selectedIds = new Set();
   let deleteTargetId = null;
   let activeNotesId = null;
   let maxKnownId = 0;
@@ -1505,6 +1785,14 @@ export async function onRequestGet(context) {
         document.getElementById('statWeek').innerText = json.stats.week;
         document.getElementById('statMonth').innerText = json.stats.month;
         document.getElementById('statTotal').innerText = json.stats.total;
+
+        const dashToday = document.getElementById('dashStatToday');
+        if (dashToday) {
+          dashToday.innerText = json.stats.today;
+          document.getElementById('dashStatWeek').innerText = json.stats.week;
+          document.getElementById('dashStatMonth').innerText = json.stats.month;
+          document.getElementById('dashStatTotal').innerText = json.stats.total;
+        }
 
         if (json.stats.by_status) {
           document.getElementById('countStatusNew').innerText = json.stats.by_status.new || 0;
@@ -1578,7 +1866,7 @@ export async function onRequestGet(context) {
     counter.innerText = 'إجمالي المعروض: ' + list.length + ' رسالة';
 
     if (list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="12" class="empty-state">لا توجد رسائل مطابقة لخيارات البحث أو الفلترة</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="13" class="empty-state">لا توجد رسائل مطابقة لخيارات البحث أو الفلترة</td></tr>';
       return;
     }
 
@@ -1586,6 +1874,7 @@ export async function onRequestGet(context) {
       const isStarred = Number(m.starred || 0) === 1;
       const starIcon = isStarred ? '⭐' : '☆';
       const starClass = isStarred ? 'starred' : 'unstarred';
+      const isChecked = selectedIds.has(Number(m.id)) ? 'checked' : '';
 
       const timeBadge = getRelativeBadge(m.created_at);
       const formattedDate = formatDate(m.created_at);
@@ -1613,6 +1902,7 @@ export async function onRequestGet(context) {
 
       return [
         '<tr>',
+        '  <td style="text-align:center"><input type="checkbox" class="row-select-checkbox" data-id="' + m.id + '" onchange="toggleSelectRow(' + m.id + ', this.checked)" ' + isChecked + ' style="cursor:pointer"/></td>',
         '  <td class="cell-star ' + starClass + '" data-action="toggle-star" data-id="' + m.id + '" title="' + (isStarred ? 'إزالة النجمة' : 'تمييز بنجمة') + '">' + starIcon + '</td>',
         '  <td class="cell-id">#' + m.id + '</td>',
         '  <td class="cell-date">' + timeBadge + ' ' + formattedDate + '</td>',
@@ -2038,9 +2328,184 @@ export async function onRequestGet(context) {
     showToast('تم تصدير ملف Excel بنجاح! 📥');
   }
 
+  // ═══════════════════════════════════════════════
+  // BULK ACTIONS & SELECTION
+  // ═══════════════════════════════════════════════
+  function updateBulkUI() {
+    const bar = document.getElementById('bulkBar');
+    const info = document.getElementById('bulkInfo');
+    const selectAllCb = document.getElementById('selectAllCheckbox');
+
+    if (selectedIds.size > 0) {
+      bar.classList.add('active');
+      info.innerText = 'تم تحديد ' + selectedIds.size + ' رسالة';
+    } else {
+      bar.classList.remove('active');
+    }
+
+    if (selectAllCb) {
+      selectAllCb.checked = allMessages.length > 0 && selectedIds.size === allMessages.length;
+    }
+  }
+
+  function toggleSelectRow(id, isChecked) {
+    const numId = Number(id);
+    if (isChecked) {
+      selectedIds.add(numId);
+    } else {
+      selectedIds.delete(numId);
+    }
+    updateBulkUI();
+  }
+
+  function toggleSelectAll(masterCb) {
+    if (masterCb.checked) {
+      allMessages.forEach(m => selectedIds.add(Number(m.id)));
+    } else {
+      selectedIds.clear();
+    }
+    renderTable(allMessages);
+    updateBulkUI();
+  }
+
+  function deselectAll() {
+    selectedIds.clear();
+    renderTable(allMessages);
+    updateBulkUI();
+  }
+
+  async function applyBulkStatus() {
+    const st = document.getElementById('bulkStatusSelect').value;
+    if (!st) {
+      alert('يرجى اختيار الحالة أولاً');
+      return;
+    }
+    if (selectedIds.size === 0) {
+      alert('لم تقم بتحديد أي رسائل');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/messages/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'status', ids: Array.from(selectedIds), status: st })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast(json.message || 'تم تحديث الحالة بنجاح ✅');
+        selectedIds.clear();
+        loadAll();
+      } else {
+        alert('حدث خطأ: ' + (json.error || ''));
+      }
+    } catch (e) {
+      alert('تعذر الاتصال بالخادم');
+    }
+  }
+
+  async function applyBulkDelete() {
+    if (selectedIds.size === 0) {
+      alert('لم تقم بتحديد أي رسائل لحذفها');
+      return;
+    }
+    if (!confirm('هل أنت متأكد من رغبتك في حذف ' + selectedIds.size + ' رسالة نهائياً؟')) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/messages/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', ids: Array.from(selectedIds) })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast(json.message || 'تم حذف الرسائل بنجاح 🗑️');
+        selectedIds.clear();
+        loadAll();
+      } else {
+        alert('حدث خطأ: ' + (json.error || ''));
+      }
+    } catch (e) {
+      alert('تعذر الاتصال بالخادم');
+    }
+  }
+
+  // ═══════════════════════════════════════════════
+  // ANALYTICS & DASHBOARD LOADERS
+  // ═══════════════════════════════════════════════
+  let _analyticsData = null;
+  async function fetchAnalyticsData() {
+    try {
+      const res = await fetch('/api/admin/analytics');
+      if (res.status === 401) return location.reload();
+      const json = await res.json();
+      if (!json.success) return;
+      _analyticsData = json;
+
+      // Render 7-day chart in Dashboard
+      renderDashboardChart(json.last7Days || []);
+
+      // Render Analytics Tab
+      renderAnalyticsList('analyticsCampaigns', json.campaigns || [], 'حملة');
+      renderAnalyticsList('analyticsBusiness', json.businessBreakdown || [], 'نشاط');
+      renderAnalyticsList('analyticsBudget', json.budgetBreakdown || [], 'ميزانية');
+      renderAnalyticsList('analyticsSource', json.sourceBreakdown || [], 'مصدر');
+    } catch (e) {
+      console.error('Failed to load analytics:', e);
+    }
+  }
+
+  function renderDashboardChart(daysList) {
+    const container = document.getElementById('dashboardBars');
+    if (!container) return;
+
+    if (!daysList || daysList.length === 0) {
+      container.innerHTML = '<div style="width:100%;text-align:center;color:var(--text-muted);padding-top:60px">لا توجد رسائل مسجلة خلال آخر 7 أيام</div>';
+      return;
+    }
+
+    const maxVal = Math.max(...daysList.map(d => Number(d.count || 0)), 1);
+
+    container.innerHTML = daysList.map(item => {
+      const count = Number(item.count || 0);
+      const heightPercent = Math.max(Math.round((count / maxVal) * 100), 4);
+      const dateLabel = String(item.day || '').slice(5); // MM-DD
+      return [
+        '<div class="chart-col">',
+        '  <div class="chart-bar-fill" style="height:' + heightPercent + '%" title="' + count + ' رسائل">',
+        '    <span class="chart-bar-val">' + count + '</span>',
+        '  </div>',
+        '  <span class="chart-col-label">' + dateLabel + '</span>',
+        '</div>'
+      ].join('');
+    }).join('');
+  }
+
+  function renderAnalyticsList(targetId, items, label) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    if (!items || items.length === 0) {
+      el.innerHTML = '<p style="color:var(--text-muted);font-size:13px">لا توجد بيانات مسجلة حتى الآن</p>';
+      return;
+    }
+    el.innerHTML = items.map(item => {
+      const name = item.campaign || item.business || item.budget || item.source || 'غير محدد';
+      const count = item.count || 0;
+      return [
+        '<div class="analytics-item">',
+        '  <span class="analytics-name">' + escapeHtml(name) + '</span>',
+        '  <span class="analytics-count">' + count + '</span>',
+        '</div>'
+      ].join('');
+    }).join('');
+  }
+
   function loadAll() {
     fetchStats();
     fetchMessages();
+    fetchAnalyticsData();
   }
 
   // Focus Window resets notification badge in title
@@ -2052,6 +2517,7 @@ export async function onRequestGet(context) {
   setInterval(() => {
     fetchStats();
     fetchMessages(true);
+    fetchAnalyticsData();
   }, 30000);
 
   // Initial Load
@@ -2061,15 +2527,17 @@ export async function onRequestGet(context) {
   // ═══════════════════════════════════════════════
   // CMS TAB SWITCHING
   // ═══════════════════════════════════════════════
-  const CMS_TABS = ['messages','content','clients','team','theme','layout'];
+  const CMS_TABS = ['dashboard','messages','analytics','settings','content','clients','team','theme','layout'];
   function switchTab(name) {
     CMS_TABS.forEach(t => {
-      document.getElementById('panel-' + t).classList.toggle('active', t === name);
+      const panel = document.getElementById('panel-' + t);
+      if (panel) panel.classList.toggle('active', t === name);
     });
     document.querySelectorAll('.cms-tab-btn').forEach((btn, i) => {
       btn.classList.toggle('active', CMS_TABS[i] === name);
     });
     // lazy load on first open
+    if (name === 'dashboard' || name === 'analytics') fetchAnalyticsData();
     if (name === 'content') fetchCmsContent();
     if (name === 'clients') fetchCmsClients();
     if (name === 'team') fetchCmsTeam();
