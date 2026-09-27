@@ -2810,7 +2810,7 @@ export async function onRequestGet(context) {
         ? escapeHtml(t.content).slice(0, 70) + '...' 
         : escapeHtml(t.content);
 
-      return `
+      return \`
       <tr>
         <td style="color:var(--text-sub);font-family:monospace">#\${t.id}</td>
         <td style="font-weight:700;color:#fff">\${escapeHtml(t.name)}</td>
@@ -2825,7 +2825,7 @@ export async function onRequestGet(context) {
             <button class="act-btn act-del" onclick="deleteTestimonial(\${t.id})" title="حذف">🗑️</button>
           </div>
         </td>
-      </tr>`;
+      </tr>\`;
     }).join('');
   }
 
