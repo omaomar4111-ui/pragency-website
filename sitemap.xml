@@ -18,6 +18,14 @@
     <priority>0.80</priority>
   </url>
 
+  <!-- آراء العملاء -->
+  <url>
+    <loc>https://pragency.pages.dev/testimonials</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
   <!-- صفحة الخدمات الرئيسية -->
   <url>
     <loc>https://pragency.pages.dev/services/index.html</loc>

@@ -1,0 +1,9 @@
+.tools
+.gemini
+.agents
+features
+node_modules
+scratch
+.wrangler
+deploy_*.cjs
+dns_preload.cjs

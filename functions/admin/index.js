@@ -1221,6 +1221,7 @@ export async function onRequestGet(context) {
     <button class="cms-tab-btn active" onclick="switchTab('dashboard')">📊 لوحة المؤشرات</button>
     <button class="cms-tab-btn" onclick="switchTab('messages')">📨 الرسائل</button>
     <button class="cms-tab-btn" onclick="switchTab('analytics')">📈 التحليلات</button>
+    <button class="cms-tab-btn" onclick="switchTab('testimonials')">⭐ آراء العملاء</button>
     <button class="cms-tab-btn" onclick="switchTab('settings')">⚙️ الإعدادات</button>
     <button class="cms-tab-btn" onclick="switchTab('content')">📝 المحتوى</button>
     <button class="cms-tab-btn" onclick="switchTab('clients')">👥 العملاء</button>
@@ -1501,7 +1502,7 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>قاعدة البيانات:</td>
-          <td>Cloudflare D1 (Serverless SQLite) — Contacts Table</td>
+          <td>Cloudflare D1 (Serverless SQLite) — Contacts &amp; Testimonials</td>
         </tr>
         <tr>
           <td>حالة السيرفر:</td>
@@ -1509,7 +1510,7 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>إصدار التخزين المؤقت (Cache):</td>
-          <td>CSS: v19 / JS: v17 / Multi-step: v2 / Pages: v47</td>
+          <td>CSS: v19 / JS: v17 / Multi-step: v2 / Pages: v48</td>
         </tr>
         <tr>
           <td>رابط الموقع الحي:</td>
@@ -1517,11 +1518,42 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>مسارات الصفحات المستقلة:</td>
-          <td>/about, /services, /clients</td>
+          <td>/about, /services, /clients, /testimonials</td>
         </tr>
       </table>
     </div>
   </div><!-- end #panel-settings -->
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- TAB: TESTIMONIALS (Feature 6)       -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="cms-tab-panel" id="panel-testimonials">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:18px;font-weight:800;color:#fff">⭐ إدارة آراء العملاء (Testimonials)</h2>
+      <button class="cms-save-btn" onclick="openTestimonialModal()">➕ إضافة رأي جديد</button>
+    </div>
+    <div class="cms-section-card">
+      <div style="overflow-x:auto">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>العميل</th>
+              <th>الشركة / المنصب</th>
+              <th>نص الرأي</th>
+              <th>التقييم</th>
+              <th>الترتيب</th>
+              <th>الحالة</th>
+              <th style="text-align:center">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="testimonialsTableBody">
+            <tr><td colspan="8" class="empty-state">جارٍ التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- end #panel-testimonials -->
 
   <!-- ═══════════════════════════════════ -->
   <!-- TAB: CONTENT                        -->
@@ -1681,6 +1713,57 @@ export async function onRequestGet(context) {
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeTeamModal()">إلغاء</button>
       <button class="btn btn-primary" onclick="saveTeamMember()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonial Add/Edit Modal -->
+<div class="modal-overlay" id="testimonialModal">
+  <div class="modal-card" style="max-width:560px">
+    <h3 class="modal-title"><span>⭐</span><span id="testimonialModalTitle">إضافة رأي جديد</span></h3>
+    <input type="hidden" id="testimonialModalId"/>
+    <label class="modal-field-label">اسم العميل *</label>
+    <input type="text" class="modal-input" id="testiName" placeholder="مثال: م. عمر إبراهيم"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <label class="modal-field-label">الشركة</label>
+        <input type="text" class="modal-input" id="testiCompany" placeholder="مثال: براند كود"/>
+      </div>
+      <div>
+        <label class="modal-field-label">المنصب / الصفة</label>
+        <input type="text" class="modal-input" id="testiRole" placeholder="مثال: المؤسس والمدير التنفيذي"/>
+      </div>
+    </div>
+    <label class="modal-field-label">نص الشهادة / الرأي *</label>
+    <textarea class="modal-textarea" id="testiContent" placeholder="اكتب نص الشهادة وتجربة العميل بالتفصيل..." style="min-height:95px"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div>
+        <label class="modal-field-label">التقييم (1 - 5) *</label>
+        <select class="modal-input" id="testiRating">
+          <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+          <option value="4">⭐⭐⭐⭐ (4)</option>
+          <option value="3">⭐⭐⭐ (3)</option>
+          <option value="2">⭐⭐ (2)</option>
+          <option value="1">⭐ (1)</option>
+        </select>
+      </div>
+      <div>
+        <label class="modal-field-label">الترتيب</label>
+        <input type="number" class="modal-input" id="testiOrder" value="0"/>
+      </div>
+      <div>
+        <label class="modal-field-label">الحالة</label>
+        <select class="modal-input" id="testiActive">
+          <option value="1">✅ نشط</option>
+          <option value="0">⏸️ مخفي</option>
+        </select>
+      </div>
+    </div>
+    <label class="modal-field-label">رابط صورة العميل (URL)</label>
+    <input type="text" class="modal-input" id="testiPhoto" placeholder="https://example.com/client.jpg (اختياري)"/>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeTestimonialModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveTestimonial()">💾 حفظ الرأي</button>
     </div>
   </div>
 </div>
@@ -2527,7 +2610,7 @@ export async function onRequestGet(context) {
   // ═══════════════════════════════════════════════
   // CMS TAB SWITCHING
   // ═══════════════════════════════════════════════
-  const CMS_TABS = ['dashboard','messages','analytics','settings','content','clients','team','theme','layout'];
+  const CMS_TABS = ['dashboard','messages','analytics','testimonials','settings','content','clients','team','theme','layout'];
   function switchTab(name) {
     CMS_TABS.forEach(t => {
       const panel = document.getElementById('panel-' + t);
@@ -2538,6 +2621,7 @@ export async function onRequestGet(context) {
     });
     // lazy load on first open
     if (name === 'dashboard' || name === 'analytics') fetchAnalyticsData();
+    if (name === 'testimonials') fetchTestimonialsAdmin();
     if (name === 'content') fetchCmsContent();
     if (name === 'clients') fetchCmsClients();
     if (name === 'team') fetchCmsTeam();
@@ -2690,6 +2774,141 @@ export async function onRequestGet(context) {
       await fetch('/api/admin/clients?id=' + id, { method: 'DELETE', headers: cmsAuth() });
       _clientsLoaded = false; fetchCmsClients(); showToast('🗑️ تم الحذف');
     } catch(e) { showToast('❌ ' + e.message); }
+  }
+
+  // ═══════════════════════════════════════════════
+  // TESTIMONIALS TAB (Feature 6)
+  // ═══════════════════════════════════════════════
+  let cmsTestimonials = [];
+  let _testimonialsLoaded = false;
+
+  async function fetchTestimonialsAdmin() {
+    if (_testimonialsLoaded) return;
+    try {
+      const res = await fetch('/api/admin/testimonials', { headers: cmsAuth() });
+      const json = await res.json();
+      if (!json.success) return;
+      cmsTestimonials = json.data || [];
+      renderTestimonialsTable();
+      _testimonialsLoaded = true;
+    } catch(e) {
+      showToast('خطأ في تحميل آراء العملاء');
+    }
+  }
+
+  function renderTestimonialsTable() {
+    const tb = document.getElementById('testimonialsTableBody');
+    if (!tb) return;
+    if (!cmsTestimonials.length) {
+      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد آراء مسجلة — أضف أول رأي لعميلك!</td></tr>';
+      return;
+    }
+    tb.innerHTML = cmsTestimonials.map(t => {
+      const stars = '⭐'.repeat(Math.min(Math.max(parseInt(t.rating) || 5, 1), 5));
+      const roleCompany = [t.role, t.company].filter(Boolean).join(' — ') || '—';
+      const shortContent = escapeHtml(t.content || '').length > 70 
+        ? escapeHtml(t.content).slice(0, 70) + '...' 
+        : escapeHtml(t.content);
+
+      return `
+      <tr>
+        <td style="color:var(--text-sub);font-family:monospace">#\${t.id}</td>
+        <td style="font-weight:700;color:#fff">\${escapeHtml(t.name)}</td>
+        <td style="color:var(--text-muted);font-size:12.5px">\${escapeHtml(roleCompany)}</td>
+        <td style="color:#e5e5e5;font-size:12.5px" title="\${escapeHtml(t.content)}">\${shortContent}</td>
+        <td style="color:#fbbf24;font-size:13px">\${stars}</td>
+        <td>\${t.order_index}</td>
+        <td><span style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${t.is_active ? 'background:rgba(16,185,129,0.15);color:#34d399' : 'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${t.is_active ? 'نشط' : 'مخفي'}</span></td>
+        <td style="text-align:center">
+          <div style="display:flex;gap:6px;justify-content:center">
+            <button class="act-btn act-note" onclick="editTestimonial(\${t.id})" title="تعديل">✏️</button>
+            <button class="act-btn act-del" onclick="deleteTestimonial(\${t.id})" title="حذف">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function openTestimonialModal() {
+    document.getElementById('testimonialModalId').value = '';
+    document.getElementById('testimonialModalTitle').textContent = 'إضافة رأي جديد';
+    document.getElementById('testiName').value = '';
+    document.getElementById('testiCompany').value = '';
+    document.getElementById('testiRole').value = '';
+    document.getElementById('testiContent').value = '';
+    document.getElementById('testiRating').value = '5';
+    document.getElementById('testiOrder').value = 0;
+    document.getElementById('testiActive').value = '1';
+    document.getElementById('testiPhoto').value = '';
+    document.getElementById('testimonialModal').classList.add('open');
+  }
+
+  function editTestimonial(id) {
+    const t = cmsTestimonials.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('testimonialModalId').value = id;
+    document.getElementById('testimonialModalTitle').textContent = 'تعديل رأي العميل';
+    document.getElementById('testiName').value = t.name || '';
+    document.getElementById('testiCompany').value = t.company || '';
+    document.getElementById('testiRole').value = t.role || '';
+    document.getElementById('testiContent').value = t.content || '';
+    document.getElementById('testiRating').value = String(t.rating || 5);
+    document.getElementById('testiOrder').value = t.order_index || 0;
+    document.getElementById('testiActive').value = t.is_active ? '1' : '0';
+    document.getElementById('testiPhoto').value = t.photo_url || '';
+    document.getElementById('testimonialModal').classList.add('open');
+  }
+
+  function closeTestimonialModal() {
+    document.getElementById('testimonialModal').classList.remove('open');
+  }
+
+  async function saveTestimonial() {
+    const id = document.getElementById('testimonialModalId').value;
+    const body = {
+      name: document.getElementById('testiName').value.trim(),
+      company: document.getElementById('testiCompany').value.trim(),
+      role: document.getElementById('testiRole').value.trim(),
+      content: document.getElementById('testiContent').value.trim(),
+      rating: parseInt(document.getElementById('testiRating').value) || 5,
+      order_index: parseInt(document.getElementById('testiOrder').value) || 0,
+      is_active: document.getElementById('testiActive').value === '1' ? 1 : 0,
+      photo_url: document.getElementById('testiPhoto').value.trim()
+    };
+
+    if (!body.name || !body.content) {
+      showToast('⚠️ الاسم ونص الرأي مطلوبان');
+      return;
+    }
+
+    try {
+      const url = id ? '/api/admin/testimonials?id=' + id : '/api/admin/testimonials';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: cmsAuth(), body: JSON.stringify(body) });
+      const json = await res.json();
+      if (json.success) {
+        closeTestimonialModal();
+        _testimonialsLoaded = false;
+        fetchTestimonialsAdmin();
+        showToast('✅ تم حفظ الرأي بنجاح!');
+      } else {
+        showToast('❌ ' + (json.error || 'حدث خطأ'));
+      }
+    } catch(e) {
+      showToast('❌ ' + e.message);
+    }
+  }
+
+  async function deleteTestimonial(id) {
+    if (!confirm('هل تريد حذف هذا الرأي نهائياً؟')) return;
+    try {
+      await fetch('/api/admin/testimonials?id=' + id, { method: 'DELETE', headers: cmsAuth() });
+      _testimonialsLoaded = false;
+      fetchTestimonialsAdmin();
+      showToast('🗑️ تم الحذف');
+    } catch(e) {
+      showToast('❌ ' + e.message);
+    }
   }
 
   // ═══════════════════════════════════════════════
