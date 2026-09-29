@@ -1183,9 +1183,68 @@ export async function onRequestGet(context) {
       .filter-bar { flex-direction: column; align-items: stretch; }
       .search-box { min-width: 100%; }
       .filter-select, .star-toggle-btn, .filter-reset-btn { width: 100%; }
-      .wa-dropdown { width: 280px; left: auto; right: 0; }
+    /* Uploader & Drag Styles */
+    .img-uploader { margin: 12px 0; }
+    .img-uploader-drop {
+      border: 2px dashed rgba(168, 85, 247, 0.4);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(10, 6, 18, 0.4);
     }
+    .img-uploader-drop:hover, .img-uploader-drop.drag {
+      border-color: #A78BFA;
+      background: rgba(109, 40, 217, 0.15);
+    }
+    .img-uploader-icon { font-size: 32px; margin-bottom: 8px; }
+    .img-uploader-text { font-size: 14px; color: #fff; font-weight: 600; margin-bottom: 4px; }
+    .img-uploader-hint { font-size: 12px; color: rgba(196, 181, 253, 0.5); }
+    .img-uploader-preview {
+      position: relative;
+      display: inline-block;
+      max-width: 200px;
+    }
+    .img-uploader-preview img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .img-uploader-remove {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #c00000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .img-uploader-status {
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+    .img-uploader-status.loading { color: #FBBF24; }
+    .img-uploader-status.success { color: #10b981; }
+    .img-uploader-status.error { color: #ef4444; }
+
+    tr.drag-row { cursor: grab; }
+    tr.drag-row:active { cursor: grabbing; }
+    tr.dragging { opacity: 0.45; background: rgba(168, 85, 247, 0.2) !important; }
+    .drag-handle { cursor: grab; user-select: none; color: var(--text-muted); font-size: 15px; padding: 0 4px; }
+    .drag-handle:hover { color: #a855f7; }
+    .clickable-status, .clickable-rating { cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.2); transition: opacity 0.2s; }
+    .clickable-status:hover, .clickable-rating:hover { opacity: 0.8; }
   </style>
+  <script src="/js/admin-uploader.js?v=1" defer></script>
 </head>
 <body>
 
@@ -1528,27 +1587,31 @@ export async function onRequestGet(context) {
   <!-- TAB: TESTIMONIALS (Feature 6)       -->
   <!-- ═══════════════════════════════════ -->
   <div class="cms-tab-panel" id="panel-testimonials">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
       <h2 style="font-size:18px;font-weight:800;color:#fff">⭐ إدارة آراء العملاء (Testimonials)</h2>
-      <button class="cms-save-btn" onclick="openTestimonialModal()">➕ إضافة رأي جديد</button>
+      <div style="display:flex;gap:8px">
+        <button class="cms-save-btn" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)" onclick="exportJSON('testimonials')">📥 تصدير JSON</button>
+        <button class="cms-save-btn" onclick="openTestimonialModal()">➕ إضافة رأي جديد</button>
+      </div>
     </div>
     <div class="cms-section-card">
       <div style="overflow-x:auto">
         <table class="cms-table">
           <thead>
             <tr>
+              <th style="width:36px"></th>
               <th>#</th>
               <th>العميل</th>
               <th>الشركة / المنصب</th>
               <th>نص الرأي</th>
-              <th>التقييم</th>
+              <th>التقييم (اضغط للتعديل)</th>
               <th>الترتيب</th>
-              <th>الحالة</th>
+              <th>الحالة (اضغط للتبديل)</th>
               <th style="text-align:center">إجراءات</th>
             </tr>
           </thead>
           <tbody id="testimonialsTableBody">
-            <tr><td colspan="8" class="empty-state">جارٍ التحميل...</td></tr>
+            <tr><td colspan="9" class="empty-state">جارٍ التحميل...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1595,17 +1658,20 @@ export async function onRequestGet(context) {
   <!-- TAB: CLIENTS                        -->
   <!-- ═══════════════════════════════════ -->
   <div class="cms-tab-panel" id="panel-clients">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
       <h2 style="font-size:18px;font-weight:800;color:#fff">👥 إدارة العملاء</h2>
-      <button class="cms-save-btn" onclick="openClientModal()">➕ إضافة عميل</button>
+      <div style="display:flex;gap:8px">
+        <button class="cms-save-btn" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)" onclick="exportJSON('clients')">📥 تصدير JSON</button>
+        <button class="cms-save-btn" onclick="openClientModal()">➕ إضافة عميل</button>
+      </div>
     </div>
     <div class="cms-section-card">
       <div style="overflow-x:auto">
         <table class="cms-table">
           <thead><tr>
-            <th>#</th><th>الاسم</th><th>اللوجو</th><th>الموقع</th><th>الترتيب</th><th>الحالة</th><th>إجراءات</th>
+            <th style="width:36px"></th><th>#</th><th>الاسم</th><th>اللوجو</th><th>الموقع</th><th>الترتيب</th><th>الحالة</th><th>إجراءات</th>
           </tr></thead>
-          <tbody id="clientsTableBody"><tr><td colspan="7" class="empty-state">جارٍ التحميل...</td></tr></tbody>
+          <tbody id="clientsTableBody"><tr><td colspan="8" class="empty-state">جارٍ التحميل...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1615,17 +1681,20 @@ export async function onRequestGet(context) {
   <!-- TAB: TEAM                           -->
   <!-- ═══════════════════════════════════ -->
   <div class="cms-tab-panel" id="panel-team">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
       <h2 style="font-size:18px;font-weight:800;color:#fff">👤 إدارة الفريق</h2>
-      <button class="cms-save-btn" onclick="openTeamModal()">➕ إضافة عضو</button>
+      <div style="display:flex;gap:8px">
+        <button class="cms-save-btn" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)" onclick="exportJSON('team')">📥 تصدير JSON</button>
+        <button class="cms-save-btn" onclick="openTeamModal()">➕ إضافة عضو</button>
+      </div>
     </div>
     <div class="cms-section-card">
       <div style="overflow-x:auto">
         <table class="cms-table">
           <thead><tr>
-            <th>#</th><th>الاسم</th><th>المنصب</th><th>الصورة</th><th>لينكدإن</th><th>الترتيب</th><th>الحالة</th><th>إجراءات</th>
+            <th style="width:36px"></th><th>#</th><th>الاسم</th><th>المنصب</th><th>الصورة</th><th>لينكدإن</th><th>الترتيب</th><th>الحالة</th><th>إجراءات</th>
           </tr></thead>
-          <tbody id="teamTableBody"><tr><td colspan="8" class="empty-state">جارٍ التحميل...</td></tr></tbody>
+          <tbody id="teamTableBody"><tr><td colspan="9" class="empty-state">جارٍ التحميل...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1673,22 +1742,32 @@ export async function onRequestGet(context) {
 </div><!-- end .container -->
 
 
-<!-- Client Add/Edit Modal -->
+<!-- Client Add/Edit Modal (Simplified Logo-First) -->
 <div class="modal-overlay" id="clientModal">
   <div class="modal-card" style="max-width:520px">
     <h3 class="modal-title"><span>👥</span><span id="clientModalTitle">إضافة عميل جديد</span></h3>
     <input type="hidden" id="clientModalId"/>
-    <label class="modal-field-label">اسم العميل *</label>
-    <input type="text" class="modal-input" id="clientName" placeholder="مثال: شركة ABC"/>
-    <label class="modal-field-label">رابط اللوجو (URL) *</label>
-    <input type="text" class="modal-input" id="clientLogoUrl" placeholder="https://example.com/logo.webp"/>
-    <label class="modal-field-label">رابط الموقع</label>
-    <input type="text" class="modal-input" id="clientWebsite" placeholder="https://example.com"/>
-    <label class="modal-field-label">الترتيب</label>
-    <input type="number" class="modal-input" id="clientOrder" value="0" placeholder="0"/>
-    <div class="modal-actions">
+    <div style="margin-bottom:14px">
+      <label class="modal-field-label">شعار العميل (Logo) *</label>
+      <div id="clientLogoUploader"></div>
+      <input type="hidden" id="client-logo-url"/>
+    </div>
+    <details style="margin-top:14px;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px">
+      <summary style="cursor:pointer;color:rgba(196,181,253,0.8);font-size:13px;font-weight:600">
+        ⚙️ بيانات إضافية (اختياري)
+      </summary>
+      <div style="margin-top:12px">
+        <label class="modal-field-label">اسم العميل (اختياري)</label>
+        <input type="text" class="modal-input" id="client-name" placeholder="اتركه فارغاً للتسمية التلقائية"/>
+        <label class="modal-field-label">رابط الموقع (اختياري)</label>
+        <input type="url" class="modal-input" id="client-website" placeholder="https://example.com" dir="ltr"/>
+        <label class="modal-field-label">الترتيب</label>
+        <input type="number" class="modal-input" id="clientOrder" value="0" placeholder="0"/>
+      </div>
+    </details>
+    <div class="modal-actions" style="margin-top:18px">
       <button class="btn btn-secondary" onclick="closeClientModal()">إلغاء</button>
-      <button class="btn btn-primary" onclick="saveClient()">💾 حفظ</button>
+      <button class="btn btn-primary" onclick="saveClient()">💾 حفظ العميل</button>
     </div>
   </div>
 </div>
@@ -1702,10 +1781,11 @@ export async function onRequestGet(context) {
     <input type="text" class="modal-input" id="teamName" placeholder="مثال: أحمد محمد"/>
     <label class="modal-field-label">المنصب *</label>
     <input type="text" class="modal-input" id="teamRole" placeholder="مثال: مدير التسويق"/>
+    <label class="modal-field-label">صورة العضو (اختياري)</label>
+    <div id="teamPhotoUploader"></div>
+    <input type="hidden" id="team-photo-url"/>
     <label class="modal-field-label">نبذة مختصرة</label>
     <textarea class="modal-textarea" id="teamBio" placeholder="نبذة..."></textarea>
-    <label class="modal-field-label">رابط الصورة</label>
-    <input type="text" class="modal-input" id="teamPhoto" placeholder="https://example.com/photo.jpg"/>
     <label class="modal-field-label">رابط لينكدإن</label>
     <input type="text" class="modal-input" id="teamLinkedin" placeholder="https://linkedin.com/in/..."/>
     <label class="modal-field-label">الترتيب</label>
@@ -1734,6 +1814,9 @@ export async function onRequestGet(context) {
         <input type="text" class="modal-input" id="testiRole" placeholder="مثال: المؤسس والمدير التنفيذي"/>
       </div>
     </div>
+    <label class="modal-field-label">صورة العميل (اختياري)</label>
+    <div id="testimonialPhotoUploader"></div>
+    <input type="hidden" id="testimonial-photo-url"/>
     <label class="modal-field-label">نص الشهادة / الرأي *</label>
     <textarea class="modal-textarea" id="testiContent" placeholder="اكتب نص الشهادة وتجربة العميل بالتفصيل..." style="min-height:95px"></textarea>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
@@ -1759,9 +1842,7 @@ export async function onRequestGet(context) {
         </select>
       </div>
     </div>
-    <label class="modal-field-label">رابط صورة العميل (URL)</label>
-    <input type="text" class="modal-input" id="testiPhoto" placeholder="https://example.com/client.jpg (اختياري)"/>
-    <div class="modal-actions">
+    <div class="modal-actions" style="margin-top:18px">
       <button class="btn btn-secondary" onclick="closeTestimonialModal()">إلغاء</button>
       <button class="btn btn-primary" onclick="saveTestimonial()">💾 حفظ الرأي</button>
     </div>
@@ -2704,18 +2785,20 @@ export async function onRequestGet(context) {
 
   function renderClientsTable() {
     const tb = document.getElementById('clientsTableBody');
+    if (!tb) return;
     if (!cmsClients.length) {
-      tb.innerHTML = '<tr><td colspan="7" class="empty-state">لا يوجد عملاء — أضف أول عميل!</td></tr>';
+      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا يوجد عملاء — أضف أول عميل!</td></tr>';
       return;
     }
     tb.innerHTML = cmsClients.map(c => \`
-      <tr>
+      <tr class="drag-row" data-id="\${c.id}">
+        <td class="drag-handle" title="اسحب لإعادة الترتيب">☰</td>
         <td style="color:var(--text-sub);font-family:monospace">\${c.id}</td>
-        <td style="font-weight:700;color:#fff">\${c.name}</td>
-        <td><img src="\${c.logo_url}" alt="\${c.name}" style="height:32px;max-width:80px;object-fit:contain;border-radius:4px" onerror="this.style.display='none'"/></td>
-        <td><a href="\${c.website_url||'#'}" target="_blank" style="color:#60a5fa;font-size:12px">\${c.website_url||'—'}</a></td>
+        <td style="font-weight:700;color:#fff">\${escapeHtml(c.name)}</td>
+        <td><img src="\${c.logo_url}" alt="\${escapeHtml(c.name)}" style="height:32px;max-width:80px;object-fit:contain;border-radius:4px" onerror="this.style.display='none'"/></td>
+        <td><a href="\${c.website_url||'#'}" target="_blank" style="color:#60a5fa;font-size:12px">\${escapeHtml(c.website_url||'—')}</a></td>
         <td>\${c.order_index}</td>
-        <td><span style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${c.is_active?'background:rgba(16,185,129,0.15);color:#34d399':'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${c.is_active?'نشط':'مخفي'}</span></td>
+        <td><span class="clickable-status" onclick="toggleClientStatus(\${c.id},\${c.is_active?0:1})" style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${c.is_active?'background:rgba(16,185,129,0.15);color:#34d399':'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${c.is_active?'نشط ▾':'مخفي ▾'}</span></td>
         <td>
           <div style="display:flex;gap:6px">
             <button class="act-btn act-note" onclick="editClient(\${c.id})">✏️</button>
@@ -2723,15 +2806,31 @@ export async function onRequestGet(context) {
           </div>
         </td>
       </tr>\`).join('');
+    makeSortable(tb, '/api/admin/clients/reorder', () => { _clientsLoaded = false; fetchCmsClients(); });
   }
+
+  let clientLogoUploaderInstance = null;
 
   function openClientModal(id) {
     document.getElementById('clientModalId').value = '';
     document.getElementById('clientModalTitle').textContent = 'إضافة عميل جديد';
-    document.getElementById('clientName').value = '';
-    document.getElementById('clientLogoUrl').value = '';
-    document.getElementById('clientWebsite').value = '';
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-website').value = '';
+    document.getElementById('client-logo-url').value = '';
     document.getElementById('clientOrder').value = 0;
+    
+    const mount = document.getElementById('clientLogoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      clientLogoUploaderInstance = window.ImageUploader.create({
+        folder: 'clients',
+        value: '',
+        onChange: function(url) {
+          document.getElementById('client-logo-url').value = url;
+        }
+      });
+      mount.appendChild(clientLogoUploaderInstance);
+    }
     document.getElementById('clientModal').classList.add('open');
   }
 
@@ -2740,10 +2839,23 @@ export async function onRequestGet(context) {
     if (!c) return;
     document.getElementById('clientModalId').value = id;
     document.getElementById('clientModalTitle').textContent = 'تعديل بيانات العميل';
-    document.getElementById('clientName').value = c.name || '';
-    document.getElementById('clientLogoUrl').value = c.logo_url || '';
-    document.getElementById('clientWebsite').value = c.website_url || '';
+    document.getElementById('client-name').value = c.name || '';
+    document.getElementById('client-website').value = c.website_url || '';
+    document.getElementById('client-logo-url').value = c.logo_url || '';
     document.getElementById('clientOrder').value = c.order_index || 0;
+
+    const mount = document.getElementById('clientLogoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      clientLogoUploaderInstance = window.ImageUploader.create({
+        folder: 'clients',
+        value: c.logo_url || '',
+        onChange: function(url) {
+          document.getElementById('client-logo-url').value = url;
+        }
+      });
+      mount.appendChild(clientLogoUploaderInstance);
+    }
     document.getElementById('clientModal').classList.add('open');
   }
 
@@ -2751,20 +2863,42 @@ export async function onRequestGet(context) {
 
   async function saveClient() {
     const id = document.getElementById('clientModalId').value;
+    const logo = document.getElementById('client-logo-url').value.trim();
+    if (!logo) { showToast('⚠️ يرجى رفع شعار العميل أولاً'); return; }
+
+    let name = document.getElementById('client-name').value.trim();
+    if (!name) name = 'عميل ' + Date.now();
+
     const body = {
-      name: document.getElementById('clientName').value.trim(),
-      logo_url: document.getElementById('clientLogoUrl').value.trim(),
-      website_url: document.getElementById('clientWebsite').value.trim(),
+      name: name,
+      logo_url: logo,
+      website_url: document.getElementById('client-website').value.trim(),
       order_index: parseInt(document.getElementById('clientOrder').value) || 0
     };
-    if (!body.name || !body.logo_url) { showToast('⚠️ الاسم والرابط مطلوبان'); return; }
+
     try {
       const url = id ? '/api/admin/clients?id=' + id : '/api/admin/clients';
       const method = id ? 'PUT' : 'POST';
       const res = await fetch(url, { method, headers: cmsAuth(), body: JSON.stringify(body) });
       const json = await res.json();
-      if (json.success) { closeClientModal(); _clientsLoaded = false; fetchCmsClients(); showToast('✅ تم الحفظ!'); }
+      if (json.success) { closeClientModal(); _clientsLoaded = false; fetchCmsClients(); showToast('✅ تم الحفظ بنجاح!'); }
       else showToast('❌ ' + json.error);
+    } catch(e) { showToast('❌ ' + e.message); }
+  }
+
+  async function toggleClientStatus(id, newStatus) {
+    try {
+      const res = await fetch('/api/admin/clients?id=' + id, {
+        method: 'PUT',
+        headers: cmsAuth(),
+        body: JSON.stringify({ is_active: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('✓ تم تغيير الحالة');
+        _clientsLoaded = false;
+        fetchCmsClients();
+      } else { showToast('❌ ' + json.error); }
     } catch(e) { showToast('❌ ' + e.message); }
   }
 
@@ -2800,25 +2934,31 @@ export async function onRequestGet(context) {
     const tb = document.getElementById('testimonialsTableBody');
     if (!tb) return;
     if (!cmsTestimonials.length) {
-      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد آراء مسجلة — أضف أول رأي لعميلك!</td></tr>';
+      tb.innerHTML = '<tr><td colspan="9" class="empty-state">لا توجد آراء مسجلة — أضف أول رأي لعميلك!</td></tr>';
       return;
     }
     tb.innerHTML = cmsTestimonials.map(t => {
-      const stars = '⭐'.repeat(Math.min(Math.max(parseInt(t.rating) || 5, 1), 5));
+      const currentRating = Math.min(Math.max(parseInt(t.rating) || 5, 1), 5);
+      const stars = '⭐'.repeat(currentRating);
       const roleCompany = [t.role, t.company].filter(Boolean).join(' — ') || '—';
       const shortContent = escapeHtml(t.content || '').length > 70 
         ? escapeHtml(t.content).slice(0, 70) + '...' 
         : escapeHtml(t.content);
 
       return \`
-      <tr>
+      <tr class="drag-row" data-id="\${t.id}">
+        <td class="drag-handle" title="اسحب لإعادة الترتيب">☰</td>
         <td style="color:var(--text-sub);font-family:monospace">#\${t.id}</td>
         <td style="font-weight:700;color:#fff">\${escapeHtml(t.name)}</td>
         <td style="color:var(--text-muted);font-size:12.5px">\${escapeHtml(roleCompany)}</td>
         <td style="color:#e5e5e5;font-size:12.5px" title="\${escapeHtml(t.content)}">\${shortContent}</td>
-        <td style="color:#fbbf24;font-size:13px">\${stars}</td>
+        <td>
+          <span class="clickable-rating" onclick="promptChangeRating(\${t.id},\${currentRating})" style="color:#fbbf24;font-size:13px" title="اضغط لتغيير النجوم">\${stars} ▾</span>
+        </td>
         <td>\${t.order_index}</td>
-        <td><span style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${t.is_active ? 'background:rgba(16,185,129,0.15);color:#34d399' : 'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${t.is_active ? 'نشط' : 'مخفي'}</span></td>
+        <td>
+          <span class="clickable-status" onclick="toggleTestimonialStatus(\${t.id},\${t.is_active?0:1})" style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${t.is_active ? 'background:rgba(16,185,129,0.15);color:#34d399' : 'background:rgba(107,114,128,0.15);color:#9ca3af'}" title="اضغط للتبديل">\${t.is_active ? 'نشط ▾' : 'مخفي ▾'}</span>
+        </td>
         <td style="text-align:center">
           <div style="display:flex;gap:6px;justify-content:center">
             <button class="act-btn act-note" onclick="editTestimonial(\${t.id})" title="تعديل">✏️</button>
@@ -2827,7 +2967,10 @@ export async function onRequestGet(context) {
         </td>
       </tr>\`;
     }).join('');
+    makeSortable(tb, '/api/admin/testimonials/reorder', () => { _testimonialsLoaded = false; fetchTestimonialsAdmin(); });
   }
+
+  let testimonialPhotoUploaderInstance = null;
 
   function openTestimonialModal() {
     document.getElementById('testimonialModalId').value = '';
@@ -2839,7 +2982,20 @@ export async function onRequestGet(context) {
     document.getElementById('testiRating').value = '5';
     document.getElementById('testiOrder').value = 0;
     document.getElementById('testiActive').value = '1';
-    document.getElementById('testiPhoto').value = '';
+    document.getElementById('testimonial-photo-url').value = '';
+
+    const mount = document.getElementById('testimonialPhotoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      testimonialPhotoUploaderInstance = window.ImageUploader.create({
+        folder: 'testimonials',
+        value: '',
+        onChange: function(url) {
+          document.getElementById('testimonial-photo-url').value = url;
+        }
+      });
+      mount.appendChild(testimonialPhotoUploaderInstance);
+    }
     document.getElementById('testimonialModal').classList.add('open');
   }
 
@@ -2855,7 +3011,20 @@ export async function onRequestGet(context) {
     document.getElementById('testiRating').value = String(t.rating || 5);
     document.getElementById('testiOrder').value = t.order_index || 0;
     document.getElementById('testiActive').value = t.is_active ? '1' : '0';
-    document.getElementById('testiPhoto').value = t.photo_url || '';
+    document.getElementById('testimonial-photo-url').value = t.photo_url || '';
+
+    const mount = document.getElementById('testimonialPhotoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      testimonialPhotoUploaderInstance = window.ImageUploader.create({
+        folder: 'testimonials',
+        value: t.photo_url || '',
+        onChange: function(url) {
+          document.getElementById('testimonial-photo-url').value = url;
+        }
+      });
+      mount.appendChild(testimonialPhotoUploaderInstance);
+    }
     document.getElementById('testimonialModal').classList.add('open');
   }
 
@@ -2873,7 +3042,7 @@ export async function onRequestGet(context) {
       rating: parseInt(document.getElementById('testiRating').value) || 5,
       order_index: parseInt(document.getElementById('testiOrder').value) || 0,
       is_active: document.getElementById('testiActive').value === '1' ? 1 : 0,
-      photo_url: document.getElementById('testiPhoto').value.trim()
+      photo_url: document.getElementById('testimonial-photo-url').value.trim()
     };
 
     if (!body.name || !body.content) {
@@ -2897,6 +3066,42 @@ export async function onRequestGet(context) {
     } catch(e) {
       showToast('❌ ' + e.message);
     }
+  }
+
+  async function toggleTestimonialStatus(id, newStatus) {
+    try {
+      const res = await fetch('/api/admin/testimonials?id=' + id, {
+        method: 'PUT',
+        headers: cmsAuth(),
+        body: JSON.stringify({ is_active: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('✓ تم تغيير الحالة');
+        _testimonialsLoaded = false;
+        fetchTestimonialsAdmin();
+      } else { showToast('❌ ' + json.error); }
+    } catch(e) { showToast('❌ ' + e.message); }
+  }
+
+  async function promptChangeRating(id, current) {
+    const val = prompt('اختر التقييم الجديد (1 إلى 5):', current);
+    if (!val) return;
+    const r = parseInt(val, 10);
+    if (isNaN(r) || r < 1 || r > 5) { showToast('⚠️ التقييم يجب أن يكون بين 1 و 5'); return; }
+    try {
+      const res = await fetch('/api/admin/testimonials?id=' + id, {
+        method: 'PUT',
+        headers: cmsAuth(),
+        body: JSON.stringify({ rating: r })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('✓ تم تحديث النجوم');
+        _testimonialsLoaded = false;
+        fetchTestimonialsAdmin();
+      } else { showToast('❌ ' + json.error); }
+    } catch(e) { showToast('❌ ' + e.message); }
   }
 
   async function deleteTestimonial(id) {
@@ -2927,19 +3132,21 @@ export async function onRequestGet(context) {
 
   function renderTeamTable() {
     const tb = document.getElementById('teamTableBody');
+    if (!tb) return;
     if (!cmsTeam.length) {
-      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا يوجد أعضاء — أضف أول عضو!</td></tr>';
+      tb.innerHTML = '<tr><td colspan="9" class="empty-state">لا يوجد أعضاء — أضف أول عضو!</td></tr>';
       return;
     }
     tb.innerHTML = cmsTeam.map(m => \`
-      <tr>
+      <tr class="drag-row" data-id="\${m.id}">
+        <td class="drag-handle" title="اسحب لإعادة الترتيب">☰</td>
         <td style="color:var(--text-sub);font-family:monospace">\${m.id}</td>
-        <td style="font-weight:700;color:#fff">\${m.name}</td>
-        <td style="color:var(--text-muted)">\${m.role}</td>
+        <td style="font-weight:700;color:#fff">\${escapeHtml(m.name)}</td>
+        <td style="color:var(--text-muted)">\${escapeHtml(m.role)}</td>
         <td>\${m.photo_url?'<img src="'+m.photo_url+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display=\\"none\\""/>':'—'}</td>
         <td>\${m.linkedin_url?'<a href="'+m.linkedin_url+'" target="_blank" style="color:#60a5fa;font-size:12px">🔗</a>':'—'}</td>
         <td>\${m.order_index}</td>
-        <td><span style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${m.is_active?'background:rgba(16,185,129,0.15);color:#34d399':'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${m.is_active?'نشط':'مخفي'}</span></td>
+        <td><span class="clickable-status" onclick="toggleTeamStatus(\${m.id},\${m.is_active?0:1})" style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${m.is_active?'background:rgba(16,185,129,0.15);color:#34d399':'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${m.is_active?'نشط ▾':'مخفي ▾'}</span></td>
         <td>
           <div style="display:flex;gap:6px">
             <button class="act-btn act-note" onclick="editTeamMember(\${m.id})">✏️</button>
@@ -2947,13 +3154,30 @@ export async function onRequestGet(context) {
           </div>
         </td>
       </tr>\`).join('');
+    makeSortable(tb, '/api/admin/team/reorder', () => { fetchCmsTeam(); });
   }
+
+  let teamPhotoUploaderInstance = null;
 
   function openTeamModal() {
     document.getElementById('teamModalId').value = '';
     document.getElementById('teamModalTitle').textContent = 'إضافة عضو فريق';
-    ['teamName','teamRole','teamBio','teamPhoto','teamLinkedin'].forEach(id => document.getElementById(id).value = '');
+    ['teamName','teamRole','teamBio','teamLinkedin'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('team-photo-url').value = '';
     document.getElementById('teamOrder').value = 0;
+
+    const mount = document.getElementById('teamPhotoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      teamPhotoUploaderInstance = window.ImageUploader.create({
+        folder: 'team',
+        value: '',
+        onChange: function(url) {
+          document.getElementById('team-photo-url').value = url;
+        }
+      });
+      mount.appendChild(teamPhotoUploaderInstance);
+    }
     document.getElementById('teamModal').classList.add('open');
   }
 
@@ -2965,9 +3189,22 @@ export async function onRequestGet(context) {
     document.getElementById('teamName').value = m.name || '';
     document.getElementById('teamRole').value = m.role || '';
     document.getElementById('teamBio').value = m.bio || '';
-    document.getElementById('teamPhoto').value = m.photo_url || '';
+    document.getElementById('team-photo-url').value = m.photo_url || '';
     document.getElementById('teamLinkedin').value = m.linkedin_url || '';
     document.getElementById('teamOrder').value = m.order_index || 0;
+
+    const mount = document.getElementById('teamPhotoUploader');
+    if (mount && window.ImageUploader) {
+      mount.innerHTML = '';
+      teamPhotoUploaderInstance = window.ImageUploader.create({
+        folder: 'team',
+        value: m.photo_url || '',
+        onChange: function(url) {
+          document.getElementById('team-photo-url').value = url;
+        }
+      });
+      mount.appendChild(teamPhotoUploaderInstance);
+    }
     document.getElementById('teamModal').classList.add('open');
   }
 
@@ -2979,7 +3216,7 @@ export async function onRequestGet(context) {
       name: document.getElementById('teamName').value.trim(),
       role: document.getElementById('teamRole').value.trim(),
       bio: document.getElementById('teamBio').value.trim(),
-      photo_url: document.getElementById('teamPhoto').value.trim(),
+      photo_url: document.getElementById('team-photo-url').value.trim(),
       linkedin_url: document.getElementById('teamLinkedin').value.trim(),
       order_index: parseInt(document.getElementById('teamOrder').value) || 0
     };
@@ -2991,6 +3228,21 @@ export async function onRequestGet(context) {
       const json = await res.json();
       if (json.success) { closeTeamModal(); fetchCmsTeam(); showToast('✅ تم الحفظ!'); }
       else showToast('❌ ' + json.error);
+    } catch(e) { showToast('❌ ' + e.message); }
+  }
+
+  async function toggleTeamStatus(id, newStatus) {
+    try {
+      const res = await fetch('/api/admin/team?id=' + id, {
+        method: 'PUT',
+        headers: cmsAuth(),
+        body: JSON.stringify({ is_active: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('✓ تم تغيير الحالة');
+        fetchCmsTeam();
+      } else { showToast('❌ ' + json.error); }
     } catch(e) { showToast('❌ ' + e.message); }
   }
 
@@ -3113,6 +3365,110 @@ export async function onRequestGet(context) {
       showToast('✅ تم حفظ الترتيب!');
     } catch(e) { showToast('❌ ' + e.message); }
   }
+
+  // ═══════════════════════════════════════════════
+  // DRAG & DROP REORDER (WAVE D1)
+  // ═══════════════════════════════════════════════
+  function makeSortable(tbody, endpoint, onDone) {
+    if (!tbody) return;
+    let dragging = null;
+    tbody.querySelectorAll('tr.drag-row').forEach(function (row) {
+      row.draggable = true;
+      row.addEventListener('dragstart', function (e) {
+        dragging = row;
+        row.classList.add('dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', row.dataset.id || '');
+        }
+      });
+      row.addEventListener('dragend', function () {
+        row.classList.remove('dragging');
+        dragging = null;
+      });
+      row.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        if (!dragging || dragging === row) return;
+        const rect = row.getBoundingClientRect();
+        const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+        tbody.insertBefore(dragging, next ? row.nextSibling : row);
+      });
+    });
+
+    tbody.addEventListener('drop', async function (e) {
+      e.preventDefault();
+      const ids = Array.from(tbody.querySelectorAll('tr.drag-row')).map(r => r.dataset.id).filter(Boolean);
+      if (!ids.length) return;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'PATCH',
+          headers: cmsAuth(),
+          body: JSON.stringify({ ids: ids })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showToast('✓ تم حفظ الترتيب الجديد');
+          if (onDone) onDone();
+        } else {
+          showToast('❌ ' + (json.error || 'فشل حفظ الترتيب'));
+        }
+      } catch(err) {
+        showToast('❌ ' + err.message);
+      }
+    });
+  }
+
+  // ═══════════════════════════════════════════════
+  // EXPORT JSON (WAVE D3)
+  // ═══════════════════════════════════════════════
+  async function exportJSON(type) {
+    try {
+      showToast('⏳ جاري تجهيز ملف التصدير...');
+      const res = await fetch('/api/admin/' + type, { headers: cmsAuth() });
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = type + '-' + Date.now() + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('✓ تم تحميل ملف ' + type + '.json بنجاح');
+    } catch(e) {
+      showToast('❌ فشل التصدير: ' + e.message);
+    }
+  }
+
+  // ═══════════════════════════════════════════════
+  // KEYBOARD SHORTCUTS (WAVE D4)
+  // ═══════════════════════════════════════════════
+  document.addEventListener('keydown', function(e) {
+    // Esc -> Close active modal
+    if (e.key === 'Escape') {
+      const openModal = document.querySelector('.modal-overlay.open');
+      if (openModal) {
+        openModal.classList.remove('open');
+      }
+    }
+    // Ctrl + S -> Save currently open modal
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      const openModal = document.querySelector('.modal-overlay.open');
+      if (openModal) {
+        const primaryBtn = openModal.querySelector('.btn-primary');
+        if (primaryBtn) primaryBtn.click();
+      }
+    }
+    // Ctrl + K -> Focus search input
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      const searchBox = document.getElementById('searchMessagesInput') || document.querySelector('.search-box');
+      if (searchBox) {
+        searchBox.focus();
+        searchBox.select && searchBox.select();
+      }
+    }
+  });
 
 </script>
 

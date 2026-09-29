@@ -138,3 +138,20 @@ export async function onRequestDelete(context) {
     return json({ success: false, error: err.message }, 500);
   }
 }
+
+export async function onRequestPatch(context) {
+  const { request, env } = context;
+  if (!checkAuth(request, env)) return unauthorized();
+  if (!env.DB) return json({ success: false, error: 'Database not configured' }, 500);
+
+  try {
+    const body = await request.json();
+    const ids = body.ids || [];
+    for (let i = 0; i < ids.length; i++) {
+      await env.DB.prepare('UPDATE testimonials SET order_index = ? WHERE id = ?').bind(i + 1, ids[i]).run();
+    }
+    return json({ success: true, message: 'تم تحديث الترتيب' });
+  } catch (err) {
+    return json({ success: false, error: err.message }, 500);
+  }
+}

@@ -1,4 +1,4 @@
-﻿function checkAuth(request, env) {
+function checkAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
   const auth = request.headers.get('Authorization') || '';
   if (!auth.startsWith('Basic ')) return false;
@@ -38,13 +38,16 @@ export async function onRequestPost(context) {
   if (!checkAuth(request, env)) return unauthorizedResponse();
   try {
     const body = await request.json();
-    const { name, logo_url, website_url = '', order_index = 0, is_active = 1 } = body;
-    if (!name || !logo_url) return jsonResponse({ success: false, error: 'name and logo_url required' }, 400);
+    let { name = '', logo_url, website_url = '', order_index = 0, is_active = 1 } = body;
+    if (!logo_url) return jsonResponse({ success: false, error: 'logo_url required' }, 400);
+    if (!name || !name.trim()) {
+      name = 'عميل ' + Date.now();
+    }
 
     const result = await env.DB.prepare(
       `INSERT INTO clients (name, logo_url, website_url, order_index, is_active)
        VALUES (?, ?, ?, ?, ?)`
-    ).bind(name, logo_url, website_url, order_index, is_active).run();
+    ).bind(name.trim(), logo_url.trim(), website_url.trim(), order_index, is_active).run();
 
     return jsonResponse({ success: true, message: 'تم الإضافة', id: result.meta?.last_row_id });
   } catch (err) { return jsonResponse({ success: false, error: err.message }, 500); }
@@ -87,5 +90,18 @@ export async function onRequestDelete(context) {
 
     await env.DB.prepare('DELETE FROM clients WHERE id = ?').bind(id).run();
     return jsonResponse({ success: true, message: 'تم الحذف' });
+  } catch (err) { return jsonResponse({ success: false, error: err.message }, 500); }
+}
+
+export async function onRequestPatch(context) {
+  const { request, env } = context;
+  if (!checkAuth(request, env)) return unauthorizedResponse();
+  try {
+    const body = await request.json();
+    const ids = body.ids || [];
+    for (let i = 0; i < ids.length; i++) {
+      await env.DB.prepare('UPDATE clients SET order_index = ? WHERE id = ?').bind(i + 1, ids[i]).run();
+    }
+    return jsonResponse({ success: true, message: 'تم تحديث الترتيب' });
   } catch (err) { return jsonResponse({ success: false, error: err.message }, 500); }
 }

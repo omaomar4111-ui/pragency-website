@@ -1,4 +1,4 @@
-﻿function checkAuth(request, env) {
+function checkAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
   const auth = request.headers.get('Authorization') || '';
   if (!auth.startsWith('Basic ')) return false;
@@ -87,5 +87,18 @@ export async function onRequestDelete(context) {
 
     await env.DB.prepare('DELETE FROM team_members WHERE id = ?').bind(id).run();
     return jsonResponse({ success: true, message: 'تم الحذف' });
+  } catch (err) { return jsonResponse({ success: false, error: err.message }, 500); }
+}
+
+export async function onRequestPatch(context) {
+  const { request, env } = context;
+  if (!checkAuth(request, env)) return unauthorizedResponse();
+  try {
+    const body = await request.json();
+    const ids = body.ids || [];
+    for (let i = 0; i < ids.length; i++) {
+      await env.DB.prepare('UPDATE team_members SET order_index = ? WHERE id = ?').bind(i + 1, ids[i]).run();
+    }
+    return jsonResponse({ success: true, message: 'تم تحديث الترتيب' });
   } catch (err) { return jsonResponse({ success: false, error: err.message }, 500); }
 }
