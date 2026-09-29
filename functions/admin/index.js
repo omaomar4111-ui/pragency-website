@@ -2936,7 +2936,7 @@ export async function onRequestGet(context) {
         <td style="color:var(--text-sub);font-family:monospace">\${m.id}</td>
         <td style="font-weight:700;color:#fff">\${m.name}</td>
         <td style="color:var(--text-muted)">\${m.role}</td>
-        <td>\${m.photo_url?'<img src="'+m.photo_url+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display=\'none\'"/>':'—'}</td>
+        <td>\${m.photo_url?'<img src="'+m.photo_url+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display=\\"none\\""/>':'—'}</td>
         <td>\${m.linkedin_url?'<a href="'+m.linkedin_url+'" target="_blank" style="color:#60a5fa;font-size:12px">🔗</a>':'—'}</td>
         <td>\${m.order_index}</td>
         <td><span style="padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;\${m.is_active?'background:rgba(16,185,129,0.15);color:#34d399':'background:rgba(107,114,128,0.15);color:#9ca3af'}">\${m.is_active?'نشط':'مخفي'}</span></td>
