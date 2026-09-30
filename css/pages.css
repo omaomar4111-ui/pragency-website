@@ -2019,4 +2019,84 @@ a.client-card:hover .client-logo {
   border-bottom: 1px solid rgba(109, 40, 217, 0.15);
 }
 
+/* ═══════════════════════════════════════════════
+   SMART WHATSAPP WIDGET
+   ═══════════════════════════════════════════════ */
+.wa-widget {
+  position: fixed;
+  bottom: 100px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  z-index: 9998;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  text-decoration: none;
+}
+
+.wa-widget:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 32px rgba(37, 211, 102, 0.6);
+}
+
+.wa-widget svg { position: relative; z-index: 2; }
+
+.wa-tooltip {
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 6, 18, 0.95);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  font-family: 'Cairo', sans-serif;
+  border: 1px solid rgba(37, 211, 102, 0.4);
+}
+
+.wa-widget:hover .wa-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(4px);
+}
+
+/* Pulse animation */
+.wa-widget::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.5);
+  animation: waPulse 2s ease-out infinite;
+  z-index: 1;
+}
+
+@keyframes waPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .wa-widget {
+    width: 54px;
+    height: 54px;
+    bottom: 90px;
+    left: 16px;
+  }
+  .wa-tooltip { display: none; }
+}
+
+
 
