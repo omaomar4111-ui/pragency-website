@@ -1,6 +1,7 @@
 /* ============================================================
    PR AGENCY — CLIENTS LOGOS MODULE (21 UNIQUE CLIENTS)
    Two Marquee Rows (Opposite Directions) — NO GRID
+   Supports API with Hardcoded Fallback
    ============================================================ */
 var CLIENT_LOGOS = [
   { name: 'BLILTNA', nameEn: 'BLILTNA', sector: 'زراعة', file: 'client-01-bliltna.png' },
@@ -31,35 +32,59 @@ function basePath() {
           window.location.pathname.indexOf('/blog/') > -1) ? '../' : '';
 }
 
-function renderClients() {
+async function fetchFromAPI() {
+  try {
+    const res = await fetch('/api/clients');
+    const data = await res.json();
+    if (data.success && data.data && data.data.length > 0) {
+      return data.data.map(c => ({
+        name: c.name || 'Client',
+        file: c.logo_url,
+        url: c.website_url,
+        isExternal: (c.logo_url && (c.logo_url.startsWith('http://') || c.logo_url.startsWith('https://')))
+      }));
+    }
+  } catch (e) {}
+  return null;
+}
+
+function renderRow(items, bp) {
+  var doubled = items.concat(items);
+  return doubled.map(function(logo) {
+    if (logo.isExternal) {
+      return '<div class="client-logo" title="' + (logo.name || '') + '">' +
+             '  <img src="' + logo.file + '" alt="' + (logo.name || '') + '" loading="lazy" width="160" height="70" style="max-height:60px;width:auto;object-fit:contain" />' +
+             '</div>';
+    }
+    var webp = (logo.file || '').replace(/\.(png|jpg)$/i, '.webp');
+    return '<div class="client-logo" title="' + (logo.name || '') + '">' +
+           '  <picture>' +
+           '    <source srcset="' + bp + 'assets/logos/clients/' + webp + '" type="image/webp">' +
+           '    <img src="' + bp + 'assets/logos/clients/' + logo.file + '" alt="' + (logo.name || '') + '" loading="lazy" width="160" height="70" />' +
+           '  </picture>' +
+           '</div>';
+  }).join('');
+}
+
+async function initClients() {
   var trackTop = document.getElementById('clientsTrackTop');
   var trackBottom = document.getElementById('clientsTrackBottom');
   if (!trackTop || !trackBottom) return;
-  
+
   var bp = basePath();
-  var half = Math.ceil(CLIENT_LOGOS.length / 2);
-  var rowTop = CLIENT_LOGOS.slice(0, half);
-  var rowBottom = CLIENT_LOGOS.slice(half);
-  
-  function renderRow(items) {
-    var doubled = items.concat(items);
-    return doubled.map(function(logo) {
-      var webp = logo.file.replace(/\.(png|jpg)$/i, '.webp');
-      return '<div class="client-logo" title="' + logo.name + '">' +
-             '  <picture>' +
-             '    <source srcset="' + bp + 'assets/logos/clients/' + webp + '" type="image/webp">' +
-             '    <img src="' + bp + 'assets/logos/clients/' + logo.file + '" alt="' + logo.name + '" loading="lazy" width="160" height="70" />' +
-             '  </picture>' +
-             '</div>';
-    }).join('');
-  }
-  
-  trackTop.innerHTML = renderRow(rowTop);
-  trackBottom.innerHTML = renderRow(rowBottom);
+  var apiClients = await fetchFromAPI();
+  var clients = (apiClients && apiClients.length > 0) ? apiClients : CLIENT_LOGOS;
+
+  var half = Math.ceil(clients.length / 2);
+  var rowTop = clients.slice(0, half);
+  var rowBottom = clients.slice(half);
+
+  trackTop.innerHTML = renderRow(rowTop, bp);
+  trackBottom.innerHTML = renderRow(rowBottom, bp);
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderClients);
+  document.addEventListener('DOMContentLoaded', initClients);
 } else {
-  renderClients();
+  initClients();
 }

@@ -1997,3 +1997,26 @@ a.client-card:hover .client-logo {
   .testimonials-grid { grid-template-columns: 1fr; }
 }
 
+.clients-row {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+/* /clients page specific spacing */
+.page-standalone .clients-row {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.page-standalone .clients-row-top {
+  border-top: 1px solid rgba(109, 40, 217, 0.15);
+}
+
+.page-standalone .clients-row-bottom {
+  border-bottom: 1px solid rgba(109, 40, 217, 0.15);
+}
+
+

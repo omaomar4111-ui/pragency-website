@@ -81,7 +81,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/main.css?v=19"/>
-<link rel="stylesheet" href="css/pages.css?v=48"/>
+<link rel="stylesheet" href="css/pages.css?v=49"/>
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -136,39 +136,29 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 </nav>
 
 <main class="page-standalone">
-
   <section class="page-hero">
     <div class="page-hero-container">
-      <span class="team-hero-badge" style="display:inline-block;padding:6px 16px;border-radius:20px;background:rgba(109,40,217,0.2);border:1px solid rgba(168,85,247,0.4);color:var(--c-purple-l);font-size:13px;font-weight:700;margin-bottom:16px;">عملاؤنا</span>
       <h1 class="page-hero-title">علامات تثق فينا</h1>
-      <p class="page-hero-subtitle">+19 براند اشتغلنا معاهم في مجالات مختلفة وحققنا نتائج حقيقية وقابلة للقياس.</p>
+      <p class="page-hero-subtitle">+19 براند اشتغلنا معاهم في مجالات مختلفة</p>
     </div>
   </section>
 
-  <section class="page-content">
-    <div id="clientsGrid" class="clients-grid" aria-live="polite" aria-label="قائمة العملاء">
-      <!-- يتحمل ديناميكياً من /api/clients عبر js/clients-page.js -->
-      <!-- Fallback يظهر لو D1 فاضية -->
-    </div>
-    <div id="clientsLoading" class="clients-loading" aria-label="جاري التحميل">
-      <div class="clients-spinner"></div>
-      <p>جاري تحميل العملاء…</p>
-    </div>
-  </section>
+  <div class="clients-row clients-row-top">
+    <div class="clients-track" id="clientsTrackTop"></div>
+  </div>
+  <div class="clients-row clients-row-bottom">
+    <div class="clients-track" id="clientsTrackBottom"></div>
+  </div>
 
   <section class="page-cta">
     <div class="page-cta-inner">
-      <h2 class="page-cta-title">جاهز نبدأ مشروعك؟</h2>
+      <h2 class="page-cta-title">جاهز تكون التالي؟</h2>
       <p class="page-cta-desc">احصل على استشارة مجانية من فريق PR Agency</p>
       <a href="/#register" class="btn btn-primary">
         احصل على استشارة مجانية
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
       </a>
     </div>
   </section>
-
 </main>
 
 <footer class="site-footer" role="contentinfo">
@@ -280,7 +270,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <button id="back-to-top" aria-label="ارجع لأعلى"><svg class="svgi" style="font-size:18px;transform:rotate(90deg)"><use href="#fa-arrow-left"></use></svg></button>
 
 <script src="js/scroll-progress.js?v=1" defer></script>
-<script src="js/clients-page.js?v=1" defer></script>
+<script src="js/clients.js?v=12" defer></script>
 <script src="js/main.js?v=17" defer></script>
 </body>
 </html>
