@@ -1560,7 +1560,7 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>قاعدة البيانات:</td>
-          <td>Cloudflare D1 (Serverless SQLite) — Contacts &amp; Testimonials</td>
+          <td>Cloudflare D1 (Serverless SQLite) — Production</td>
         </tr>
         <tr>
           <td>حالة السيرفر:</td>
@@ -1568,7 +1568,7 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>إصدار التخزين المؤقت (Cache):</td>
-          <td>CSS: v19 / JS: v17 / Multi-step: v2 / Pages: v48</td>
+          <td>CSS: v19 / JS: v17 / Multi-step: v2 / Pages: v49</td>
         </tr>
         <tr>
           <td>رابط الموقع الحي:</td>
@@ -1576,7 +1576,7 @@ export async function onRequestGet(context) {
         </tr>
         <tr>
           <td>مسارات الصفحات المستقلة:</td>
-          <td>/about, /services, /clients, /testimonials</td>
+          <td>/about, /services, /clients</td>
         </tr>
       </table>
     </div>
