@@ -7,6 +7,7 @@
 
   let currentLang = DEFAULT_LANG;
   let translations = {};
+  let isToggling = false;
 
   function detectLang() {
     try {
@@ -55,8 +56,10 @@
       document.documentElement.dir = RTL_LANGS.includes(lang) ? 'rtl' : 'ltr';
       document.body.classList.toggle('lang-ar', lang === 'ar');
       document.body.classList.toggle('lang-en', lang === 'en');
+      // When website is AR, button shows EN (the target to switch to).
+      // When website is EN, button shows عربي (or AR) so user knows clicking it takes them back to Arabic.
       document.querySelectorAll('.lang-switch .lang-label').forEach(function (label) {
-        label.textContent = lang === 'ar' ? 'EN' : 'AR';
+        label.textContent = lang === 'ar' ? 'English' : 'عربي';
       });
     } catch (e) {
       console.warn('applyDirection error:', e);
@@ -80,16 +83,27 @@
   window.i18n = {
     get: function () { return currentLang; },
     set: setLanguage,
-    toggle: function () { return setLanguage(currentLang === 'ar' ? 'en' : 'ar'); },
+    toggle: function () {
+      if (isToggling) return;
+      isToggling = true;
+      const targetLang = (currentLang === 'ar') ? 'en' : 'ar';
+      setLanguage(targetLang).finally(function() {
+        setTimeout(function() { isToggling = false; }, 200);
+      });
+    },
     t: function (key) { return translations[key] || key; }
   };
 
-  // Bind toggle buttons
   function bindToggleButtons() {
     document.querySelectorAll('.lang-switch').forEach(function (btn) {
+      // Remove inline onclick if present to avoid dual trigger
+      if (btn.getAttribute('onclick')) {
+        btn.removeAttribute('onclick');
+      }
       if (!btn.dataset.i18nBound) {
         btn.dataset.i18nBound = '1';
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
           window.i18n.toggle();
         });
       }
