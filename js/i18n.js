@@ -32,11 +32,15 @@
     if (!val) return;
     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
       el.placeholder = val;
-    } else if (/<[a-z][\s\S]*>/i.test(val)) {
-      el.innerHTML = val;
     } else {
       el.textContent = val;
     }
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+    const key = el.dataset.i18nHtml;
+    if (translations[key]) el.innerHTML = translations[key];
+  });
+}
   });
   document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
     const key = el.dataset.i18nHtml;
