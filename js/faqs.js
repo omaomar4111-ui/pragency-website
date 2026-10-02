@@ -31,11 +31,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       faqContainer.innerHTML = faqs.map((f, i) => `
         <div class="faq-item reveal" style="transition-delay: ${i * 0.1}s">
           <div class="faq-question">
-            <h3>${f.question}</h3>
+            <h3>${window.i18n?.get() === "en" && f.question_en ? f.question_en : f.question}</h3>
             <div class="faq-icon"></div>
           </div>
           <div class="faq-answer">
-            <p>${f.answer}</p>
+            <p>${window.i18n?.get() === "en" && f.answer_en ? f.answer_en : f.answer}</p>
           </div>
         </div>
       `).join('');
@@ -76,4 +76,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     faqContainer.innerHTML = '';
     if (document.getElementById('faq')) document.getElementById('faq').style.display = 'none';
   }
+});
+
+// Re-render on language change
+document.addEventListener('i18n:changed', () => {
+  if (typeof window.renderFaqs === 'function') window.renderFaqs();
 });

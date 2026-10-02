@@ -105,3 +105,8 @@
     renderTeam();
   }
 })();
+
+// Re-render on language change
+document.addEventListener('i18n:changed', () => {
+  if (typeof renderTeam === 'function') renderTeam();
+});

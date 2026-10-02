@@ -2427,3 +2427,33 @@ a.client-card:hover .client-logo {
   opacity: 1 !important;
   transform: none !important;
 }
+
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 50px;
+  color: #A78BFA;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+.lang-switch:hover {
+  background: rgba(109, 40, 217, 0.2);
+  border-color: #A78BFA;
+}
+.lang-icon { width: 16px; height: 16px; }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+body.lang-en {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en h5 {
+  font-family: 'Inter', system-ui, sans-serif;
+}

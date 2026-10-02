@@ -42,7 +42,7 @@ export async function onRequestPost(context) {
     if (!name || !role) return jsonResponse({ success: false, error: 'name and role required' }, 400);
 
     const result = await env.DB.prepare(
-      `INSERT INTO team_members (name, role, bio, photo_url, linkedin_url, order_index, is_active)
+      `INSERT INTO team_members (name, name_en, role, role_en, bio, bio_en, photo_url, linkedin_url, order_index, is_active)
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).bind(name, role, bio, photo_url, linkedin_url, order_index, is_active).run();
 

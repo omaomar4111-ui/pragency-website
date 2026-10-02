@@ -88,3 +88,8 @@ if (document.readyState === 'loading') {
 } else {
   initClients();
 }
+
+// Re-render on language change
+document.addEventListener('i18n:changed', () => {
+  if (typeof renderClientsMarquee === 'function') renderClientsMarquee();
+});
