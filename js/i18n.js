@@ -5,11 +5,14 @@
   const RTL_LANGS = ['ar'];
   const STORAGE_KEY = 'pr_lang';
 
-  let currentLang = DEFAULT_LANG;
+  // Read language pre-rendered by Cloudflare Worker HTMLRewriter if present
+  const serverLang = document.documentElement.lang;
+  let currentLang = SUPPORTED.includes(serverLang) ? serverLang : DEFAULT_LANG;
   let translations = {};
   let isToggling = false;
 
   function detectLang() {
+    if (window.location.pathname.startsWith('/en')) return 'en';
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored && SUPPORTED.includes(stored)) return stored;
@@ -56,8 +59,6 @@
       document.documentElement.dir = RTL_LANGS.includes(lang) ? 'rtl' : 'ltr';
       document.body.classList.toggle('lang-ar', lang === 'ar');
       document.body.classList.toggle('lang-en', lang === 'en');
-      // When website is AR, button shows EN (the target to switch to).
-      // When website is EN, button shows عربي (or AR) so user knows clicking it takes them back to Arabic.
       document.querySelectorAll('.lang-switch .lang-label').forEach(function (label) {
         label.textContent = lang === 'ar' ? 'English' : 'عربي';
       });
@@ -66,11 +67,29 @@
     }
   }
 
-  async function setLanguage(lang) {
+  async function setLanguage(lang, navigate = false) {
     try {
       if (!SUPPORTED.includes(lang)) lang = DEFAULT_LANG;
       currentLang = lang;
-      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+      try {
+        localStorage.setItem(STORAGE_KEY, lang);
+        document.cookie = `pr_lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+      } catch (e) {}
+
+      // If user toggles language on a dedicated /en route or wants smooth transition
+      if (navigate) {
+        const currentPath = window.location.pathname;
+        if (lang === 'en' && !currentPath.startsWith('/en')) {
+          const newPath = '/en' + (currentPath === '/' ? '' : currentPath);
+          window.location.href = newPath + window.location.search + window.location.hash;
+          return;
+        } else if (lang === 'ar' && currentPath.startsWith('/en')) {
+          const newPath = currentPath.replace(/^\/en/, '') || '/';
+          window.location.href = newPath + window.location.search + window.location.hash;
+          return;
+        }
+      }
+
       await loadTranslations(lang);
       applyDirection(lang);
       applyTranslations();
@@ -87,7 +106,7 @@
       if (isToggling) return;
       isToggling = true;
       const targetLang = (currentLang === 'ar') ? 'en' : 'ar';
-      setLanguage(targetLang).finally(function() {
+      setLanguage(targetLang, true).finally(function() {
         setTimeout(function() { isToggling = false; }, 200);
       });
     },
@@ -96,10 +115,6 @@
 
   function bindToggleButtons() {
     document.querySelectorAll('.lang-switch').forEach(function (btn) {
-      // Remove inline onclick if present to avoid dual trigger
-      if (btn.getAttribute('onclick')) {
-        btn.removeAttribute('onclick');
-      }
       if (!btn.dataset.i18nBound) {
         btn.dataset.i18nBound = '1';
         btn.addEventListener('click', function (e) {
@@ -110,11 +125,12 @@
     });
   }
 
+  const initialLang = detectLang();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-      setLanguage(detectLang()).then(bindToggleButtons);
+      setLanguage(initialLang, false).then(bindToggleButtons);
     });
   } else {
-    setLanguage(detectLang()).then(bindToggleButtons);
+    setLanguage(initialLang, false).then(bindToggleButtons);
   }
 })();
