@@ -2420,3 +2420,10 @@ a.client-card:hover .client-logo {
   .numbered-grid { grid-template-columns: 1fr; }
 }
 
+
+
+/* Fix reveal for services page */
+.services-page .rv {
+  opacity: 1 !important;
+  transform: none !important;
+}
