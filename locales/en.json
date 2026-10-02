@@ -129,5 +129,11 @@
   "footer.location": "Headquarters",
   "footer.location.val": "Cairo — Egypt",
   "footer.phone": "Sales Team",
-  "footer.email": "Admin Contact"
+  "footer.email": "Admin Contact",
+  "services_page.main_title": "3 Essential Services to Transform Your Brand",
+  "services_page.why_title": "Why Are These Services Important?",
+  "services_page.why_desc": "Whatever your industry, these services guarantee:",
+  "services_page.list1": "✓ Strong presence on social media",
+  "services_page.list2": "✓ Faster reach to your target audience",
+  "services_page.list3": "✓ Your products and services presented in the best light"
 }

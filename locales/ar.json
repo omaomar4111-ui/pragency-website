@@ -129,5 +129,11 @@
   "footer.location": "المقر",
   "footer.location.val": "القاهرة — مصر",
   "footer.phone": "فريق المبيعات",
-  "footer.email": "تواصل إداري"
+  "footer.email": "تواصل إداري",
+  "services_page.main_title": "3 خدمات أساسية تحوّل براندك",
+  "services_page.why_title": "ليه الخدمات دي مهمة؟",
+  "services_page.why_desc": "مهما كان مجالك، الخدمات دي بتضمنلك:",
+  "services_page.list1": "✓ حضور قوي على السوشيال ميديا",
+  "services_page.list2": "✓ وصول أسرع لجمهورك المستهدف",
+  "services_page.list3": "✓ منتجاتك وخدماتك تظهر بأفضل شكل"
 }
