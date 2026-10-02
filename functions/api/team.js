@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
   
   try {
     const { results } = await env.DB.prepare(
-      'SELECT id, name, role, bio, photo_url, linkedin_url FROM team_members WHERE is_active = 1 ORDER BY order_index ASC, id ASC'
+      'SELECT id, name, name_en, role, role_en, bio, bio_en, photo_url, linkedin_url FROM team_members WHERE is_active = 1 ORDER BY order_index ASC, id ASC'
     ).all();
     
     return new Response(JSON.stringify({ success: true, data: results || [] }), {
