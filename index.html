@@ -69,7 +69,7 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/main.css?v=19"/>
-<link rel="stylesheet" href="css/pages.css?v=55"/>
+<link rel="stylesheet" href="css/pages.css?v=56"/>
 
 
 <!-- Favicons -->
@@ -170,12 +170,12 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
   </a>
   
   <div class="hdr-nav">
-    <a href="/">الرئيسية</a>
-    <a href="/about.html">عن الوكالة</a>
-    <a href="/services.html">الخدمات</a>
-    <a href="/team">الفريق</a>
-    <a href="/clients.html">العملاء</a>
-    <a href="#register">تواصل</a>
+    <a href="/" data-i18n="nav.home">الرئيسية</a>
+    <a href="/about.html" data-i18n="nav.about">عن الوكالة</a>
+    <a href="/services.html" data-i18n="nav.services">الخدمات</a>
+    <a href="/team" data-i18n="nav.team">الفريق</a>
+    <a href="/clients.html" data-i18n="nav.clients">العملاء</a>
+    <a href="#register" data-i18n="nav.contact">تواصل</a>
   </div>
   
   <div class="hdr-actions">
@@ -207,12 +207,12 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <div id="mmenu" aria-hidden="true"><div class="mmenu-panel">
   <div class="mmenu-head"><span style="font-weight:900;color:#fff">القائمة</span><button class="mmenu-close" aria-label="إغلاق">✕</button></div>
   <div class="mmenu-links">
-    <a href="/">الرئيسية</a>
-    <a href="/about.html">عن الوكالة</a>
-    <a href="/services.html">الخدمات</a>
-    <a href="/team">الفريق</a>
-    <a href="/clients.html">العملاء</a>
-    <a href="#register">تواصل</a>
+    <a href="/" data-i18n="nav.home">الرئيسية</a>
+    <a href="/about.html" data-i18n="nav.about">عن الوكالة</a>
+    <a href="/services.html" data-i18n="nav.services">الخدمات</a>
+    <a href="/team" data-i18n="nav.team">الفريق</a>
+    <a href="/clients.html" data-i18n="nav.clients">العملاء</a>
+    <a href="#register" data-i18n="nav.contact">تواصل</a>
   </div>
   <a href="#register" class="btn btn-primary" style="justify-content:center">ابدأ الآن</a>
 </div></div>
@@ -234,9 +234,9 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <!-- عمود النص (يمين في العربي، يسار في الإنجليزي) -->
     <div class="hero-vr-text">
       <h1 class="hero-vr-title">
-        نحرّك براندك<br/>
-        <span class="hero-vr-title-accent">للأمام</span><br/>
-        <span class="hero-vr-title-small">بسرعة وذكاء استراتيجي.</span>
+        <span data-i18n="hero.title.line1">نحرّك براندك</span><br/>
+        <span class="hero-vr-title-accent"><span data-i18n="hero.title.line2">للأمام</span></span><br/>
+        <span class="hero-vr-title-small"><span data-i18n="hero.title.line3">بسرعة وذكاء استراتيجي.</span></span>
       </h1>
       
       <p class="hero-vr-sub">
@@ -326,7 +326,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
   <div style="text-align:center;margin-top:var(--sp-6)">
     <a href="/about.html" class="btn btn-secondary rv" style="display:inline-flex;align-items:center;gap:8px;">
-      <span>شوف المزيد عن الوكالة</span>
+      <span data-i18n="about.more">شوف المزيد عن الوكالة</span>
       <svg class="svgi" style="font-size:14px"><use href="#fa-arrow-left"></use></svg>
     </a>
   </div>
@@ -345,9 +345,9 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
 <section id="services" class="section-services-slider">
   <div class="slider-header" style="text-align:center">
-    <div class="section-badge rv">خدماتنا</div>
-    <h2 class="section-title rv">حلول تسويق <span>متكاملة</span></h2>
-    <p class="section-desc rv">كل خدمة مصممة تحقق هدف محدد لنمو البزنس بتاعك</p>
+    <div class="section-badge rv" data-i18n="services.eyebrow">خدماتنا</div>
+    <h2 class="section-title rv"><span data-i18n="services.title">حلول تسويق</span> <span>متكاملة</span></h2>
+    <p class="section-desc rv" data-i18n="services.sub">كل خدمة مصممة تحقق هدف محدد لنمو البزنس بتاعك</p>
   </div>
 
   <div class="services-slider-wrap">
@@ -391,7 +391,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
   <div class="slider-dots" id="sliderDots"></div>
 
   <div style="text-align:center;margin-top:40px">
-    <a href="/services.html" class="btn btn-secondary">شوف كل الخدمات</a>
+    <a href="/services.html" class="btn btn-secondary" data-i18n="services.more">شوف كل الخدمات</a>
   </div>
 </section>
 
@@ -402,7 +402,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 ═══════════════════════════════════════════════════════ -->
 <section id="values" class="section-values-vr">
   <div class="container">
-    <h2 class="section-values-vr-title rv">ليه تتشارك معانا؟</h2>
+    <h2 class="section-values-vr-title rv" data-i18n="values.title">ليه تتشارك معانا؟</h2>
     
     <div class="values-vr-grid">
       
@@ -493,7 +493,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
   <div style="text-align:center;margin-top:var(--sp-6)">
     <a href="/clients.html" class="btn btn-secondary rv" style="display:inline-flex;align-items:center;gap:8px;">
-      <span>شوف كل شركاء نجاحنا</span>
+      <span data-i18n="clients.more">شوف كل شركاء نجاحنا</span>
       <svg class="svgi" style="font-size:14px"><use href="#fa-arrow-left"></use></svg>
     </a>
   </div>
@@ -627,7 +627,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
   <div style="text-align:center;margin-top:var(--sp-6)">
     <a href="/team" class="btn btn-secondary rv" style="display:inline-flex;align-items:center;gap:8px;">
-      <span>تعرّف على كل أعضاء الفريق</span>
+      <span data-i18n="team.more">تعرّف على كل أعضاء الفريق</span>
       <svg class="svgi" style="font-size:14px"><use href="#fa-arrow-left"></use></svg>
     </a>
   </div>
@@ -652,9 +652,9 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <section id="faq" class="section-faq">
   <div class="container">
     <div class="section-header reveal">
-      <div class="section-badge">استفساراتك مجابة</div>
-      <h2 class="section-title">الأسئلة <span>الشائعة</span></h2>
-      <p class="section-desc">جمعنا لك أبرز الأسئلة اللي ممكن تدور في بالك عن خدماتنا وطريقة عملنا.</p>
+      <div class="section-badge" data-i18n="faq.eyebrow">استفساراتك مجابة</div>
+      <h2 class="section-title"><span data-i18n="faq.title">الأسئلة الشائعة</span></h2>
+      <p class="section-desc" data-i18n="faq.sub">جمعنا لك أبرز الأسئلة اللي ممكن تدور في بالك عن خدماتنا وطريقة عملنا.</p>
     </div>
     
     <div class="faq-accordion" id="faqAccordion">
@@ -679,9 +679,9 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
         </div>
         
         <h2 class="register-title">
-          خلينا ناخد<br/>
-          <span class="register-title-accent">أول خطوة</span><br/>
-          سوا.
+          <span data-i18n="contact.title.line1">خلينا ناخد</span><br/>
+          <span class="register-title-accent"><span data-i18n="contact.title.line2">أول خطوة</span></span><br/>
+          <span data-i18n="contact.title.line3">سوا.</span>
         </h2>
         
         <p class="register-lead">
@@ -739,15 +739,15 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
           <div class="form-step active" data-step="1">
             <div class="register-field">
-              <label for="reg-name">الاسم *</label>
-              <input type="text" id="reg-name" name="name" required placeholder="اسمك الكامل" autocomplete="name"/>
+              <label for="reg-name" data-i18n="form.name">الاسم *</label>
+              <input type="text" id="reg-name" name="name" required data-i18n="form.name.ph" placeholder="اسمك الكامل" autocomplete="name"/>
             </div>
             <div class="register-field">
-              <label for="reg-phone">رقم الموبايل *</label>
-              <input type="tel" id="reg-phone" name="phone" required placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel"/>
+              <label for="reg-phone" data-i18n="form.phone">رقم الموبايل *</label>
+              <input type="tel" id="reg-phone" name="phone" required data-i18n="form.phone.ph" placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel"/>
             </div>
             <div class="register-field">
-              <label for="reg-business">نوع النشاط *</label>
+              <label for="reg-business" data-i18n="form.business">نوع النشاط *</label>
               <select id="reg-business" name="business" required>
                 <option value="">اختر نوع نشاطك</option>
                 <option value="عيادة">عيادة / مركز طبي</option>
@@ -787,7 +787,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
                 السابق
               </button>
               <button type="submit" class="register-submit" id="registerSubmit">
-                <span>احصل على استشارة مجانية</span>
+                <span data-i18n="form.submit">احصل على استشارة مجانية</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -819,7 +819,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'color:#7C3AED;font-size:36px;font-weight:900;font-family:Arial;margin-bottom:16px;\'>PR</div>');" />
         
         <p class="site-footer-tagline">
-          شريكك في تحقيق النمو — بسرعة وذكاء استراتيجي.
+          شريكك في تحقيق النمو — <span data-i18n="hero.title.line3">بسرعة وذكاء استراتيجي.</span>
         </p>
         
         <div class="site-footer-social">
@@ -843,20 +843,20 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       
       <!-- العمود 2: روابط سريعة -->
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">روابط سريعة</h4>
+        <h4 class="site-footer-heading" data-i18n="footer.quickLinks">روابط سريعة</h4>
         <ul class="site-footer-links">
-            <li><a href="/">الرئيسية</a></li>
-            <li><a href="/about.html">عن الوكالة</a></li>
-            <li><a href="/services.html">الخدمات</a></li>
-            <li><a href="/team">الفريق</a></li>
-            <li><a href="/clients.html">العملاء</a></li>
+            <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
+            <li><a href="/about.html" data-i18n="nav.about">عن الوكالة</a></li>
+            <li><a href="/services.html" data-i18n="nav.services">الخدمات</a></li>
+            <li><a href="/team" data-i18n="nav.team">الفريق</a></li>
+            <li><a href="/clients.html" data-i18n="nav.clients">العملاء</a></li>
             <li><a href="#register">تواصل معانا</a></li>
           </ul>
       </div>
       
       <!-- العمود 3: تواصل -->
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">عندك مشروع؟ يلا نبدأ</h4>
+        <h4 class="site-footer-heading" data-i18n="footer.project.title">عندك مشروع؟ يلا نبدأ</h4>
         <p class="site-footer-cta-text">
           ابعتلنا هدفك وميزانيتك، وهنرد عليك بخطة جاهزة للتنفيذ.
         </p>
@@ -905,8 +905,8 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <!-- خط فاصل + حقوق -->
     <div class="site-footer-bottom">
       <p>
-        <a href="/privacy.html">سياسة الخصوصية</a> · 
-        <a href="/terms.html">شروط الاستخدام</a> · 
+        <a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a> · 
+        <a href="/terms.html" data-i18n="footer.terms">شروط الاستخدام</a> · 
         © <span id="footer-year">2026</span> PR Agency — كل الحقوق محفوظة.
       </p>
     </div>
@@ -931,7 +931,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <div class="conv-progress"><div class="prog-dot active"></div><div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
     <div class="conv-choices" id="convChoices"></div>
     <div class="conv-input-row" id="convInputRow" style="display:none">
-      <input type="tel" class="conv-input-field" id="convInput" placeholder="01xxxxxxxxx" dir="ltr"/>
+      <input type="tel" class="conv-input-field" id="convInput" data-i18n="form.phone.ph" placeholder="01xxxxxxxxx" dir="ltr"/>
       <button class="conv-send" onclick="convSend()" aria-label="إرسال"><svg class="svgi" style="font-size:14px;color:#fff"><use href="#fa-arrow-left"></use></svg></button>
     </div>
   </div>

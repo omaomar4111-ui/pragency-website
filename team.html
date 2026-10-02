@@ -67,7 +67,7 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://connect.facebook.net"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/main.css?v=18"/>
-<link rel="stylesheet" href="css/pages.css?v=55"/>
+<link rel="stylesheet" href="css/pages.css?v=56"/>
 
 
 <!-- Favicons -->
@@ -167,12 +167,12 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
   </a>
   
   <div class="hdr-nav">
-    <a href="/">الرئيسية</a>
-    <a href="/about.html">عن الوكالة</a>
-    <a href="/services.html">الخدمات</a>
-    <a href="/team" class="active">الفريق</a>
-    <a href="/clients.html">العملاء</a>
-    <a href="/#register">تواصل</a>
+    <a href="/" data-i18n="nav.home">الرئيسية</a>
+    <a href="/about.html" data-i18n="nav.about">عن الوكالة</a>
+    <a href="/services.html" data-i18n="nav.services">الخدمات</a>
+    <a href="/team" class="active" data-i18n="nav.team">الفريق</a>
+    <a href="/clients.html" data-i18n="nav.clients">العملاء</a>
+    <a href="/#register" data-i18n="nav.contact">تواصل</a>
   </div>
   
   <div class="hdr-actions">
@@ -204,7 +204,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <section class="team-hero">
       <div class="team-hero-container">
         <span class="team-hero-badge" style="display:inline-block;padding:6px 16px;border-radius:20px;background:rgba(109,40,217,0.2);border:1px solid rgba(168,85,247,0.4);color:var(--c-purple-l);font-size:13px;font-weight:700;margin-bottom:16px;">نخبة المبدعين</span>
-        <h1 class="team-hero-title">فريقنا</h1>
+        <h1 class="team-hero-title" data-i18n="team.eyebrow">فريقنا</h1>
         <p class="team-hero-subtitle">الناس اللي بتشتغل على شغلك بكل شغف واحترافية لتحقيق أعلى نتائج ممكنة لبراندك.</p>
       </div>
     </section>
@@ -230,7 +230,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'color:#7C3AED;font-size:36px;font-weight:900;font-family:Arial;margin-bottom:16px;\'>PR</div>');" />
         
         <p class="site-footer-tagline">
-          شريكك في تحقيق النمو — بسرعة وذكاء استراتيجي.
+          شريكك في تحقيق النمو — <span data-i18n="hero.title.line3">بسرعة وذكاء استراتيجي.</span>
         </p>
         
         <div class="site-footer-social">
@@ -254,13 +254,13 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       
       <!-- العمود 2: روابط سريعة -->
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">روابط سريعة</h4>
+        <h4 class="site-footer-heading" data-i18n="footer.quickLinks">روابط سريعة</h4>
         <ul class="site-footer-links">
-            <li><a href="/">الرئيسية</a></li>
-            <li><a href="/about.html">عن الوكالة</a></li>
-            <li><a href="/services.html">الخدمات</a></li>
-            <li><a href="/team">الفريق</a></li>
-            <li><a href="/clients.html">العملاء</a></li>
+            <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
+            <li><a href="/about.html" data-i18n="nav.about">عن الوكالة</a></li>
+            <li><a href="/services.html" data-i18n="nav.services">الخدمات</a></li>
+            <li><a href="/team" data-i18n="nav.team">الفريق</a></li>
+            <li><a href="/clients.html" data-i18n="nav.clients">العملاء</a></li>
             <li></li>
             <li><a href="/#register">تواصل معانا</a></li>
           </ul>
@@ -268,7 +268,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       
       <!-- العمود 3: تواصل -->
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">عندك مشروع؟ يلا نبدأ</h4>
+        <h4 class="site-footer-heading" data-i18n="footer.project.title">عندك مشروع؟ يلا نبدأ</h4>
         <p class="site-footer-cta-text">
           ابعتلنا هدفك وميزانيتك، وهنرد عليك بخطة جاهزة للتنفيذ.
         </p>
@@ -317,8 +317,8 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <!-- خط فاصل + حقوق -->
     <div class="site-footer-bottom">
       <p>
-        <a href="/privacy.html">سياسة الخصوصية</a> · 
-        <a href="/terms.html">شروط الاستخدام</a> · 
+        <a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a> · 
+        <a href="/terms.html" data-i18n="footer.terms">شروط الاستخدام</a> · 
         © <span id="footer-year">2026</span> PR Agency — كل الحقوق محفوظة.
       </p>
     </div>
@@ -343,7 +343,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <div class="conv-progress"><div class="prog-dot active"></div><div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
     <div class="conv-choices" id="convChoices"></div>
     <div class="conv-input-row" id="convInputRow" style="display:none">
-      <input type="tel" class="conv-input-field" id="convInput" placeholder="01xxxxxxxxx" dir="ltr"/>
+      <input type="tel" class="conv-input-field" id="convInput" data-i18n="form.phone.ph" placeholder="01xxxxxxxxx" dir="ltr"/>
       <button class="conv-send" onclick="convSend()" aria-label="إرسال"><svg class="svgi" style="font-size:14px;color:#fff"><use href="#fa-arrow-left"></use></svg></button>
     </div>
   </div>

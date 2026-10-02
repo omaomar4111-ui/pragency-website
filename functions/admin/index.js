@@ -1832,6 +1832,10 @@ export async function onRequestGet(context) {
       <input type="text" id="faq-question" class="modal-input" placeholder="اكتب السؤال هنا..." />
       <label class="modal-field-label">الإجابة</label>
       <textarea id="faq-answer" class="modal-input" style="min-height:100px;resize:vertical" placeholder="اكتب الإجابة هنا..."></textarea>
+      <label class="modal-field-label">السؤال (إنجليزي)</label>
+      <input type="text" id="faq-question-en" class="modal-input" placeholder="English question..." />
+      <label class="modal-field-label">الإجابة (إنجليزي)</label>
+      <textarea id="faq-answer-en" class="modal-input" style="min-height:100px;resize:vertical" placeholder="English answer..."></textarea>
       <label class="modal-field-label">الترتيب</label>
       <input type="number" id="faq-order" class="modal-input" value="0" />
       <div class="modal-actions">
@@ -2776,6 +2780,7 @@ let allMessages = [];
     document.getElementById('clientModalId').value = '';
     document.getElementById('clientModalTitle').textContent = 'إضافة عميل جديد';
     document.getElementById('client-name').value = '';
+    document.getElementById('client-name-en').value = '';
     document.getElementById('client-website').value = '';
     document.getElementById('client-logo-url').value = '';
     document.getElementById('clientOrder').value = 0;
@@ -2801,6 +2806,7 @@ let allMessages = [];
     document.getElementById('clientModalId').value = id;
     document.getElementById('clientModalTitle').textContent = 'تعديل بيانات العميل';
     document.getElementById('client-name').value = c.name || '';
+    document.getElementById('client-name-en').value = c.name_en || '';
     document.getElementById('client-website').value = c.website_url || '';
     document.getElementById('client-logo-url').value = c.logo_url || '';
     document.getElementById('clientOrder').value = c.order_index || 0;

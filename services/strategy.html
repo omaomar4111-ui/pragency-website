@@ -81,7 +81,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <link rel="preload" href="../assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/main.css?v=19"/>
-<link rel="stylesheet" href="../css/pages.css?v=55"/>
+<link rel="stylesheet" href="../css/pages.css?v=56"/>
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -110,12 +110,12 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <img src="../assets/logos/pr-agency.webp" alt="PR Agency" class="hdr-logo" width="60" height="60"/>
   </a>
   <div class="hdr-nav">
-    <a href="/">الرئيسية</a>
-    <a href="/about.html" class="active">عن الوكالة</a>
-    <a href="/services.html">الخدمات</a>
-    <a href="/team">الفريق</a>
-    <a href="/clients.html">العملاء</a>
-    <a href="/#register">تواصل</a>
+    <a href="/" data-i18n="nav.home">الرئيسية</a>
+    <a href="/about.html" class="active" data-i18n="nav.about">عن الوكالة</a>
+    <a href="/services.html" data-i18n="nav.services">الخدمات</a>
+    <a href="/team" data-i18n="nav.team">الفريق</a>
+    <a href="/clients.html" data-i18n="nav.clients">العملاء</a>
+    <a href="/#register" data-i18n="nav.contact">تواصل</a>
   </div>
   <div class="hdr-actions">
         <button class="lang-switch" onclick="i18n.toggle()" aria-label="Switch language">
@@ -147,35 +147,35 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
   <div class="service-layout">
     <aside class="service-sidebar">
       <div class="sidebar-block">
-        <h4 class="sidebar-title">الخدمات</h4>
+        <h4 class="sidebar-title" data-i18n="nav.services">الخدمات</h4>
         <ul class="sidebar-list">
-          <li><a href="/services/social-media" class="">إدارة السوشيال ميديا</a></li><li><a href="/services/media-buying" class="">الإعلانات المدفوعة</a></li><li><a href="/services/content-production" class="">إنتاج المحتوى</a></li><li><a href="/services/branding" class="">العلامة التجارية والهوية</a></li><li><a href="/services/strategy" class="active">استراتيجية التسويق</a></li>
+          <li><a href="/services/social-media" class="" data-i18n="service.social.title">إدارة السوشيال ميديا</a></li><li><a href="/services/media-buying" class="" data-i18n="service.media.title">الإعلانات المدفوعة</a></li><li><a href="/services/content-production" class="" data-i18n="service.content.title">إنتاج المحتوى</a></li><li><a href="/services/branding" class="" data-i18n="service.branding.title">العلامة التجارية والهوية</a></li><li><a href="/services/strategy" class="active" data-i18n="service.strategy.title">استراتيجية التسويق</a></li>
         </ul>
       </div>
       <div class="sidebar-block">
-        <h4 class="sidebar-title">خدمات إضافية</h4>
+        <h4 class="sidebar-title" data-i18n="services.eyebrow">خدمات إضافية</h4>
         <ul class="sidebar-list">
-          <li><a href="/services">كل الخدمات</a></li>
-          <li><a href="/#register">تواصل معنا</a></li>
+          <li><a href="/services" data-i18n="services.more">كل الخدمات</a></li>
+          <li><a href="/#register" data-i18n="nav.contact">تواصل معنا</a></li>
         </ul>
       </div>
     </aside>
 
     <div class="service-main">
       <div class="breadcrumb" style="margin-bottom:20px;font-size:14px">
-        <a href="/" style="color:var(--c-p)">الرئيسية</a> <span style="color:var(--c-w50)">·</span> <a href="/services" style="color:var(--c-p)">الخدمات</a> <span style="color:var(--c-w50)">·</span> <span>استراتيجية التسويق</span>
+        <a href="/" style="color:var(--c-p)" data-i18n="nav.home">الرئيسية</a> <span style="color:var(--c-w50)">·</span> <a href="/services" style="color:var(--c-p)" data-i18n="nav.services">الخدمات</a> <span style="color:var(--c-w50)">·</span> <span data-i18n="service.strategy.title">استراتيجية التسويق</span>
       </div>
-      <h1 class="service-title">استراتيجية التسويق</h1>
-      <p class="service-subtitle">الاستراتيجية مش رفاهية، دي الفرق بين الشغل العشوائي والنتايج.</p>
+      <h1 class="service-title" data-i18n="service.strategy.title">استراتيجية التسويق</h1>
+      <p class="service-subtitle" data-i18n="service.strategy.sub">الاستراتيجية مش رفاهية، دي الفرق بين الشغل العشوائي والنتايج.</p>
 
       <div class="service-points">
-        <div class="point-item"><span class="point-num">01</span><span class="point-text">تحليل السوق والمنافسين بعمق</span></div><div class="point-item"><span class="point-num">02</span><span class="point-text">تحديد الجمهور المستهدف بدقة</span></div><div class="point-item"><span class="point-num">03</span><span class="point-text">خطة محتوى وقنوات متكاملة</span></div><div class="point-item"><span class="point-num">04</span><span class="point-text">KPIs واضحة وأهداف قابلة للقياس</span></div><div class="point-item"><span class="point-num">05</span><span class="point-text">مراجعة وتحسين مستمر للخطة</span></div>
+        <div class="point-item"><span class="point-num">01</span><span class="point-text" data-i18n="service.strategy.pt1">تحليل السوق والمنافسين بعمق</span></div><div class="point-item"><span class="point-num">02</span><span class="point-text" data-i18n="service.strategy.pt2">تحديد الجمهور المستهدف بدقة</span></div><div class="point-item"><span class="point-num">03</span><span class="point-text" data-i18n="service.strategy.pt3">خطة محتوى وقنوات متكاملة</span></div><div class="point-item"><span class="point-num">04</span><span class="point-text" data-i18n="service.strategy.pt4">KPIs واضحة وأهداف قابلة للقياس</span></div><div class="point-item"><span class="point-num">05</span><span class="point-text" data-i18n="service.strategy.pt5">مراجعة وتحسين مستمر للخطة</span></div>
       </div>
 
-      <p class="service-cta-text">خطة تسويق بتوصل لهدفك</p>
+      <p class="service-cta-text" data-i18n="service.strategy.cta">خطة تسويق بتوصل لهدفك</p>
 
       <a href="/#register" class="service-circle-cta">
-        <span>تواصل معنا</span>
+        <span data-i18n="nav.contact">تواصل معنا</span>
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M7 17L17 7M17 7H7M17 7V17"/>
         </svg>
@@ -189,7 +189,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       <div class="site-footer-brand">
         <img src="../assets/logos/pr-agency.webp" alt="PR Agency" class="site-footer-logo"
              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'color:#7C3AED;font-size:36px;font-weight:900;font-family:Arial;margin-bottom:16px;\'>PR</div>');" />
-        <p class="site-footer-tagline">شريكك في تحقيق النمو — بسرعة وذكاء استراتيجي.</p>
+        <p class="site-footer-tagline">شريكك في تحقيق النمو — <span data-i18n="hero.title.line3">بسرعة وذكاء استراتيجي.</span></p>
         <div class="site-footer-social">
           <a href="https://www.facebook.com/profile.php?id=61582428766517" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
             <svg viewBox="0 0 320 512" width="16" height="16" fill="currentColor"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg>
@@ -203,19 +203,19 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
         </div>
       </div>
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">روابط سريعة</h4>
+        <h4 class="site-footer-heading" data-i18n="footer.quickLinks">روابط سريعة</h4>
         <ul class="site-footer-links">
-          <li><a href="/">الرئيسية</a></li>
-          <li><a href="/about.html">عن الوكالة</a></li>
-          <li><a href="/services.html">الخدمات</a></li>
-          <li><a href="/team">الفريق</a></li>
-          <li><a href="/clients.html">العملاء</a></li>
+          <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
+          <li><a href="/about.html" data-i18n="nav.about">عن الوكالة</a></li>
+          <li><a href="/services.html" data-i18n="nav.services">الخدمات</a></li>
+          <li><a href="/team" data-i18n="nav.team">الفريق</a></li>
+          <li><a href="/clients.html" data-i18n="nav.clients">العملاء</a></li>
           <li><a href="/#register">تواصل معانا</a></li>
         </ul>
       </div>
       <div class="site-footer-col">
-        <h4 class="site-footer-heading">عندك مشروع؟ يلا نبدأ</h4>
-        <p class="site-footer-cta-text">ابعتلنا هدفك وميزانيتك، وهنرد عليك بخطة جاهزة للتنفيذ.</p>
+        <h4 class="site-footer-heading" data-i18n="footer.project.title">عندك مشروع؟ يلا نبدأ</h4>
+        <p class="site-footer-cta-text" data-i18n="footer.project.desc">ابعتلنا هدفك وميزانيتك، وهنرد عليك بخطة جاهزة للتنفيذ.</p>
         <ul class="site-footer-contact">
           <li>
             <span class="site-footer-contact-icon">
@@ -249,8 +249,8 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     </div>
     <div class="site-footer-bottom">
       <p>
-        <a href="/privacy.html">سياسة الخصوصية</a> · 
-        <a href="/terms.html">شروط الاستخدام</a> · 
+        <a href="/privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a> · 
+        <a href="/terms.html" data-i18n="footer.terms">شروط الاستخدام</a> · 
         © <span id="footer-year">2026</span> PR Agency — كل الحقوق محفوظة.
       </p>
     </div>
@@ -274,7 +274,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     <div class="conv-progress"><div class="prog-dot active"></div><div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
     <div class="conv-choices" id="convChoices"></div>
     <div class="conv-input-row" id="convInputRow" style="display:none">
-      <input type="tel" class="conv-input-field" id="convInput" placeholder="01xxxxxxxxx" dir="ltr"/>
+      <input type="tel" class="conv-input-field" id="convInput" data-i18n="form.phone.ph" placeholder="01xxxxxxxxx" dir="ltr"/>
       <button class="conv-send" onclick="convSend()" aria-label="إرسال"><svg class="svgi" style="font-size:14px;color:#fff"><use href="#fa-arrow-left"></use></svg></button>
     </div>
   </div>
