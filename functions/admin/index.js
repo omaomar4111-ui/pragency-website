@@ -1285,6 +1285,7 @@ export async function onRequestGet(context) {
     <button class="cms-tab-btn" onclick="switchTab('clients')">👥 العملاء</button>
     <button class="cms-tab-btn" onclick="switchTab('team')">👤 الفريق</button>
     <button class="cms-tab-btn" onclick="switchTab('theme')">🎨 الثيم</button>
+    <button class="cms-tab-btn" onclick="switchTab('faqs')">❓ الأسئلة الشائعة</button>
     <button class="cms-tab-btn" onclick="switchTab('layout')">📐 الترتيب</button>
   </nav>
 
@@ -1792,8 +1793,56 @@ export async function onRequestGet(context) {
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- TAB: FAQS                           -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="cms-tab-panel" id="panel-faqs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:18px;font-weight:800;color:#fff">❓ إدارة الأسئلة الشائعة</h2>
+      <button class="btn btn-primary" onclick="openFaqModal()">+ إضافة سؤال جديد</button>
+    </div>
+    <div class="table-wrap">
+      <div class="table-container">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>السؤال</th>
+              <th>الإجابة</th>
+              <th>الترتيب</th>
+              <th>الحالة</th>
+              <th style="text-align:center">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="faqsTableBody">
+            <tr><td colspan="6" class="empty-state">جارٍ تحميل الأسئلة...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Modal -->
+  <div class="modal-overlay" id="faqModal" onclick="if(event.target===this) closeFaqModal()">
+    <div class="modal-card">
+      <h3 class="modal-title" id="faqModalTitle">إضافة سؤال جديد</h3>
+      <input type="hidden" id="faqModalId" />
+      <label class="modal-field-label">السؤال</label>
+      <input type="text" id="faq-question" class="modal-input" placeholder="اكتب السؤال هنا..." />
+      <label class="modal-field-label">الإجابة</label>
+      <textarea id="faq-answer" class="modal-input" style="min-height:100px;resize:vertical" placeholder="اكتب الإجابة هنا..."></textarea>
+      <label class="modal-field-label">الترتيب</label>
+      <input type="number" id="faq-order" class="modal-input" value="0" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeFaqModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveFaq()">حفظ</button>
+      </div>
+    </div>
+  </div>
+
 <script>
-  let allMessages = [];
+let allMessages = [];
   let selectedIds = new Set();
   let deleteTargetId = null;
   let activeNotesId = null;
@@ -2603,7 +2652,7 @@ export async function onRequestGet(context) {
   // ═══════════════════════════════════════════════
   // CMS TAB SWITCHING
   // ═══════════════════════════════════════════════
-  const CMS_TABS = ['dashboard','messages','analytics','settings','content','clients','team','theme','layout'];
+  const CMS_TABS = ['dashboard','messages','analytics','settings','content','clients','team','theme','layout','faqs'];
   function switchTab(name) {
     CMS_TABS.forEach(t => {
       const panel = document.getElementById('panel-' + t);
@@ -2619,6 +2668,7 @@ export async function onRequestGet(context) {
     if (name === 'team') fetchCmsTeam();
     if (name === 'theme') fetchCmsTheme();
     if (name === 'layout') fetchCmsLayout();
+    if (name === 'faqs') fetchCmsFaqs();
   }
 
   // ═══════════════════════════════════════════════
