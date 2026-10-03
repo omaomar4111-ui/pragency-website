@@ -320,7 +320,7 @@ const KEYWORD_MAP = {
   process: [
     'بتشتغلوا ازاي', 'كيف تشتغلون', 'الخطوات', 'ازاي بتبداوا', 'كيف نبدا', 'من فين نبدا',
     'اول خطوه', 'بعد كده', 'وبعدين', 'بعدها ايه', 'بتاخدوا وقت اد ايه', 'كم المده',
-    'طريقه العمل', 'اليه العمل', 'steps', 'process', 'procedure', 'how do you start',
+    'طريقه العمل', 'ازاي', 'طب ازاي', 'كيف', 'اليه العمل', 'steps', 'process', 'procedure', 'how do you start',
     'how it works'
   ],
 
@@ -341,7 +341,7 @@ const KEYWORD_MAP = {
     'سوشيال', 'سوشيال ميديا', 'انستجرام', 'انستا', 'فيسبوك', 'فيس', 'تويتر',
     'سناب', 'لينكد ان', 'اداره صفحات', 'اداره حسابات', 'بتديروا انستجرام',
     'بتديروا فيسبوك', 'عايز حد يدير صفحتي', 'محتاج محتوى', 'عايز بوستات', 'كونتنت',
-    'محتوى', 'تفاعل', 'فولوورز', 'followers', 'social media', 'instagram',
+    'محتوى', 'محتوي', 'محتاج محتوى', 'عايز محتوى', 'تفاعل', 'فولوورز', 'followers', 'social media', 'instagram',
     'facebook', 'content', 'منشورات', 'سوشيال ميديا ماركتنج'
   ],
 
@@ -380,7 +380,7 @@ const KEYWORD_MAP = {
 
   location: [
     'عنوان', 'عنوانكم', 'فين مقركم', 'مقر', 'مكتب', 'لوكيشن', 'موقعكم',
-    'فين مكانكم', 'location', 'where are you', 'address', 'office', 'cairo'
+    'فين مكانكم', 'فين', 'وين', 'location', 'where are you', 'address', 'office', 'cairo'
   ],
 
   about: [
@@ -390,7 +390,7 @@ const KEYWORD_MAP = {
   ],
 
   services: [
-    'خدمات', 'خدمه', 'بتعملوا ايه', 'بتقدموا ايه', 'ايه شغلكم', 'شغلكم ايه',
+    'خدمات', 'خدمه', 'بتعملوا ايه', 'بتقدموا ايه', 'تسوون', 'وش تسوون', 'بتسووا', 'ايه شغلكم', 'شغلكم ايه',
     'مجالاتكم', 'نشاطكم', 'تخصصكم', 'services', 'offer', 'provide', 'what do you do',
     'what do you offer', 'help with', 'بتساعدوا في'
   ],
@@ -575,6 +575,9 @@ export async function onRequestPost(context) {
 
       if (!topic) {
         topic = detectTopic(normalized);
+      }
+      if (!topic && isFollowUp) {
+        topic = 'services';
       }
 
       if (topic) {
