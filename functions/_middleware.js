@@ -32,7 +32,7 @@ async function sendTelegramAlert(env, data) {
   const token = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
-    console.warn('[Analytics] Telegram credentials missing:', { hasToken: !!token, hasChatId: !!chatId });
+    console.warn('[Analytics] Telegram credentials missing in Worker env:', { hasToken: !!token, hasChatId: !!chatId });
     return;
   }
 
@@ -47,9 +47,19 @@ async function sendTelegramAlert(env, data) {
     notifyCooldown.clear();
   }
 
+  // Construct full detailed geographic presentation
+  const locationParts = [data.city, data.region, data.country].filter(Boolean).join(', ') || 'Unknown';
+  let geoBlock = `📍 <b>Location:</b> ${locationParts}`;
+  if (data.postalCode) {
+    geoBlock += `\n📮 <b>Postal Code:</b> ${data.postalCode}`;
+  }
+  if (data.latitude && data.longitude) {
+    geoBlock += `\n🧭 <b>Coordinates:</b> ${data.latitude}, ${data.longitude}`;
+  }
+
   const message = 
     `🔔 <b>New Visitor on PR Agency!</b>\n` +
-    `📍 <b>Location:</b> ${data.city || 'Unknown'}, ${data.country || 'Unknown'}\n` +
+    `${geoBlock}\n` +
     `🌐 <b>Page:</b> ${data.path}\n` +
     `📱 <b>Device:</b> ${data.device}\n` +
     `🔗 <b>Referrer:</b> ${data.referrer || 'Direct'}\n` +
@@ -66,9 +76,13 @@ async function sendTelegramAlert(env, data) {
       })
     });
     const resJson = await res.json();
-    console.log('[Analytics] Telegram send response:', resJson);
+    if (!resJson.ok) {
+      console.error('[Analytics] Telegram API rejected message:', resJson);
+    } else {
+      console.log('[Analytics] Telegram alert sent successfully:', resJson.result?.message_id);
+    }
   } catch (err) {
-    console.error('[Analytics] Telegram send error:', err);
+    console.error('[Analytics] Telegram dispatch network error:', err);
   }
 }
 
@@ -83,7 +97,6 @@ async function logVisit(context, visitorData) {
   try {
     const now = new Date().toISOString();
 
-    // 1. First ensure session exists or update it safely without relying on complex ON CONFLICT
     const existing = await db.prepare('SELECT id, page_views FROM sessions WHERE id = ?').bind(visitorData.sessionId).first();
 
     if (existing) {
@@ -116,19 +129,22 @@ async function logVisit(context, visitorData) {
       ).run();
     }
 
-    // 2. Insert event
     await db.prepare(`
       INSERT INTO events (session_id, visitor_id, event_type, event_data, page_url, timestamp)
       VALUES (?, ?, 'page_view', ?, ?, ?)
     `).bind(
       visitorData.sessionId,
       visitorData.visitorId,
-      JSON.stringify({ lang: visitorData.lang }),
+      JSON.stringify({
+        lang: visitorData.lang,
+        region: visitorData.region,
+        coords: visitorData.latitude ? `${visitorData.latitude},${visitorData.longitude}` : null
+      }),
       visitorData.path,
       now
     ).run();
 
-    console.log('[Analytics] Successfully recorded visit for session:', visitorData.sessionId);
+    console.log('[Analytics] Successfully recorded visit in D1 for session:', visitorData.sessionId);
   } catch (err) {
     console.error('[Analytics] Visitor logging DB error:', err);
   }
@@ -175,8 +191,16 @@ export async function onRequest(context) {
   const userAgent = request.headers.get('User-Agent') || '';
   const botFlag = isBot(userAgent);
   const ip = request.headers.get('CF-Connecting-IP') || '';
-  const country = request.cf?.country || '';
-  const city = request.cf?.city || '';
+  
+  // Extract comprehensive geographic attributes from Cloudflare request.cf
+  const cf = request.cf || {};
+  const country = cf.country || '';
+  const city = cf.city || '';
+  const region = cf.region || cf.regionCode || '';
+  const postalCode = cf.postalCode || '';
+  const latitude = cf.latitude || '';
+  const longitude = cf.longitude || '';
+
   const referrer = request.headers.get('Referer') || '';
 
   // Determine language mode
@@ -196,7 +220,7 @@ export async function onRequest(context) {
     }
   }
 
-  // 3. Reliable Visitor Tracking (Synchronous or resilient execution)
+  // 3. Reliable Visitor Tracking (Synchronous execution)
   if (!botFlag) {
     const visitorData = {
       visitorId,
@@ -204,6 +228,10 @@ export async function onRequest(context) {
       ip,
       country,
       city,
+      region,
+      postalCode,
+      latitude,
+      longitude,
       path: pathname,
       referrer,
       userAgent,
@@ -212,7 +240,6 @@ export async function onRequest(context) {
       lang
     };
 
-    // Await logging directly to ensure D1 and Telegram complete reliably
     try {
       await logVisit(context, visitorData);
       await sendTelegramAlert(env, visitorData);
