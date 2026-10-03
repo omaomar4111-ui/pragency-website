@@ -31,17 +31,18 @@ function parseCookies(cookieHeader) {
 async function sendTelegramAlert(env, data) {
   const token = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return;
+  if (!token || !chatId) {
+    console.warn('[Analytics] Telegram credentials missing:', { hasToken: !!token, hasChatId: !!chatId });
+    return;
+  }
 
   const now = Date.now();
   const lastSent = notifyCooldown.get(data.visitorId) || 0;
   if (now - lastSent < 60000) {
-    // 60 seconds cooldown per visitor to prevent spamming
     return;
   }
   notifyCooldown.set(data.visitorId, now);
 
-  // Clean old cooldown entries periodically
   if (notifyCooldown.size > 2000) {
     notifyCooldown.clear();
   }
@@ -55,7 +56,7 @@ async function sendTelegramAlert(env, data) {
     `🆔 <b>Visitor ID:</b> <code>${data.visitorId.slice(0, 8)}</code>`;
 
   try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -64,46 +65,59 @@ async function sendTelegramAlert(env, data) {
         parse_mode: 'HTML'
       })
     });
+    const resJson = await res.json();
+    console.log('[Analytics] Telegram send response:', resJson);
   } catch (err) {
-    console.error('Telegram notification error:', err);
+    console.error('[Analytics] Telegram send error:', err);
   }
 }
 
 async function logVisit(context, visitorData) {
   const { env } = context;
   const db = env.ANALYTICS_DB || env.DB;
-  if (!db) return;
+  if (!db) {
+    console.error('[Analytics] Neither ANALYTICS_DB nor DB is available in env!');
+    return;
+  }
 
   try {
     const now = new Date().toISOString();
 
-    // Upsert session
-    const insertSession = db.prepare(`
-      INSERT INTO sessions (
-        id, visitor_id, first_seen, last_seen, country, city, ip,
-        user_agent, referrer, entry_page, exit_page, page_views, is_bot
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        last_seen = excluded.last_seen,
-        exit_page = excluded.exit_page,
-        page_views = page_views + 1
-    `).bind(
-      visitorData.sessionId,
-      visitorData.visitorId,
-      now,
-      now,
-      visitorData.country || null,
-      visitorData.city || null,
-      visitorData.ip || null,
-      visitorData.userAgent || null,
-      visitorData.referrer || null,
-      visitorData.path,
-      visitorData.path,
-      visitorData.isBot
-    );
+    // 1. First ensure session exists or update it safely without relying on complex ON CONFLICT
+    const existing = await db.prepare('SELECT id, page_views FROM sessions WHERE id = ?').bind(visitorData.sessionId).first();
 
-    // Insert page view event
-    const insertEvent = db.prepare(`
+    if (existing) {
+      await db.prepare(`
+        UPDATE sessions SET
+          last_seen = ?,
+          exit_page = ?,
+          page_views = page_views + 1
+        WHERE id = ?
+      `).bind(now, visitorData.path, visitorData.sessionId).run();
+    } else {
+      await db.prepare(`
+        INSERT INTO sessions (
+          id, visitor_id, first_seen, last_seen, country, city, ip,
+          user_agent, referrer, entry_page, exit_page, page_views, is_bot
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+      `).bind(
+        visitorData.sessionId,
+        visitorData.visitorId,
+        now,
+        now,
+        visitorData.country || null,
+        visitorData.city || null,
+        visitorData.ip || null,
+        visitorData.userAgent || null,
+        visitorData.referrer || null,
+        visitorData.path,
+        visitorData.path,
+        visitorData.isBot
+      ).run();
+    }
+
+    // 2. Insert event
+    await db.prepare(`
       INSERT INTO events (session_id, visitor_id, event_type, event_data, page_url, timestamp)
       VALUES (?, ?, 'page_view', ?, ?, ?)
     `).bind(
@@ -112,11 +126,11 @@ async function logVisit(context, visitorData) {
       JSON.stringify({ lang: visitorData.lang }),
       visitorData.path,
       now
-    );
+    ).run();
 
-    await db.batch([insertSession, insertEvent]);
+    console.log('[Analytics] Successfully recorded visit for session:', visitorData.sessionId);
   } catch (err) {
-    console.error('Visitor logging DB error:', err);
+    console.error('[Analytics] Visitor logging DB error:', err);
   }
 }
 
@@ -155,7 +169,6 @@ export async function onRequest(context) {
     newVidCookie = `pr_vid=${visitorId}; Path=/; Max-Age=31536000; SameSite=Lax`;
   }
 
-  // Generate a daily-based or ongoing session ID
   const todayStr = new Date().toISOString().slice(0, 10);
   const sessionId = `${visitorId.slice(0, 8)}_${todayStr}`;
 
@@ -183,7 +196,7 @@ export async function onRequest(context) {
     }
   }
 
-  // 3. Asynchronous Visitor Analytics & Telegram Dispatch (Zero-latency impact)
+  // 3. Reliable Visitor Tracking (Synchronous or resilient execution)
   if (!botFlag) {
     const visitorData = {
       visitorId,
@@ -199,12 +212,13 @@ export async function onRequest(context) {
       lang
     };
 
-    context.waitUntil(
-      Promise.all([
-        logVisit(context, visitorData),
-        sendTelegramAlert(env, visitorData)
-      ])
-    );
+    // Await logging directly to ensure D1 and Telegram complete reliably
+    try {
+      await logVisit(context, visitorData);
+      await sendTelegramAlert(env, visitorData);
+    } catch (e) {
+      console.error('[Analytics] Error during direct visit tracking:', e);
+    }
   }
 
   // 4. Resolve Underlying Asset
