@@ -17,8 +17,30 @@
     var nameInput = document.getElementById('reg-name');
     var phoneInput = document.getElementById('reg-phone');
     var businessInput = document.getElementById('reg-business');
+    var customIndustryWrapper = document.getElementById('custom-industry-wrapper');
+    var customIndustryInput = document.getElementById('custom-industry');
     var budgetInput = document.getElementById('reg-budget');
     var notesInput = document.getElementById('reg-notes');
+
+    function toggleCustomIndustry() {
+      if (!businessInput || !customIndustryWrapper) return;
+      var val = (businessInput.value || '').toLowerCase();
+      var isOther = val.includes('other') || val.includes('أخرى') || val.includes('اخرى') || val.includes('خدمات');
+      if (isOther) {
+        customIndustryWrapper.style.display = 'block';
+        if (customIndustryInput) customIndustryInput.required = true;
+      } else {
+        customIndustryWrapper.style.display = 'none';
+        if (customIndustryInput) {
+          customIndustryInput.required = false;
+          customIndustryInput.value = '';
+        }
+      }
+    }
+
+    if (businessInput) {
+      businessInput.addEventListener('change', toggleCustomIndustry);
+    }
 
     // ── Form Auto-Save via localStorage ──
     function restoreDraft() {
@@ -28,7 +50,11 @@
         var data = JSON.parse(raw);
         if (data.name && nameInput && !nameInput.value) nameInput.value = data.name;
         if (data.phone && phoneInput && !phoneInput.value) phoneInput.value = data.phone;
-        if (data.business && businessInput && !businessInput.value) businessInput.value = data.business;
+        if (data.business && businessInput && !businessInput.value) {
+          businessInput.value = data.business;
+          toggleCustomIndustry();
+        }
+        if (data.custom_industry && customIndustryInput && !customIndustryInput.value) customIndustryInput.value = data.custom_industry;
         if (data.budget && budgetInput && !budgetInput.value) budgetInput.value = data.budget;
         if (data.notes && notesInput && !notesInput.value) notesInput.value = data.notes;
       } catch (e) {}
@@ -40,6 +66,7 @@
           name: nameInput ? nameInput.value : '',
           phone: phoneInput ? phoneInput.value : '',
           business: businessInput ? businessInput.value : '',
+          custom_industry: customIndustryInput ? customIndustryInput.value : '',
           budget: budgetInput ? budgetInput.value : '',
           notes: notesInput ? notesInput.value : ''
         };
@@ -57,6 +84,7 @@
     });
 
     restoreDraft();
+    toggleCustomIndustry();
 
     function goToStep(stepNum) {
       steps.forEach(function(s) { s.classList.toggle('active', s.dataset.step == stepNum); });
@@ -73,6 +101,16 @@
         if (!name.value.trim() || name.value.trim().length < 2) { name.focus(); name.classList.add('error'); setTimeout(function() { name.classList.remove('error'); }, 1500); return; }
         if (!phone.value.trim() || phone.value.trim().length < 8) { phone.focus(); phone.classList.add('error'); setTimeout(function() { phone.classList.remove('error'); }, 1500); return; }
         if (!business.value) { business.focus(); business.classList.add('error'); setTimeout(function() { business.classList.remove('error'); }, 1500); return; }
+        
+        var val = (business.value || '').toLowerCase();
+        var isOther = val.includes('other') || val.includes('أخرى') || val.includes('اخرى') || val.includes('خدمات');
+        if (isOther && customIndustryInput && (!customIndustryInput.value.trim() || customIndustryInput.value.trim().length < 2)) {
+          customIndustryInput.focus();
+          customIndustryInput.classList.add('error');
+          setTimeout(function() { customIndustryInput.classList.remove('error'); }, 1500);
+          return;
+        }
+
         goToStep(2);
       });
     }

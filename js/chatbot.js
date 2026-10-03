@@ -13,13 +13,8 @@
     return match ? match[1] : 'anon_' + sessionId;
   }
 
-  // 2. Inject HTML Widget
+  // 2. Inject HTML Widget (NO floating button — controlled by Contact Hub)
   const widgetHtml = `
-    <button id="ai-chat-btn" aria-label="Chat with AI" data-i18n-title="chat.btn_label">
-      <div class="chat-pulse"></div>
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5L2.5 21.5l4.5-.838A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.478 0-2.872-.387-4.08-1.064l-.292-.163-2.673.498.498-2.673-.163-.292A7.955 7.955 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8zm-3-9a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-6 4a4.002 4.002 0 006 0 .75.75 0 00-1.166-.944 2.502 2.502 0 01-3.668 0A.75.75 0 009 15z"/></svg>
-    </button>
-
     <div id="ai-chat-panel">
       <div class="ai-chat-header">
         <div class="ai-chat-profile">
@@ -50,7 +45,6 @@
   document.body.insertAdjacentHTML('beforeend', widgetHtml);
 
   // 3. UI References
-  const btn = document.getElementById('ai-chat-btn');
   const panel = document.getElementById('ai-chat-panel');
   const closeBtn = document.getElementById('ai-chat-close-btn');
   const msgsContainer = document.getElementById('ai-chat-msgs');
@@ -85,29 +79,33 @@
     history.forEach(m => renderMessage(m.role, m.content));
   }
 
-  // Toggle Panel
+  // 5. Public API — called by Contact Hub
   let hasOpened = false;
-  btn.addEventListener('click', () => {
-    panel.classList.toggle('active');
-    if (panel.classList.contains('active')) {
-      input.focus();
-      if (!hasOpened && history.length === 0) {
-        hasOpened = true;
-        const greeting = (window.__CURRENT_LANG__ === 'en' || document.documentElement.lang === 'en')
-          ? "Hello! 👋 I am PR Agency AI Growth Assistant. How can I help you accelerate your marketing strategy and scale your sales today?"
-          : "أهلاً بك! 👋 أنا مساعد النمو الذكي في PR Agency. كيف يمكنني مساعدتك في تطوير خطتك التسويقية ومبيعاتك اليوم؟";
-        renderMessage('assistant', greeting);
-        history.push({ role: 'assistant', content: greeting });
-        saveHistory(history);
-      }
+  window.openChatbot = function() {
+    panel.classList.add('active');
+    input.focus();
+    if (!hasOpened && history.length === 0) {
+      hasOpened = true;
+      const greeting = (window.__CURRENT_LANG__ === 'en' || document.documentElement.lang === 'en')
+        ? "Hello! 👋 I am PR Agency AI Growth Assistant. How can I help you accelerate your marketing strategy and scale your sales today?"
+        : "أهلاً بك! 👋 أنا مساعد النمو الذكي في PR Agency. كيف يمكنني مساعدتك في تطوير خطتك التسويقية ومبيعاتك اليوم؟";
+      renderMessage('assistant', greeting);
+      history.push({ role: 'assistant', content: greeting });
+      saveHistory(history);
     }
-  });
+  };
+
+  window.closeChatbot = function() {
+    panel.classList.remove('active');
+  };
 
   closeBtn.addEventListener('click', () => {
     panel.classList.remove('active');
+    // Re-open the Contact Hub menu if available
+    if (typeof window.openContactHub === 'function') window.openContactHub();
   });
 
-  // 5. Send Logic
+  // 6. Send Logic
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;

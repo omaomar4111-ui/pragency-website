@@ -77,18 +77,18 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="preload" href="css/main.css?v=699" as="style"/>
+<link rel="preload" href="css/main.css?v=709" as="style"/>
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/main.css?v=699"/>
-<link rel="stylesheet" href="css/pages.css?v=69"/>
+<link rel="stylesheet" href="css/main.css?v=709"/>
+<link rel="stylesheet" href="css/pages.css?v=70"/>
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 <meta name="theme-color" content="#0A0612" />
-<link rel="stylesheet" href="/css/chatbot.css?v=69"/>
+<link rel="stylesheet" href="/css/chatbot.css?v=70"/>
 </head>
 
 <body>
@@ -350,13 +350,101 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
 <button id="back-to-top" aria-label="ارجع لأعلى"><svg class="svgi" style="font-size:18px;transform:rotate(90deg)"><use href="#fa-arrow-left"></use></svg></button>
 
-<script src="js/scroll-progress.js?v=69" defer></script>
-<script src="js/main.js?v=69" defer></script>
-<script src="js/cms-loader.js?v=69" defer></script>
-  <script src="js/whatsapp-widget.js?v=69" defer></script>
-  <script src="js/i18n.js?v=69" defer></script>
+<script src="js/scroll-progress.js?v=70" defer></script>
+<script src="js/main.js?v=70" defer></script>
+<script src="js/cms-loader.js?v=70" defer></script>
+  <script src="js/i18n.js?v=70" defer></script>
 
-<script src="/js/analytics.js?v=69" defer></script>
-<script src="/js/chatbot.js?v=69" defer></script>
+<script src="/js/analytics.js?v=70" defer></script>
+<script src="/js/chatbot.js?v=70" defer></script>
+
+  <!-- Contact Hub Widget -->
+  <div id="contact-hub">
+    <div id="contact-hub-menu">
+      <!-- AI Chat -->
+      <div class="hub-option" id="hub-opt-ai" role="button" tabindex="0" aria-label="Chat with AI">
+        <span class="hub-option-label" data-i18n="contact_hub.ai">تحدث مع المساعد الذكي</span>
+        <span class="hub-option-icon ai-icon">💬</span>
+      </div>
+      <!-- WhatsApp -->
+      <a class="hub-option" id="hub-opt-wa" href="https://wa.me/201144826641" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <span class="hub-option-label" data-i18n="contact_hub.whatsapp">واتساب</span>
+        <span class="hub-option-icon wa-icon">
+          <svg viewBox="0 0 448 512" width="22" height="22" fill="#fff"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157z"/></svg>
+        </span>
+      </a>
+      <!-- Call -->
+      <a class="hub-option" id="hub-opt-call" href="tel:+201144826641" aria-label="Call Us">
+        <span class="hub-option-label" data-i18n="contact_hub.call">اتصل بنا</span>
+        <span class="hub-option-icon call-icon">📞</span>
+      </a>
+    </div>
+
+    <button id="contact-hub-btn" aria-label="Contact Us" aria-expanded="false">
+      <div class="hub-pulse"></div>
+      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    </button>
+  </div>
+
+  <script>
+  (function(){
+    var hubBtn = document.getElementById('contact-hub-btn');
+    var hubMenu = document.getElementById('contact-hub-menu');
+    var optAi = document.getElementById('hub-opt-ai');
+
+    function toggleMenu() {
+      var isOpen = hubMenu.classList.contains('open');
+      hubMenu.classList.toggle('open');
+      hubBtn.classList.toggle('open');
+      hubBtn.setAttribute('aria-expanded', !isOpen);
+    }
+
+    window.openContactHub = function() {
+      hubMenu.classList.add('open');
+      hubBtn.classList.add('open');
+      hubBtn.setAttribute('aria-expanded', 'true');
+    };
+
+    hubBtn.addEventListener('click', toggleMenu);
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!document.getElementById('contact-hub').contains(e.target) &&
+          !document.getElementById('ai-chat-panel').contains(e.target)) {
+        hubMenu.classList.remove('open');
+        hubBtn.classList.remove('open');
+        hubBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // AI Chat option
+    optAi.addEventListener('click', function() {
+      hubMenu.classList.remove('open');
+      hubBtn.classList.remove('open');
+      hubBtn.setAttribute('aria-expanded', 'false');
+      if (typeof window.openChatbot === 'function') window.openChatbot();
+    });
+    optAi.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') optAi.click();
+    });
+
+    // WhatsApp tracking
+    var optWa = document.getElementById('hub-opt-wa');
+    optWa.addEventListener('click', function() {
+      hubMenu.classList.remove('open');
+      hubBtn.classList.remove('open');
+      if (typeof gtag === 'function') gtag('event','whatsapp_click',{event_category:'engagement'});
+      if (typeof fbq === 'function') fbq('track','Contact',{content_name:'WhatsApp Click'});
+    });
+
+    // Call tracking
+    var optCall = document.getElementById('hub-opt-call');
+    optCall.addEventListener('click', function() {
+      hubMenu.classList.remove('open');
+      hubBtn.classList.remove('open');
+      if (typeof gtag === 'function') gtag('event','phone_call_click',{event_category:'engagement'});
+    });
+  })();
+  </script>
 </body>
 </html>

@@ -62,10 +62,15 @@
       var formData = new FormData(form);
       var utms = getUtmParams();
 
+      var rawBusiness = (formData.get('business') || '').toString().trim();
+      var customIndustry = (formData.get('custom_industry') || '').toString().trim();
+      var isOther = rawBusiness.includes('other') || rawBusiness.includes('أخرى') || rawBusiness.includes('اخرى') || rawBusiness.includes('خدمات');
+      var finalBusiness = (isOther && customIndustry) ? customIndustry : rawBusiness;
+
       var payload = {
         name:         (formData.get('name')     || '').toString().trim(),
         phone:        (formData.get('phone')    || '').toString().trim(),
-        business:     (formData.get('business') || '').toString().trim(),
+        business:     finalBusiness,
         budget:       (formData.get('budget')   || '').toString().trim(),
         message:      (formData.get('message')  || '').toString().trim(),
         utm_source:   utms.utm_source   || '',
@@ -146,7 +151,29 @@
     extraForms.forEach(function (f) { forms.push(f); });
 
     forms.forEach(function (form) {
-      if (form) bindForm(form);
+      if (form) {
+        bindForm(form);
+        // Bind custom industry toggle for contact.html if present
+        var cfBusiness = form.querySelector('#cf-business');
+        var cfWrapper = form.querySelector('#cf-custom-industry-wrapper');
+        var cfInput = form.querySelector('#cf-custom-industry');
+        if (cfBusiness && cfWrapper) {
+          cfBusiness.addEventListener('change', function () {
+            var v = (this.value || '').toLowerCase();
+            var isOther = v.includes('other') || v.includes('أخرى') || v.includes('اخرى') || v.includes('خدمات');
+            if (isOther) {
+              cfWrapper.style.display = 'block';
+              if (cfInput) cfInput.required = true;
+            } else {
+              cfWrapper.style.display = 'none';
+              if (cfInput) {
+                cfInput.required = false;
+                cfInput.value = '';
+              }
+            }
+          });
+        }
+      }
     });
   }
 

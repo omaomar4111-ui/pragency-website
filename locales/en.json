@@ -162,6 +162,8 @@
   "contact.business.ecommerce": "E-commerce Store",
   "contact.business.restaurant": "Restaurant / Cafe",
   "contact.business.other": "Other Services",
+  "contact.custom_industry_label": "Specify Your Industry *",
+  "contact.custom_industry_placeholder": "Enter your industry name",
   "contact.next": "Next",
   "contact.prev": "Previous",
   "contact.budget.label": "Monthly Budget (Optional)",
@@ -232,5 +234,10 @@
   "chat.lead_phone": "Phone / WhatsApp",
   "chat.lead_email": "Email Address",
   "chat.lead_submit": "Confirm & Connect",
-  "chat.lead_thanks": "✅ Thank you! Your details have been received and a senior strategist will reach out shortly."
+  "chat.lead_thanks": "✅ Thank you! Your details have been received and a senior strategist will reach out shortly.",
+  "contact_hub": {
+    "ai": "Chat with AI Assistant",
+    "whatsapp": "WhatsApp",
+    "call": "Call Us"
+  }
 }

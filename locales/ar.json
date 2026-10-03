@@ -162,6 +162,8 @@
   "contact.business.ecommerce": "متجر إلكتروني",
   "contact.business.restaurant": "مطعم / كافيه",
   "contact.business.other": "خدمات أخرى",
+  "contact.custom_industry_label": "حدد مجالك *",
+  "contact.custom_industry_placeholder": "اكتب اسم مجالك",
   "contact.next": "التالي",
   "contact.prev": "السابق",
   "contact.budget.label": "الميزانية الشهرية (اختياري)",
@@ -232,5 +234,10 @@
   "chat.lead_phone": "رقم الموبايل / واتساب",
   "chat.lead_email": "البريد الإلكتروني",
   "chat.lead_submit": "تأكيد وحجز تواصل",
-  "chat.lead_thanks": "✅ شكراً لك! تم استلام بياناتك وسيتواصل معك خبير استراتيجي خلال وقت قصير."
+  "chat.lead_thanks": "✅ شكراً لك! تم استلام بياناتك وسيتواصل معك خبير استراتيجي خلال وقت قصير.",
+  "contact_hub": {
+    "ai": "تحدث مع المساعد الذكي",
+    "whatsapp": "واتساب",
+    "call": "اتصل بنا"
+  }
 }
