@@ -98,4 +98,20 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Privacy -->
+  <url>
+    <loc>https://pragency.pages.dev/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/privacy"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/privacy"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>
