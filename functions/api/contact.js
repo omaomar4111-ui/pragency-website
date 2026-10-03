@@ -62,43 +62,100 @@ export async function onRequestPost(context) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(name, phone, business, budget, message, ip, userAgent, utm_source, utm_medium, utm_campaign, utm_content, lead_source, meta_lead_id).run();
 
+    // Dual-write to leads table in ANALYTICS_DB / DB for CRM visibility
+    const analyticsDb = env.ANALYTICS_DB || env.DB;
+    if (analyticsDb) {
+      try {
+        const nowIso = new Date().toISOString();
+        const cf = request.cf || {};
+        const visitorCountry = cf.country || 'Unknown';
+        const visitorCity = cf.city || 'Unknown';
+        await analyticsDb.prepare(`
+          INSERT INTO leads (name, phone, message, source, created_at, status, country, city)
+          VALUES (?, ?, ?, 'contact_form', ?, 'new', ?, ?)
+        `).bind(
+          name,
+          phone,
+          `[نشاط: ${business || 'غير محدد'} | ميزانية: ${budget || 'غير محدد'}]\n${message || ''}`.trim(),
+          nowIso,
+          visitorCountry,
+          visitorCity
+        ).run();
+      } catch (leadDbErr) {
+        console.warn('Leads dual-write warning:', leadDbErr.message);
+      }
+    }
+
     // -------------------------------------------------------------
-    // Send email notification via Resend (Isolated try/catch)
+    // 1. High-Priority Telegram Alert (Instant Real-time Dispatch)
+    // -------------------------------------------------------------
+    const tgToken = env.TELEGRAM_BOT_TOKEN;
+    const tgChatId = env.TELEGRAM_CHAT_ID;
+
+    function cleanPhoneForWa(p) {
+      if (!p) return '';
+      let num = p.replace(/[^0-9]/g, '');
+      if (num.startsWith('01')) num = '20' + num.substring(1);
+      else if (!num.startsWith('20') && num.length === 10) num = '20' + num;
+      return num;
+    }
+
+    const waNumber = cleanPhoneForWa(phone);
+    const waLink = waNumber ? `https://wa.me/${waNumber}` : '';
+
+    if (tgToken && tgChatId) {
+      try {
+        const tgMessage =
+          `🚨 <b>استمارة تسجيل جديدة (Contact Form)!</b>\n\n` +
+          `👤 <b>الاسم:</b> ${name}\n` +
+          `📱 <b>الموبايل:</b> <code>${phone}</code>\n` +
+          `💼 <b>نوع النشاط:</b> ${business || 'غير محدد'}\n` +
+          `💰 <b>الميزانية:</b> ${budget || 'غير محدد'}\n` +
+          (message ? `📝 <b>الرسالة:</b> ${message}\n` : '') +
+          (utm_campaign ? `🎯 <b>الحملة:</b> ${utm_campaign} (${utm_source || 'direct'})\n` : '') +
+          `🌐 <b>IP:</b> <code>${ip}</code>\n` +
+          (waLink ? `\n👉 <a href="${waLink}">فتح محادثة واتساب فورية</a>` : '');
+
+        await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: tgChatId,
+            text: tgMessage,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
+          })
+        });
+      } catch (tgErr) {
+        console.error('Telegram notification failed:', tgErr.message);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 2. Send email notification via Resend
     // -------------------------------------------------------------
     try {
       const RESEND_KEY = env.RESEND_API_KEY;
       if (!RESEND_KEY) {
-        console.warn('RESEND_API_KEY not configured, skipping email notification');
-        throw new Error('Email notification skipped');
-      }
+        console.warn('RESEND_API_KEY not configured in env, skipping Resend dispatch');
+      } else {
+        function escapeHtml(str) {
+          if (!str) return '';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        }
 
-      function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
+        const egyptTime = new Intl.DateTimeFormat('ar-EG', {
+          timeZone: 'Africa/Cairo',
+          dateStyle: 'full',
+          timeStyle: 'medium',
+        }).format(new Date());
 
-      function cleanPhoneForWa(p) {
-        if (!p) return '';
-        let num = p.replace(/[^0-9]/g, '');
-        if (num.startsWith('01')) num = '20' + num.substring(1);
-        else if (!num.startsWith('20') && num.length === 10) num = '20' + num;
-        return num;
-      }
-
-      const waNumber = cleanPhoneForWa(phone);
-      const waLink = waNumber ? `https://wa.me/${waNumber}` : 'https://wa.me/';
-      const egyptTime = new Intl.DateTimeFormat('ar-EG', {
-        timeZone: 'Africa/Cairo',
-        dateStyle: 'full',
-        timeStyle: 'medium',
-      }).format(new Date());
-
-      const emailHtml = `<!DOCTYPE html>
+        const emailHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -164,11 +221,12 @@ export async function onRequestPost(context) {
           </tr>` : ''}
         </table>
 
+        ${waLink ? `
         <div class="btn-wrap">
           <a href="${waLink}" target="_blank" class="btn">
             💬 تواصل مع العميل عبر واتساب
           </a>
-        </div>
+        </div>` : ''}
 
         <p class="meta">وقت الإرسال: ${egyptTime} (بتوقيت مصر)</p>
       </div>
@@ -181,27 +239,28 @@ export async function onRequestPost(context) {
 </body>
 </html>`;
 
-      const emailRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'PR Agency <onboarding@resend.dev>',
-          to: 'omaomar4111@gmail.com',
-          reply_to: 'omaomar4111@gmail.com',
-          subject: `🔔 رسالة جديدة من ${name}`,
-          html: emailHtml,
-        }),
-      });
+        const emailRes = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'PR Agency <onboarding@resend.dev>',
+            to: 'omaomar4111@gmail.com',
+            reply_to: 'omaomar4111@gmail.com',
+            subject: `🔔 رسالة جديدة من ${name}`,
+            html: emailHtml,
+          }),
+        });
 
-      if (emailRes.ok) {
-        const emailJson = await emailRes.json();
-        console.log('Resend email sent successfully:', emailJson);
-      } else {
-        const errText = await emailRes.text();
-        console.error('Resend API returned error:', emailRes.status, errText);
+        if (emailRes.ok) {
+          const emailJson = await emailRes.json();
+          console.log('Resend email sent successfully:', emailJson);
+        } else {
+          const errText = await emailRes.text();
+          console.error('Resend API returned error:', emailRes.status, errText);
+        }
       }
     } catch (emailErr) {
       console.error('Failed to send Resend email notification:', emailErr);
