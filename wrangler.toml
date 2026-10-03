@@ -6,3 +6,8 @@ pages_build_output_dir = "."
 binding = "DB"
 database_name = "2d-marketing-db"
 database_id = "7f2ae756-a713-4936-94fb-b8b2b05f6878"
+
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "pragency-analytics"
+database_id = "9948c70f-d00f-4af8-8f39-8ae205b23281"
