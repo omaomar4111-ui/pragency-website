@@ -164,9 +164,18 @@
     formDiv.className = 'ai-lead-form';
     formDiv.innerHTML = `
       <h4>${isEn ? 'Confirm your details for consultation:' : 'أكد بياناتك لحجز استشارة مخصصة:'}</h4>
-      <input type="text" class="ai-lead-input" id="ai-lead-name" placeholder="${isEn ? 'Your Name' : 'الاسم بالكامل'}" />
-      <input type="tel" class="ai-lead-input" id="ai-lead-phone" value="${detectedPhone}" placeholder="${isEn ? 'Phone / WhatsApp' : 'رقم الموبايل / واتساب'}" dir="ltr" />
-      <input type="email" class="ai-lead-input" id="ai-lead-email" value="${detectedEmail}" placeholder="${isEn ? 'Email Address' : 'البريد الإلكتروني'}" dir="ltr" />
+      <div class="ai-lead-field-group">
+        <label style="font-size:0.75rem;color:#A78BFA;font-weight:600;display:block;margin-bottom:2px;">${isEn ? 'Full Name *' : 'الاسم بالكامل *'}</label>
+        <input type="text" class="ai-lead-input" id="ai-lead-name" placeholder="${isEn ? 'Your Name' : 'اسمك الكريم'}" />
+      </div>
+      <div class="ai-lead-field-group">
+        <label style="font-size:0.75rem;color:#A78BFA;font-weight:600;display:block;margin-bottom:2px;">${isEn ? 'Phone / WhatsApp *' : 'رقم الموبايل / واتساب *'}</label>
+        <input type="tel" class="ai-lead-input" id="ai-lead-phone" value="${detectedPhone || ''}" placeholder="${isEn ? 'e.g. 01xxxxxxxxx' : '01xxxxxxxxx'}" dir="ltr" />
+      </div>
+      <div class="ai-lead-field-group">
+        <label style="font-size:0.75rem;color:#A78BFA;font-weight:600;display:block;margin-bottom:2px;">${isEn ? 'Email Address' : 'البريد الإلكتروني'}</label>
+        <input type="email" class="ai-lead-input" id="ai-lead-email" value="${detectedEmail || ''}" placeholder="${isEn ? 'name@example.com' : 'name@example.com'}" dir="ltr" />
+      </div>
       <button class="ai-lead-btn" id="ai-lead-submit-btn">${isEn ? 'Submit & Connect' : 'تأكيد وإرسال'}</button>
     `;
 
