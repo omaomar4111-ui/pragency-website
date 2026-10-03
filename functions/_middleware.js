@@ -115,7 +115,7 @@ async function sendTelegramAlert(env, data) {
   }
 }
 
-context, visitorData) {
+async function logVisit(context, visitorData) {
   const { env } = context;
   const db = env.ANALYTICS_DB || env.DB;
   if (!db) {
