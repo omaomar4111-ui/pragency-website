@@ -427,3 +427,58 @@
     right: 16px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE FIXES (v71)
+══════════════════════════════════════════════════════════════ */
+
+/* 2a: Move Contact Hub to bottom-LEFT on mobile so it doesn't overlap hero CTA */
+@media (max-width: 768px) {
+  #contact-hub {
+    bottom: 16px;
+    left: 16px;
+    right: auto;
+  }
+
+  #contact-hub-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Menu opens up from bottom-left */
+  #contact-hub-menu {
+    align-items: flex-start;
+  }
+
+  /* Hub option labels: keep label left of icon on mobile too */
+  .hub-option {
+    flex-direction: row;
+  }
+
+  /* RTL override: keep same layout on mobile RTL */
+  [dir="rtl"] #contact-hub {
+    left: 16px;
+    right: auto;
+  }
+
+  [dir="rtl"] .hub-option {
+    flex-direction: row;
+  }
+
+  /* Chat panel full-screen on mobile (already set, confirm right/left) */
+  #ai-chat-panel {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+/* 2b: Hide hero logo layer on mobile only — keep on desktop */
+@media (max-width: 768px) {
+  .hero-logo-layer,
+  .hero-brand-lockup {
+    display: none !important;
+  }
+}

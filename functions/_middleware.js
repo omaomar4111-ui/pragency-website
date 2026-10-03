@@ -36,22 +36,35 @@ async function sendTelegramAlert(env, data) {
     return;
   }
 
-  // Country filtering: Support NOTIFY_COUNTRIES env var (comma-separated), fallback to EG, SA, AE
+  // ── NOTIFY_ALL_VISITS logic ────────────────────────────────────────────────
+  // Default: only notify for NEW visitors (no pr_vid cookie previously seen).
+  // If env var NOTIFY_ALL_VISITS=true, notify for returning visitors too,
+  // but with a 5-minute per-visitor cooldown stored in Worker memory.
+  const notifyAll = (env.NOTIFY_ALL_VISITS || '').toLowerCase() === 'true';
+  const isNewVisitor = data.isNewVisitor === true;
+
+  if (!isNewVisitor && !notifyAll) {
+    // Returning visitor and NOTIFY_ALL_VISITS is false → skip
+    return;
+  }
+
+  // Country filtering: Support NOTIFY_COUNTRIES env var, fallback to EG, SA, AE
   const allowedCountries = (env.NOTIFY_COUNTRIES || 'EG,SA,AE')
     .split(',')
     .map(c => c.trim().toUpperCase())
     .filter(Boolean);
 
   const visitorCountry = (data.country || '').trim().toUpperCase();
-  // If visitor country is known and not in allowed list, skip alert
   if (visitorCountry && !allowedCountries.includes(visitorCountry)) {
     console.log(`[Analytics] Skipping Telegram alert for country ${visitorCountry}. Allowed: ${allowedCountries.join(',')}`);
     return;
   }
 
+  // ── Per-visitor cooldown (Worker memory, 5-min window) ────────────────────
+  const COOLDOWN_MS = notifyAll ? 5 * 60 * 1000 : 60 * 1000; // 5 min if notifyAll, else 1 min
   const now = Date.now();
   const lastSent = notifyCooldown.get(data.visitorId) || 0;
-  if (now - lastSent < 60000) {
+  if (now - lastSent < COOLDOWN_MS) {
     return;
   }
   notifyCooldown.set(data.visitorId, now);
@@ -60,43 +73,49 @@ async function sendTelegramAlert(env, data) {
     notifyCooldown.clear();
   }
 
-  // Construct full detailed geographic presentation
+  // ── Build message ─────────────────────────────────────────────────────────
   const locationParts = [data.city, data.region, data.country].filter(Boolean).join(', ') || 'Unknown';
   let geoBlock = `📍 <b>Location:</b> ${locationParts}`;
-  if (data.postalCode) {
-    geoBlock += `\n📮 <b>Postal Code:</b> ${data.postalCode}`;
-  }
-  if (data.latitude && data.longitude) {
-    geoBlock += `\n🧭 <b>Coordinates:</b> ${data.latitude}, ${data.longitude}`;
-  }
+  if (data.postalCode) geoBlock += `\n📮 <b>Postal Code:</b> ${data.postalCode}`;
+  if (data.latitude && data.longitude) geoBlock += `\n🧭 <b>Coordinates:</b> ${data.latitude}, ${data.longitude}`;
 
-  const message = 
-    `🔔 <b>New Visitor on PR Agency!</b>\n` +
+  const visitorLabel = isNewVisitor ? '🆕 <b>New Visitor!</b>' : '🔄 <b>Returning Visitor</b>';
+
+  const message =
+    `🔔 ${visitorLabel} — PR Agency\n` +
     `${geoBlock}\n` +
     `🌐 <b>Page:</b> ${data.path}\n` +
     `📱 <b>Device:</b> ${data.device}\n` +
     `🔗 <b>Referrer:</b> ${data.referrer || 'Direct'}\n` +
     `🆔 <b>Visitor ID:</b> <code>${data.visitorId.slice(0, 8)}</code>`;
 
+  // ── Send with 429 retry handling ──────────────────────────────────────────
   try {
     const tgResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'HTML'
-      })
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' })
     });
+
+    if (tgResponse.status === 429) {
+      const retryAfter = parseInt(tgResponse.headers.get('Retry-After') || '5', 10);
+      console.warn(`TELEGRAM_RATE_LIMITED: retry after ${retryAfter}s for visitor ${data.visitorId.slice(0,8)}`);
+      // Reset cooldown so next request can retry
+      notifyCooldown.delete(data.visitorId);
+      return;
+    }
+
     const tgBody = await tgResponse.text();
     console.log('TELEGRAM_RESPONSE_STATUS:', tgResponse.status);
-    console.log('TELEGRAM_RESPONSE_BODY:', tgBody);
+    if (tgResponse.status !== 200) {
+      console.warn('TELEGRAM_RESPONSE_BODY:', tgBody);
+    }
   } catch (err) {
-    console.error('TELEGRAM_FETCH_ERROR:', err.message, err.stack);
+    console.error('TELEGRAM_FETCH_ERROR:', err.message);
   }
 }
 
-async function logVisit(context, visitorData) {
+context, visitorData) {
   const { env } = context;
   const db = env.ANALYTICS_DB || env.DB;
   if (!db) {
@@ -249,6 +268,7 @@ export async function onRequest(context) {
       referrer,
       userAgent,
       device: userAgent.includes('Mobile') ? 'Mobile' : 'Desktop',
+      isNewVisitor: !cookies['pr_vid'],
       isBot: botFlag,
       lang
     };
