@@ -159,12 +159,12 @@ async function logVisit(context, visitorData) {
     }
 
     await db.prepare(`
-      INSERT INTO events (session_id, visitor_id, event_type, event_data, page_url, timestamp)
-      VALUES (?, ?, 'page_view', ?, ?, ?)
+      INSERT INTO events (session_id, event_type, event_data, page_url, timestamp)
+      VALUES (?, 'page_view', ?, ?, ?)
     `).bind(
       visitorData.sessionId,
-      visitorData.visitorId,
       JSON.stringify({
+        visitorId: visitorData.visitorId,
         lang: visitorData.lang,
         region: visitorData.region,
         coords: visitorData.latitude ? `${visitorData.latitude},${visitorData.longitude}` : null
