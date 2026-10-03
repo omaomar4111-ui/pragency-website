@@ -219,5 +219,18 @@
   "privacy.rights_2": "الحق في تصحيح أو حذف بياناتك.",
   "privacy.rights_3": "الحق في الاعتراض على معالجة بياناتك.",
   "privacy.contact_title": "تواصل معنا",
-  "privacy.contact_body": "لأي استفسارات بخصوص الخصوصية، تواصل معنا على hello@pragency.ag."
+  "privacy.contact_body": "لأي استفسارات بخصوص الخصوصية، تواصل معنا على hello@pragency.ag.",
+  "chat.btn_label": "تحدث مع المساعد الذكي",
+  "chat.title": "مساعد PR Agency الذكي",
+  "chat.status": "متاح للرد فوراً",
+  "chat.placeholder": "اكتب استفسارك هنا...",
+  "chat.send": "إرسال",
+  "chat.typing": "المساعد يكتب الآن...",
+  "chat.greeting": "أهلاً بك! 👋 أنا مساعد النمو الذكي في PR Agency. كيف يمكنني مساعدتك في تطوير خطتك التسويقية ومبيعاتك اليوم؟",
+  "chat.lead_title": "طلب استشارة ومتابعة مباشرة",
+  "chat.lead_name": "الاسم الكامل",
+  "chat.lead_phone": "رقم الموبايل / واتساب",
+  "chat.lead_email": "البريد الإلكتروني",
+  "chat.lead_submit": "تأكيد وحجز تواصل",
+  "chat.lead_thanks": "✅ شكراً لك! تم استلام بياناتك وسيتواصل معك خبير استراتيجي خلال وقت قصير."
 }

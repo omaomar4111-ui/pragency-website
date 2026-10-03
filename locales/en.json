@@ -219,5 +219,18 @@
   "privacy.rights_2": "The right to rectify or erase your data.",
   "privacy.rights_3": "The right to object to data processing.",
   "privacy.contact_title": "Contact Us",
-  "privacy.contact_body": "For any privacy inquiries, reach us at hello@pragency.ag."
+  "privacy.contact_body": "For any privacy inquiries, reach us at hello@pragency.ag.",
+  "chat.btn_label": "Chat with AI Assistant",
+  "chat.title": "PR Agency AI Assistant",
+  "chat.status": "Online & ready to help",
+  "chat.placeholder": "Type your question here...",
+  "chat.send": "Send",
+  "chat.typing": "Assistant is typing...",
+  "chat.greeting": "Hello! 👋 I am PR Agency AI Growth Assistant. How can I help you accelerate your marketing strategy and scale your sales today?",
+  "chat.lead_title": "Schedule Consultation & Follow-up",
+  "chat.lead_name": "Full Name",
+  "chat.lead_phone": "Phone / WhatsApp",
+  "chat.lead_email": "Email Address",
+  "chat.lead_submit": "Confirm & Connect",
+  "chat.lead_thanks": "✅ Thank you! Your details have been received and a senior strategist will reach out shortly."
 }
