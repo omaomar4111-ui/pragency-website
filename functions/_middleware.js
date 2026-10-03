@@ -36,6 +36,19 @@ async function sendTelegramAlert(env, data) {
     return;
   }
 
+  // Country filtering: Support NOTIFY_COUNTRIES env var (comma-separated), fallback to EG, SA, AE
+  const allowedCountries = (env.NOTIFY_COUNTRIES || 'EG,SA,AE')
+    .split(',')
+    .map(c => c.trim().toUpperCase())
+    .filter(Boolean);
+
+  const visitorCountry = (data.country || '').trim().toUpperCase();
+  // If visitor country is known and not in allowed list, skip alert
+  if (visitorCountry && !allowedCountries.includes(visitorCountry)) {
+    console.log(`[Analytics] Skipping Telegram alert for country ${visitorCountry}. Allowed: ${allowedCountries.join(',')}`);
+    return;
+  }
+
   const now = Date.now();
   const lastSent = notifyCooldown.get(data.visitorId) || 0;
   if (now - lastSent < 60000) {
@@ -66,7 +79,7 @@ async function sendTelegramAlert(env, data) {
     `🆔 <b>Visitor ID:</b> <code>${data.visitorId.slice(0, 8)}</code>`;
 
   try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const tgResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -75,14 +88,11 @@ async function sendTelegramAlert(env, data) {
         parse_mode: 'HTML'
       })
     });
-    const resJson = await res.json();
-    if (!resJson.ok) {
-      console.error('[Analytics] Telegram API rejected message:', resJson);
-    } else {
-      console.log('[Analytics] Telegram alert sent successfully:', resJson.result?.message_id);
-    }
+    const tgBody = await tgResponse.text();
+    console.log('TELEGRAM_RESPONSE_STATUS:', tgResponse.status);
+    console.log('TELEGRAM_RESPONSE_BODY:', tgBody);
   } catch (err) {
-    console.error('[Analytics] Telegram dispatch network error:', err);
+    console.error('TELEGRAM_FETCH_ERROR:', err.message, err.stack);
   }
 }
 
@@ -154,6 +164,9 @@ export async function onRequest(context) {
   const { request, next, env } = context;
   const url = new URL(request.url);
   const pathname = url.pathname;
+
+  console.log('MIDDLEWARE_HIT:', pathname);
+  console.log('ENV_CHECK:', { hasDB: !!(env.ANALYTICS_DB || env.DB), hasToken: !!env.TELEGRAM_BOT_TOKEN, hasChatId: !!env.TELEGRAM_CHAT_ID, chatId: env.TELEGRAM_CHAT_ID });
 
   // 1. Skip backend endpoints, static assets, and admin
   if (
