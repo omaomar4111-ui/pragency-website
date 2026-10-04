@@ -63,7 +63,7 @@ export async function onRequestGet(context) {
     .container { max-width: 1280px; margin: 0 auto; }
     header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 24px; flex-wrap: gap: 16px;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
     }
     h1 { font-size: 26px; font-weight: 900; color: #fff; }
     .header-actions { display: flex; align-items: center; gap: 12px; }
@@ -217,14 +217,14 @@ export async function onRequestGet(context) {
   </div>
 
   <script>
-    let rawData = null;
-    let lineChart = null;
-    let barChart = null;
-    let doughnutChart = null;
+    var rawData = null;
+    var lineChart = null;
+    var barChart = null;
+    var doughnutChart = null;
 
     async function fetchAnalytics() {
       try {
-        const res = await fetch('/api/admin/analytics-charts');
+        var res = await fetch('/api/admin/analytics-charts');
         if (!res.ok) throw new Error('Failed to load API');
         rawData = await res.json();
         renderAll('30d');
@@ -237,8 +237,8 @@ export async function onRequestGet(context) {
     function filterByDate(list, dateField, range) {
       if (!list || !Array.isArray(list)) return [];
       if (range === 'all') return list;
-      const now = new Date();
-      let cutoff = new Date();
+      var now = new Date();
+      var cutoff = new Date();
       if (range === 'today') {
         cutoff.setHours(0, 0, 0, 0);
       } else if (range === '7d') {
@@ -246,8 +246,8 @@ export async function onRequestGet(context) {
       } else if (range === '30d') {
         cutoff.setDate(now.getDate() - 30);
       }
-      return list.filter(item => {
-        const d = new Date(item[dateField]);
+      return list.filter(function(item) {
+        var d = new Date(item[dateField]);
         return d >= cutoff;
       });
     }
@@ -256,13 +256,13 @@ export async function onRequestGet(context) {
       if (!rawData) return;
 
       // 1. Visitors Line Chart
-      const filteredVisitors = filterByDate(rawData.visitors_per_day || [], 'date', range);
-      const dates = filteredVisitors.map(v => v.date);
-      const counts = filteredVisitors.map(v => v.visitors);
-      const totalV = counts.reduce((a, b) => a + b, 0);
+      var filteredVisitors = filterByDate(rawData.visitors_per_day || [], 'date', range);
+      var dates = filteredVisitors.map(function(v) { return v.date; });
+      var counts = filteredVisitors.map(function(v) { return v.visitors; });
+      var totalV = counts.reduce(function(a, b) { return a + b; }, 0);
       document.getElementById('visitorsCountBadge').textContent = 'إجمالي: ' + totalV + ' زائر';
 
-      const lineCtx = document.getElementById('visitorsLineChart').getContext('2d');
+      var lineCtx = document.getElementById('visitorsLineChart').getContext('2d');
       if (lineChart) lineChart.destroy();
       lineChart = new Chart(lineCtx, {
         type: 'line',
@@ -291,16 +291,16 @@ export async function onRequestGet(context) {
       });
 
       // 2. Top Pages Bar Chart
-      const top5Pages = (rawData.top_pages || []).slice(0, 5);
-      const barCtx = document.getElementById('pagesBarChart').getContext('2d');
+      var top5Pages = (rawData.top_pages || []).slice(0, 5);
+      var barCtx = document.getElementById('pagesBarChart').getContext('2d');
       if (barChart) barChart.destroy();
       barChart = new Chart(barCtx, {
         type: 'bar',
         data: {
-          labels: top5Pages.map(p => p.page),
+          labels: top5Pages.map(function(p) { return p.page; }),
           datasets: [{
             label: 'المشاهدات',
-            data: top5Pages.map(p => p.views),
+            data: top5Pages.map(function(p) { return p.views; }),
             backgroundColor: ['#8B5CF6', '#EC4899', '#3B82F6', '#10B981', '#F59E0B'],
             borderRadius: 8
           }]
@@ -317,15 +317,15 @@ export async function onRequestGet(context) {
       });
 
       // 3. Top Countries Doughnut Chart
-      const countries = (rawData.top_countries || []).slice(0, 5);
-      const doughnutCtx = document.getElementById('countriesDoughnutChart').getContext('2d');
+      var countries = (rawData.top_countries || []).slice(0, 5);
+      var doughnutCtx = document.getElementById('countriesDoughnutChart').getContext('2d');
       if (doughnutChart) doughnutChart.destroy();
       doughnutChart = new Chart(doughnutCtx, {
         type: 'doughnut',
         data: {
-          labels: countries.map(c => c.country),
+          labels: countries.map(function(c) { return c.country; }),
           datasets: [{
-            data: countries.map(c => c.count),
+            data: countries.map(function(c) { return c.count; }),
             backgroundColor: ['#8B5CF6', '#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
             borderWidth: 0
           }]
@@ -340,46 +340,56 @@ export async function onRequestGet(context) {
       });
 
       // 4. Recent Leads Table
-      const filteredLeads = filterByDate(rawData.recent_leads || [], 'created_at', range);
-      const leadsBody = document.getElementById('leadsTableBody');
+      var filteredLeads = filterByDate(rawData.recent_leads || [], 'created_at', range);
+      var leadsBody = document.getElementById('leadsTableBody');
       if (!filteredLeads.length) {
         leadsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;">لا توجد طلبات في هذه الفترة</td></tr>';
       } else {
-        leadsBody.innerHTML = filteredLeads.map(l => `
-          <tr>
-            <td style="font-weight:700;color:#fff;">${l.name || 'عميل'}</td>
-            <td><a href="tel:${l.phone || ''}" style="color:#A78BFA;text-decoration:none;">${l.phone || '-'}</a></td>
-            <td><span class="badge badge-lead">${l.source || 'website'}</span></td>
-            <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.message || '-'}</td>
-            <td>${l.created_at ? new Date(l.created_at).toLocaleDateString('ar-EG') : '-'}</td>
-          </tr>
-        `).join('');
+        leadsBody.innerHTML = filteredLeads.map(function(l) {
+          var name = l.name || 'عميل';
+          var phone = l.phone || '-';
+          var source = l.source || 'website';
+          var msg = l.message || '-';
+          var dateStr = l.created_at ? new Date(l.created_at).toLocaleDateString('ar-EG') : '-';
+          return '<tr>' +
+            '<td style="font-weight:700;color:#fff;">' + name + '</td>' +
+            '<td><a href="tel:' + phone + '" style="color:#A78BFA;text-decoration:none;">' + phone + '</a></td>' +
+            '<td><span class="badge badge-lead">' + source + '</span></td>' +
+            '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + msg + '</td>' +
+            '<td>' + dateStr + '</td>' +
+            '</tr>';
+        }).join('');
       }
 
       // 5. Recent Sessions Table
-      const filteredSessions = filterByDate(rawData.recent_sessions || [], 'first_seen', range);
-      const sessBody = document.getElementById('sessionsTableBody');
+      var filteredSessions = filterByDate(rawData.recent_sessions || [], 'first_seen', range);
+      var sessBody = document.getElementById('sessionsTableBody');
       if (!filteredSessions.length) {
         sessBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;">لا توجد جلسات مسجلة في هذه الفترة</td></tr>';
       } else {
-        sessBody.innerHTML = filteredSessions.map(s => `
-          <tr>
-            <td><code>${(s.visitor_id || s.id || '').slice(0, 10)}</code></td>
-            <td>${s.city ? s.city + '، ' : ''}${s.country || 'غير محدد'}</td>
-            <td>${s.entry_page || '/'}</td>
-            <td><span class="badge badge-session">${s.page_views || 1} صفحة</span></td>
-            <td>${s.first_seen ? new Date(s.first_seen).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-          </tr>
-        `).join('');
+        sessBody.innerHTML = filteredSessions.map(function(s) {
+          var idStr = (s.visitor_id || s.id || '').slice(0, 10);
+          var locStr = (s.city ? s.city + '، ' : '') + (s.country || 'غير محدد');
+          var page = s.entry_page || '/';
+          var views = (s.page_views || 1) + ' صفحة';
+          var timeStr = s.first_seen ? new Date(s.first_seen).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '-';
+          return '<tr>' +
+            '<td><code>' + idStr + '</code></td>' +
+            '<td>' + locStr + '</td>' +
+            '<td>' + page + '</td>' +
+            '<td><span class="badge badge-session">' + views + '</span></td>' +
+            '<td>' + timeStr + '</td>' +
+            '</tr>';
+        }).join('');
       }
     }
 
     // Filter Buttons Listener
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-bar .filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-bar .filter-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        renderAll(btn.dataset.range);
+        renderAll(btn.getAttribute('data-range'));
       });
     });
 
