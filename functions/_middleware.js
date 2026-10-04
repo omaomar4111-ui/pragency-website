@@ -181,6 +181,9 @@ export async function onRequest(context) {
 
   // 1. Skip backend endpoints, static assets, and admin
   if (
+    pathname === '/sw.js' ||
+    pathname === '/manifest.json' ||
+    pathname.startsWith('/icons/') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/locales/') ||
@@ -274,7 +277,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v77';
+  const VERSION = 'v78';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>غير متصل بالإنترنت — PR Agency</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#7c3aed"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0f0820;
+      --card: #180d33;
+      --purple: #7c3aed;
+      --purple-light: #a78bfa;
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .offline-card {
+      background: var(--card);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 24px;
+      padding: 48px 32px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .logo-img {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 24px;
+      border-radius: 16px;
+    }
+    .icon-wifi {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn-retry {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+    }
+    .btn-retry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px rgba(124, 58, 237, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <img src="/icons/icon-144.png" alt="PR Agency" class="logo-img" />
+    <span class="icon-wifi">📡</span>
+    <h1>أنت غير متصل بالإنترنت</h1>
+    <p>يبدو أن اتصال الإنترنت قد انقطع. يمكنك إعادة المحاولة بمجرد استعادة الاتصال للوصول إلى كافة الميزات.</p>
+    <button class="btn-retry" onclick="window.location.reload()">
+      <span>🔄 إعادة المحاولة</span>
+    </button>
+  </div>
+</body>
+</html>

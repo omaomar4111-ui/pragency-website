@@ -211,3 +211,43 @@ function initGSAP() {
     });
   });
 }
+
+/* ═══ PWA Service Worker & Install Prompt ═══ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      console.log('[PWA] ServiceWorker registered with scope:', reg.scope);
+    }).catch(function(err) {
+      console.warn('[PWA] ServiceWorker registration failed:', err);
+    });
+  });
+}
+
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  if (document.getElementById('pwa-install-btn')) return;
+  var btn = document.createElement('button');
+  btn.id = 'pwa-install-btn';
+  btn.className = 'pwa-install-btn';
+  btn.setAttribute('aria-label', 'تثبيت التطبيق');
+  var currentLang = (document.documentElement.lang || 'ar').toLowerCase();
+  var labelText = currentLang === 'en' ? 'Install App' : 'ثبت التطبيق';
+  btn.innerHTML = '📱 <span data-i18n="pwa.install">' + labelText + '</span>';
+  btn.onclick = async function() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    btn.remove();
+  };
+  document.body.appendChild(btn);
+  setTimeout(function() {
+    if (btn && btn.parentNode) btn.remove();
+  }, 30000);
+}

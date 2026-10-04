@@ -276,5 +276,6 @@
   "cro_form.budget_tier2": "10,000 - 30,000 جنيه",
   "cro_form.budget_tier3": "30,000 - 100,000 جنيه",
   "cro_form.budget_tier4": "أكثر من 100,000 جنيه",
-  "cro_form.budget_tier5": "مفتوح / حسب الاتفاق"
+  "cro_form.budget_tier5": "مفتوح / حسب الاتفاق",
+  "pwa.install": "ثبت التطبيق"
 }
