@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="case_studies.title">قصص نجاح عملائنا — PR Agency</title>
+  <meta name="description" content="اكتشف كيف ساعدنا كبرى الشركات والعيادات والمتاجر على مضاعفة مبيعاتهم وتحقيق نمو استثنائي."/>
+  
+  <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+  <link rel="stylesheet" href="/css/style.css?v=75"/>
+  <link rel="stylesheet" href="/css/pages.css?v=75"/>
+  <link rel="stylesheet" href="/css/chatbot.css?v=75"/>
+  
+  <style>
+    .case-studies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 32px;
+      margin: 40px auto 80px;
+      max-width: 1200px;
+      padding: 0 24px;
+    }
+    .cs-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .cs-card:hover {
+      transform: translateY(-6px);
+      border-color: #8B5CF6;
+      box-shadow: 0 16px 36px rgba(139, 92, 246, 0.2);
+    }
+    .cs-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .cs-logo {
+      height: 48px;
+      max-width: 130px;
+      object-fit: contain;
+      filter: brightness(1.2);
+    }
+    .cs-badge {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #C4B5FD;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+    .cs-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 10px;
+    }
+    .cs-result-highlight {
+      font-size: 0.95rem;
+      color: #94A3B8;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .cs-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .cs-metric-item {
+      text-align: center;
+    }
+    .cs-metric-val {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #10B981;
+      display: block;
+    }
+    .cs-metric-lbl {
+      font-size: 0.75rem;
+      color: #94A3B8;
+    }
+    .cs-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .cs-card:hover .cs-cta-btn {
+      opacity: 0.95;
+    }
+    .cs-skeleton {
+      min-height: 320px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 0.9; }
+      100% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="page-services">
+
+<nav id="hdr" role="navigation" aria-label="التنقل الرئيسي">
+  <a href="/" aria-label="PR Agency — الرئيسية" class="hdr-logo-link">
+    <img src="/assets/logos/pr-agency.webp" alt="PR Agency" class="hdr-logo" width="60" height="60"/>
+  </a>
+  <div class="hdr-nav">
+    <a href="/" data-i18n="nav.home">الرئيسية</a>
+    <a href="/about.html" data-i18n="nav.about">عن الوكالة</a>
+    <a href="/services.html" data-i18n="nav.services">الخدمات</a>
+    <a href="/case-studies" class="active" data-i18n="nav.case_studies">قصص النجاح</a>
+    <a href="/team" data-i18n="nav.team">الفريق</a>
+    <a href="/clients.html" data-i18n="nav.clients">العملاء</a>
+    <a href="/#register" data-i18n="nav.contact">تواصل</a>
+  </div>
+  <div class="hdr-actions">
+    <button class="hdr-burger" id="hdr-burger" aria-label="Menu">
+      <svg viewBox="0 0 448 512" width="20" height="20" fill="currentColor">
+        <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/>
+      </svg>
+    </button>
+    <button class="lang-switch" aria-label="Switch language">
+      <span class="lang-label">EN</span>
+    </button>
+    <a href="https://wa.me/201144826641" class="hdr-cta" target="_blank" rel="noopener">
+      كلمنا
+    </a>
+  </div>
+</nav>
+
+<main class="page-standalone">
+  <section class="page-hero">
+    <div class="page-hero-container">
+      <h1 class="page-hero-title" data-i18n="case_studies.title">قصص نجاح عملائنا</h1>
+      <p class="page-hero-subtitle" data-i18n="case_studies.subtitle">نتايج حقيقية بأرقام حقيقية</p>
+    </div>
+  </section>
+
+  <!-- Case Studies Grid -->
+  <div class="case-studies-grid" id="case-studies-grid">
+    <div class="cs-skeleton"></div>
+    <div class="cs-skeleton"></div>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer-container">
+    <div class="site-footer-grid">
+      <div class="site-footer-brand">
+        <img src="/assets/logos/pr-agency.webp" alt="PR Agency" class="site-footer-logo"/>
+        <p class="site-footer-tagline">شريكك في تحقيق النمو — بسرعة وذكاء استراتيجي.</p>
+      </div>
+      <div class="site-footer-col">
+        <h4 class="site-footer-heading" data-i18n="footer.quickLinks">روابط سريعة</h4>
+        <ul class="site-footer-links">
+          <li><a href="/" data-i18n="nav.home">الرئيسية</a></li>
+          <li><a href="/services.html" data-i18n="nav.services">الخدمات</a></li>
+          <li><a href="/case-studies" data-i18n="nav.case_studies">قصص النجاح</a></li>
+          <li><a href="/#register" data-i18n="nav.contact">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <p>© 2026 PR Agency. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/case-studies.js?v=75" defer></script>
+<script src="/js/chatbot.js?v=75" defer></script>
+
+</body>
+</html>

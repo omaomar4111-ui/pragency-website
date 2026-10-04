@@ -272,5 +272,16 @@
   "cro_form.budget_above_10k": "Above $10,000 (> 500,000 EGP)",
   "cro_form.email_label": "Email Address (Optional)",
   "cro_form.email_ph": "name@company.com",
-  "cro_form.submit_btn": "Submit & Confirm Request 🚀"
+  "cro_form.submit_btn": "Submit & Confirm Request 🚀",
+  "nav.case_studies": "Case Studies",
+  "case_studies.title": "Client Success Stories",
+  "case_studies.subtitle": "Real results with real numbers",
+  "case_studies.view": "Read Full Case Study",
+  "case_studies.empty": "No case studies published yet",
+  "case_study.challenge": "The Challenge",
+  "case_study.solution": "The Solution",
+  "case_study.results": "Results & Metrics",
+  "case_study.testimonial": "Client Feedback",
+  "case_study.cta": "Want similar results?",
+  "case_study.back": "← All Case Studies"
 }

@@ -1279,6 +1279,7 @@ export async function onRequestGet(context) {
   <nav class="cms-tabs-nav">
     <button class="cms-tab-btn active" onclick="switchTab('dashboard')">📊 لوحة المؤشرات</button>
     <button class="cms-tab-btn" onclick="switchTab('messages')">📨 الرسائل</button>
+    <a href="/admin/case-studies" class="cms-tab-btn" style="text-decoration:none;display:inline-flex;align-items:center;">💼 قصص النجاح</a>
     <button class="cms-tab-btn" onclick="switchTab('analytics')">📈 التحليلات</button>
     <button class="cms-tab-btn" onclick="switchTab('settings')">⚙️ الإعدادات</button>
     <button class="cms-tab-btn" onclick="switchTab('content')">📝 المحتوى</button>

@@ -272,5 +272,16 @@
   "cro_form.budget_above_10k": "أكثر من $10,000 (أكثر من 500,000 ج.م)",
   "cro_form.email_label": "البريد الإلكتروني (اختياري)",
   "cro_form.email_ph": "name@company.com",
-  "cro_form.submit_btn": "إرسال وتأكيد الطلب 🚀"
+  "cro_form.submit_btn": "إرسال وتأكيد الطلب 🚀",
+  "nav.case_studies": "قصص النجاح",
+  "case_studies.title": "قصص نجاح عملائنا",
+  "case_studies.subtitle": "نتايج حقيقية بأرقام حقيقية",
+  "case_studies.view": "اقرأ القصة كاملة",
+  "case_studies.empty": "لا توجد قصص نجاح منشورة حتى الآن",
+  "case_study.challenge": "التحدي",
+  "case_study.solution": "الحل",
+  "case_study.results": "النتايج والأرقام",
+  "case_study.testimonial": "رأي العميل",
+  "case_study.cta": "عايز نتايج زي دي؟",
+  "case_study.back": "← كل قصص النجاح"
 }
