@@ -160,11 +160,11 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://www.googletagmanager.com"/>
 <link rel="preconnect" href="https://www.google-analytics.com"/>
 <link rel="preconnect" href="https://connect.facebook.net"/>
-<link rel="preload" href="css/main.css?v=759" as="style"/>
+<link rel="preload" href="css/main.css?v=769" as="style"/>
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/main.css?v=759"/>
-<link rel="stylesheet" href="css/pages.css?v=75"/>
+<link rel="stylesheet" href="css/main.css?v=769"/>
+<link rel="stylesheet" href="css/pages.css?v=76"/>
 
 
 <!-- Favicons -->
@@ -210,8 +210,8 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "yjs9vg1xxe");
 </script>
-<link rel="stylesheet" href="css/multi-step-form.css?v=75"/>
-<link rel="stylesheet" href="/css/chatbot.css?v=75"/>
+<link rel="stylesheet" href="css/multi-step-form.css?v=76"/>
+<link rel="stylesheet" href="/css/chatbot.css?v=76"/>
 </head>
 
 <body>
@@ -350,25 +350,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
         </svg>
       </a>
 
-      <!-- Trust Badges (Task 1.3) -->
-      <div class="hero-trust-badges">
-        <div class="trust-badge-item">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          <span data-i18n="trust.badge1">ضمان الجودة</span>
-        </div>
-        <div class="trust-badge-item">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <span data-i18n="trust.badge2">تسليم في الوقت</span>
-        </div>
-        <div class="trust-badge-item">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-          <span data-i18n="trust.badge3">+5 سنوات خبرة</span>
-        </div>
-        <div class="trust-badge-item">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span data-i18n="trust.badge4">دعم 24/7</span>
-        </div>
-      </div>
+      
 
     </div>
     
@@ -854,20 +836,24 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
           <div class="form-step" data-step="2">
             <div class="cro-step-grid">
               <label class="cro-choice-card">
-                <input type="radio" name="budget_tier" value="< $1K" required />
-                <span data-i18n="cro_form.budget_under_1k">أقل من $1,000</span>
+                <input type="radio" name="budget_tier" value="< 10k" required />
+                <span data-i18n="cro_form.budget_tier1">أقل من 10,000 جنيه</span>
               </label>
               <label class="cro-choice-card">
-                <input type="radio" name="budget_tier" value="$1K - $3K" />
-                <span data-i18n="cro_form.budget_1k_3k">$1,000 - $3,000</span>
+                <input type="radio" name="budget_tier" value="10k - 30k" />
+                <span data-i18n="cro_form.budget_tier2">10,000 - 30,000 جنيه</span>
               </label>
               <label class="cro-choice-card">
-                <input type="radio" name="budget_tier" value="$3K - $10K" />
-                <span data-i18n="cro_form.budget_3k_10k">$3,000 - $10,000</span>
+                <input type="radio" name="budget_tier" value="30k - 100k" />
+                <span data-i18n="cro_form.budget_tier3">30,000 - 100,000 جنيه</span>
               </label>
               <label class="cro-choice-card">
-                <input type="radio" name="budget_tier" value="> $10K" />
-                <span data-i18n="cro_form.budget_above_10k">أكثر من $10,000</span>
+                <input type="radio" name="budget_tier" value="> 100k" />
+                <span data-i18n="cro_form.budget_tier4">أكثر من 100,000 جنيه</span>
+              </label>
+              <label class="cro-choice-card" style="grid-column: 1 / -1;">
+                <input type="radio" name="budget_tier" value="open" />
+                <span data-i18n="cro_form.budget_tier5">مفتوح / حسب الاتفاق</span>
               </label>
             </div>
             <div class="form-actions" style="display:flex;gap:12px;">
@@ -941,64 +927,35 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 
 
 <!-- ═══════════════════════════════════════════════════════
-     SOCIAL PROOF & TESTIMONIALS (Task 1.2)
+     TRUSTED BY CLIENTS MARQUEE (FIX 3 & FIX 4)
 ═══════════════════════════════════════════════════════ -->
-<section id="social-proof" class="section-social-proof">
+<section id="social-proof" class="section-social-proof" style="padding: 60px 0;">
   <div class="social-proof-container">
     
-    <div class="social-proof-header">
+    <div class="social-proof-header" style="margin-bottom: 24px;">
       <h2 class="social-proof-title" data-i18n="social_proof.title">أكثر من 19 علامة تجارية تثق فينا</h2>
-      <p class="social-proof-sub" data-i18n="social_proof.subtitle">نساعد شركاءنا على تحقيق نمو استثنائي ومضاعفة المبيعات بأعلى معايير الإبداع الرقمي</p>
+      <p class="social-proof-sub" data-i18n="social_proof.subtitle">شراكات نجاح حقيقية حققت نتائج استثنائية في مصر والخليج العربي</p>
     </div>
 
-    <!-- 8 Client Logos -->
-    <div class="social-proof-logos">
-      <img src="assets/logos/clients/client-05-nh-clinics.webp" alt="NH Clinics" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-07-mountain-view.webp" alt="Mountain View Partner" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-14-island-gym.webp" alt="Island Gym" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-02-home-ix.webp" alt="Home IX" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-04-dar.webp" alt="Dar Real Estate" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-15-iskin.webp" alt="ISkin Clinics" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-18-ovo.webp" alt="OVO Stores" class="social-proof-logo-item" loading="lazy" />
-      <img src="assets/logos/clients/client-09-memaar.webp" alt="Memaar Properties" class="social-proof-logo-item" loading="lazy" />
-    </div>
-
-    <!-- 3 Client Testimonials -->
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote" data-i18n="social_proof.t1_quote">"ضاعفنا عدد الحجوزات والمبيعات من خلال إعلاناتهم الاحترافية وحملات السوشيال ميديا."</p>
-        <div class="testimonial-author-wrap">
-          <div class="testimonial-avatar-placeholder">NH</div>
-          <div>
-            <div class="testimonial-author-name" data-i18n="social_proof.t1_author">د. أحمد منصور</div>
-            <div class="testimonial-author-role" data-i18n="social_proof.t1_role">مدير مراكز NH Clinics الطبية</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote" data-i18n="social_proof.t2_quote">"فريق تصوير وميديا باينج على أعلى مستوى من الإتقان والالتزام التام بالنتائج والمواعيد."</p>
-        <div class="testimonial-author-wrap">
-          <div class="testimonial-avatar-placeholder">MV</div>
-          <div>
-            <div class="testimonial-author-name" data-i18n="social_proof.t2_author">م. كريم الشريف</div>
-            <div class="testimonial-author-role" data-i18n="social_proof.t2_role">شريك مؤسس — قطاع التطوير العقاري</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote" data-i18n="social_proof.t3_quote">"من أفضل الوكالات التي تعاونا معها، استراتيجية المحتوى والريلز حققت تفاعلاً غير مسبوق."</p>
-        <div class="testimonial-author-wrap">
-          <div class="testimonial-avatar-placeholder">IG</div>
-          <div>
-            <div class="testimonial-author-name" data-i18n="social_proof.t3_author">كابتن عمر زكي</div>
-            <div class="testimonial-author-role" data-i18n="social_proof.t3_role">المدير التنفيذي — Island Gym</div>
-          </div>
-        </div>
+    <!-- Infinite Scrolling Logos Strip -->
+    <div class="clients-marquee-wrapper">
+      <div class="clients-marquee-track">
+    <img src="assets/logos/clients/client-05-nh-clinics.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-07-mountain-view.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-14-island-gym.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-02-home-ix.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-04-dar.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-15-iskin.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-18-ovo.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-09-memaar.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-05-nh-clinics.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-07-mountain-view.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-14-island-gym.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-02-home-ix.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-04-dar.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-15-iskin.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-18-ovo.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
+    <img src="assets/logos/clients/client-09-memaar.webp" alt="Client Logo" class="clients-marquee-logo" loading="lazy" />
       </div>
     </div>
 
@@ -1150,25 +1107,25 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <button id="back-to-top" aria-label="ارجع لأعلى"><svg class="svgi" style="font-size:18px;transform:rotate(90deg)"><use href="#fa-arrow-left"></use></svg></button>
 
 
-<script src="js/clients.js?v=752" defer></script>
+<script src="js/clients.js?v=762" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="js/team.js?v=75" defer></script>
-<script src="js/main.js?v=75" defer></script>
-<script src="js/faqs.js?v=75" defer></script>
-<script src="js/search.js?v=750" defer></script>
-<script src="js/ads.js?v=750" defer></script>
-<script src="js/reveal.js?v=75" defer></script>
-<script src="js/contact-form.js?v=75" defer></script>
+<script src="js/team.js?v=76" defer></script>
+<script src="js/main.js?v=76" defer></script>
+<script src="js/faqs.js?v=76" defer></script>
+<script src="js/search.js?v=760" defer></script>
+<script src="js/ads.js?v=760" defer></script>
+<script src="js/reveal.js?v=76" defer></script>
+<script src="js/contact-form.js?v=76" defer></script>
 
-  <script src="js/scroll-progress.js?v=75" defer></script>
-  <script src="js/cms-loader.js?v=75" defer></script>
-  <script src="js/multi-step.js?v=75" defer></script>
-  <script src="js/services-slider.js?v=75" defer></script>
-  <script src="js/i18n.js?v=75" defer></script>
+  <script src="js/scroll-progress.js?v=76" defer></script>
+  <script src="js/cms-loader.js?v=76" defer></script>
+  <script src="js/multi-step.js?v=76" defer></script>
+  <script src="js/services-slider.js?v=76" defer></script>
+  <script src="js/i18n.js?v=76" defer></script>
 
-<script src="/js/analytics.js?v=75" defer></script>
-<script src="/js/chatbot.js?v=75" defer></script>
+<script src="/js/analytics.js?v=76" defer></script>
+<script src="/js/chatbot.js?v=76" defer></script>
 
   <!-- Contact Hub Widget -->
   <div id="contact-hub">

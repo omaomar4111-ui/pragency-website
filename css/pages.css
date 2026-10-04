@@ -2674,3 +2674,63 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
     padding-left: 0 !important;
   }
 }
+
+
+/* ══════════════════════════════════════════════════════════════
+   INFINITE CLIENT LOGOS MARQUEE (FIX 4)
+══════════════════════════════════════════════════════════════ */
+.clients-marquee-wrapper {
+  overflow: hidden;
+  width: 100%;
+  padding: 30px 0;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.clients-marquee-track {
+  display: flex;
+  gap: 60px;
+  width: max-content;
+  animation: scroll-clients 35s linear infinite;
+  align-items: center;
+}
+.clients-marquee-track:hover {
+  animation-play-state: paused;
+}
+.clients-marquee-logo {
+  height: 48px;
+  max-width: 140px;
+  object-fit: contain;
+  filter: grayscale(100%) brightness(1.2);
+  opacity: 0.75;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+.clients-marquee-logo:hover {
+  filter: grayscale(0%) brightness(1);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@keyframes scroll-clients {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+[dir="rtl"] .clients-marquee-track {
+  animation: scroll-clients-rtl 35s linear infinite;
+}
+[dir="rtl"] .clients-marquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes scroll-clients-rtl {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}

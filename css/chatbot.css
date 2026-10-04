@@ -488,36 +488,7 @@
    PHASE 1: CRO (Conversion Rate Optimization) STYLES
 ══════════════════════════════════════════════════════════════ */
 
-/* Trust Badges in Hero */
-.hero-trust-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
-}
-.trust-badge-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #E2E8F0;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.trust-badge-item:hover {
-  border-color: #8B5CF6;
-  transform: translateY(-1px);
-}
-.trust-badge-item svg {
-  color: #10B981;
-  flex-shrink: 0;
-}
+
 
 /* Multi-Step 3-Step Styles */
 .cro-step-grid {
