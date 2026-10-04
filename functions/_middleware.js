@@ -37,14 +37,10 @@ async function sendTelegramAlert(env, data) {
   }
 
   // ── NOTIFY_ALL_VISITS logic ────────────────────────────────────────────────
-  // Default: only notify for NEW visitors (no pr_vid cookie previously seen).
-  // If env var NOTIFY_ALL_VISITS=true, notify for returning visitors too,
-  // but with a 5-minute per-visitor cooldown stored in Worker memory.
   const notifyAll = (env.NOTIFY_ALL_VISITS || '').toLowerCase() === 'true';
   const isNewVisitor = data.isNewVisitor === true;
 
   if (!isNewVisitor && !notifyAll) {
-    // Returning visitor and NOTIFY_ALL_VISITS is false → skip
     return;
   }
 
@@ -61,7 +57,7 @@ async function sendTelegramAlert(env, data) {
   }
 
   // ── Per-visitor cooldown (Worker memory, 5-min window) ────────────────────
-  const COOLDOWN_MS = notifyAll ? 5 * 60 * 1000 : 60 * 1000; // 5 min if notifyAll, else 1 min
+  const COOLDOWN_MS = notifyAll ? 5 * 60 * 1000 : 60 * 1000;
   const now = Date.now();
   const lastSent = notifyCooldown.get(data.visitorId) || 0;
   if (now - lastSent < COOLDOWN_MS) {
@@ -98,20 +94,17 @@ async function sendTelegramAlert(env, data) {
     });
 
     if (tgResponse.status === 429) {
-      const retryAfter = parseInt(tgResponse.headers.get('Retry-After') || '5', 10);
-      console.warn(`TELEGRAM_RATE_LIMITED: retry after ${retryAfter}s for visitor ${data.visitorId.slice(0,8)}`);
-      // Reset cooldown so next request can retry
-      notifyCooldown.delete(data.visitorId);
-      return;
-    }
-
-    const tgBody = await tgResponse.text();
-    console.log('TELEGRAM_RESPONSE_STATUS:', tgResponse.status);
-    if (tgResponse.status !== 200) {
-      console.warn('TELEGRAM_RESPONSE_BODY:', tgBody);
+      const retryAfter = parseInt(tgResponse.headers.get('Retry-After') || '3', 10);
+      console.warn(`[Analytics] Telegram 429 rate limited. Backing off ${retryAfter}s...`);
+      await new Promise(r => setTimeout(r, retryAfter * 1000));
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' })
+      });
     }
   } catch (err) {
-    console.error('TELEGRAM_FETCH_ERROR:', err.message);
+    console.error('[Analytics] Failed to send Telegram alert:', err);
   }
 }
 
@@ -119,29 +112,29 @@ async function logVisit(context, visitorData) {
   const { env } = context;
   const db = env.ANALYTICS_DB || env.DB;
   if (!db) {
-    console.error('[Analytics] Neither ANALYTICS_DB nor DB is available in env!');
+    console.warn('[Analytics] DB binding not found (checked ANALYTICS_DB, DB). Skipping D1 logging.');
     return;
   }
 
-  try {
-    const now = new Date().toISOString();
+  const now = new Date().toISOString();
 
-    const existing = await db.prepare('SELECT id, page_views FROM sessions WHERE id = ?').bind(visitorData.sessionId).first();
+  try {
+    const existing = await db.prepare(
+      'SELECT id, page_views FROM sessions WHERE id = ?'
+    ).bind(visitorData.sessionId).first();
 
     if (existing) {
       await db.prepare(`
-        UPDATE sessions SET
-          last_seen = ?,
-          exit_page = ?,
-          page_views = page_views + 1
+        UPDATE sessions
+        SET last_seen = ?, page_views = page_views + 1, exit_page = ?
         WHERE id = ?
       `).bind(now, visitorData.path, visitorData.sessionId).run();
     } else {
       await db.prepare(`
         INSERT INTO sessions (
-          id, visitor_id, first_seen, last_seen, country, city, ip,
-          user_agent, referrer, entry_page, exit_page, page_views, is_bot
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+          id, visitor_id, first_seen, last_seen, country, city,
+          ip, user_agent, referrer, entry_page, exit_page, is_bot
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).bind(
         visitorData.sessionId,
         visitorData.visitorId,
@@ -185,7 +178,6 @@ export async function onRequest(context) {
   const pathname = url.pathname;
 
   console.log('MIDDLEWARE_HIT:', pathname);
-  console.log('ENV_CHECK:', { hasDB: !!(env.ANALYTICS_DB || env.DB), hasToken: !!env.TELEGRAM_BOT_TOKEN, hasChatId: !!env.TELEGRAM_CHAT_ID, chatId: env.TELEGRAM_CHAT_ID });
 
   // 1. Skip backend endpoints, static assets, and admin
   if (
@@ -281,7 +273,35 @@ export async function onRequest(context) {
     }
   }
 
-  // 4. Resolve Underlying Asset
+  // 4. Cloudflare Cache API (Cache HTML responses per language and version)
+  const VERSION = 'v77';
+  const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
+  let cache = null;
+  try {
+    if (typeof caches !== 'undefined' && caches.default) {
+      cache = caches.default;
+    }
+  } catch (ce) {
+    console.warn('[Cache] caches.default error:', ce.message);
+  }
+
+  if (cache) {
+    try {
+      const cachedResponse = await cache.match(cacheKey);
+      if (cachedResponse) {
+        const h = new Headers(cachedResponse.headers);
+        h.set('X-Cache-Status', 'HIT');
+        if (newVidCookie) {
+          h.append('Set-Cookie', newVidCookie);
+        }
+        return new Response(cachedResponse.body, { status: cachedResponse.status, headers: h });
+      }
+    } catch (cmErr) {
+      console.warn('[Cache] cache.match error:', cmErr.message);
+    }
+  }
+
+  // 5. Resolve Underlying Asset
   let originPath = pathname;
   if (isEnRoute) {
     originPath = pathname.replace(/^\/en/, '') || '/';
@@ -306,7 +326,7 @@ export async function onRequest(context) {
     return response;
   }
 
-  // 5. Build HTMLRewriter (SSR i18n & hreflang tags)
+  // 6. Build HTMLRewriter (SSR i18n & hreflang tags)
   const cleanPath = originPath.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
   const normalizedPath = cleanPath === '/' ? '' : cleanPath;
   const baseUrl = 'https://pragency.pages.dev';
@@ -371,16 +391,37 @@ export async function onRequest(context) {
     });
 
   const modifiedResponse = rewriter.transform(response);
-  const headers = new Headers(modifiedResponse.headers);
-  headers.set('Content-Language', lang);
-  headers.set('Vary', 'Accept-Language, Cookie');
-  if (newVidCookie) {
-    headers.append('Set-Cookie', newVidCookie);
+  const responseBody = await modifiedResponse.text();
+
+  if (cache) {
+    try {
+      const ch = new Headers(modifiedResponse.headers);
+      ch.set('Content-Type', 'text/html; charset=utf-8');
+      ch.set('Cache-Control', 'public, max-age=300');
+      ch.set('Content-Language', lang);
+      ch.set('Vary', 'Accept-Language, Cookie');
+      const cacheResp = new Response(responseBody, {
+        status: modifiedResponse.status,
+        headers: ch
+      });
+      context.waitUntil(cache.put(cacheKey, cacheResp));
+    } catch (putErr) {
+      console.warn('[Cache] cache.put error:', putErr.message);
+    }
   }
 
-  return new Response(modifiedResponse.body, {
+  const fh = new Headers(modifiedResponse.headers);
+  fh.set('Content-Type', 'text/html; charset=utf-8');
+  fh.set('Content-Language', lang);
+  fh.set('Vary', 'Accept-Language, Cookie');
+  fh.set('X-Cache-Status', 'MISS');
+  if (newVidCookie) {
+    fh.append('Set-Cookie', newVidCookie);
+  }
+
+  return new Response(responseBody, {
     status: modifiedResponse.status,
     statusText: modifiedResponse.statusText,
-    headers
+    headers: fh
   });
 }
