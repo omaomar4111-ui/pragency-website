@@ -160,11 +160,11 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://www.googletagmanager.com"/>
 <link rel="preconnect" href="https://www.google-analytics.com"/>
 <link rel="preconnect" href="https://connect.facebook.net"/>
-<link rel="preload" href="css/main.css?v=739" as="style"/>
+<link rel="preload" href="css/main.css?v=749" as="style"/>
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/main.css?v=739"/>
-<link rel="stylesheet" href="css/pages.css?v=73"/>
+<link rel="stylesheet" href="css/main.css?v=749"/>
+<link rel="stylesheet" href="css/pages.css?v=74"/>
 
 
 <!-- Favicons -->
@@ -210,8 +210,8 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "yjs9vg1xxe");
 </script>
-<link rel="stylesheet" href="css/multi-step-form.css?v=73"/>
-<link rel="stylesheet" href="/css/chatbot.css?v=73"/>
+<link rel="stylesheet" href="css/multi-step-form.css?v=74"/>
+<link rel="stylesheet" href="/css/chatbot.css?v=74"/>
 </head>
 
 <body>
@@ -342,12 +342,34 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       
       <p class="hero-vr-sub" data-i18n="hero.sub2">استراتيجية واضحة + تنفيذ احترافي: إدارة السوشيال ميديا، الإعلانات المدفوعة، الهوية البصرية، إنتاج المحتوى، والاستراتيجية.</p>
       
-      <a href="#register" class="hero-vr-cta" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'}); return false;">
-        <span data-i18n="hero.cta">اطلب عرض سعر</span>
+      
+      <a href="#register" id="hero-cta-btn" class="hero-vr-cta" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'}); return false;">
+        <span class="cta-label" data-i18n="hero.cta">اطلب عرض سعر</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
           <path d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
       </a>
+
+      <!-- Trust Badges (Task 1.3) -->
+      <div class="hero-trust-badges">
+        <div class="trust-badge-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span data-i18n="trust.badge1">ضمان الجودة</span>
+        </div>
+        <div class="trust-badge-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span data-i18n="trust.badge2">تسليم في الوقت</span>
+        </div>
+        <div class="trust-badge-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          <span data-i18n="trust.badge3">+5 سنوات خبرة</span>
+        </div>
+        <div class="trust-badge-item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="trust.badge4">دعم 24/7</span>
+        </div>
+      </div>
+
     </div>
     
     <!-- عمود اللوجو + التمثال + Tagline -->
@@ -774,20 +796,93 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       <!-- العمود الشمال في العربي (الفورم) -->
       <div class="register-right">
         
+        
         <form id="registerForm" class="register-form multi-step-form" novalidate>
+          
+          <!-- Progress Bar (3 Steps) -->
           <div class="form-progress">
-            <div class="form-progress-bar" data-step="1"></div>
+            <div class="form-progress-bar" style="width: 0%;" data-step="1"></div>
             <div class="form-progress-step active" data-step="1">
               <span class="step-num">1</span>
-              <span class="step-label" data-i18n="contact.step1">معلوماتك</span>
+              <span class="step-label" data-i18n="cro_form.step1_title">الخدمة المطلوبة</span>
             </div>
             <div class="form-progress-step" data-step="2">
               <span class="step-num">2</span>
-              <span class="step-label" data-i18n="contact.step2">التفاصيل</span>
+              <span class="step-label" data-i18n="cro_form.step2_title">الميزانية المتوقعة</span>
+            </div>
+            <div class="form-progress-step" data-step="3">
+              <span class="step-num">3</span>
+              <span class="step-label" data-i18n="cro_form.step3_title">بيانات التواصل</span>
             </div>
           </div>
 
+          <!-- STEP 1: Service Type -->
           <div class="form-step active" data-step="1">
+            <div class="cro-step-grid">
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Social Media" required />
+                <span data-i18n="cro_form.service_social">إدارة السوشيال ميديا</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Media Buying" />
+                <span data-i18n="cro_form.service_ads">الإعلانات الممولة (Media Buying)</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Video Production" />
+                <span data-i18n="cro_form.service_video">الإنتاج المرئي والتصوير</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Branding" />
+                <span data-i18n="cro_form.service_branding">الهوية البصرية والبراندنج</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Strategy" />
+                <span data-i18n="cro_form.service_strategy">استراتيجية التسويق والنمو</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="service_type" value="Other" />
+                <span data-i18n="cro_form.service_other">خدمات أخرى / مخصصة</span>
+              </label>
+            </div>
+            <button type="button" class="register-submit form-next-btn" id="step1NextBtn">
+              <span data-i18n="contact.next">التالي</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+          </div>
+
+          <!-- STEP 2: Budget Range -->
+          <div class="form-step" data-step="2">
+            <div class="cro-step-grid">
+              <label class="cro-choice-card">
+                <input type="radio" name="budget_tier" value="< $1K" required />
+                <span data-i18n="cro_form.budget_under_1k">أقل من $1,000</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="budget_tier" value="$1K - $3K" />
+                <span data-i18n="cro_form.budget_1k_3k">$1,000 - $3,000</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="budget_tier" value="$3K - $10K" />
+                <span data-i18n="cro_form.budget_3k_10k">$3,000 - $10,000</span>
+              </label>
+              <label class="cro-choice-card">
+                <input type="radio" name="budget_tier" value="> $10K" />
+                <span data-i18n="cro_form.budget_above_10k">أكثر من $10,000</span>
+              </label>
+            </div>
+            <div class="form-actions" style="display:flex;gap:12px;">
+              <button type="button" class="register-submit form-prev-btn" id="step2PrevBtn" style="background:transparent;border:1px solid rgba(168,85,247,0.4);color:#A78BFA">
+                السابق
+              </button>
+              <button type="button" class="register-submit form-next-btn" id="step2NextBtn">
+                <span data-i18n="contact.next">التالي</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Contact Info & Submission -->
+          <div class="form-step" data-step="3">
             <div class="register-field">
               <label for="reg-name" data-i18n="form.name">الاسم *</label>
               <input type="text" id="reg-name" name="name" required data-i18n="form.name.ph" placeholder="اسمك الكامل" autocomplete="name"/>
@@ -795,6 +890,10 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
             <div class="register-field">
               <label for="reg-phone" data-i18n="form.phone">رقم الموبايل *</label>
               <input type="tel" id="reg-phone" name="phone" required data-i18n="form.phone.ph" placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel"/>
+            </div>
+            <div class="register-field">
+              <label for="reg-email" data-i18n="cro_form.email_label">البريد الإلكتروني (اختياري)</label>
+              <input type="email" id="reg-email" name="email" placeholder="name@company.com" dir="ltr" autocomplete="email"/>
             </div>
             <div class="register-field">
               <label for="reg-business" data-i18n="form.business">نوع النشاط *</label>
@@ -819,45 +918,19 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
                 maxlength="100"
               />
             </div>
-            <button type="button" class="register-submit form-next-btn" id="formNextBtn">
-              <span data-i18n="contact.next">التالي</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-            </button>
-          </div>
-
-          <div class="form-step" data-step="2">
-            <div class="register-field">
-              <label for="reg-budget" data-i18n="contact.budget.label">الميزانية الشهرية (اختياري)</label>
-              <select id="reg-budget" name="budget">
-                <option value="" data-i18n="contact.budget.ph">اختر الميزانية</option>
-                <option value="أقل من 10,000" data-i18n="contact.budget.tier1">أقل من 10,000 ج.م</option>
-                <option value="10,000 - 25,000" data-i18n="contact.budget.tier2">10,000 - 25,000 ج.م</option>
-                <option value="25,000 - 50,000" data-i18n="contact.budget.tier3">25,000 - 50,000 ج.م</option>
-                <option value="50,000 - 100,000" data-i18n="contact.budget.tier4">50,000 - 100,000 ج.م</option>
-                <option value="أكثر من 100,000" data-i18n="contact.budget.tier5">أكثر من 100,000 ج.م</option>
-              </select>
-            </div>
-            <div class="register-field">
-              <label for="reg-message" data-i18n="contact.message.label">رسالتك (اختياري)</label>
-              <textarea id="reg-message" name="message" rows="3" placeholder="عايز تقولنا إيه؟"></textarea>
-            </div>
-            <div class="form-actions">
-              <button type="button" class="register-submit form-prev-btn" id="formPrevBtn" style="background:transparent;border:1px solid rgba(168,85,247,0.4);color:#A78BFA">
+            <div class="form-actions" style="display:flex;gap:12px;">
+              <button type="button" class="register-submit form-prev-btn" id="step3PrevBtn" style="background:transparent;border:1px solid rgba(168,85,247,0.4);color:#A78BFA">
                 السابق
               </button>
               <button type="submit" class="register-submit" id="registerSubmit">
-                <span data-i18n="form.submit">احصل على استشارة مجانية</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+                <span data-i18n="cro_form.submit_btn">إرسال وتأكيد الطلب 🚀</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
               </button>
             </div>
           </div>
 
-          <div class="register-status" id="registerStatus" role="status" aria-live="polite"></div>
         </form>
+
         
       </div>
       
@@ -1011,25 +1084,25 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <button id="back-to-top" aria-label="ارجع لأعلى"><svg class="svgi" style="font-size:18px;transform:rotate(90deg)"><use href="#fa-arrow-left"></use></svg></button>
 
 
-<script src="js/clients.js?v=732" defer></script>
+<script src="js/clients.js?v=742" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="js/team.js?v=73" defer></script>
-<script src="js/main.js?v=73" defer></script>
-<script src="js/faqs.js?v=73" defer></script>
-<script src="js/search.js?v=730" defer></script>
-<script src="js/ads.js?v=730" defer></script>
-<script src="js/reveal.js?v=73" defer></script>
-<script src="js/contact-form.js?v=73" defer></script>
+<script src="js/team.js?v=74" defer></script>
+<script src="js/main.js?v=74" defer></script>
+<script src="js/faqs.js?v=74" defer></script>
+<script src="js/search.js?v=740" defer></script>
+<script src="js/ads.js?v=740" defer></script>
+<script src="js/reveal.js?v=74" defer></script>
+<script src="js/contact-form.js?v=74" defer></script>
 
-  <script src="js/scroll-progress.js?v=73" defer></script>
-  <script src="js/cms-loader.js?v=73" defer></script>
-  <script src="js/multi-step.js?v=73" defer></script>
-  <script src="js/services-slider.js?v=73" defer></script>
-  <script src="js/i18n.js?v=73" defer></script>
+  <script src="js/scroll-progress.js?v=74" defer></script>
+  <script src="js/cms-loader.js?v=74" defer></script>
+  <script src="js/multi-step.js?v=74" defer></script>
+  <script src="js/services-slider.js?v=74" defer></script>
+  <script src="js/i18n.js?v=74" defer></script>
 
-<script src="/js/analytics.js?v=73" defer></script>
-<script src="/js/chatbot.js?v=73" defer></script>
+<script src="/js/analytics.js?v=74" defer></script>
+<script src="/js/chatbot.js?v=74" defer></script>
 
   <!-- Contact Hub Widget -->
   <div id="contact-hub">

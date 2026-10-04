@@ -67,11 +67,17 @@
       var isOther = rawBusiness.includes('other') || rawBusiness.includes('أخرى') || rawBusiness.includes('اخرى') || rawBusiness.includes('خدمات');
       var finalBusiness = (isOther && customIndustry) ? customIndustry : rawBusiness;
 
+      var serviceType = (formData.get('service_type') || '').toString().trim();
+      var budgetTier = (formData.get('budget_tier') || formData.get('budget') || '').toString().trim();
+      var emailVal = (formData.get('email') || '').toString().trim();
+
       var payload = {
         name:         (formData.get('name')     || '').toString().trim(),
         phone:        (formData.get('phone')    || '').toString().trim(),
-        business:     finalBusiness,
-        budget:       (formData.get('budget')   || '').toString().trim(),
+        email:        emailVal,
+        service:      serviceType,
+        business:     finalBusiness + (serviceType ? ' (' + serviceType + ')' : ''),
+        budget:       budgetTier,
         message:      (formData.get('message')  || '').toString().trim(),
         utm_source:   utms.utm_source   || '',
         utm_medium:   utms.utm_medium   || '',
