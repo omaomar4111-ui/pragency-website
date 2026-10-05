@@ -131,7 +131,13 @@
   direction: ltr;
 }
 
-/* ═══ التمثال ═══ */
+/* ═══ التمثال — Bulletproof Blend with Purple Hero ═══ */
+.hero-statue-layer,
+.hero-statue-layer img,
+.hero-statue-layer picture {
+  background: transparent !important;
+}
+
 .hero-statue-layer {
   position: absolute;
   top: 70%;
@@ -144,11 +150,11 @@
 }
 
 .hero-statue-layer img {
-  background: transparent;
   width: 100%;
   height: auto;
   display: block;
-  mix-blend-mode: screen;
+  mix-blend-mode: screen !important;
+  filter: brightness(1.05) contrast(1.05) drop-shadow(0 0 40px rgba(124, 58, 237, 0.3));
 }
 
 /* PR Logo على الصدر */
