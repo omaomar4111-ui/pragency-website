@@ -3,7 +3,7 @@
   "lang.name": "English",
   "lang.switch": "العربية",
   "nav.home": "Home",
-  "nav.about": "About Us",
+  "nav.about": "Who We Are",
   "nav.services": "Services",
   "nav.team": "Team",
   "nav.clients": "Clients",
@@ -236,7 +236,7 @@
   "chat.lead_submit": "Confirm & Connect",
   "chat.lead_thanks": "✅ Thank you! Your details have been received and a senior strategist will reach out shortly.",
   "contact_hub": {
-    "ai": "Chat with AI Assistant",
+    "ai": "Talk to Us",
     "whatsapp": "WhatsApp",
     "call": "Call Us"
   },
@@ -280,5 +280,6 @@
   "pwa.install": "Install App",
   "instagram.title": "Follow Us on Instagram",
   "instagram.subtitle": "Latest works and behind the scenes",
-  "instagram.follow": "Follow us @pragency_1"
+  "instagram.follow": "Follow us @pragency_1",
+  "contact_hub.ai": "Talk to Us"
 }

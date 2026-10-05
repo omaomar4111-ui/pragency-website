@@ -474,6 +474,40 @@ function pickFallback(lang, lastAssistantMsg) {
 }
 
 // ── 5. Main Request Handler ──────────────────────────────────────────────────
+
+// ── Service Links Extension for Responses ───────────────────────────────────
+const serviceLinks = {
+  pricing: {
+    ar: 'خدماتنا اللي بتغطي الميزانيات المختلفة: إدارة السوشيال ميديا، الإعلانات الممولة، الإنتاج المرئي، الهوية البصرية، والاستراتيجيات التسويقية. تحب نبدأ بأي واحدة؟',
+    en: 'Our services that fit different budgets: Social Media Management, Paid Ads, Video Production, Branding, and Marketing Strategy. Which one would you like to start with?'
+  },
+  portfolio: {
+    ar: 'تقدر تشوف نماذج من شغلنا في: إدارة السوشيال ميديا، الميديا باينج، إنتاج الفيديوهات، والبراندنج. أي خدمة تحب تشوف أعمالها؟',
+    en: 'You can see samples of our work in: Social Media, Media Buying, Video Production, and Branding. Which service would you like to explore?'
+  },
+  process: {
+    ar: 'خطواتنا بتنقسم على حسب الخدمة: لو سوشيال ميديا، بنبدأ بالاستراتيجية والمحتوى. لو إعلانات، بنبدأ بتحليل الجمهور والميزانية. لو إنتاج، بنبدأ بالسيناريو والتصوير. أي خدمة مهتم بيها؟',
+    en: 'Our process depends on the service: Social Media starts with strategy and content. Ads start with audience and budget analysis. Production starts with scripting and filming. Which service interests you?'
+  },
+  team: {
+    ar: 'فريقنا متخصص في: إدارة الحسابات، الميديا باينج، إنتاج المحتوى، التصميم، والتصوير. كل خدمة ليها فريق متخصص. تحب تعرف تفاصيل أي خدمة؟',
+    en: 'Our team specializes in: Account Management, Media Buying, Content Creation, Design, and Photography. Each service has its own dedicated team. Want details on any service?'
+  },
+  comparison: {
+    ar: 'اللي بيميزنا في كل خدمة:\n• سوشيال ميديا: محتوى إبداعي + تحليل أداء\n• ميديا باينج: نتايج بالأرقام وROAS واضح\n• إنتاج: جودة سينمائية\n• براندنج: هوية بتعيش\nأي خدمة تحب نتكلم عنها؟',
+    en: 'What sets us apart per service:\n• Social Media: Creative content + performance analysis\n• Media Buying: Clear ROAS and numbers\n• Production: Cinematic quality\n• Branding: A lasting identity\nWhich service would you like to discuss?'
+  },
+  about: {
+    ar: 'إحنا وكالة تسويق متكاملة بنقدم 5 خدمات أساسية: السوشيال ميديا، الإعلانات الممولة، الإنتاج المرئي، الهوية البصرية، والاستراتيجية. بنشتغل مع عملاء في مصر والخليج. أي خدمة تحب نعرفك عليها؟',
+    en: 'We are a full-service marketing agency offering 5 core services: Social Media, Paid Ads, Video Production, Branding, and Strategy. We work with clients across Egypt and the Gulf. Which service would you like to know more about?'
+  }
+};
+
+const generalFallback = {
+  ar: 'أهلاً! إحنا PR Agency، وكالة تسويق متكاملة بنقدم:\n• إدارة السوشيال ميديا\n• الإعلانات الممولة\n• الإنتاج المرئي\n• الهوية البصرية\n• الاستراتيجيات التسويقية\n\nإيه الخدمة اللي تحب تعرف عنها أكتر؟',
+  en: 'Hi! We are PR Agency, a full-service marketing agency offering:\n• Social Media Management\n• Paid Ads\n• Video Production\n• Branding\n• Marketing Strategy\n\nWhich service would you like to know more about?'
+};
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
@@ -582,10 +616,14 @@ export async function onRequestPost(context) {
 
       if (topic) {
         aiResponse = pickResponse(topic, lang, lastAssistantMsg);
+        if (serviceLinks[topic] && !aiResponse.includes('خدماتنا') && !aiResponse.includes('services')) {
+          const serviceLink = serviceLinks[topic][lang] || serviceLinks[topic].ar;
+          aiResponse = aiResponse + '\n\n' + serviceLink;
+        }
       }
 
       if (!aiResponse) {
-        aiResponse = pickFallback(lang, lastAssistantMsg);
+        aiResponse = generalFallback[lang] || generalFallback.ar;
       }
     }
 

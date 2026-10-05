@@ -1,3 +1,4 @@
+// Contact Hub Option: <span class="contact-hub-label" data-i18n="contact_hub.ai">تحدث معنا</span>
 (function() {
   'use strict';
 

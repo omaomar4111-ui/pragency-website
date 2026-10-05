@@ -3,7 +3,7 @@
   "lang.name": "العربية",
   "lang.switch": "English",
   "nav.home": "الرئيسية",
-  "nav.about": "عن الوكالة",
+  "nav.about": "من نحن",
   "nav.services": "الخدمات",
   "nav.team": "الفريق",
   "nav.clients": "العملاء",
@@ -236,7 +236,7 @@
   "chat.lead_submit": "تأكيد وحجز تواصل",
   "chat.lead_thanks": "✅ شكراً لك! تم استلام بياناتك وسيتواصل معك خبير استراتيجي خلال وقت قصير.",
   "contact_hub": {
-    "ai": "تحدث مع المساعد الذكي",
+    "ai": "تحدث معنا",
     "whatsapp": "واتساب",
     "call": "اتصل بنا"
   },
@@ -280,5 +280,6 @@
   "pwa.install": "ثبت التطبيق",
   "instagram.title": "تابعنا على Instagram",
   "instagram.subtitle": "أحدث الأعمال وكواليس الإنتاج اليومية",
-  "instagram.follow": "تابعنا @pragency_1"
+  "instagram.follow": "تابعنا @pragency_1",
+  "contact_hub.ai": "تحدث معنا"
 }
