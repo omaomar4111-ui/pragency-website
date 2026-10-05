@@ -1,3 +1,4 @@
+import { addLeadScore } from './lib/lead_scoring.js';
 import { ar, en } from './locales_data.js';
 
 // Cooldown map in Worker memory for Telegram notifications (per visitor)
@@ -167,6 +168,17 @@ async function logVisit(context, visitorData) {
     ).run();
 
     console.log('[Analytics] Successfully recorded visit in D1 for session:', visitorData.sessionId);
+
+    // Add page view & return visitor score
+    const eventType = visitorData.isNewVisitor ? 'page_view' : 'return_visit';
+    await addLeadScore(env, {
+      sessionId: visitorData.sessionId,
+      visitorId: visitorData.visitorId,
+      eventType: eventType,
+      pageUrl: visitorData.path,
+      locationInfo: { city: visitorData.city, country: visitorData.country }
+    });
+
   } catch (err) {
     console.error('[Analytics] Visitor logging DB error:', err);
   }
@@ -277,7 +289,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v78';
+  const VERSION = 'v79';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {

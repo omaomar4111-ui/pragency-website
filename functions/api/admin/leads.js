@@ -38,13 +38,21 @@ export async function onRequestGet(context) {
   try {
     const leads = await db.prepare('SELECT * FROM leads ORDER BY created_at DESC LIMIT 100').all();
     const totalLeads = await db.prepare('SELECT COUNT(*) as count FROM leads').first();
-    const recentSessions = await db.prepare('SELECT * FROM chat_sessions ORDER BY last_message_at DESC LIMIT 50').all();
+    // Fetch sessions including lead_score
+    let recentSessionsList = [];
+    try {
+      const sessRes = await db.prepare('SELECT id, visitor_id, first_seen, last_seen, country, city, entry_page, exit_page, page_views, COALESCE(lead_score, 0) as lead_score FROM sessions ORDER BY first_seen DESC LIMIT 50').all();
+      recentSessionsList = sessRes.results || [];
+    } catch (se) {
+      const fallbackSess = await db.prepare('SELECT * FROM chat_sessions ORDER BY last_message_at DESC LIMIT 50').all();
+      recentSessionsList = fallbackSess.results || [];
+    }
 
     return new Response(JSON.stringify({
       success: true,
       totalLeads: totalLeads?.count || 0,
       leads: leads.results || [],
-      recentSessions: recentSessions.results || []
+      recentSessions: recentSessionsList
     }, null, 2), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

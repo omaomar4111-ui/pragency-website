@@ -1,3 +1,5 @@
+import { addLeadScore } from '../lib/lead_scoring.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
@@ -28,6 +30,17 @@ export async function onRequestPost(context) {
       ).bind(now, page_url || null, session_id);
 
       await db.batch([insertEvent, updateSession]);
+
+      // 3. Update Lead Scoring dynamically
+      const cf = request.cf || {};
+      await addLeadScore(env, {
+        sessionId: session_id,
+        visitorId: visitor_id,
+        eventType: event_type,
+        pageUrl: page_url,
+        eventData: event_data,
+        locationInfo: { city: cf.city, country: cf.country }
+      });
     }
 
     return new Response(JSON.stringify({ success: true }), {

@@ -277,5 +277,8 @@
   "cro_form.budget_tier3": "30,000 - 100,000 EGP",
   "cro_form.budget_tier4": "Over 100,000 EGP",
   "cro_form.budget_tier5": "Open / Flexible",
-  "pwa.install": "Install App"
+  "pwa.install": "Install App",
+  "instagram.title": "Follow Us on Instagram",
+  "instagram.subtitle": "Latest works and behind the scenes",
+  "instagram.follow": "Follow @2d_marketing_1"
 }

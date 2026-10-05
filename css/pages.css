@@ -2734,3 +2734,99 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
     transform: translateX(50%);
   }
 }
+
+/* ============================================================
+   Instagram Feed Section (Phase 5)
+   ============================================================ */
+.section-instagram {
+  padding: 80px 0;
+  background: var(--bg-surface, #0d0e12);
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.insta-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.insta-item {
+  display: block;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: #14161f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.insta-item:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(225, 48, 108, 0.5);
+  box-shadow: 0 12px 30px rgba(225, 48, 108, 0.2);
+}
+
+.insta-thumb {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.insta-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.insta-item:hover .insta-thumb img {
+  transform: scale(1.08);
+}
+
+.insta-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.6) 0%, rgba(131, 58, 180, 0.6) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.insta-item:hover .insta-overlay {
+  opacity: 1;
+}
+
+.insta-icon {
+  font-size: 1.8rem;
+  transform: scale(0.7);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.insta-item:hover .insta-icon {
+  transform: scale(1);
+}
+
+@media (max-width: 1024px) {
+  .insta-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-instagram {
+    padding: 50px 0;
+  }
+  .insta-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
