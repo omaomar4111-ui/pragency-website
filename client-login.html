@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل دخول بوابة العملاء | PR Agency Client Portal</title>
+  <meta name="description" content="بوابة عملاء PR Agency - متابعة واعتماد الروزنامة الشهرية، فيديوهات الريلز، والتصاميم."/>
+  <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/main.css?v=84"/>
+  <link rel="stylesheet" href="css/pages.css?v=84"/>
+  <style>
+    .portal-login-body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.18) 0%, #07050d 80%);
+      padding: 24px;
+      font-family: 'Cairo', sans-serif;
+    }
+    .portal-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(18, 14, 28, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(124, 58, 237, 0.15);
+      backdrop-filter: blur(16px);
+      text-align: center;
+      position: relative;
+    }
+    .portal-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      display: block;
+      filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.5));
+    }
+    .portal-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .portal-sub {
+      font-size: 14px;
+      color: #a1a1aa;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .portal-form-group {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .portal-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #e4e4e7;
+      margin-bottom: 8px;
+    }
+    .portal-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.25s ease;
+      direction: ltr;
+      text-align: right;
+    }
+    .portal-input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.08);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+    .portal-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .portal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.6);
+    }
+    .portal-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .portal-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .portal-demo-box {
+      margin-top: 24px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px dashed rgba(139, 92, 246, 0.3);
+      font-size: 12px;
+      color: #c4b5fd;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .portal-back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: #a1a1aa;
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .portal-back-link:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="portal-login-body">
+
+  <div class="portal-card">
+    <a href="/">
+      <img src="/assets/logos/pr-agency.png" alt="PR Agency" class="portal-logo"/>
+    </a>
+    
+    <h1 class="portal-title">بوابة العملاء</h1>
+    <p class="portal-sub">سجّل دخولك لمتابعة واعتماد جدول المحتوى والتصاميم والفيديوهات الخاصة بعلامتك التجارية.</p>
+
+    <div id="login-error" class="portal-error"></div>
+
+    <form id="portal-login-form">
+      <div class="portal-form-group">
+        <label class="portal-label" for="login-email">البريد الإلكتروني للشركة</label>
+        <input type="email" id="login-email" class="portal-input" placeholder="client@company.com" required autocomplete="email"/>
+      </div>
+
+      <div class="portal-form-group">
+        <label class="portal-label" for="login-pass">كلمة المرور</label>
+        <input type="password" id="login-pass" class="portal-input" placeholder="••••••••" required autocomplete="current-password"/>
+      </div>
+
+      <button type="submit" id="login-submit-btn" class="portal-btn">
+        <span>تسجيل الدخول</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <div class="portal-demo-box">
+      <strong>حساب تجريبي للاختبار السريع:</strong><br/>
+      البريد: <code style="color:#fff;">client@demo.com</code> | كلمة المرور: <code style="color:#fff;">demo123</code>
+    </div>
+
+    <div>
+      <a href="/" class="portal-back-link">← العودة للموقع الرئيسي</a>
+    </div>
+  </div>
+
+  <script>
+    // If already logged in, redirect immediately
+    fetch('/api/portal/auth')
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.authenticated) {
+          window.location.href = '/client-portal.html';
+        }
+      }).catch(() => {});
+
+    const form = document.getElementById('portal-login-form');
+    const submitBtn = document.getElementById('login-submit-btn');
+    const errorBox = document.getElementById('login-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.querySelector('span').textContent = 'جاري التحقق...';
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-pass').value;
+
+      try {
+        const res = await fetch('/api/portal/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          sessionStorage.setItem('pr_client', JSON.stringify(data.client));
+          window.location.href = '/client-portal.html';
+        } else {
+          errorBox.textContent = data.error || 'فشل تسجيل الدخول';
+          errorBox.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'تسجيل الدخول';
+        }
+      } catch (err) {
+        errorBox.textContent = 'حدث خطأ في الاتصال بالخادم، يرجى المحاولة لاحقاً';
+        errorBox.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.querySelector('span').textContent = 'تسجيل الدخول';
+      }
+    });
+  </script>
+</body>
+</html>
