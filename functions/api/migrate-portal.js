@@ -66,17 +66,19 @@ export async function onRequestPost(context) {
     // Seed Demo Client if none exists
     const existing = await db.prepare('SELECT id FROM portal_clients WHERE email = ?').bind('client@demo.com').first();
     let seeded = false;
-    if (!existing) {
       const clientId = 'c_demo_2026';
-      // Default demo password is: demo123 (we use SHA-256 hex)
-      // SHA-256 of "demo123": 2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5c3da9c8ec4acd
-      const passHash = '2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5c3da9c8ec4acd';
+      // Correct SHA-256 of "demo123": d3ad9315b7be5dd53b31a273b3b3aba5defe700808305aa16a3062b76658a791
+      const passHash = 'd3ad9315b7be5dd53b31a273b3b3aba5defe700808305aa16a3062b76658a791';
       const now = new Date().toISOString();
 
-      await db.prepare(`
-        INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
-      `).bind(clientId, 'Island Gym & Spa', 'كابتن أحمد سامي', 'client@demo.com', passHash, '/assets/logos/clients/client-14-island-gym.png', '#10b981', now).run();
+      if (!existing) {
+        await db.prepare(`
+          INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
+        `).bind(clientId, 'Island Gym & Spa', 'كابتن أحمد سامي', 'client@demo.com', passHash, '/assets/logos/clients/client-14-island-gym.png', '#10b981', now).run();
+      } else {
+        await db.prepare('UPDATE portal_clients SET password_hash = ? WHERE email = ?').bind(passHash, 'client@demo.com').run();
+      }
 
       // Seed sample calendar items for current month
       const today = new Date();
