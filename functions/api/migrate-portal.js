@@ -136,7 +136,6 @@ export async function onRequestPost(context) {
       }
 
       seeded = true;
-    }
 
     const tables = await db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
 
