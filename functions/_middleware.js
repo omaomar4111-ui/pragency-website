@@ -191,6 +191,22 @@ export async function onRequest(context) {
 
   console.log('MIDDLEWARE_HIT:', pathname);
 
+  // 0. Block deprecated public client portal URLs
+  if (
+    pathname === '/client-login' ||
+    pathname === '/client-login.html' ||
+    pathname === '/client-portal' ||
+    pathname === '/client-portal.html'
+  ) {
+    return new Response('Not Found', {
+      status: 404,
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow',
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      }
+    });
+  }
+
   // 1. Skip backend endpoints, static assets, and admin
   if (
     pathname === '/sw.js' ||
@@ -290,7 +306,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v88';
+  const VERSION = 'v89';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {
