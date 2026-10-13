@@ -207,7 +207,52 @@ export async function onRequest(context) {
     });
   }
 
-  // 1. Skip backend endpoints, static assets, and admin
+  // 1. Subdomain Isolation & Dedicated Portal Routing (e.g. portal.pragency.ag)
+  const hostname = url.hostname.toLowerCase();
+  const isPortalSubdomain = hostname.startsWith('portal.') || hostname.startsWith('clients.');
+
+  if (isPortalSubdomain) {
+    // A. Root or /login on subdomain -> Serve portal login directly
+    if (pathname === '/' || pathname === '/login') {
+      const accessUrl = new URL(request.url);
+      accessUrl.pathname = '/portal-access-2026.html';
+      const resp = await env.ASSETS.fetch(new Request(accessUrl.toString(), request));
+      const h = new Headers(resp.headers);
+      h.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+      h.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return new Response(resp.body, { status: 200, headers: h });
+    }
+
+    // B. /dashboard or /portal-dashboard-2026 -> Serve portal dashboard
+    if (pathname === '/dashboard' || pathname === '/portal-dashboard-2026' || pathname === '/portal-dashboard-2026.html') {
+      const dashUrl = new URL(request.url);
+      dashUrl.pathname = '/portal-dashboard-2026.html';
+      const resp = await env.ASSETS.fetch(new Request(dashUrl.toString(), request));
+      const h = new Headers(resp.headers);
+      h.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+      h.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return new Response(resp.body, { status: 200, headers: h });
+    }
+
+    // C. Pass through backend API calls and static assets on subdomain
+    if (
+      pathname.startsWith('/api/portal/') ||
+      pathname.startsWith('/css/') ||
+      pathname.startsWith('/js/') ||
+      pathname.startsWith('/assets/') ||
+      pathname === '/favicon.ico'
+    ) {
+      return next();
+    }
+
+    // D. Block access to any public marketing pages from the portal subdomain
+    return new Response('Not Found', {
+      status: 404,
+      headers: { 'X-Robots-Tag': 'noindex, nofollow' }
+    });
+  }
+
+  // 2. Skip backend endpoints, static assets, and admin
   if (
     pathname === '/sw.js' ||
     pathname === '/manifest.json' ||
@@ -306,7 +351,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v89';
+  const VERSION = 'v90';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {

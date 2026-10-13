@@ -265,6 +265,8 @@ export async function onRequestPost(context) {
         'X-Robots-Tag': 'noindex, nofollow',
         'Cache-Control': 'no-store, no-cache, must-revalidate',
         'X-Frame-Options': 'DENY',
+        'Access-Control-Allow-Origin': request.headers.get('Origin') || '*',
+        'Access-Control-Allow-Credentials': 'true',
         'Set-Cookie': `pr_portal_token=${token}; Path=/; Max-Age=2592000; SameSite=Lax`
       }
     });
@@ -327,7 +329,24 @@ export async function onRequestGet(context) {
       'Content-Type': 'application/json',
       'X-Robots-Tag': 'noindex, nofollow',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
-      'X-Frame-Options': 'DENY'
+      'X-Frame-Options': 'DENY',
+      'Access-Control-Allow-Origin': request.headers.get('Origin') || '*',
+      'Access-Control-Allow-Credentials': 'true'
+    }
+  });
+}
+
+// ── 3. OPTIONS /api/portal/auth (CORS Preflight) ──────────────────────────────
+export async function onRequestOptions(context) {
+  const origin = context.request.headers.get('Origin') || '*';
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400'
     }
   });
 }
