@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/>
+  <meta name="googlebot" content="noindex, nofollow"/>
   <title>بوابة العميل — جدول واعتماد المحتوى | PR Agency Portal</title>
   <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -545,7 +547,7 @@
         const res = await fetch('/api/portal/auth');
         const data = await res.json();
         if (!data.authenticated) {
-          window.location.href = '/client-login.html';
+          window.location.href = '/portal-access-2026';
           return;
         }
         currentClient = data.client;
@@ -556,7 +558,7 @@
 
         await loadCalendar();
       } catch (e) {
-        window.location.href = '/client-login.html';
+        window.location.href = '/portal-access-2026';
       }
     }
 
@@ -732,7 +734,7 @@
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await fetch('/api/portal/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'logout' }) });
       sessionStorage.removeItem('pr_client');
-      window.location.href = '/client-login.html';
+      window.location.href = '/portal-access-2026';
     });
 
     init();

@@ -262,6 +262,9 @@ export async function onRequestPost(context) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
+        'X-Robots-Tag': 'noindex, nofollow',
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'X-Frame-Options': 'DENY',
         'Set-Cookie': `pr_portal_token=${token}; Path=/; Max-Age=2592000; SameSite=Lax`
       }
     });
@@ -320,6 +323,11 @@ export async function onRequestGet(context) {
     }
   }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'X-Frame-Options': 'DENY'
+    }
   });
 }

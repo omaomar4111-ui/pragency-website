@@ -195,6 +195,7 @@ export async function onRequest(context) {
   if (
     pathname === '/sw.js' ||
     pathname === '/manifest.json' ||
+    pathname.startsWith('/portal-') ||
     pathname.startsWith('/icons/') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/admin') ||
@@ -289,7 +290,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v87';
+  const VERSION = 'v88';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {

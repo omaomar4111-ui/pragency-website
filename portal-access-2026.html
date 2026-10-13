@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تسجيل دخول بوابة العملاء | PR Agency Client Portal</title>
+  <title>بوابة العملاء الخاصة | PR Agency Client Portal</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/>
+  <meta name="googlebot" content="noindex, nofollow"/>
   <meta name="description" content="بوابة عملاء PR Agency - متابعة واعتماد الروزنامة الشهرية، فيديوهات الريلز، والتصاميم."/>
   <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/main.css?v=84"/>
-  <link rel="stylesheet" href="css/pages.css?v=84"/>
+  <link rel="stylesheet" href="css/main.css?v=87"/>
+  <link rel="stylesheet" href="css/pages.css?v=87"/>
   <style>
     .portal-login-body {
       min-height: 100vh;
@@ -49,8 +51,19 @@
     .portal-sub {
       font-size: 14px;
       color: #a1a1aa;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
       line-height: 1.5;
+    }
+    .portal-private-notice {
+      text-align: center;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 12px;
+      line-height: 1.6;
     }
     .portal-form-group {
       text-align: right;
@@ -154,6 +167,13 @@
     <h1 class="portal-title">بوابة العملاء</h1>
     <p class="portal-sub">سجّل دخولك لمتابعة واعتماد جدول المحتوى والتصاميم والفيديوهات الخاصة بعلامتك التجارية.</p>
 
+    <!-- Private Notice -->
+    <div class="portal-private-notice">
+      🔒 <strong>هذه البوابة مخصصة لعملاء PR Agency فقط</strong>
+      <br>
+      <small style="color: #94a3b8;">This portal is for PR Agency clients only</small>
+    </div>
+
     <div id="login-error" class="portal-error"></div>
 
     <form id="portal-login-form">
@@ -174,7 +194,7 @@
     </form>
 
     <div class="portal-demo-box">
-      <strong>حساب تجريبي للاختبار السريع:</strong><br/>
+      <strong>بيانات الدخول التجريبي:</strong><br/>
       البريد: <code style="color:#fff;">client@demo.com</code> | كلمة المرور: <code style="color:#fff;">demo123</code>
     </div>
 
@@ -189,7 +209,7 @@
       .then(r => r.json())
       .then(data => {
         if (data && data.authenticated) {
-          window.location.href = '/client-portal.html';
+          window.location.href = '/portal-dashboard-2026';
         }
       }).catch(() => {});
 
@@ -216,7 +236,7 @@
 
         if (data.success) {
           sessionStorage.setItem('pr_client', JSON.stringify(data.client));
-          window.location.href = '/client-portal.html';
+          window.location.href = '/portal-dashboard-2026';
         } else {
           errorBox.textContent = data.error || 'فشل تسجيل الدخول';
           errorBox.style.display = 'block';
