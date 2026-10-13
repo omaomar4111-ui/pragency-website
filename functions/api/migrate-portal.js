@@ -1,6 +1,7 @@
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
+  const body = await request.json().catch(() => ({}));
 
   if (!db) {
     return new Response(JSON.stringify({ ok: false, error: 'D1 binding not found' }), {
