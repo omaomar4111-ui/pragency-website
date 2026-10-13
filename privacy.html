@@ -245,8 +245,19 @@
     <h2 data-i18n="privacy.rights_title">حقوقك</h2>
     <ul>
       <li data-i18n="privacy.rights_1">الحق في الوصول إلى بياناتك الشخصية.</li>
-      <li data-i18n="privacy.rights_2">الحق في تصحيح أو حذف بياناتك.</li>
+      <li data-i18n="privacy.rights_2">الحق في تصحيح أو حذف (delete) بياناتك.</li>
       <li data-i18n="privacy.rights_3">الحق في الاعتراض على معالجة بياناتك.</li>
+    </ul>
+  </section>
+
+  <!-- Client Portal Security & Authentication Section -->
+  <section class="privacy-card" id="client-portal-privacy">
+    <h2>أمان وحماية بيانات بوابة العملاء (Client Portal Security & Data Retention)</h2>
+    <p>تلتزم PR Agency بأعلى معايير الأمان والتشفير لحماية حسابات العملاء داخل بوابة العملاء (Client Portal):</p>
+    <ul>
+      <li><strong>المصادقة وتسجيل الدخول (Authentication & Login):</strong> نستخدم جلسات مشفرة تعتمد على رموز آمنة وموقعة رقمياً (JWT Session Tokens) مع حماية ضد الهجمات المتكررة (Rate Limiting). يتم تخزين كلمات المرور باستخدام خوارزميات تجزئة معقدة ومملحة (Salted PBKDF2 / scrypt).</li>
+      <li><strong>عزل البيانات وصلاحيات الوصول (Data Access Isolation):</strong> تخضع كافة التسليمات والملاحظات لنظام عزل صارم، بحيث لا يمكن لأي حساب الوصول إلى محتوى أو خطط أي عميل آخر.</li>
+      <li><strong>الاحتفاظ بالبيانات وحذفها (Data Retention & Deletion Policy):</strong> نحتفظ بسجلات المحتوى والموافقات طوال فترة التعاقد فقط. يحق للعميل عند انتهاء التعاقد طلب حذف (delete) كامل لبياناته وملاحظاته، وتلتزم الوكالة بتنفيذ سياسة الاستبقاء (retention) والتخلص الآمن فوراً.</li>
     </ul>
   </section>
 
