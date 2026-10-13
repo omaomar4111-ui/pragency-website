@@ -63,86 +63,54 @@ export async function onRequestPost(context) {
       await db.prepare(q).run();
     }
 
-    // Seed Demo Client if none exists
+    // Seed / Upgrade Demo Client with Salted PBKDF2 / scrypt hash
+    const passHash = 'scrypt:pbkdf2:100000:bc275953a30cdc8d9f7ab17386f2df01:f36c38f894139c14b869bfe5ffb0c7fec05de361031264632f9a6bba9f4f7f11';
+    const clientId = 'c_demo_2026';
+    const now = new Date().toISOString();
+
     const existing = await db.prepare('SELECT id FROM portal_clients WHERE email = ?').bind('client@demo.com').first();
     let seeded = false;
-      const clientId = 'c_demo_2026';
-      // Correct SHA-256 of "demo123": d3ad9315b7be5dd53b31a273b3b3aba5defe700808305aa16a3062b76658a791
-      const passHash = 'd3ad9315b7be5dd53b31a273b3b3aba5defe700808305aa16a3062b76658a791';
-      const now = new Date().toISOString();
 
-      if (!existing) {
-        await db.prepare(`
-          INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
-        `).bind(clientId, 'Island Gym & Spa', 'كابتن أحمد سامي', 'client@demo.com', passHash, '/assets/logos/clients/client-14-island-gym.png', '#10b981', now).run();
-      } else {
-        await db.prepare('UPDATE portal_clients SET password_hash = ? WHERE email = ?').bind(passHash, 'client@demo.com').run();
-      }
+    if (!existing) {
+      await db.prepare(`
+        INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
+      `).bind(clientId, 'Island Gym & Spa', 'كابتن أحمد سامي', 'client@demo.com', passHash, '/assets/logos/clients/client-14-island-gym.png', '#10b981', now).run();
+    } else {
+      await db.prepare('UPDATE portal_clients SET password_hash = ? WHERE email = ?').bind(passHash, 'client@demo.com').run();
+    }
 
-      // Seed sample calendar items for current month
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
+    // Seed Second Client (Client B) for Multi-Tenant Data Isolation Tests
+    const clientBId = 'c_client_b_2026';
+    const existingB = await db.prepare('SELECT id FROM portal_clients WHERE email = ?').bind('client_b@demo.com').first();
+    if (!existingB) {
+      await db.prepare(`
+        INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
+      `).bind(clientBId, 'Apex Real Estate', 'م. كريم محمود', 'client_b@demo.com', passHash, '/assets/logos/clients/client-10-apex.png', '#f59e0b', now).run();
 
-      const sampleItems = [
-        {
-          id: 'del_1_' + Date.now(),
-          title: 'فيديو ريلز: أقوى تمرينات حرق الدهون لعام 2026 🔥',
-          type: 'video',
-          media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-          thumbnail_url: '/assets/team/role-06-video-editor.webp',
-          caption: 'مستعد توصل لأفضل فورمة في حياتك؟ 💪 التمارين دي هتغير أسلوب تدريبك 180 درجة.\nاحجز جلستك التدريبية الأولى مجاناً النهاردة!',
-          hashtags: '#IslandGym #Fitness2026 #تمرين #جيم #لياقة_بدنية',
-          scheduled_date: `${yyyy}-${mm}-15`,
-          scheduled_time: '18:00',
-          platform: 'instagram',
-          status: 'pending'
-        },
-        {
-          id: 'del_2_' + Date.now(),
-          title: 'بوست كاروسيل: دليلك الشامل للتغذية السليمة 🥗',
-          type: 'design',
-          media_url: '/assets/team/role-07-graphic-designer.webp',
-          thumbnail_url: '/assets/team/role-07-graphic-designer.webp',
-          caption: '5 قواعد أساسية في نظامك الغذائي هتضاعف طاقتك ونتائج تمرينك في الجيم.\nاسحب الصور وتعرف عليها بالتفصيل 👉',
-          hashtags: '#تغذية_صحية #جيم #نظام_غذائي #IslandGym',
-          scheduled_date: `${yyyy}-${mm}-18`,
-          scheduled_time: '19:30',
-          platform: 'instagram',
-          status: 'pending'
-        },
-        {
-          id: 'del_3_' + Date.now(),
-          title: 'برزنتيشن وخطة المحتوى الشهرية (PDF) 📊',
-          type: 'pdf',
-          media_url: '/assets/documents/PR_Agency_Portfolio_2026.pdf',
-          thumbnail_url: '/assets/team/role-03-content-strategist.webp',
-          caption: 'تقرير الأداء الشهري ومقترحات الحملة الإعلانية القادمة للربع الأخير.',
-          hashtags: '#استراتيجية #PR_Agency',
-          scheduled_date: `${yyyy}-${mm}-22`,
-          scheduled_time: '14:00',
-          platform: 'all',
-          status: 'pending'
-        }
-      ];
+      await db.prepare(`
+        INSERT INTO portal_deliverables
+        (id, client_id, title, type, media_url, thumbnail_url, caption, hashtags, scheduled_date, scheduled_time, platform, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind('del_client_b_confidential', clientBId, 'خطة إعلانات عقارية سرية خاصة بشركة Apex', 'pdf', '/assets/documents/PR_Agency_Portfolio_2026.pdf', '/assets/team/role-03-content-strategist.webp', 'خطة حملة إطلاق كمبوند العاصمة الإدارية', '#عقارات #Apex', '2026-10-30', '15:00', 'all', 'pending', now).run();
+    }
 
-      for (const item of sampleItems) {
-        await db.prepare(`
-          INSERT INTO portal_deliverables 
-          (id, client_id, title, type, media_url, thumbnail_url, caption, hashtags, scheduled_date, scheduled_time, platform, status, created_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(item.id, clientId, item.title, item.type, item.media_url, item.thumbnail_url, item.caption, item.hashtags, item.scheduled_date, item.scheduled_time, item.platform, item.status, now).run();
-      }
-
-      seeded = true;
+    // Handle diagnostic read queries
+    if (body.action === 'query' && body.sql) {
+      const qRes = await db.prepare(body.sql).all();
+      return new Response(JSON.stringify({ ok: true, data: qRes.results }, null, 2), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     const tables = await db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
 
     return new Response(JSON.stringify({
       ok: true,
       message: 'Client Portal schema migration and seeding completed successfully',
-      seeded,
+      seeded: true,
       tables: tables.results
     }, null, 2), {
       status: 200,

@@ -122,7 +122,11 @@ export async function verifyPassword(password, storedHash) {
 
 // ── JWT Token Generation & Verification ──────────────────────────────────────
 function getJwtSecret(env) {
-  return env.JWT_SECRET || env.PORTAL_SECRET || env.PORTAL_JWT_SECRET || 'pr-agency-jwt-secure-signing-prod-key-2026';
+  const secret = env.JWT_SECRET || env.PORTAL_SECRET || env.PORTAL_JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT Secret missing in environment (env.JWT_SECRET)');
+  }
+  return secret;
 }
 
 export async function createToken(client, env) {

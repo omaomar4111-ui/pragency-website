@@ -16,6 +16,8 @@ database_id = "9948c70f-d00f-4af8-8f39-8ae205b23281"
 TELEGRAM_BOT_TOKEN = "8857951958:AAGLCjUIW_KwZZ-Tl07LfKEvhw5XsC-bp7s"
 TELEGRAM_CHAT_ID = "5715939844"
 NOTIFY_COUNTRIES = "EG,SA,AE"
+JWT_SECRET = "9948c70f-d00f-4af8-8f39-8ae205b23281-pragency-jwt-secure-signing-prod-key-2026"
+PORTAL_SECRET = "9948c70f-d00f-4af8-8f39-8ae205b23281-pragency-jwt-secure-signing-prod-key-2026"
 
 [ai]
 binding = "AI"
