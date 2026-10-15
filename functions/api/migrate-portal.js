@@ -134,6 +134,8 @@ export async function onRequestPost(context) {
         (id, client_id, title, type, media_url, thumbnail_url, caption, hashtags, scheduled_date, scheduled_time, platform, status, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).bind('del_client_b_confidential', clientBId, 'خطة إعلانات عقارية سرية خاصة بشركة Apex', 'pdf', '/assets/documents/PR_Agency_Portfolio_2026.pdf', '/assets/team/role-03-content-strategist.webp', 'خطة حملة إطلاق كمبوند العاصمة الإدارية', '#عقارات #Apex', '2026-10-30', '15:00', 'all', 'pending', now).run();
+    }
+
     // Seed Sample Portfolio Brands & Designs
     const brandCount = await db.prepare('SELECT count(*) as cnt FROM portfolio_brands').first();
     if (brandCount && brandCount.cnt === 0) {
