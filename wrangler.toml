@@ -22,8 +22,4 @@ PORTAL_SECRET = "9948c70f-d00f-4af8-8f39-8ae205b23281-pragency-jwt-secure-signin
 [ai]
 binding = "AI"
 
-[[r2_buckets]]
-binding = "PORTFOLIO_BUCKET"
-bucket_name = "pragency-portfolio"
-
 
