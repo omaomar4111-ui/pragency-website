@@ -281,5 +281,18 @@
   "instagram.title": "Follow Us on Instagram",
   "instagram.subtitle": "Latest works and behind the scenes",
   "instagram.follow": "Follow us @pragency_1",
-  "contact_hub.ai": "Talk to Us"
+  "contact_hub.ai": "Talk to Us",
+  "nav.portfolio": "Portfolio",
+  "portfolio.title": "Our Portfolio",
+  "portfolio.subtitle": "Selected work organized by brand",
+  "portfolio.all_brands": "All Brands",
+  "portfolio.designs_count": "Designs",
+  "portfolio.view_design": "View Design",
+  "portfolio.empty": "No designs available yet",
+  "portfolio.filter_by": "Filter by",
+  "portfolio.categories.social_media": "Social Media",
+  "portfolio.categories.branding": "Branding",
+  "portfolio.categories.ads": "Paid Ads",
+  "portfolio.categories.video": "Video",
+  "portfolio.categories.other": "Other"
 }
