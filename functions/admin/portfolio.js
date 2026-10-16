@@ -747,15 +747,15 @@ function renderFastPreviewGrid() {
   panel.style.display = 'block';
   countBadge.textContent = pendingFastFiles.length + ' صور';
 
-  grid.innerHTML = pendingFastFiles.map((item, idx) => `
-    <div class="preview-card" id="card-${item.id}">
-      <button class="preview-remove-btn" type="button" onclick="removePendingFile('${item.id}')">✕</button>
-      <img src="${item.objectUrl}" alt="Preview"/>
-      <div class="preview-card-body">
-        <input type="text" class="preview-card-title-input" value="${item.title}" oninput="updatePendingTitle('${item.id}', this.value)" placeholder="عنوان التصميم..."/>
-      </div>
-    </div>
-  `).join('');
+  grid.innerHTML = pendingFastFiles.map((item, idx) => 
+    '<div class="preview-card" id="card-' + item.id + '">' +
+      '<button class="preview-remove-btn" type="button" onclick="removePendingFile(\\\'' + item.id + '\\\')">✕</button>' +
+      '<img src="' + item.objectUrl + '" alt="Preview"/>' +
+      '<div class="preview-card-body">' +
+        '<input type="text" class="preview-card-title-input" value="' + item.title + '" oninput="updatePendingTitle(\\\'' + item.id + '\\\', this.value)" placeholder="عنوان التصميم..."/>' +
+      '</div>' +
+    '</div>'
+  ).join('');
 }
 
 function removePendingFile(id) {
