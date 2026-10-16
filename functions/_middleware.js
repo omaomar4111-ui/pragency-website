@@ -252,14 +252,6 @@ export async function onRequest(context) {
     });
   }
 
-  // Explicit 404 for removed portfolio routes
-  if (pathname === '/portfolio' || pathname.startsWith('/portfolio/')) {
-    return new Response('Not Found', {
-      status: 404,
-      headers: { 'X-Robots-Tag': 'noindex, nofollow' }
-    });
-  }
-
   // 2. Skip backend endpoints, static assets, and admin
   if (
     pathname === '/sw.js' ||
