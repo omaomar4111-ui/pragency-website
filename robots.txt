@@ -1,12 +1,23 @@
 User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
 Disallow: /portal-access-2026
 Disallow: /portal-dashboard-2026
 Disallow: /client-login
 Disallow: /client-portal
-Disallow: /api/portal/
-Disallow: /admin
-Disallow: /admin/
-Disallow: /api/
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
 Allow: /
 
 Sitemap: https://pragency.pages.dev/sitemap.xml

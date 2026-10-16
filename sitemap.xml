@@ -34,7 +34,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Services -->
+  <!-- Services Index -->
   <url>
     <loc>https://pragency.pages.dev/services</loc>
     <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services"/>
@@ -48,6 +48,82 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services"/>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+
+  <!-- Individual Service Pages -->
+  <url>
+    <loc>https://pragency.pages.dev/services/social-media</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/social-media"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/social-media"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/services/social-media</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/social-media"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/social-media"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://pragency.pages.dev/services/media-buying</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/media-buying"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/media-buying"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/services/media-buying</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/media-buying"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/media-buying"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://pragency.pages.dev/services/video-production</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/video-production"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/video-production"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/services/video-production</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/video-production"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/video-production"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://pragency.pages.dev/services/branding</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/branding"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/branding"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/services/branding</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/branding"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/branding"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://pragency.pages.dev/services/strategy</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/strategy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/strategy"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://pragency.pages.dev/en/services/strategy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pragency.pages.dev/en/services/strategy"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/services/strategy"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
   </url>
 
   <!-- Portfolio -->
@@ -114,6 +190,13 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Case Studies -->
+  <url>
+    <loc>https://pragency.pages.dev/case-studies</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
   <!-- Privacy -->
   <url>
     <loc>https://pragency.pages.dev/privacy</loc>
@@ -128,11 +211,5 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://pragency.pages.dev/privacy"/>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://pragency.pages.dev/case-studies</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
   </url>
 </urlset>

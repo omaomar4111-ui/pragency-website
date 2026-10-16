@@ -351,7 +351,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v91';
+  const VERSION = 'v92';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {
