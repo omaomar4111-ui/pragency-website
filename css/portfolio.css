@@ -488,76 +488,132 @@
   padding: 30px 20px 0;
 }
 
-.brand-hero-badge {
-  display: inline-block;
-  padding: 6px 18px;
-  background: rgba(139, 92, 246, 0.15);
-  border: 1px solid rgba(139, 92, 246, 0.35);
-  color: #C4B5FD;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
+.brand-hero {
+  text-align: center;
+  padding: 40px 0 20px;
 }
 
-.brand-hero-title {
-  font-size: clamp(2.4rem, 6vw, 3.8rem);
+.brand-service-label {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.brand-title {
+  font-size: clamp(40px, 7vw, 72px);
   font-weight: 900;
   color: #fff;
-  margin-bottom: 16px;
-  line-height: 1.15;
-  background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1.1;
 }
 
-.brand-hero-desc {
-  max-width: 720px;
-  margin: 0 auto;
-  font-size: 1.15rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-/* 2. Minimalist Metadata Block */
-.brand-meta {
-  margin-bottom: 56px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 24px 32px;
-  backdrop-filter: blur(10px);
-}
-
-.brand-meta-grid {
+/* 2. Two-Column Layout: Story + Metadata */
+.brand-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+  margin: 40px 0 60px;
+  align-items: start;
 }
 
-.brand-meta-item {
+.brand-story {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #ccc;
+  border-right: 3px solid #22c55e;
+  padding-right: 24px;
+}
+
+html[dir="ltr"] .brand-story,
+body[dir="ltr"] .brand-story {
+  border-right: none;
+  border-left: 3px solid #22c55e;
+  padding-right: 0;
+  padding-left: 24px;
+}
+
+.brand-story p {
+  margin-bottom: 16px;
+}
+
+.brand-story p:last-child {
+  margin-bottom: 0;
+}
+
+.brand-meta {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+}
+
+.meta-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 14px;
 }
 
-.brand-meta-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 1px;
+.meta-row:last-child {
+  border-bottom: none;
 }
 
-.brand-meta-value {
-  font-size: 1.15rem;
-  font-weight: 700;
+.meta-label {
+  color: #888;
+  font-weight: 500;
+}
+
+.meta-value {
   color: #fff;
+  font-weight: 700;
+  text-align: left;
+}
+
+html[dir="rtl"] .meta-value {
+  text-align: left;
 }
 
 /* 3. Masonry / Grid for Brand Designs */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 80px;
+}
+
+.gallery-item {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 768px) {
+  .brand-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .brand-title {
+    font-size: clamp(32px, 8vw, 48px);
+  }
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+}
 .brand-gallery-section {
   margin-bottom: 80px;
 }

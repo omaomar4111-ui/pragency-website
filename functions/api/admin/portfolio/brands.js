@@ -66,8 +66,14 @@ export async function onRequestPost(context) {
       description_ar,
       description_en,
       logo_url,
+      brand_logo_url,
       category,
       display_order,
+      year,
+      service_ar,
+      service_en,
+      story_ar,
+      story_en,
       is_published
     } = body;
 
@@ -81,8 +87,10 @@ export async function onRequestPost(context) {
     const result = await db.prepare(`
       INSERT INTO portfolio_brands (
         slug, name_ar, name_en, description_ar, description_en,
-        logo_url, category, display_order, is_published, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        logo_url, brand_logo_url, category, display_order,
+        year, service_ar, service_en, story_ar, story_en,
+        is_published, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       cleanSlug,
       name_ar.trim(),
@@ -90,9 +98,15 @@ export async function onRequestPost(context) {
       description_ar ? description_ar.trim() : null,
       description_en ? description_en.trim() : null,
       logo_url || null,
+      brand_logo_url || logo_url || null,
       category || 'social_media',
       parseInt(display_order, 10) || 0,
-      is_published !== undefined ? (is_published ? 1 : 0) : 1,
+      year ? parseInt(year, 10) : 2026,
+      service_ar ? service_ar.trim() : null,
+      service_en ? service_en.trim() : null,
+      story_ar ? story_ar.trim() : null,
+      story_en ? story_en.trim() : null,
+      is_published !== undefined ? (is_published ? 1 : 0) : 0,
       now
     ).run();
 
@@ -127,8 +141,14 @@ export async function onRequestPut(context) {
       description_ar,
       description_en,
       logo_url,
+      brand_logo_url,
       category,
       display_order,
+      year,
+      service_ar,
+      service_en,
+      story_ar,
+      story_en,
       is_published
     } = body;
 
@@ -146,19 +166,31 @@ export async function onRequestPut(context) {
         description_ar = COALESCE(?, description_ar),
         description_en = COALESCE(?, description_en),
         logo_url = COALESCE(?, logo_url),
+        brand_logo_url = COALESCE(?, brand_logo_url),
         category = COALESCE(?, category),
         display_order = COALESCE(?, display_order),
+        year = COALESCE(?, year),
+        service_ar = COALESCE(?, service_ar),
+        service_en = COALESCE(?, service_en),
+        story_ar = COALESCE(?, story_ar),
+        story_en = COALESCE(?, story_en),
         is_published = COALESCE(?, is_published)
       WHERE id = ?
     `).bind(
       cleanSlug,
-      name_ar ? name_ar.trim() : null,
+      name_ar !== undefined ? name_ar.trim() : null,
       name_en !== undefined ? name_en.trim() : null,
       description_ar !== undefined ? description_ar.trim() : null,
       description_en !== undefined ? description_en.trim() : null,
       logo_url !== undefined ? logo_url : null,
+      brand_logo_url !== undefined ? brand_logo_url : null,
       category !== undefined ? category : null,
       display_order !== undefined ? parseInt(display_order, 10) : null,
+      year !== undefined ? parseInt(year, 10) : null,
+      service_ar !== undefined ? service_ar.trim() : null,
+      service_en !== undefined ? service_en.trim() : null,
+      story_ar !== undefined ? story_ar.trim() : null,
+      story_en !== undefined ? story_en.trim() : null,
       is_published !== undefined ? (is_published ? 1 : 0) : null,
       id
     ).run();
@@ -172,7 +204,7 @@ export async function onRequestPut(context) {
   }
 }
 
-// DELETE /api/admin/portfolio/brands - delete brand
+// DELETE /api/admin/portfolio/brands - delete brand and all its designs
 export async function onRequestDelete(context) {
   const { request, env } = context;
   if (!checkAuth(request, env)) return unauthResponse();
@@ -183,9 +215,17 @@ export async function onRequestDelete(context) {
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
-    if (!id) return new Response(JSON.stringify({ error: 'ID is required' }), { status: 400 });
+    if (!id) return new Response(JSON.stringify({ error: 'Brand ID is required' }), { status: 400 });
 
-    // Cascade delete designs first (just in case foreign keys constraint is off)
+    const { results: designs } = await db.prepare('SELECT r2_key FROM portfolio_designs WHERE brand_id = ?').bind(id).all();
+    if (designs && env.PORTFOLIO_BUCKET) {
+      for (const d of designs) {
+        if (d.r2_key) {
+          try { await env.PORTFOLIO_BUCKET.delete(d.r2_key); } catch (e) {}
+        }
+      }
+    }
+
     await db.prepare('DELETE FROM portfolio_designs WHERE brand_id = ?').bind(id).run();
     await db.prepare('DELETE FROM portfolio_brands WHERE id = ?').bind(id).run();
 

@@ -8,8 +8,9 @@ export async function onRequestGet(context) {
   }
 
   try {
+    // Note: Allow viewing the brand page by direct URL so the admin can review before public launch
     const brand = await db.prepare(
-      'SELECT * FROM portfolio_brands WHERE slug = ? AND is_published = 1'
+      'SELECT * FROM portfolio_brands WHERE slug = ?'
     ).bind(slug).first();
 
     if (!brand) {
@@ -27,10 +28,9 @@ export async function onRequestGet(context) {
 
     const brandName = isEn && brand.name_en ? brand.name_en : (brand.name_ar || brand.slug);
     const brandDesc = isEn && brand.description_en ? brand.description_en : (brand.description_ar || 'نماذج أعمال وتصاميم إبداعية لعلامة تجارية رائدة بالتعاون مع PR Agency.');
-    const brandLogo = brand.logo_url || '/assets/logos/pr-agency.webp';
-    const categoryName = brand.category || (isEn ? 'Creative Direction' : 'إدارة المحتوى والهوية');
-    const clientName = brandName;
-    const year = '2026';
+    const brandStory = isEn && brand.story_en ? brand.story_en : (brand.story_ar || brandDesc);
+    const brandLogo = brand.brand_logo_url || brand.logo_url || '/assets/logos/pr-agency.webp';
+    const year = brand.year || 2026;
 
     const categoryMap = {
       'social_media': isEn ? 'Social Media Management' : 'إدارة السوشيال ميديا',
@@ -39,9 +39,12 @@ export async function onRequestGet(context) {
       'video': isEn ? 'Video Production & Reels' : 'الإنتاج المرئي وتصوير',
       'other': isEn ? 'Full Creative Services' : 'خدمات تسويقية متكاملة'
     };
-    const displayCategory = categoryMap[brand.category] || (isEn ? 'Brand Growth & Marketing' : 'تسويق وإدارة العلامة التجارية');
 
-    // JSON-LD CollectionPage schema with hasPart
+    const serviceDisplay = isEn 
+      ? (brand.service_en || categoryMap[brand.category] || 'Full Creative Direction')
+      : (brand.service_ar || categoryMap[brand.category] || 'إدارة المحتوى والهوية البصرية');
+
+    // JSON-LD CollectionPage schema
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
@@ -79,7 +82,7 @@ export async function onRequestGet(context) {
         const thumb = d.thumbnail_url || img;
 
         designsHtml += `
-          <div class="brand-design-card" data-index="${idx}" data-img="${img}" data-title="${title}" data-desc="${desc}">
+          <div class="gallery-item brand-design-card" data-index="${idx}" data-img="${img}" data-title="${title}" data-desc="${desc}">
             <div class="brand-design-img-wrap">
               <img src="${thumb}" alt="${title}" loading="lazy" width="600" height="600"/>
               <div class="brand-design-overlay">
@@ -107,6 +110,7 @@ export async function onRequestGet(context) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow, noarchive"/>
   <title>${brandName} — ${isEn ? 'Portfolio Gallery' : 'معرض أعمال البراند'} | PR Agency</title>
   <meta name="description" content="${brandDesc}"/>
   <link rel="canonical" href="https://pragency.pages.dev/portfolio/${brand.slug}"/>
@@ -121,10 +125,10 @@ export async function onRequestGet(context) {
   <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="stylesheet" href="/css/style.css?v=89"/>
-  <link rel="stylesheet" href="/css/pages.css?v=89"/>
-  <link rel="stylesheet" href="/css/portfolio.css?v=89"/>
-  <link rel="stylesheet" href="/css/chatbot.css?v=89"/>
+  <link rel="stylesheet" href="/css/style.css?v=90"/>
+  <link rel="stylesheet" href="/css/pages.css?v=90"/>
+  <link rel="stylesheet" href="/css/portfolio.css?v=90"/>
+  <link rel="stylesheet" href="/css/chatbot.css?v=90"/>
 
   <script type="application/ld+json">
     ${JSON.stringify(jsonLd)}
@@ -132,7 +136,7 @@ export async function onRequestGet(context) {
 </head>
 <body class="page-brand-portfolio">
 
-  <!-- Main Navigation -->
+  <!-- Main Navigation (Portfolio link hidden from public) -->
   <nav id="hdr" role="navigation" aria-label="التنقل الرئيسي">
     <a href="/" aria-label="PR Agency — الرئيسية" class="hdr-logo-link">
       <img src="/assets/logos/pr-agency.webp" alt="PR Agency" class="hdr-logo" width="60" height="60"/>
@@ -141,7 +145,7 @@ export async function onRequestGet(context) {
       <a href="/">${isEn ? 'Home' : 'الرئيسية'}</a>
       <a href="/about.html">${isEn ? 'About' : 'من نحن'}</a>
       <a href="/services.html">${isEn ? 'Services' : 'الخدمات'}</a>
-      <a href="/portfolio" class="active">${isEn ? 'Portfolio' : 'معرض الأعمال'}</a>
+      <!-- PORTFOLIO_LINK_HIDDEN -->
       <a href="/team">${isEn ? 'Team' : 'الفريق'}</a>
       <a href="/clients.html">${isEn ? 'Clients' : 'العملاء'}</a>
       <a href="/#register">${isEn ? 'Contact' : 'تواصل'}</a>
@@ -158,53 +162,43 @@ export async function onRequestGet(context) {
 
   <main class="brand-page-main">
     
-    <!-- Breadcrumb / Back Link -->
-    <div class="brand-back-nav">
-      <a href="/portfolio" class="brand-back-link">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="${isEn ? 'M19 12H5M12 19l-7-7 7-7' : 'M5 12h14M12 5l7 7-7 7'}"/>
-        </svg>
-        <span>${isEn ? 'Back to All Brands' : 'العودة لكل الأعمال'}</span>
-      </a>
-    </div>
-
-    <!-- 1. Top Hero Section -->
+    <!-- 1. Top Hero Section: Minimalist Centered Title with Dashes -->
     <header class="brand-hero">
-      <div class="brand-hero-badge">${displayCategory}</div>
-      <h1 class="brand-hero-title">${brandName}</h1>
-      <p class="brand-hero-desc">${brandDesc}</p>
+      <div class="brand-service-label">—————— ${serviceDisplay} ——————</div>
+      <h1 class="brand-title">${brandName}</h1>
     </header>
 
-    <!-- 2. Minimalist Metadata Block -->
-    <section class="brand-meta">
-      <div class="brand-meta-grid">
-        <div class="brand-meta-item">
-          <span class="brand-meta-label">${isEn ? 'Client' : 'العميل'}</span>
-          <strong class="brand-meta-value">${clientName}</strong>
+    <!-- 2. Two-Column Layout: Story (with Green Accent Border) + Metadata Table -->
+    <section class="brand-content">
+      <div class="brand-story">
+        ${brandStory ? brandStory.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('') : `<p>${brandDesc}</p>`}
+      </div>
+      <div class="brand-meta">
+        <div class="meta-row">
+          <span class="meta-label">${isEn ? 'Client' : 'العميل'}</span>
+          <span class="meta-value">${brandName}</span>
         </div>
-        <div class="brand-meta-item">
-          <span class="brand-meta-label">${isEn ? 'Year' : 'السنة'}</span>
-          <strong class="brand-meta-value">${year}</strong>
+        <div class="meta-row">
+          <span class="meta-label">${isEn ? 'Year' : 'السنة'}</span>
+          <span class="meta-value">${year}</span>
         </div>
-        <div class="brand-meta-item">
-          <span class="brand-meta-label">${isEn ? 'Services Provided' : 'الخدمات المنفذة'}</span>
-          <strong class="brand-meta-value">${displayCategory}</strong>
+        <div class="meta-row">
+          <span class="meta-label">${isEn ? 'Services' : 'الخدمات'}</span>
+          <span class="meta-value">${serviceDisplay}</span>
         </div>
       </div>
     </section>
 
     <!-- 3. Minimalist Responsive Masonry Gallery -->
-    <section class="brand-gallery-section">
-      <div class="brand-designs-grid" id="brand-designs-masonry">
-        ${designsHtml}
-      </div>
+    <section class="gallery-grid" id="brand-designs-masonry">
+      ${designsHtml}
     </section>
 
-    <!-- 4. Brand Logo Presentation Section -->
+    <!-- 4. Large Brand Logo Presentation Section -->
     <section class="brand-logo-section">
       <div class="brand-logo-card">
         <div class="brand-logo-img-wrap">
-          <img src="${brandLogo}" alt="${brandName} Logo" loading="lazy" width="140" height="140"/>
+          <img src="${brandLogo}" alt="${brandName} Logo" loading="lazy" width="160" height="160"/>
         </div>
         <h2 class="brand-logo-name">${brandName}</h2>
         <p class="brand-logo-tagline">${isEn ? "Creative Visual Identity & Growth Partnership" : "شراكة نمو وهوية بصرية متكاملة"}</p>

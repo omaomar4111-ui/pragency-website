@@ -41,6 +41,7 @@ export async function onRequestGet(context) {
       --card-border: rgba(139, 92, 246, 0.2);
       --purple: #8B5CF6;
       --purple-light: #A78BFA;
+      --green: #22c55e;
       --text: #ffffff;
       --text-muted: rgba(255, 255, 255, 0.65);
       --font: 'Cairo', system-ui, sans-serif;
@@ -158,6 +159,95 @@ export async function onRequestGet(context) {
       background: rgba(255, 255, 255, 0.05);
     }
 
+    /* Drop Zone (Instagram-Like Upload) */
+    .drop-zone {
+      border: 2px dashed rgba(139, 92, 246, 0.4);
+      border-radius: 16px;
+      padding: 40px 24px;
+      text-align: center;
+      background: rgba(139, 92, 246, 0.03);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--purple);
+      background: rgba(139, 92, 246, 0.1);
+      transform: scale(1.005);
+    }
+    .drop-zone-icon {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .drop-zone-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .drop-zone-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Preview Grid for Multi Upload */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+      margin-bottom: 20px;
+    }
+    .preview-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      background: #0f0017;
+    }
+    .preview-card-body {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .preview-card-title-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 6px 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.8rem;
+      width: 100%;
+    }
+    .preview-remove-btn {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(239, 68, 68, 0.85);
+      color: #fff;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
     /* Grid for Designs */
     .designs-admin-grid {
       display: grid;
@@ -244,7 +334,7 @@ export async function onRequestGet(context) {
       background: #14001F;
       border: 1px solid var(--purple);
       border-radius: 18px;
-      max-width: 600px;
+      max-width: 680px;
       width: 100%;
       padding: 24px;
       max-height: 90vh;
@@ -298,17 +388,17 @@ export async function onRequestGet(context) {
     }
     .upload-progress-bar {
       width: 100%;
-      height: 6px;
+      height: 8px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      margin-top: 10px;
+      border-radius: 4px;
+      margin-top: 14px;
       overflow: hidden;
       display: none;
     }
     .upload-progress-fill {
       height: 100%;
       width: 0%;
-      background: var(--purple);
+      background: linear-gradient(90deg, var(--purple), #10b981);
       transition: width 0.3s ease;
     }
     .badge-pill {
@@ -354,14 +444,15 @@ export async function onRequestGet(context) {
             <th>الشعار</th>
             <th>الاسم (عربي / إنجليزي)</th>
             <th>Slug الرابط</th>
-            <th>القسم</th>
+            <th>السنة</th>
+            <th>الخدمة</th>
             <th>عدد التصاميم</th>
             <th>حالة النشر</th>
             <th>إجراءات سريعة</th>
           </tr>
         </thead>
         <tbody id="brands-table-body">
-          <tr><td colspan="7" style="text-align:center">جارٍ التحميل...</td></tr>
+          <tr><td colspan="8" style="text-align:center">جارٍ التحميل...</td></tr>
         </tbody>
       </table>
     </div>
@@ -369,17 +460,52 @@ export async function onRequestGet(context) {
 
   <!-- 2. DESIGNS TAB -->
   <div id="tab-designs" class="tab-content">
+    
+    <!-- Instagram-Like Fast Upload Zone -->
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('fast-file-input').click()">
+      <span class="drop-zone-icon">📸</span>
+      <div class="drop-zone-title">اسحب وأفلت التصاميم هنا للرفع السريع (Instagram-Like Upload)</div>
+      <div class="drop-zone-desc">أو اضغط لاختيار حتى 20 صورة دفعة واحدة (JPG, PNG, WebP) — يدعم المعاينة الفورية وتعديل العناوين</div>
+      <input type="file" id="fast-file-input" multiple accept="image/*" style="display:none" onchange="handleFastFilesSelect(this.files)"/>
+    </div>
+
+    <!-- Active Upload Panel (when files selected) -->
+    <div id="fast-upload-panel" style="display:none;background:var(--card-bg);border:1px solid var(--purple);border-radius:16px;padding:20px;margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+        <h4 style="color:#fff;display:flex;align-items:center;gap:8px">
+          <span>🚀 تجهيز رفع</span>
+          <span id="fast-files-count" class="badge-pill badge-pub">0 صور</span>
+        </h4>
+        <div style="display:flex;gap:12px;align-items:center">
+          <label style="font-size:0.85rem;color:var(--purple-light)">البراند المستهدف:</label>
+          <select id="fast-target-brand" class="form-control" style="width:200px" required></select>
+        </div>
+      </div>
+
+      <div id="fast-preview-grid" class="preview-grid"></div>
+
+      <div class="upload-progress-bar" id="fast-progress-bar">
+        <div class="upload-progress-fill" id="fast-progress-fill"></div>
+      </div>
+      <div id="fast-status-text" style="font-size:0.85rem;margin-top:8px;color:var(--purple-light)"></div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+        <button type="button" class="btn btn-secondary" onclick="cancelFastUpload()">إلغاء وتفريغ</button>
+        <button type="button" id="btn-start-fast-upload" class="btn btn-success" onclick="executeFastUpload()">بدء الرفع وحفظ الكل</button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
       <div style="display:flex;align-items:center;gap:12px">
-        <h3>معرض التصاميم</h3>
+        <h3>معرض التصاميم المرفوعة</h3>
         <select id="filter-design-brand" class="form-control" style="width:200px" onchange="loadDesigns()">
           <option value="">كل البراندات</option>
         </select>
         <button id="btn-bulk-delete" class="btn btn-danger" style="display:none" onclick="bulkDeleteSelectedDesigns()">🗑️ حذف المحددة (<span id="selected-count">0</span>)</button>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-secondary" onclick="openBulkUploadModal()">📤 رفع مجمع (Bulk Upload)</button>
-        <button class="btn" onclick="openDesignModal()">+ إضافة تصميم فردي</button>
+        <button class="btn" onclick="openDesignModal()">+ إضافة تصميم فردي يدوي</button>
       </div>
     </div>
 
@@ -408,10 +534,29 @@ export async function onRequestGet(context) {
           <input type="text" id="brand-name-en" class="form-control" oninput="if(!document.getElementById('brand-slug').value) autoGenerateSlug(this.value)"/>
         </div>
       </div>
-      <div class="form-group">
-        <label>Slug الرابط (مثال: island-gym) *</label>
-        <input type="text" id="brand-slug" class="form-control" required/>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Slug الرابط (مثال: island-gym) *</label>
+          <input type="text" id="brand-slug" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label>سنة المشروع (Year) *</label>
+          <input type="number" id="brand-year" class="form-control" value="2026" required/>
+        </div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>الخدمة المنفذة بالعربي (مثال: إدارة السوشيال ميديا والهوية)</label>
+          <input type="text" id="brand-service-ar" class="form-control" placeholder="Social Media & Content Direction"/>
+        </div>
+        <div class="form-group">
+          <label>الخدمة بالإنجليزي (اختياري)</label>
+          <input type="text" id="brand-service-en" class="form-control" placeholder="Brand Identity & Marketing"/>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>القسم / التصنيف</label>
@@ -428,6 +573,7 @@ export async function onRequestGet(context) {
           <input type="number" id="brand-order" class="form-control" value="0"/>
         </div>
       </div>
+
       <div class="form-group">
         <label>شعار البراند (رفع ملف صورة أو رابط مباشر)</label>
         <div style="display:flex;gap:8px">
@@ -436,17 +582,25 @@ export async function onRequestGet(context) {
           <button type="button" class="btn btn-secondary" onclick="document.getElementById('brand-logo-file').click()">رفع لوجو</button>
         </div>
         <div id="brand-logo-preview-wrap" style="margin-top:8px;display:none">
-          <img id="brand-logo-preview" src="" style="width:50px;height:50px;border-radius:8px;object-fit:cover;border:1px solid var(--purple)"/>
+          <img id="brand-logo-preview" src="" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:1px solid var(--purple)"/>
         </div>
       </div>
+
       <div class="form-group">
-        <label>الوصف بالعربي</label>
-        <textarea id="brand-desc-ar" class="form-control" rows="2" placeholder="نبذة مختصرة عن طبيعة العمل والخدمات المقدمة للعميل"></textarea>
+        <label>قصة المشروع وتفاصيله بالعربي (Story AR - تظهر في العمود الأيمن مع الخط الأخضر)</label>
+        <textarea id="brand-story-ar" class="form-control" rows="4" placeholder="اكتب تفاصيل الرحلة التسويقية، التحديات التي واجهت البراند، والنتائج الاستثنائية التي حققها..."></textarea>
       </div>
+
       <div class="form-group">
-        <label>الوصف بالإنجليزي (اختياري)</label>
-        <textarea id="brand-desc-en" class="form-control" rows="2"></textarea>
+        <label>قصة المشروع بالإنجليزي (Story EN - اختياري)</label>
+        <textarea id="brand-story-en" class="form-control" rows="3" placeholder="Case study overview, strategic growth and deliverables..."></textarea>
       </div>
+
+      <div class="form-group">
+        <label>الوصف المختصر (Meta Description / Snippet)</label>
+        <textarea id="brand-desc-ar" class="form-control" rows="2" placeholder="نبذة مختصرة لسيو ومحركات البحث"></textarea>
+      </div>
+
       <div class="form-group">
         <label class="toggle-switch">
           <input type="checkbox" id="brand-is-published"/>
@@ -527,49 +681,186 @@ export async function onRequestGet(context) {
   </div>
 </div>
 
-<!-- BULK UPLOAD MODAL -->
-<div id="bulk-modal" class="modal-backdrop">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>📤 رفع مجمع للتصاميم (Bulk Upload)</h3>
-      <button onclick="closeModal('bulk-modal')" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">×</button>
-    </div>
-    <form id="bulk-form" onsubmit="executeBulkUpload(event)">
-      <div class="form-group">
-        <label>اختر البراند / العميل *</label>
-        <select id="bulk-brand-id" class="form-control" required></select>
-      </div>
-      <div class="form-group">
-        <label>نوع التصاميم</label>
-        <select id="bulk-design-type" class="form-control">
-          <option value="social_media">سوشيال ميديا</option>
-          <option value="branding">هوية بصرية</option>
-          <option value="ads">إعلانات</option>
-          <option value="video">فيديو</option>
-          <option value="other">أخرى</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>حدد الصور (حتى 20 صورة في المرة الواحدة) *</label>
-        <input type="file" id="bulk-files-input" class="form-control" multiple accept="image/*" required onchange="previewBulkFiles(this)"/>
-        <div id="bulk-preview-list" style="margin-top:10px;max-height:160px;overflow-y:auto;font-size:0.85rem;color:var(--text-muted)"></div>
-      </div>
-      <div class="upload-progress-bar" id="bulk-progress-bar">
-        <div class="upload-progress-fill" id="bulk-progress-fill"></div>
-      </div>
-      <p id="bulk-status-text" style="font-size:0.85rem;margin-top:8px;color:var(--purple-light)"></p>
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('bulk-modal')">إلغاء</button>
-        <button type="submit" id="btn-start-bulk" class="btn btn-success">بدء الرفع والحفظ</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <script>
 let brandsList = [];
 let designsList = [];
 let selectedDesignIds = new Set();
+let pendingFastFiles = [];
+
+// Drag & Drop Setup
+const dropZone = document.getElementById('drop-zone');
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('dragover');
+  });
+});
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('dragover');
+  });
+});
+dropZone.addEventListener('drop', (e) => {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files && files.length > 0) {
+    handleFastFilesSelect(files);
+  }
+});
+
+function handleFastFilesSelect(fileList) {
+  const incoming = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (incoming.length === 0) return alert('يرجى اختيار صور فقط');
+  
+  if (pendingFastFiles.length + incoming.length > 20) {
+    alert('الحد الأقصى للرفع المجمع هو 20 صورة في المرة الواحدة');
+  }
+
+  incoming.slice(0, 20 - pendingFastFiles.length).forEach(file => {
+    const id = 'f_' + Math.random().toString(36).substr(2, 9);
+    const objectUrl = URL.createObjectURL(file);
+    const cleanName = file.name.replace(/\\.[^/.]+$/, "");
+    pendingFastFiles.push({
+      id,
+      file,
+      objectUrl,
+      title: cleanName
+    });
+  });
+
+  renderFastPreviewGrid();
+}
+
+function renderFastPreviewGrid() {
+  const panel = document.getElementById('fast-upload-panel');
+  const countBadge = document.getElementById('fast-files-count');
+  const grid = document.getElementById('fast-preview-grid');
+  
+  if (pendingFastFiles.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  panel.style.display = 'block';
+  countBadge.textContent = pendingFastFiles.length + ' صور';
+
+  grid.innerHTML = pendingFastFiles.map((item, idx) => `
+    <div class="preview-card" id="card-${item.id}">
+      <button class="preview-remove-btn" type="button" onclick="removePendingFile('${item.id}')">✕</button>
+      <img src="${item.objectUrl}" alt="Preview"/>
+      <div class="preview-card-body">
+        <input type="text" class="preview-card-title-input" value="${item.title}" oninput="updatePendingTitle('${item.id}', this.value)" placeholder="عنوان التصميم..."/>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removePendingFile(id) {
+  pendingFastFiles = pendingFastFiles.filter(item => item.id !== id);
+  renderFastPreviewGrid();
+}
+
+function updatePendingTitle(id, val) {
+  const found = pendingFastFiles.find(item => item.id === id);
+  if (found) found.title = val;
+}
+
+function cancelFastUpload() {
+  pendingFastFiles = [];
+  renderFastPreviewGrid();
+  document.getElementById('fast-progress-bar').style.display = 'none';
+  document.getElementById('fast-status-text').textContent = '';
+  document.getElementById('fast-file-input').value = '';
+}
+
+async function executeFastUpload() {
+  if (pendingFastFiles.length === 0) return alert('لا توجد صور للرفع');
+  const targetBrandId = document.getElementById('fast-target-brand').value;
+  if (!targetBrandId) return alert('يرجى اختيار البراند المستهدف أولاً');
+
+  const btnStart = document.getElementById('btn-start-fast-upload');
+  const progressBar = document.getElementById('fast-progress-bar');
+  const progressFill = document.getElementById('fast-progress-fill');
+  const statusText = document.getElementById('fast-status-text');
+
+  btnStart.disabled = true;
+  progressBar.style.display = 'block';
+  progressFill.style.width = '15%';
+  statusText.textContent = '🚀 جارٍ رفع ' + pendingFastFiles.length + ' صورة إلى Cloudflare R2...';
+
+  // 1. Prepare FormData for multi-file upload
+  const fd = new FormData();
+  pendingFastFiles.forEach(item => {
+    fd.append('files', item.file);
+  });
+
+  try {
+    const uploadRes = await fetch('/api/admin/portfolio/upload', { method: 'POST', body: fd });
+    const uploadData = await uploadRes.json();
+
+    if (!uploadData.success && (!uploadData.files || uploadData.files.length === 0)) {
+      throw new Error(uploadData.error || 'فشل الرفع');
+    }
+
+    progressFill.style.width = '65%';
+    statusText.textContent = '✅ تم رفع ' + uploadData.uploadedCount + ' صورة. جارٍ تسجيل التصاميم في قاعدة البيانات...';
+
+    // 2. Prepare items for bulk database insert
+    const itemsToInsert = [];
+    const uploadedFiles = uploadData.files || [];
+
+    uploadedFiles.forEach((fileRes, idx) => {
+      if (fileRes.success) {
+        const matchingPending = pendingFastFiles[idx];
+        const title = matchingPending ? matchingPending.title : (fileRes.name ? fileRes.name.replace(/\\.[^/.]+$/, "") : 'تصميم #' + (idx + 1));
+        
+        itemsToInsert.push({
+          brand_id: targetBrandId,
+          title_ar: title,
+          title_en: title,
+          image_url: fileRes.url,
+          thumbnail_url: fileRes.url,
+          r2_key: fileRes.key,
+          file_size: fileRes.size || 0,
+          design_type: 'social_media',
+          display_order: idx + 1,
+          is_published: 1
+        });
+      }
+    });
+
+    if (itemsToInsert.length === 0) {
+      throw new Error('لم ينجح رفع أي صورة للحفظ');
+    }
+
+    // 3. Insert items into database
+    const saveRes = await fetch('/api/admin/portfolio/designs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itemsToInsert)
+    });
+
+    if (!saveRes.ok) throw new Error('فشل حفظ التصاميم في قاعدة البيانات');
+
+    progressFill.style.width = '100%';
+    statusText.textContent = '🎉 اكتمل الرفع والحفظ بنجاح (' + itemsToInsert.length + ' تصميم)!';
+    
+    setTimeout(() => {
+      cancelFastUpload();
+      btnStart.disabled = false;
+      loadDesigns();
+      loadBrands();
+    }, 1200);
+
+  } catch (err) {
+    alert('حدث خطأ أثناء الرفع: ' + err.message);
+    btnStart.disabled = false;
+    statusText.textContent = '❌ حدث خطأ: ' + err.message;
+  }
+}
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -588,7 +879,7 @@ function switchTab(tab) {
 function autoGenerateSlug(val) {
   if (!val) return;
   const slugField = document.getElementById('brand-slug');
-  const slug = val.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-');
+  const slug = val.toLowerCase().trim().replace(/[^\\w\\s-]/g, '').replace(/[\\s_-]+/g, '-');
   slugField.value = slug;
 }
 
@@ -601,23 +892,24 @@ async function loadBrands() {
     // Update filter and modal selects
     const filterSelect = document.getElementById('filter-design-brand');
     const modalSelect = document.getElementById('design-brand-id');
-    const bulkSelect = document.getElementById('bulk-brand-id');
+    const fastBrandSelect = document.getElementById('fast-target-brand');
     
     const optionsHtml = brandsList.map(b => '<option value="' + b.id + '">' + b.name_ar + ' (' + (b.name_en || b.slug) + ')</option>').join('');
     filterSelect.innerHTML = '<option value="">كل البراندات</option>' + brandsList.map(b => '<option value="' + b.slug + '">' + b.name_ar + '</option>').join('');
     modalSelect.innerHTML = optionsHtml;
-    bulkSelect.innerHTML = optionsHtml;
+    fastBrandSelect.innerHTML = optionsHtml;
 
     if (brandsList.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">لا توجد براندات مضافة حتى الآن. اضغط على "إضافة براند جديد".</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">لا توجد براندات مضافة حتى الآن. اضغط على "إضافة براند جديد".</td></tr>';
       return;
     }
 
     tbody.innerHTML = brandsList.map(b => '<tr>' +
-      '<td><img src="' + (b.logo_url || '/assets/logos/pr-agency.webp') + '" class="brand-thumb"/></td>' +
+      '<td><img src="' + (b.brand_logo_url || b.logo_url || '/assets/logos/pr-agency.webp') + '" class="brand-thumb"/></td>' +
       '<td><strong>' + b.name_ar + '</strong>' + (b.name_en ? '<div style="font-size:0.8rem;color:var(--text-muted)">' + b.name_en + '</div>' : '') + '</td>' +
       '<td><code>' + b.slug + '</code></td>' +
-      '<td>' + (b.category || '-') + '</td>' +
+      '<td>' + (b.year || '2026') + '</td>' +
+      '<td>' + (b.service_ar || b.category || '-') + '</td>' +
       '<td>' + (b.design_count || 0) + '</td>' +
       '<td>' + (b.is_published ? '<span class="badge-pill badge-pub">منشور</span>' : '<span class="badge-pill badge-draft">مسودة / مخفي</span>') + '</td>' +
       '<td>' +
@@ -630,7 +922,7 @@ async function loadBrands() {
       '</td>' +
     '</tr>').join('');
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red">فشل تحميل البراندات: ' + e.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:red">فشل تحميل البراندات: ' + e.message + '</td></tr>';
   }
 }
 
@@ -657,7 +949,7 @@ async function loadDesigns() {
     designsList = await res.json();
 
     if (designsList.length === 0) {
-      container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">لا توجد تصاميم للبراند المحدد. اضغط على "إضافة تصميم" أو "رفع مجمع".</div>';
+      container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">لا توجد تصاميم للبراند المحدد. اسحب الصور لمنطقة الرفع بالأعلى لإضافتها فوراً.</div>';
       return;
     }
 
@@ -719,6 +1011,11 @@ async function toggleDesignPublish(id, newStatus) {
 function openBrandModal() {
   document.getElementById('brand-form').reset();
   document.getElementById('brand-id').value = '';
+  document.getElementById('brand-year').value = '2026';
+  document.getElementById('brand-service-ar').value = '';
+  document.getElementById('brand-service-en').value = '';
+  document.getElementById('brand-story-ar').value = '';
+  document.getElementById('brand-story-en').value = '';
   document.getElementById('brand-is-published').checked = false; // default unpublished
   document.getElementById('brand-logo-preview-wrap').style.display = 'none';
   document.getElementById('brand-modal-title').textContent = 'إضافة براند جديد';
@@ -732,15 +1029,20 @@ function editBrand(id) {
   document.getElementById('brand-name-ar').value = b.name_ar || '';
   document.getElementById('brand-name-en').value = b.name_en || '';
   document.getElementById('brand-slug').value = b.slug || '';
+  document.getElementById('brand-year').value = b.year || '2026';
+  document.getElementById('brand-service-ar').value = b.service_ar || '';
+  document.getElementById('brand-service-en').value = b.service_en || '';
+  document.getElementById('brand-story-ar').value = b.story_ar || '';
+  document.getElementById('brand-story-en').value = b.story_en || '';
   document.getElementById('brand-category').value = b.category || 'social_media';
   document.getElementById('brand-order').value = b.display_order || 0;
-  document.getElementById('brand-logo-url').value = b.logo_url || '';
+  document.getElementById('brand-logo-url').value = b.brand_logo_url || b.logo_url || '';
   document.getElementById('brand-desc-ar').value = b.description_ar || '';
-  document.getElementById('brand-desc-en').value = b.description_en || '';
   document.getElementById('brand-is-published').checked = !!b.is_published;
   
-  if (b.logo_url) {
-    document.getElementById('brand-logo-preview').src = b.logo_url;
+  const logoSrc = b.brand_logo_url || b.logo_url;
+  if (logoSrc) {
+    document.getElementById('brand-logo-preview').src = logoSrc;
     document.getElementById('brand-logo-preview-wrap').style.display = 'block';
   } else {
     document.getElementById('brand-logo-preview-wrap').style.display = 'none';
@@ -782,22 +1084,6 @@ function editDesign(id) {
   document.getElementById('design-modal').classList.add('open');
 }
 
-function openBulkUploadModal() {
-  document.getElementById('bulk-form').reset();
-  document.getElementById('bulk-preview-list').innerHTML = '';
-  document.getElementById('bulk-status-text').textContent = '';
-  document.getElementById('bulk-progress-bar').style.display = 'none';
-  document.getElementById('bulk-progress-fill').style.width = '0%';
-  document.getElementById('btn-start-bulk').disabled = false;
-  
-  const currentBrandSlug = document.getElementById('filter-design-brand').value;
-  if (currentBrandSlug) {
-    const found = brandsList.find(b => b.slug === currentBrandSlug);
-    if (found) document.getElementById('bulk-brand-id').value = found.id;
-  }
-  document.getElementById('bulk-modal').classList.add('open');
-}
-
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
@@ -831,102 +1117,13 @@ async function uploadSingleDesignFile(input) {
       document.getElementById('design-image-url').value = data.url;
       document.getElementById('design-r2-key').value = data.key;
       if (!document.getElementById('design-title-ar').value) {
-        document.getElementById('design-title-ar').value = input.files[0].name.replace(/\.[^/.]+$/, "");
+        document.getElementById('design-title-ar').value = input.files[0].name.replace(/\\.[^/.]+$/, "");
       }
       alert('تم رفع التصميم بنجاح!');
     } else {
       alert(data.error || 'فشل الرفع');
     }
   } catch(e) { alert('خطأ أثناء الرفع: ' + e.message); }
-}
-
-function previewBulkFiles(input) {
-  const list = document.getElementById('bulk-preview-list');
-  const files = Array.from(input.files);
-  if (files.length === 0) { list.innerHTML = ''; return; }
-  list.innerHTML = '<strong>' + files.length + ' ملف محدد:</strong><br/>' + files.map(f => '• ' + f.name).join('<br/>');
-}
-
-async function executeBulkUpload(e) {
-  e.preventDefault();
-  const brandId = document.getElementById('bulk-brand-id').value;
-  const designType = document.getElementById('bulk-design-type').value;
-  const fileInput = document.getElementById('bulk-files-input');
-  const files = Array.from(fileInput.files);
-
-  if (files.length === 0) return alert('يرجى اختيار ملفات أولاً');
-
-  const btnStart = document.getElementById('btn-start-bulk');
-  const progressBar = document.getElementById('bulk-progress-bar');
-  const progressFill = document.getElementById('bulk-progress-fill');
-  const statusText = document.getElementById('bulk-status-text');
-
-  btnStart.disabled = true;
-  progressBar.style.display = 'block';
-  progressFill.style.width = '10%';
-  statusText.textContent = 'جارٍ رفع الصور إلى مساحة التخزين...';
-
-  // 1. Upload files to R2 via /api/admin/portfolio/upload
-  const fd = new FormData();
-  files.forEach(f => fd.append('files', f));
-
-  try {
-    const uploadRes = await fetch('/api/admin/portfolio/upload', { method: 'POST', body: fd });
-    const uploadData = await uploadRes.json();
-    
-    if (!uploadData.success && (!uploadData.files || uploadData.files.length === 0)) {
-      throw new Error(uploadData.error || 'فشل رفع الملفات');
-    }
-
-    progressFill.style.width = '60%';
-    statusText.textContent = 'تم رفع ' + uploadData.uploadedCount + ' من ' + uploadData.total + ' صورة. جارٍ حفظ التصاميم في قاعدة البيانات...';
-
-    // 2. Prepare items for bulk database insert
-    const itemsToInsert = [];
-    const uploadedFiles = uploadData.files || [];
-
-    uploadedFiles.forEach((fileRes, idx) => {
-      if (fileRes.success) {
-        const title = fileRes.name ? fileRes.name.replace(/\.[^/.]+$/, "") : ('تصميم #' + (idx + 1));
-        itemsToInsert.push({
-          brand_id: brandId,
-          title_ar: title,
-          title_en: title,
-          image_url: fileRes.url,
-          thumbnail_url: fileRes.url,
-          r2_key: fileRes.key,
-          design_type: designType,
-          display_order: idx + 1,
-          is_published: 1
-        });
-      }
-    });
-
-    if (itemsToInsert.length === 0) {
-      throw new Error('لم ينجح رفع أي صورة للحفظ');
-    }
-
-    // 3. Insert items into database via /api/admin/portfolio/designs
-    const saveRes = await fetch('/api/admin/portfolio/designs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(itemsToInsert)
-    });
-
-    if (!saveRes.ok) throw new Error('فشل حفظ التصاميم في قاعدة البيانات');
-
-    progressFill.style.width = '100%';
-    statusText.textContent = '✅ اكتمل الرفع والحفظ بنجاح (' + itemsToInsert.length + ' تصميم)!';
-    setTimeout(() => {
-      closeModal('bulk-modal');
-      loadDesigns();
-    }, 1200);
-
-  } catch (err) {
-    alert('حدث خطأ أثناء الرفع المجمع: ' + err.message);
-    btnStart.disabled = false;
-    statusText.textContent = '❌ حدث خطأ: ' + err.message;
-  }
 }
 
 async function saveBrand(e) {
@@ -936,11 +1133,16 @@ async function saveBrand(e) {
     name_ar: document.getElementById('brand-name-ar').value,
     name_en: document.getElementById('brand-name-en').value,
     slug: document.getElementById('brand-slug').value,
+    year: document.getElementById('brand-year').value,
+    service_ar: document.getElementById('brand-service-ar').value,
+    service_en: document.getElementById('brand-service-en').value,
+    story_ar: document.getElementById('brand-story-ar').value,
+    story_en: document.getElementById('brand-story-en').value,
     category: document.getElementById('brand-category').value,
     display_order: document.getElementById('brand-order').value,
     logo_url: document.getElementById('brand-logo-url').value,
+    brand_logo_url: document.getElementById('brand-logo-url').value,
     description_ar: document.getElementById('brand-desc-ar').value,
-    description_en: document.getElementById('brand-desc-en').value,
     is_published: document.getElementById('brand-is-published').checked ? 1 : 0
   };
 
