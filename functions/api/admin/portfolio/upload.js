@@ -55,16 +55,20 @@ export async function onRequestPost(context) {
     // Limit to max 20 files per request
     const filesToUpload = rawFiles.slice(0, 20);
     const results = [];
-    const MAX_SIZE = 15 * 1024 * 1024; // 15MB
-    const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'];
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
+    const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'];
+    const videoExts = ['mp4', 'webm', 'mov'];
 
     for (const file of filesToUpload) {
       if (!file || typeof file === 'string') continue;
 
-      const originalName = file.name || 'upload.jpg';
+      const originalName = file.name || 'upload.bin';
       const ext = originalName.split('.').pop().toLowerCase();
+      const isVideo = videoExts.includes(ext) || (file.type && file.type.startsWith('video/'));
+      const isImage = imageExts.includes(ext) || (file.type && file.type.startsWith('image/'));
 
-      if (!allowedExts.includes(ext)) {
+      if (!isVideo && !isImage) {
         results.push({
           name: originalName,
           success: false,
@@ -73,11 +77,12 @@ export async function onRequestPost(context) {
         continue;
       }
 
-      if (file.size > MAX_SIZE) {
+      const limit = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+      if (file.size > limit) {
         results.push({
           name: originalName,
           success: false,
-          error: 'حجم الملف يتجاوز 15MB'
+          error: isVideo ? 'حجم الفيديو يتجاوز 50MB' : 'حجم الصورة يتجاوز 10MB'
         });
         continue;
       }
@@ -88,21 +93,28 @@ export async function onRequestPost(context) {
         const filename = `${timestamp}-${random}.${ext}`;
         const r2Key = `portfolio/${filename}`;
         const arrayBuffer = await file.arrayBuffer();
+        const mimeType = file.type || (isVideo ? `video/${ext === 'mov' ? 'mp4' : ext}` : `image/${ext === 'jpg' ? 'jpeg' : ext}`);
 
         await bucket.put(r2Key, arrayBuffer, {
           httpMetadata: {
-            contentType: file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`,
+            contentType: mimeType,
             cacheControl: 'public, max-age=31536000, immutable'
           }
         });
 
         const streamUrl = `/api/portfolio/image/${filename}`;
+        const mediaType = isVideo ? 'video' : 'image';
+
         results.push({
           name: originalName,
           success: true,
           url: streamUrl,
           key: r2Key,
-          filename
+          filename,
+          type: mediaType,
+          media_type: mediaType,
+          mime_type: mimeType,
+          size: file.size
         });
       } catch (fileErr) {
         results.push({
@@ -113,7 +125,6 @@ export async function onRequestPost(context) {
       }
     }
 
-    // If only one file uploaded, return single-file friendly response as well as files array
     const firstSuccessful = results.find(r => r.success);
     const allSuccessful = results.every(r => r.success);
 
@@ -122,6 +133,9 @@ export async function onRequestPost(context) {
       url: firstSuccessful ? firstSuccessful.url : null,
       key: firstSuccessful ? firstSuccessful.key : null,
       filename: firstSuccessful ? firstSuccessful.filename : null,
+      type: firstSuccessful ? firstSuccessful.type : 'image',
+      media_type: firstSuccessful ? firstSuccessful.type : 'image',
+      mime_type: firstSuccessful ? firstSuccessful.mime_type : 'image/jpeg',
       files: results,
       total: results.length,
       uploadedCount: results.filter(r => r.success).length

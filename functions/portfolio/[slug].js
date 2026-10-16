@@ -81,10 +81,18 @@ export async function onRequestGet(context) {
         const img = d.image_url || '/assets/logos/pr-agency.webp';
         const thumb = d.thumbnail_url || img;
 
+        const isVideo = d.media_type === 'video' || (d.video_url && d.video_url.length > 0) || (d.image_url && d.image_url.match(/\.(mp4|webm|mov)$/i));
+        const mediaSource = d.video_url || d.image_url;
+
         designsHtml += `
-          <div class="gallery-item brand-design-card" data-index="${idx}" data-img="${img}" data-title="${title}" data-desc="${desc}">
+          <div class="gallery-item brand-design-card" data-index="${idx}" data-img="${img}" data-video="${isVideo ? mediaSource : ''}" data-type="${isVideo ? 'video' : 'image'}" data-title="${title}" data-desc="${desc}">
             <div class="brand-design-img-wrap">
-              <img src="${thumb}" alt="${title}" loading="lazy" width="600" height="600"/>
+              ${isVideo ? `
+                <video src="${mediaSource}" muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover"></video>
+                <span class="video-badge" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.75);color:#fff;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;z-index:2">▶ فيديو</span>
+              ` : `
+                <img src="${thumb}" alt="${title}" loading="lazy" width="600" height="600"/>
+              `}
               <div class="brand-design-overlay">
                 <span class="brand-design-zoom-btn" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
@@ -227,7 +235,8 @@ export async function onRequestGet(context) {
     <button class="lightbox-prev" aria-label="Previous">‹</button>
     <button class="lightbox-next" aria-label="Next">›</button>
     <div class="lightbox-content">
-      <img id="brand-lightbox-img" src="" alt="" />
+      <img id="brand-lightbox-img" src="" alt="" style="display:none"/>
+      <video id="brand-lightbox-video" src="" controls playsinline style="display:none;max-width:90vw;max-height:80vh;border-radius:12px"></video>
       <div class="lightbox-caption">
         <h3 id="brand-lightbox-title"></h3>
         <p id="brand-lightbox-desc"></p>
@@ -247,6 +256,7 @@ export async function onRequestGet(context) {
       const cards = Array.from(document.querySelectorAll('.brand-design-card'));
       const lightbox = document.getElementById('brand-lightbox');
       const lbImg = document.getElementById('brand-lightbox-img');
+      const lbVideo = document.getElementById('brand-lightbox-video');
       const lbTitle = document.getElementById('brand-lightbox-title');
       const lbDesc = document.getElementById('brand-lightbox-desc');
       const btnClose = lightbox ? lightbox.querySelector('.lightbox-close') : null;
@@ -262,12 +272,32 @@ export async function onRequestGet(context) {
         if (idx >= cards.length) idx = 0;
         currentIndex = idx;
         const card = cards[currentIndex];
+        const type = card.getAttribute('data-type');
         const img = card.getAttribute('data-img');
+        const video = card.getAttribute('data-video');
         const title = card.getAttribute('data-title') || '';
         const desc = card.getAttribute('data-desc') || '';
 
-        lbImg.src = img;
-        lbImg.alt = title;
+        if (type === 'video' && video) {
+          if (lbImg) lbImg.style.display = 'none';
+          if (lbVideo) {
+            lbVideo.style.display = 'block';
+            lbVideo.src = video;
+            lbVideo.play().catch(() => {});
+          }
+        } else {
+          if (lbVideo) {
+            lbVideo.pause();
+            lbVideo.style.display = 'none';
+            lbVideo.src = '';
+          }
+          if (lbImg) {
+            lbImg.style.display = 'block';
+            lbImg.src = img;
+            lbImg.alt = title;
+          }
+        }
+
         lbTitle.textContent = title;
         lbDesc.textContent = desc;
         lightbox.classList.remove('lightbox-hidden');
@@ -275,6 +305,10 @@ export async function onRequestGet(context) {
       }
 
       function closeLightbox() {
+        if (lbVideo) {
+          lbVideo.pause();
+          lbVideo.src = '';
+        }
         lightbox.classList.add('lightbox-hidden');
         document.body.style.overflow = '';
       }

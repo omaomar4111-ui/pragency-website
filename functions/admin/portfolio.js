@@ -159,37 +159,165 @@ export async function onRequestGet(context) {
       background: rgba(255, 255, 255, 0.05);
     }
 
-    /* Drop Zone (Instagram-Like Upload) */
+    /* Drop Zone */
     .drop-zone {
       border: 2px dashed rgba(139, 92, 246, 0.4);
       border-radius: 16px;
-      padding: 40px 24px;
+      padding: 32px 20px;
       text-align: center;
       background: rgba(139, 92, 246, 0.03);
       cursor: pointer;
       transition: all 0.25s ease;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       position: relative;
     }
-    .drop-zone:hover, .drop-zone.dragover {
+    .drop-zone:hover, .drop-zone.dragover, .drop-zone.drag-over {
       border-color: var(--purple);
       background: rgba(139, 92, 246, 0.1);
       transform: scale(1.005);
     }
     .drop-zone-icon {
-      font-size: 2.8rem;
-      margin-bottom: 12px;
+      font-size: 2.4rem;
+      margin-bottom: 10px;
       display: inline-block;
     }
     .drop-zone-title {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #fff;
       margin-bottom: 6px;
     }
     .drop-zone-desc {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
+    }
+
+    /* Modal Inline Designs Section */
+    .brand-designs-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .section-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    #brand-drop-zone {
+      border: 2px dashed rgba(139, 92, 246, 0.45);
+      border-radius: 14px;
+      padding: 26px 16px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(139, 92, 246, 0.04);
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+    }
+    #brand-drop-zone:hover, #brand-drop-zone.drag-over {
+      border-color: var(--purple);
+      background: rgba(139, 92, 246, 0.12);
+    }
+    #brand-designs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .design-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a0f2e;
+      border: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .design-thumb img, .design-thumb video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .design-thumb .delete-btn {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.9);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+      z-index: 3;
+    }
+    .design-thumb:hover .delete-btn {
+      opacity: 1;
+    }
+    .design-thumb .video-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      z-index: 2;
+    }
+    .design-thumb-footer {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(180deg, transparent 0%, rgba(10, 0, 20, 0.95) 100%);
+      padding: 8px 6px 6px;
+    }
+    .design-thumb-title {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      width: 100%;
+      padding: 2px 4px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .design-thumb-title:focus {
+      background: rgba(0, 0, 0, 0.8);
+      border-color: var(--purple);
+      outline: none;
+    }
+    .design-thumb-uploading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      text-align: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--purple-light);
     }
 
     /* Preview Grid for Multi Upload */
@@ -209,7 +337,7 @@ export async function onRequestGet(context) {
       display: flex;
       flex-direction: column;
     }
-    .preview-card img {
+    .preview-card img, .preview-card video {
       width: 100%;
       height: 140px;
       object-fit: cover;
@@ -246,9 +374,10 @@ export async function onRequestGet(context) {
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
+      z-index: 2;
     }
 
-    /* Grid for Designs */
+    /* Grid for Designs Tab */
     .designs-admin-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -279,7 +408,7 @@ export async function onRequestGet(context) {
       cursor: pointer;
       z-index: 2;
     }
-    .design-admin-card img {
+    .design-admin-card img, .design-admin-card video {
       width: 100%;
       height: 180px;
       object-fit: cover;
@@ -334,7 +463,7 @@ export async function onRequestGet(context) {
       background: #14001F;
       border: 1px solid var(--purple);
       border-radius: 18px;
-      max-width: 680px;
+      max-width: 760px;
       width: 100%;
       padding: 24px;
       max-height: 90vh;
@@ -418,7 +547,7 @@ export async function onRequestGet(context) {
   <header>
     <div class="header-titles">
       <h1>🎨 إدارة معرض الأعمال (Portfolio CMS)</h1>
-      <p style="color:var(--text-muted);font-size:0.9rem">إدارة البراندات وتصاميم الهوية والمحتوى مع رفع الصور على Cloudflare R2 والتحكم الكامل في النشر</p>
+      <p style="color:var(--text-muted);font-size:0.9rem">إدارة البراندات وتصاميم الهوية والمحتوى مع رفع الصور والفيديوهات على Cloudflare R2 والتحكم الكامل في النشر</p>
     </div>
     <div class="nav-links">
       <a href="/portfolio" target="_blank" class="btn btn-secondary">🌐 عرض المعرض العام</a>
@@ -461,20 +590,20 @@ export async function onRequestGet(context) {
   <!-- 2. DESIGNS TAB -->
   <div id="tab-designs" class="tab-content">
     
-    <!-- Instagram-Like Fast Upload Zone -->
+    <!-- Fast Upload Zone -->
     <div class="drop-zone" id="drop-zone" onclick="document.getElementById('fast-file-input').click()">
       <span class="drop-zone-icon">📸</span>
-      <div class="drop-zone-title">اسحب وأفلت التصاميم هنا للرفع السريع (Instagram-Like Upload)</div>
-      <div class="drop-zone-desc">أو اضغط لاختيار حتى 20 صورة دفعة واحدة (JPG, PNG, WebP) — يدعم المعاينة الفورية وتعديل العناوين</div>
-      <input type="file" id="fast-file-input" multiple accept="image/*" style="display:none" onchange="handleFastFilesSelect(this.files)"/>
+      <div class="drop-zone-title">اسحب وأفلت التصاميم أو الفيديوهات هنا للرفع السريع</div>
+      <div class="drop-zone-desc">يدعم: JPG, PNG, WebP, GIF, MP4, WebM (حتى 50MB للفيديو) — معاينة فورية وتعديل العناوين</div>
+      <input type="file" id="fast-file-input" multiple accept="image/*,video/*" style="display:none" onchange="handleFastFilesSelect(this.files)"/>
     </div>
 
-    <!-- Active Upload Panel (when files selected) -->
+    <!-- Active Upload Panel -->
     <div id="fast-upload-panel" style="display:none;background:var(--card-bg);border:1px solid var(--purple);border-radius:16px;padding:20px;margin-bottom:24px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
         <h4 style="color:#fff;display:flex;align-items:center;gap:8px">
           <span>🚀 تجهيز رفع</span>
-          <span id="fast-files-count" class="badge-pill badge-pub">0 صور</span>
+          <span id="fast-files-count" class="badge-pill badge-pub">0 ملفات</span>
         </h4>
         <div style="display:flex;gap:12px;align-items:center">
           <label style="font-size:0.85rem;color:var(--purple-light)">البراند المستهدف:</label>
@@ -515,7 +644,7 @@ export async function onRequestGet(context) {
   </div>
 </div>
 
-<!-- BRAND MODAL -->
+<!-- BRAND MODAL (ONE-STOP-SHOP: BRAND INFO + INLINE DESIGNS UPLOAD) -->
 <div id="brand-modal" class="modal-backdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -524,6 +653,7 @@ export async function onRequestGet(context) {
     </div>
     <form id="brand-form" onsubmit="saveBrand(event)">
       <input type="hidden" id="brand-id"/>
+      
       <div class="form-row">
         <div class="form-group">
           <label>اسم البراند بالعربي *</label>
@@ -588,12 +718,12 @@ export async function onRequestGet(context) {
 
       <div class="form-group">
         <label>قصة المشروع وتفاصيله بالعربي (Story AR - تظهر في العمود الأيمن مع الخط الأخضر)</label>
-        <textarea id="brand-story-ar" class="form-control" rows="4" placeholder="اكتب تفاصيل الرحلة التسويقية، التحديات التي واجهت البراند، والنتائج الاستثنائية التي حققها..."></textarea>
+        <textarea id="brand-story-ar" class="form-control" rows="3" placeholder="اكتب تفاصيل الرحلة التسويقية، التحديات التي واجهت البراند، والنتائج الاستثنائية التي حققها..."></textarea>
       </div>
 
       <div class="form-group">
         <label>قصة المشروع بالإنجليزي (Story EN - اختياري)</label>
-        <textarea id="brand-story-en" class="form-control" rows="3" placeholder="Case study overview, strategic growth and deliverables..."></textarea>
+        <textarea id="brand-story-en" class="form-control" rows="2" placeholder="Case study overview, strategic growth and deliverables..."></textarea>
       </div>
 
       <div class="form-group">
@@ -601,15 +731,40 @@ export async function onRequestGet(context) {
         <textarea id="brand-desc-ar" class="form-control" rows="2" placeholder="نبذة مختصرة لسيو ومحركات البحث"></textarea>
       </div>
 
-      <div class="form-group">
+      <!-- DESIGNS SECTION INSIDE BRAND MODAL -->
+      <div class="brand-designs-section" id="modal-brand-designs-wrapper">
+        <h3 class="section-title">تصاميم البراند (Brand Deliverables & Gallery)</h3>
+        <p class="section-hint" id="brand-designs-hint">اسحب الصور أو الفيديوهات هنا، أو اضغط للاختيار</p>
+
+        <!-- Drop Zone Inside Modal -->
+        <div id="brand-drop-zone" class="drop-zone" onclick="triggerBrandFileInput()">
+          <div class="drop-zone-icon">📷</div>
+          <h4 style="color:#fff;font-size:1.05rem;margin-bottom:4px">اسحب الملفات هنا أو اضغط للاختيار</h4>
+          <p style="font-size:0.82rem;color:var(--text-muted)">يدعم: JPG, PNG, WebP, GIF, MP4 — حتى 50MB لكل ملف</p>
+          <input type="file" id="brand-file-input" multiple accept="image/*,video/*" style="display:none" onchange="handleBrandFiles(this.files)"/>
+        </div>
+
+        <div id="brand-modal-upload-progress" class="upload-progress-bar" style="margin-bottom:12px">
+          <div class="upload-progress-fill" id="brand-modal-progress-fill"></div>
+        </div>
+        <div id="brand-modal-status-text" style="font-size:0.82rem;margin-bottom:12px;color:var(--purple-light)"></div>
+
+        <!-- Preview Grid of Uploaded Designs -->
+        <div id="brand-designs-grid" class="designs-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:20px">
         <label class="toggle-switch">
           <input type="checkbox" id="brand-is-published"/>
           <span>نشر البراند في المعرض العام فوراً (Default: غير منشور لحين الانتهاء)</span>
         </label>
       </div>
+
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('brand-modal')">إلغاء</button>
-        <button type="submit" class="btn">حفظ البراند</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('brand-modal')">إغلاق</button>
+        <button type="submit" class="btn" id="btn-save-brand-main">حفظ البراند</button>
       </div>
     </form>
   </div>
@@ -640,11 +795,11 @@ export async function onRequestGet(context) {
         </div>
       </div>
       <div class="form-group">
-        <label>صورة التصميم (رفع ملف أو رابط صورة) *</label>
+        <label>صورة أو فيديو التصميم (رفع ملف أو رابط) *</label>
         <div style="display:flex;gap:8px">
-          <input type="text" id="design-image-url" class="form-control" placeholder="/assets/... أو رابط الصورة" required/>
-          <input type="file" id="design-image-file" accept="image/*" style="display:none" onchange="uploadSingleDesignFile(this)"/>
-          <button type="button" class="btn btn-secondary" onclick="document.getElementById('design-image-file').click()">رفع صورة</button>
+          <input type="text" id="design-image-url" class="form-control" placeholder="/assets/... أو رابط الصورة/الفيديو" required/>
+          <input type="file" id="design-image-file" accept="image/*,video/*" style="display:none" onchange="uploadSingleDesignFile(this)"/>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('design-image-file').click()">رفع ملف</button>
         </div>
       </div>
       <div class="form-row">
@@ -686,48 +841,259 @@ let brandsList = [];
 let designsList = [];
 let selectedDesignIds = new Set();
 let pendingFastFiles = [];
+let modalBrandDesigns = [];
 
-// Drag & Drop Setup
+// Drag & Drop Setup for Designs Tab
 const dropZone = document.getElementById('drop-zone');
-['dragenter', 'dragover'].forEach(eventName => {
-  dropZone.addEventListener(eventName, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropZone.classList.add('dragover');
+if (dropZone) {
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+    });
   });
-});
-['dragleave', 'drop'].forEach(eventName => {
-  dropZone.addEventListener(eventName, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropZone.classList.remove('dragover');
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    });
   });
-});
-dropZone.addEventListener('drop', (e) => {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  if (files && files.length > 0) {
-    handleFastFilesSelect(files);
+  dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files && files.length > 0) {
+      handleFastFilesSelect(files);
+    }
+  });
+}
+
+// Drag & Drop Setup for Brand Modal
+const brandDropZone = document.getElementById('brand-drop-zone');
+if (brandDropZone) {
+  ['dragenter', 'dragover'].forEach(eventName => {
+    brandDropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      brandDropZone.classList.add('drag-over');
+    });
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    brandDropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      brandDropZone.classList.remove('drag-over');
+    });
+  });
+  brandDropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files && files.length > 0) {
+      handleBrandFiles(files);
+    }
+  });
+}
+
+function triggerBrandFileInput() {
+  const brandId = document.getElementById('brand-id').value;
+  if (!brandId) {
+    alert('يرجى حفظ بيانات البراند الأساسية أولاً قبل رفع التصاميم');
+    return;
   }
-});
+  document.getElementById('brand-file-input').click();
+}
+
+async function loadModalBrandDesigns(brandId) {
+  const grid = document.getElementById('brand-designs-grid');
+  const hint = document.getElementById('brand-designs-hint');
+  if (!brandId) {
+    hint.innerHTML = '<span style="color:#f59e0b">⚠️ احفظ بيانات البراند أولاً لتفعيل رفع التصاميم المباشر</span>';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem">القسم غير نشط حالياً — اضغط "حفظ البراند" أولاً.</div>';
+    return;
+  }
+
+  hint.textContent = 'اسحب الصور أو الفيديوهات هنا، أو اضغط للاختيار';
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem">جارٍ تحميل تصاميم البراند...</div>';
+
+  try {
+    const res = await fetch('/api/admin/portfolio/designs?brand_id=' + brandId);
+    modalBrandDesigns = await res.json();
+
+    if (!modalBrandDesigns || modalBrandDesigns.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem">لا توجد تصاميم مضافة لهذا البراند حتى الآن. اسحب الملفات لمنطقة الرفع بالأعلى.</div>';
+      return;
+    }
+
+    renderModalBrandDesigns();
+  } catch (err) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:#ef4444;font-size:0.85rem">خطأ في تحميل التصاميم: ' + err.message + '</div>';
+  }
+}
+
+function renderModalBrandDesigns() {
+  const grid = document.getElementById('brand-designs-grid');
+  if (!modalBrandDesigns || modalBrandDesigns.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem">لا توجد تصاميم مضافة لهذا البراند حتى الآن.</div>';
+    return;
+  }
+
+  grid.innerHTML = modalBrandDesigns.map(d => {
+    const isVideo = d.media_type === 'video' || (d.video_url && d.video_url.length > 0) || (d.image_url && d.image_url.match(/\\.(mp4|webm|mov)$/i));
+    const mediaSrc = d.thumbnail_url || d.image_url;
+    const title = d.title_ar || d.title_en || 'تصميم';
+
+    return '<div class="design-thumb" id="thumb-design-' + d.id + '">' +
+      '<button type="button" class="delete-btn" onclick="deleteModalDesign(' + d.id + ')" title="حذف">✕</button>' +
+      (isVideo ? '<span class="video-badge">▶ فيديو</span><video src="' + (d.video_url || d.image_url) + '" muted playsinline preload="metadata"></video>' : '<img src="' + mediaSrc + '" loading="lazy" alt=""/>') +
+      '<div class="design-thumb-footer">' +
+        '<input type="text" class="design-thumb-title" value="' + title.replace(/"/g, '&quot;') + '" onblur="inlineSaveDesignTitle(' + d.id + ', this.value)" onkeydown="if(event.key===\\'Enter\\'){this.blur();}" title="اضغط للتعديل"/>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function handleBrandFiles(files) {
+  const brandId = document.getElementById('brand-id').value;
+  if (!brandId) {
+    alert('احفظ البراند أولاً قبل رفع التصاميم');
+    return;
+  }
+
+  const incoming = Array.from(files);
+  if (incoming.length === 0) return;
+
+  const progressBar = document.getElementById('brand-modal-upload-progress');
+  const progressFill = document.getElementById('brand-modal-progress-fill');
+  const statusText = document.getElementById('brand-modal-status-text');
+
+  progressBar.style.display = 'block';
+  progressFill.style.width = '10%';
+  statusText.textContent = '🚀 جارٍ رفع ' + incoming.length + ' ملف...';
+
+  const grid = document.getElementById('brand-designs-grid');
+
+  for (let i = 0; i < incoming.length; i++) {
+    const file = incoming[i];
+    const isVideo = file.type.startsWith('video/');
+    const cleanTitle = file.name.replace(/\\.[^/.]+$/, "");
+
+    statusText.textContent = 'جارٍ رفع ملف (' + (i + 1) + ' من ' + incoming.length + '): ' + file.name;
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('brand_id', brandId);
+
+      const res = await fetch('/api/admin/portfolio/upload', {
+        method: 'POST',
+        body: fd
+      });
+
+      const data = await res.json();
+      if (!data.success && !data.url) {
+        throw new Error(data.error || 'فشل الرفع');
+      }
+
+      const mediaUrl = data.url || (data.files && data.files[0] ? data.files[0].url : null);
+      const mediaType = isVideo ? 'video' : 'image';
+
+      // Save design to D1
+      const saveRes = await fetch('/api/admin/portfolio/designs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          brand_id: brandId,
+          title_ar: cleanTitle,
+          title_en: cleanTitle,
+          image_url: mediaUrl,
+          video_url: isVideo ? mediaUrl : null,
+          media_type: mediaType,
+          design_type: isVideo ? 'video' : 'social_media',
+          is_published: 1
+        })
+      });
+
+      const saveData = await saveRes.json();
+      if (saveData.success) {
+        modalBrandDesigns.unshift({
+          id: saveData.id,
+          brand_id: brandId,
+          title_ar: cleanTitle,
+          image_url: mediaUrl,
+          video_url: isVideo ? mediaUrl : null,
+          media_type: mediaType,
+          is_published: 1
+        });
+        renderModalBrandDesigns();
+      }
+
+      const pct = Math.round(((i + 1) / incoming.length) * 100);
+      progressFill.style.width = pct + '%';
+
+    } catch (err) {
+      console.error(err);
+      alert('خطأ أثناء رفع الملف ' + file.name + ': ' + err.message);
+    }
+  }
+
+  statusText.textContent = '✅ اكتمل رفع وحفظ كل الملفات بنجاح!';
+  setTimeout(() => {
+    progressBar.style.display = 'none';
+    statusText.textContent = '';
+    loadDesigns(); // Sync designs tab
+  }, 1500);
+}
+
+async function inlineSaveDesignTitle(id, newTitle) {
+  if (!newTitle || !newTitle.trim()) return;
+  try {
+    await fetch('/api/admin/portfolio/designs', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, title_ar: newTitle.trim(), title_en: newTitle.trim() })
+    });
+    const found = modalBrandDesigns.find(d => d.id === id);
+    if (found) {
+      found.title_ar = newTitle.trim();
+      found.title_en = newTitle.trim();
+    }
+  } catch (err) {
+    console.error('Failed to update design title:', err);
+  }
+}
+
+async function deleteModalDesign(id) {
+  if (!confirm('هل تريد بالتأكيد حذف هذا التصميم؟')) return;
+  try {
+    await fetch('/api/admin/portfolio/designs?id=' + id, { method: 'DELETE' });
+    modalBrandDesigns = modalBrandDesigns.filter(d => d.id !== id);
+    renderModalBrandDesigns();
+    loadDesigns(); // sync
+  } catch (err) {
+    alert('فشل الحذف: ' + err.message);
+  }
+}
 
 function handleFastFilesSelect(fileList) {
-  const incoming = Array.from(fileList).filter(f => f.type.startsWith('image/'));
-  if (incoming.length === 0) return alert('يرجى اختيار صور فقط');
+  const incoming = Array.from(fileList);
+  if (incoming.length === 0) return;
   
   if (pendingFastFiles.length + incoming.length > 20) {
-    alert('الحد الأقصى للرفع المجمع هو 20 صورة في المرة الواحدة');
+    alert('الحد الأقصى للرفع المجمع هو 20 ملفاً في المرة الواحدة');
   }
 
   incoming.slice(0, 20 - pendingFastFiles.length).forEach(file => {
     const id = 'f_' + Math.random().toString(36).substr(2, 9);
     const objectUrl = URL.createObjectURL(file);
     const cleanName = file.name.replace(/\\.[^/.]+$/, "");
+    const isVideo = file.type.startsWith('video/');
     pendingFastFiles.push({
       id,
       file,
       objectUrl,
-      title: cleanName
+      title: cleanName,
+      isVideo
     });
   });
 
@@ -745,14 +1111,14 @@ function renderFastPreviewGrid() {
   }
 
   panel.style.display = 'block';
-  countBadge.textContent = pendingFastFiles.length + ' صور';
+  countBadge.textContent = pendingFastFiles.length + ' ملفات';
 
   grid.innerHTML = pendingFastFiles.map((item, idx) => 
     '<div class="preview-card" id="card-' + item.id + '">' +
       '<button class="preview-remove-btn" type="button" onclick="removePendingFile(\\\'' + item.id + '\\\')">✕</button>' +
-      '<img src="' + item.objectUrl + '" alt="Preview"/>' +
+      (item.isVideo ? '<video src="' + item.objectUrl + '" muted playsinline></video>' : '<img src="' + item.objectUrl + '" alt="Preview"/>') +
       '<div class="preview-card-body">' +
-        '<input type="text" class="preview-card-title-input" value="' + item.title + '" oninput="updatePendingTitle(\\\'' + item.id + '\\\', this.value)" placeholder="عنوان التصميم..."/>' +
+        '<input type="text" class="preview-card-title-input" value="' + item.title.replace(/"/g, '&quot;') + '" oninput="updatePendingTitle(\\\'' + item.id + '\\\', this.value)" placeholder="عنوان التصميم..."/>' +
       '</div>' +
     '</div>'
   ).join('');
@@ -777,7 +1143,7 @@ function cancelFastUpload() {
 }
 
 async function executeFastUpload() {
-  if (pendingFastFiles.length === 0) return alert('لا توجد صور للرفع');
+  if (pendingFastFiles.length === 0) return alert('لا توجد ملفات للرفع');
   const targetBrandId = document.getElementById('fast-target-brand').value;
   if (!targetBrandId) return alert('يرجى اختيار البراند المستهدف أولاً');
 
@@ -789,9 +1155,8 @@ async function executeFastUpload() {
   btnStart.disabled = true;
   progressBar.style.display = 'block';
   progressFill.style.width = '15%';
-  statusText.textContent = '🚀 جارٍ رفع ' + pendingFastFiles.length + ' صورة إلى Cloudflare R2...';
+  statusText.textContent = '🚀 جارٍ رفع ' + pendingFastFiles.length + ' ملف إلى Cloudflare R2...';
 
-  // 1. Prepare FormData for multi-file upload
   const fd = new FormData();
   pendingFastFiles.forEach(item => {
     fd.append('files', item.file);
@@ -806,9 +1171,8 @@ async function executeFastUpload() {
     }
 
     progressFill.style.width = '65%';
-    statusText.textContent = '✅ تم رفع ' + uploadData.uploadedCount + ' صورة. جارٍ تسجيل التصاميم في قاعدة البيانات...';
+    statusText.textContent = '✅ تم رفع ' + uploadData.uploadedCount + ' ملف. جارٍ تسجيل التصاميم في قاعدة البيانات...';
 
-    // 2. Prepare items for bulk database insert
     const itemsToInsert = [];
     const uploadedFiles = uploadData.files || [];
 
@@ -816,6 +1180,7 @@ async function executeFastUpload() {
       if (fileRes.success) {
         const matchingPending = pendingFastFiles[idx];
         const title = matchingPending ? matchingPending.title : (fileRes.name ? fileRes.name.replace(/\\.[^/.]+$/, "") : 'تصميم #' + (idx + 1));
+        const mediaType = fileRes.media_type || (matchingPending && matchingPending.isVideo ? 'video' : 'image');
         
         itemsToInsert.push({
           brand_id: targetBrandId,
@@ -823,9 +1188,11 @@ async function executeFastUpload() {
           title_en: title,
           image_url: fileRes.url,
           thumbnail_url: fileRes.url,
+          video_url: mediaType === 'video' ? fileRes.url : null,
+          media_type: mediaType,
           r2_key: fileRes.key,
           file_size: fileRes.size || 0,
-          design_type: 'social_media',
+          design_type: mediaType === 'video' ? 'video' : 'social_media',
           display_order: idx + 1,
           is_published: 1
         });
@@ -833,10 +1200,9 @@ async function executeFastUpload() {
     });
 
     if (itemsToInsert.length === 0) {
-      throw new Error('لم ينجح رفع أي صورة للحفظ');
+      throw new Error('لم ينجح رفع أي ملف للحفظ');
     }
 
-    // 3. Insert items into database
     const saveRes = await fetch('/api/admin/portfolio/designs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -889,7 +1255,6 @@ async function loadBrands() {
     const res = await fetch('/api/admin/portfolio/brands');
     brandsList = await res.json();
     
-    // Update filter and modal selects
     const filterSelect = document.getElementById('filter-design-brand');
     const modalSelect = document.getElementById('design-brand-id');
     const fastBrandSelect = document.getElementById('fast-target-brand');
@@ -949,23 +1314,26 @@ async function loadDesigns() {
     designsList = await res.json();
 
     if (designsList.length === 0) {
-      container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">لا توجد تصاميم للبراند المحدد. اسحب الصور لمنطقة الرفع بالأعلى لإضافتها فوراً.</div>';
+      container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">لا توجد تصاميم للبراند المحدد. اسحب الملفات لمنطقة الرفع بالأعلى لإضافتها فوراً.</div>';
       return;
     }
 
-    container.innerHTML = designsList.map(d => '<div class="design-admin-card" id="card-design-' + d.id + '">' +
-      '<input type="checkbox" class="design-checkbox" onchange="toggleSelectDesign(' + d.id + ', this.checked)"/>' +
-      '<img src="' + (d.thumbnail_url || d.image_url) + '" loading="lazy"/>' +
-      '<div class="design-admin-body">' +
-        '<h4>' + (d.title_ar || d.title_en || 'تصميم') + '</h4>' +
-        '<p>البراند: ' + (d.brand_name_ar || '-') + '<br>الترتيب: ' + (d.display_order || 0) + '</p>' +
-        '<div class="card-actions">' +
-          '<button class="btn btn-secondary" style="padding:4px 8px;font-size:0.8rem" onclick="toggleDesignPublish(' + d.id + ', ' + (d.is_published ? 0 : 1) + ')">' + (d.is_published ? 'إخفاء' : 'نشر') + '</button>' +
-          '<button class="btn btn-secondary" style="padding:4px 8px;font-size:0.8rem" onclick="editDesign(' + d.id + ')">تعديل</button>' +
-          '<button class="btn btn-danger" style="padding:4px 8px;font-size:0.8rem" onclick="deleteDesign(' + d.id + ')">حذف</button>' +
+    container.innerHTML = designsList.map(d => {
+      const isVideo = d.media_type === 'video' || (d.video_url && d.video_url.length > 0) || (d.image_url && d.image_url.match(/\\.(mp4|webm|mov)$/i));
+      return '<div class="design-admin-card" id="card-design-' + d.id + '">' +
+        '<input type="checkbox" class="design-checkbox" onchange="toggleSelectDesign(' + d.id + ', this.checked)"/>' +
+        (isVideo ? '<video src="' + (d.video_url || d.image_url) + '" muted playsinline></video>' : '<img src="' + (d.thumbnail_url || d.image_url) + '" loading="lazy"/>') +
+        '<div class="design-admin-body">' +
+          '<h4>' + (d.title_ar || d.title_en || 'تصميم') + (isVideo ? ' (فيديو)' : '') + '</h4>' +
+          '<p>البراند: ' + (d.brand_name_ar || '-') + '<br>الترتيب: ' + (d.display_order || 0) + '</p>' +
+          '<div class="card-actions">' +
+            '<button class="btn btn-secondary" style="padding:4px 8px;font-size:0.8rem" onclick="toggleDesignPublish(' + d.id + ', ' + (d.is_published ? 0 : 1) + ')">' + (d.is_published ? 'إخفاء' : 'نشر') + '</button>' +
+            '<button class="btn btn-secondary" style="padding:4px 8px;font-size:0.8rem" onclick="editDesign(' + d.id + ')">تعديل</button>' +
+            '<button class="btn btn-danger" style="padding:4px 8px;font-size:0.8rem" onclick="deleteDesign(' + d.id + ')">حذف</button>' +
+          '</div>' +
         '</div>' +
-      '</div>' +
-    '</div>').join('');
+      '</div>';
+    }).join('');
   } catch(e) {
     container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:red">فشل تحميل التصاميم: ' + e.message + '</div>';
   }
@@ -1016,9 +1384,11 @@ function openBrandModal() {
   document.getElementById('brand-service-en').value = '';
   document.getElementById('brand-story-ar').value = '';
   document.getElementById('brand-story-en').value = '';
-  document.getElementById('brand-is-published').checked = false; // default unpublished
+  document.getElementById('brand-is-published').checked = false;
   document.getElementById('brand-logo-preview-wrap').style.display = 'none';
   document.getElementById('brand-modal-title').textContent = 'إضافة براند جديد';
+  
+  loadModalBrandDesigns(null);
   document.getElementById('brand-modal').classList.add('open');
 }
 
@@ -1049,6 +1419,7 @@ function editBrand(id) {
   }
 
   document.getElementById('brand-modal-title').textContent = 'تعديل البراند: ' + b.name_ar;
+  loadModalBrandDesigns(b.id);
   document.getElementById('brand-modal').classList.add('open');
 }
 
@@ -1119,7 +1490,7 @@ async function uploadSingleDesignFile(input) {
       if (!document.getElementById('design-title-ar').value) {
         document.getElementById('design-title-ar').value = input.files[0].name.replace(/\\.[^/.]+$/, "");
       }
-      alert('تم رفع التصميم بنجاح!');
+      alert('تم رفع الملف بنجاح!');
     } else {
       alert(data.error || 'فشل الرفع');
     }
@@ -1156,8 +1527,14 @@ async function saveBrand(e) {
   });
 
   if (res.ok) {
-    closeModal('brand-modal');
+    const data = await res.json().catch(() => ({}));
+    const newId = id || data.id;
+    if (newId) {
+      document.getElementById('brand-id').value = newId;
+      loadModalBrandDesigns(newId);
+    }
     loadBrands();
+    alert('تم حفظ بيانات البراند بنجاح!');
   } else {
     const d = await res.json().catch(() => ({}));
     alert(d.error || 'حدث خطأ أثناء حفظ البراند');

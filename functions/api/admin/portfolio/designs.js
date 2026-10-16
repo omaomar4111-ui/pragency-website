@@ -48,7 +48,7 @@ export async function onRequestGet(context) {
       params.push(brandSlug);
     } else if (brandId) {
       query += ` WHERE d.brand_id = ?`;
-      params.push(brandId);
+      params.push(parseInt(brandId, 10));
     }
 
     query += ` ORDER BY d.display_order ASC, d.id DESC`;
@@ -86,11 +86,14 @@ export async function onRequestPost(context) {
       const insertedIds = [];
       for (const item of body) {
         if (!item.brand_id || !item.image_url) continue;
+        const mediaType = item.media_type || (item.design_type === 'video' ? 'video' : 'image');
+        const videoUrl = item.video_url || (mediaType === 'video' ? item.image_url : null);
+
         const res = await db.prepare(`
           INSERT INTO portfolio_designs (
             brand_id, title_ar, title_en, description_ar, description_en,
-            image_url, thumbnail_url, r2_key, design_type, display_order, is_published, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            image_url, thumbnail_url, video_url, media_type, r2_key, design_type, display_order, is_published, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           parseInt(item.brand_id, 10),
           item.title_ar ? item.title_ar.trim() : null,
@@ -99,6 +102,8 @@ export async function onRequestPost(context) {
           item.description_en ? item.description_en.trim() : null,
           item.image_url.trim(),
           item.thumbnail_url ? item.thumbnail_url.trim() : item.image_url.trim(),
+          videoUrl ? videoUrl.trim() : null,
+          mediaType,
           item.r2_key || null,
           item.design_type || 'social_media',
           parseInt(item.display_order, 10) || 0,
@@ -123,6 +128,8 @@ export async function onRequestPost(context) {
       description_en,
       image_url,
       thumbnail_url,
+      video_url,
+      media_type,
       r2_key,
       design_type,
       display_order,
@@ -133,11 +140,14 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: 'البراند والصورة مطلوبان' }), { status: 400 });
     }
 
+    const calculatedMediaType = media_type || (design_type === 'video' ? 'video' : 'image');
+    const calculatedVideoUrl = video_url || (calculatedMediaType === 'video' ? image_url : null);
+
     const result = await db.prepare(`
       INSERT INTO portfolio_designs (
         brand_id, title_ar, title_en, description_ar, description_en,
-        image_url, thumbnail_url, r2_key, design_type, display_order, is_published, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        image_url, thumbnail_url, video_url, media_type, r2_key, design_type, display_order, is_published, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       parseInt(brand_id, 10),
       title_ar ? title_ar.trim() : null,
@@ -146,6 +156,8 @@ export async function onRequestPost(context) {
       description_en ? description_en.trim() : null,
       image_url.trim(),
       thumbnail_url ? thumbnail_url.trim() : image_url.trim(),
+      calculatedVideoUrl ? calculatedVideoUrl.trim() : null,
+      calculatedMediaType,
       r2_key || null,
       design_type || 'social_media',
       parseInt(display_order, 10) || 0,
@@ -199,6 +211,8 @@ export async function onRequestPut(context) {
       description_en,
       image_url,
       thumbnail_url,
+      video_url,
+      media_type,
       r2_key,
       design_type,
       display_order,
@@ -218,6 +232,8 @@ export async function onRequestPut(context) {
         description_en = COALESCE(?, description_en),
         image_url = COALESCE(?, image_url),
         thumbnail_url = COALESCE(?, thumbnail_url),
+        video_url = COALESCE(?, video_url),
+        media_type = COALESCE(?, media_type),
         r2_key = COALESCE(?, r2_key),
         design_type = COALESCE(?, design_type),
         display_order = COALESCE(?, display_order),
@@ -231,6 +247,8 @@ export async function onRequestPut(context) {
       description_en !== undefined ? description_en.trim() : null,
       image_url !== undefined ? image_url.trim() : null,
       thumbnail_url !== undefined ? thumbnail_url.trim() : null,
+      video_url !== undefined ? video_url.trim() : null,
+      media_type !== undefined ? media_type : null,
       r2_key !== undefined ? r2_key : null,
       design_type !== undefined ? design_type : null,
       display_order !== undefined ? parseInt(display_order, 10) : null,
