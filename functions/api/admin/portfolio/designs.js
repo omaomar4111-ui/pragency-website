@@ -65,7 +65,7 @@ export async function onRequestGet(context) {
   }
 }
 
-// POST /api/admin/portfolio/designs - create new design
+// POST /api/admin/portfolio/designs - create new design(s) (supports single or bulk array)
 export async function onRequestPost(context) {
   const { request, env } = context;
   if (!checkAuth(request, env)) return unauthResponse();
@@ -75,6 +75,46 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
+    const now = new Date().toISOString();
+
+    // Check if bulk insert (array of items)
+    if (Array.isArray(body)) {
+      if (body.length === 0) {
+        return new Response(JSON.stringify({ error: 'القائمة فارغة' }), { status: 400 });
+      }
+
+      const insertedIds = [];
+      for (const item of body) {
+        if (!item.brand_id || !item.image_url) continue;
+        const res = await db.prepare(`
+          INSERT INTO portfolio_designs (
+            brand_id, title_ar, title_en, description_ar, description_en,
+            image_url, thumbnail_url, r2_key, design_type, display_order, is_published, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          parseInt(item.brand_id, 10),
+          item.title_ar ? item.title_ar.trim() : null,
+          item.title_en ? item.title_en.trim() : null,
+          item.description_ar ? item.description_ar.trim() : null,
+          item.description_en ? item.description_en.trim() : null,
+          item.image_url.trim(),
+          item.thumbnail_url ? item.thumbnail_url.trim() : item.image_url.trim(),
+          item.r2_key || null,
+          item.design_type || 'social_media',
+          parseInt(item.display_order, 10) || 0,
+          item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1,
+          now
+        ).run();
+        insertedIds.push(res.meta?.last_row_id);
+      }
+
+      return new Response(JSON.stringify({ success: true, count: insertedIds.length, ids: insertedIds }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+    }
+
+    // Single design insert
     const {
       brand_id,
       title_ar,
@@ -92,8 +132,6 @@ export async function onRequestPost(context) {
     if (!brand_id || !image_url) {
       return new Response(JSON.stringify({ error: 'البراند والصورة مطلوبان' }), { status: 400 });
     }
-
-    const now = new Date().toISOString();
 
     const result = await db.prepare(`
       INSERT INTO portfolio_designs (
@@ -119,7 +157,7 @@ export async function onRequestPost(context) {
       success: true,
       id: result.meta?.last_row_id
     }), {
-      status: 201,
+      status: 200,
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     });
   } catch (err) {
@@ -127,7 +165,7 @@ export async function onRequestPost(context) {
   }
 }
 
-// PUT /api/admin/portfolio/designs - update design
+// PUT /api/admin/portfolio/designs - update design or batch reorder
 export async function onRequestPut(context) {
   const { request, env } = context;
   if (!checkAuth(request, env)) return unauthResponse();
@@ -137,6 +175,21 @@ export async function onRequestPut(context) {
 
   try {
     const body = await request.json();
+
+    // Check if batch reorder: { reorder: [{ id: 1, display_order: 0 }, ...] }
+    if (body.reorder && Array.isArray(body.reorder)) {
+      for (const item of body.reorder) {
+        if (item.id !== undefined && item.display_order !== undefined) {
+          await db.prepare('UPDATE portfolio_designs SET display_order = ? WHERE id = ?')
+            .bind(parseInt(item.display_order, 10), parseInt(item.id, 10)).run();
+        }
+      }
+      return new Response(JSON.stringify({ success: true, message: 'Reordered successfully' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+    }
+
     const {
       id,
       brand_id,
@@ -153,7 +206,7 @@ export async function onRequestPut(context) {
     } = body;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: 'Design ID is required' }), { status: 400 });
+      return new Response(JSON.stringify({ error: 'معرّف التصميم مطلوب' }), { status: 400 });
     }
 
     await db.prepare(`
@@ -194,7 +247,7 @@ export async function onRequestPut(context) {
   }
 }
 
-// DELETE /api/admin/portfolio/designs - delete design and R2 object
+// DELETE /api/admin/portfolio/designs - delete single or bulk delete
 export async function onRequestDelete(context) {
   const { request, env } = context;
   if (!checkAuth(request, env)) return unauthResponse();
@@ -204,21 +257,33 @@ export async function onRequestDelete(context) {
 
   try {
     const url = new URL(request.url);
-    const id = url.searchParams.get('id');
-    if (!id) return new Response(JSON.stringify({ error: 'ID is required' }), { status: 400 });
+    const idsParam = url.searchParams.get('ids');
+    const idParam = url.searchParams.get('id');
 
-    const design = await db.prepare('SELECT r2_key FROM portfolio_designs WHERE id = ?').bind(id).first();
-    if (design && design.r2_key && env.PORTFOLIO_BUCKET) {
-      try {
-        await env.PORTFOLIO_BUCKET.delete(design.r2_key);
-      } catch (r2Err) {
-        console.warn('Failed to delete R2 object:', r2Err);
-      }
+    let idsToDelete = [];
+    if (idsParam) {
+      idsToDelete = idsParam.split(',').map(s => parseInt(s.trim(), 10)).filter(Boolean);
+    } else if (idParam) {
+      idsToDelete = [parseInt(idParam.trim(), 10)];
     }
 
-    await db.prepare('DELETE FROM portfolio_designs WHERE id = ?').bind(id).run();
+    if (idsToDelete.length === 0) {
+      return new Response(JSON.stringify({ error: 'معرّف التصميم أو المعرفات مطلوبة' }), { status: 400 });
+    }
 
-    return new Response(JSON.stringify({ success: true }), {
+    for (const id of idsToDelete) {
+      const design = await db.prepare('SELECT r2_key FROM portfolio_designs WHERE id = ?').bind(id).first();
+      if (design && design.r2_key && env.PORTFOLIO_BUCKET) {
+        try {
+          await env.PORTFOLIO_BUCKET.delete(design.r2_key);
+        } catch (r2Err) {
+          console.warn('Failed to delete R2 object:', r2Err);
+        }
+      }
+      await db.prepare('DELETE FROM portfolio_designs WHERE id = ?').bind(id).run();
+    }
+
+    return new Response(JSON.stringify({ success: true, deleted: idsToDelete.length }), {
       status: 200,
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     });

@@ -40,3 +40,9 @@
 
 /api/*
   Cache-Control: no-store
+
+/portfolio
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/portfolio/*
+  X-Robots-Tag: noindex, nofollow, noarchive
