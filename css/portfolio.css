@@ -438,3 +438,342 @@
   .lightbox-next { right: 8px; }
   .lightbox-close { top: 12px; right: 12px; width: 36px; height: 36px; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEDICATED BRAND GALLERY PAGE (/portfolio/[slug]) — Minimalist Aesthetics
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.page-brand-portfolio {
+  background-color: #0A0014;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.brand-page-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+}
+
+.brand-back-nav {
+  margin-bottom: 32px;
+}
+
+.brand-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #a78bfa;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 999px;
+  transition: all 0.25s ease;
+}
+
+.brand-back-link:hover {
+  background: rgba(139, 92, 246, 0.2);
+  color: #fff;
+  transform: translateX(-3px);
+}
+
+/* 1. Brand Hero */
+.brand-hero {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 30px 20px 0;
+}
+
+.brand-hero-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  color: #C4B5FD;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.brand-hero-title {
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 16px;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #ffffff 40%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-hero-desc {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* 2. Minimalist Metadata Block */
+.brand-meta {
+  margin-bottom: 56px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px 32px;
+  backdrop-filter: blur(10px);
+}
+
+.brand-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.brand-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brand-meta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 1px;
+}
+
+.brand-meta-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 3. Masonry / Grid for Brand Designs */
+.brand-gallery-section {
+  margin-bottom: 80px;
+}
+
+.brand-designs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.brand-design-card {
+  border-radius: 20px;
+  overflow: hidden;
+  background: #14001F;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.brand-design-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(139, 92, 246, 0.2);
+}
+
+.brand-design-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0f0017;
+}
+
+.brand-design-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.brand-design-card:hover .brand-design-img-wrap img {
+  transform: scale(1.05);
+}
+
+.brand-design-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 0, 20, 0.1) 0%, rgba(10, 0, 20, 0.85) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.brand-design-card:hover .brand-design-overlay {
+  opacity: 1;
+}
+
+.brand-design-zoom-btn {
+  align-self: flex-end;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.brand-design-info {
+  margin-top: auto;
+}
+
+.brand-design-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.brand-design-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+.brand-empty-designs {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+}
+
+/* 4. Brand Logo Section */
+.brand-logo-section {
+  margin-bottom: 80px;
+}
+
+.brand-logo-card {
+  text-align: center;
+  padding: 48px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.brand-logo-img-wrap {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.brand-logo-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.brand-logo-name {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.brand-logo-tagline {
+  color: #a78bfa;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* 5. Brand Conversion CTA */
+.brand-cta {
+  margin-bottom: 40px;
+}
+
+.brand-cta-inner {
+  text-align: center;
+  padding: 56px 28px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(20, 0, 31, 0.8) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+.brand-cta-title {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.brand-cta-subtitle {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.brand-cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.brand-cta-btn, .brand-cta-wa {
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.brand-cta-btn {
+  background: #8b5cf6;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.4);
+}
+
+.brand-cta-btn:hover {
+  background: #7c3aed;
+  transform: translateY(-2px);
+}
+
+.brand-cta-wa {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.brand-cta-wa:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+  transform: translateY(-2px);
+}

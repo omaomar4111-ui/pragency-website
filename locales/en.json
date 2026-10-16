@@ -294,5 +294,16 @@
   "portfolio.categories.branding": "Branding",
   "portfolio.categories.ads": "Paid Ads",
   "portfolio.categories.video": "Video",
-  "portfolio.categories.other": "Other"
+  "portfolio.categories.other": "Other",
+  "process.eyebrow": "How We Work — The Process",
+  "process.title": "Clear Steps, Tangible Results",
+  "process.sub": "From initial discovery to full scale, we follow a rigorous 4-step framework.",
+  "process.card1.title": "01 Discover & Analyze",
+  "process.card1.desc": "We analyze your brand, competitors, and audience to uncover challenges and true growth opportunities.",
+  "process.card2.title": "02 Strategize & Blueprint",
+  "process.card2.desc": "We design a data-driven marketing blueprint with precise KPIs, timelines, and channels for maximum ROI.",
+  "process.card3.title": "03 Create & Execute",
+  "process.card3.desc": "Our team launches high-converting campaigns, brand visual design, and premium content production.",
+  "process.card4.title": "04 Optimize & Scale",
+  "process.card4.desc": "Continuous tracking, transparent metrics, and ongoing iteration to compound your reach and sales."
 }

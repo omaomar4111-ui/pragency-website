@@ -111,14 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     brandsGrid.querySelectorAll('.brand-card').forEach(card => {
       card.addEventListener('click', () => {
         const slug = card.getAttribute('data-slug');
-        activeBrandSlug = slug;
-        // Update filter button
-        filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.getAttribute('data-filter') === slug);
-        });
-        document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        loadDesigns(slug);
+        if (slug) {
+          window.location.href = `/portfolio/${slug}`;
+        }
       });
     });
   }

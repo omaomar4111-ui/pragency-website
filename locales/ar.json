@@ -294,5 +294,16 @@
   "portfolio.categories.branding": "هوية بصرية",
   "portfolio.categories.ads": "إعلانات",
   "portfolio.categories.video": "فيديو",
-  "portfolio.categories.other": "أخرى"
+  "portfolio.categories.other": "أخرى",
+  "process.eyebrow": "إزاي بنشتغل — The Process",
+  "process.title": "خطوات واضحة، نتايج ملموسة",
+  "process.sub": "من أول لحظة لحد ما نحقق أهدافك، بنمشي على خطة محكمة من 4 مراحل.",
+  "process.card1.title": "اكتشاف وتحليل",
+  "process.card1.desc": "بندرس براندك، منافسيك، وجمهورك المستهدف لنفهم التحديات ونحدد الفرص الحقيقية.",
+  "process.card2.title": "بناء الاستراتيجية",
+  "process.card2.desc": "بنحط خطة تسويقية محددة بالأرقام والمواعيد والمنصات الأنسب لتحقيق أعلى عائد على الاستثمار.",
+  "process.card3.title": "التنفيذ والإبداع",
+  "process.card3.desc": "فريقنا بيبدأ إنتاج المحتوى، تصميم الهوية، وإطلاق الحملات الإعلانية بأعلى معايير الجودة.",
+  "process.card4.title": "التحسين والتوسع",
+  "process.card4.desc": "متابعة يومية للأرقام، تقارير شفافة، وتطوير مستمر لمضاعفة النتائج وتكبير حجم المبيعات."
 }
