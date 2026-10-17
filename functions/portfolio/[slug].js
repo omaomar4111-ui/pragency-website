@@ -315,6 +315,17 @@ export async function onRequestGet(context) {
 
       cards.forEach((card, i) => {
         card.addEventListener('click', () => showImage(i));
+
+        // Instagram-like hover preview for video cards
+        const videoEl = card.querySelector('video');
+        if (videoEl) {
+          card.addEventListener('mouseenter', () => {
+            videoEl.play().catch(() => {});
+          });
+          card.addEventListener('mouseleave', () => {
+            videoEl.pause();
+          });
+        }
       });
 
       if (btnClose) btnClose.addEventListener('click', closeLightbox);

@@ -283,6 +283,17 @@ export async function onRequestDelete(context) {
       idsToDelete = idsParam.split(',').map(s => parseInt(s.trim(), 10)).filter(Boolean);
     } else if (idParam) {
       idsToDelete = [parseInt(idParam.trim(), 10)];
+    } else {
+      try {
+        const body = await request.json();
+        if (body && Array.isArray(body.ids)) {
+          idsToDelete = body.ids.map(s => parseInt(s, 10)).filter(Boolean);
+        } else if (body && body.id) {
+          idsToDelete = [parseInt(body.id, 10)].filter(Boolean);
+        }
+      } catch (e) {
+        // no json body
+      }
     }
 
     if (idsToDelete.length === 0) {
