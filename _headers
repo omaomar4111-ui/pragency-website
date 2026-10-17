@@ -6,6 +6,18 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
+/admin
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/api/admin/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, no-cache, must-revalidate
+
 /portal-access-2026
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: no-store, no-cache, must-revalidate
@@ -26,6 +38,15 @@
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: no-store, no-cache, must-revalidate
 
+/portfolio
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/portfolio/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/api/*
+  Cache-Control: no-store
+
 /css/*
   Cache-Control: public, max-age=31536000, immutable
 
@@ -37,12 +58,3 @@
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
-
-/api/*
-  Cache-Control: no-store
-
-/portfolio
-  X-Robots-Tag: noindex, nofollow, noarchive
-
-/portfolio/*
-  X-Robots-Tag: noindex, nofollow, noarchive

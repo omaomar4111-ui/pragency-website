@@ -508,9 +508,33 @@ const generalFallback = {
   en: 'Hi! We are PR Agency, a full-service marketing agency offering:\n• Social Media Management\n• Paid Ads\n• Video Production\n• Branding\n• Marketing Strategy\n\nWhich service would you like to know more about?'
 };
 
+// In-Memory Rate Limiter for Chatbot (Max 25 messages per 5 minutes)
+const chatRateLimiter = new Map();
+
+function checkChatRateLimit(key) {
+  const now = Date.now();
+  const record = chatRateLimiter.get(key) || { count: 0, resetAt: now + (5 * 60 * 1000) };
+
+  if (now > record.resetAt) {
+    record.count = 0;
+    record.resetAt = now + (5 * 60 * 1000);
+  }
+
+  record.count += 1;
+  chatRateLimiter.set(key, record);
+
+  if (record.count > 25) {
+    const remainingSec = Math.ceil((record.resetAt - now) / 1000);
+    return { limited: true, remainingSec };
+  }
+  return { limited: false };
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
+
+  const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
 
   try {
     const payload = await request.json();
@@ -520,6 +544,20 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: 'Missing message or sessionId' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const rateKey = `${clientIp}:${sessionId}`;
+    const rateCheck = checkChatRateLimit(rateKey);
+    if (rateCheck.limited) {
+      return new Response(JSON.stringify({
+        error: `تم تجاوز معدل الرسائل المسموح. يرجى الانتظار ${rateCheck.remainingSec} ثانية.`
+      }), {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(rateCheck.remainingSec)
+        }
       });
     }
 

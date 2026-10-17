@@ -32,6 +32,28 @@ async function syncToAirtable(env, lead) {
   }
 }
 
+// In-Memory Rate Limiter for Contact Form (Max 5 submissions per 10 minutes per IP)
+const contactRateLimiter = new Map();
+
+function checkContactRateLimit(ip) {
+  const now = Date.now();
+  const record = contactRateLimiter.get(ip) || { count: 0, resetAt: now + (10 * 60 * 1000) };
+
+  if (now > record.resetAt) {
+    record.count = 0;
+    record.resetAt = now + (10 * 60 * 1000);
+  }
+
+  record.count += 1;
+  contactRateLimiter.set(ip, record);
+
+  if (record.count > 5) {
+    const remainingSec = Math.ceil((record.resetAt - now) / 1000);
+    return { limited: true, remainingSec };
+  }
+  return { limited: false };
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -41,6 +63,24 @@ export async function onRequestPost(context) {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json; charset=utf-8',
   };
+
+  const clientIp = request.headers.get('CF-Connecting-IP')
+                || request.headers.get('X-Forwarded-For')
+                || 'unknown';
+
+  const rateCheck = checkContactRateLimit(clientIp);
+  if (rateCheck.limited) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: `تم تجاوز الحد المسموح لإرسال الرسائل. يرجى الانتظار ${rateCheck.remainingSec} ثانية قبل المحاولة مرة أخرى.`
+    }), {
+      status: 429,
+      headers: {
+        ...corsHeaders,
+        'Retry-After': String(rateCheck.remainingSec)
+      }
+    });
+  }
 
   try {
     const contentType = request.headers.get('content-type') || '';
