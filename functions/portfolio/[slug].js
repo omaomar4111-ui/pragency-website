@@ -138,10 +138,12 @@ export async function onRequestGet(context) {
   <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="stylesheet" href="/css/style.css?v=95"/>
-  <link rel="stylesheet" href="/css/pages.css?v=95"/>
-  <link rel="stylesheet" href="/css/portfolio.css?v=95"/>
-  <link rel="stylesheet" href="/css/chatbot.css?v=95"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/main.css?v=97"/>
+  <link rel="stylesheet" href="/css/style.css?v=97"/>
+  <link rel="stylesheet" href="/css/pages.css?v=97"/>
+  <link rel="stylesheet" href="/css/portfolio.css?v=97"/>
+  <link rel="stylesheet" href="/css/chatbot.css?v=97"/>
 
   <script type="application/ld+json">
     ${JSON.stringify(jsonLd)}
@@ -158,7 +160,7 @@ export async function onRequestGet(context) {
       <a href="/">${isEn ? 'Home' : 'الرئيسية'}</a>
       <a href="/about.html">${isEn ? 'About' : 'من نحن'}</a>
       <a href="/services.html">${isEn ? 'Services' : 'الخدمات'}</a>
-      <a href="/portfolio" class="active" data-i18n="nav.portfolio">${isEn ? 'Portfolio' : 'معرض الأعمال'}</a>
+      <!-- PORTFOLIO_LINK_HIDDEN: <a href="/portfolio" class="active" data-i18n="nav.portfolio">${isEn ? 'Portfolio' : 'معرض الأعمال'}</a> -->
       <a href="/team">${isEn ? 'Team' : 'الفريق'}</a>
       <a href="/clients.html">${isEn ? 'Clients' : 'العملاء'}</a>
       <a href="/#register">${isEn ? 'Contact' : 'تواصل'}</a>
