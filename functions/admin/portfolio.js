@@ -736,12 +736,19 @@ export async function onRequestGet(context) {
         <h3 class="section-title">تصاميم البراند (Brand Deliverables & Gallery)</h3>
         <p class="section-hint" id="brand-designs-hint">اسحب الصور أو الفيديوهات هنا، أو اضغط للاختيار</p>
 
-        <!-- Drop Zone Inside Modal -->
+        <!-- Drop Zone Inside Modal with PDF support -->
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary" style="background:rgba(124,58,237,0.15);border:1px dashed var(--purple-light);color:#fff;font-size:0.88rem;display:inline-flex;align-items:center;gap:6px;" onclick="document.getElementById('brand-pdf-input').click()">
+            📄 استخراج من ملف PDF (مع إزالة العلامات المائية)
+          </button>
+          <input type="file" id="brand-pdf-input" accept="application/pdf" style="display:none" onchange="handleBrandPdfUpload(this.files[0])"/>
+        </div>
+
         <div id="brand-drop-zone" class="drop-zone" onclick="triggerBrandFileInput()">
           <div class="drop-zone-icon">📷</div>
           <h4 style="color:#fff;font-size:1.05rem;margin-bottom:4px">اسحب الملفات هنا أو اضغط للاختيار</h4>
-          <p style="font-size:0.82rem;color:var(--text-muted)">يدعم: JPG, PNG, WebP, GIF, MP4 — حتى 50MB لكل ملف</p>
-          <input type="file" id="brand-file-input" multiple accept="image/*,video/*" style="display:none" onchange="handleBrandFiles(this.files)"/>
+          <p style="font-size:0.82rem;color:var(--text-muted)">يدعم: JPG, PNG, WebP, GIF, MP4, PDF — حتى 50MB لكل ملف</p>
+          <input type="file" id="brand-file-input" multiple accept="image/*,video/*,application/pdf" style="display:none" onchange="handleBrandFiles(this.files)"/>
         </div>
 
         <div id="brand-modal-upload-progress" class="upload-progress-bar" style="margin-bottom:12px">
@@ -836,7 +843,11 @@ export async function onRequestGet(context) {
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 let brandsList = [];
 let designsList = [];
 let selectedDesignIds = new Set();
@@ -951,6 +962,72 @@ function renderModalBrandDesigns() {
       '</div>' +
     '</div>';
   }).join('');
+}
+
+async function handleBrandPdfUpload(pdfFile) {
+  if (!pdfFile) return;
+  const brandId = document.getElementById('brand-id').value;
+  if (!brandId) return alert('يرجى حفظ البراند أولاً قبل رفع تصاميم الـ PDF');
+  if (!window.pdfjsLib) return alert('مكتبة معالجة الـ PDF قيد التحميل، يرجى المحاولة بعد لحظات.');
+
+  const progressBar = document.getElementById('brand-modal-upload-progress');
+  const progressFill = document.getElementById('brand-modal-progress-fill');
+  const statusText = document.getElementById('brand-modal-status-text');
+
+  progressBar.style.display = 'block';
+  progressFill.style.width = '10%';
+  statusText.textContent = '📄 جارٍ قراءة ملف الـ PDF واستخراج السلايدات...';
+
+  try {
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const numPages = pdfDoc.numPages;
+    statusText.textContent = '🔍 تم العثور على ' + numPages + ' صفحة. جارٍ قص العلامات المائية واستخراج التصاميم...';
+
+    const cleanImages = [];
+
+    for (let p = 1; p <= numPages; p++) {
+      const page = await pdfDoc.getPage(p);
+      const viewport = page.getViewport({ scale: 2.0 }); // High-res 2x
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+      // Crop out header and footer watermarks (VR logo, 2026, etc)
+      // Top: 8%, Bottom: 9%, Left: 2%, Right: 2%
+      const cropX = Math.round(canvas.width * 0.02);
+      const cropY = Math.round(canvas.height * 0.08);
+      const cropW = Math.round(canvas.width * 0.96);
+      const cropH = Math.round(canvas.height * 0.83);
+
+      const croppedCanvas = document.createElement('canvas');
+      croppedCanvas.width = cropW;
+      croppedCanvas.height = cropH;
+      const croppedCtx = croppedCanvas.getContext('2d');
+      croppedCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+      const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, 'image/jpeg', 0.92));
+      const cleanFile = new File([blob], 'slide_page_' + p + '.jpg', { type: 'image/jpeg' });
+      cleanImages.push(cleanFile);
+
+      const pct = Math.round((p / numPages) * 40);
+      progressFill.style.width = (10 + pct) + '%';
+      statusText.textContent = '✂️ تم استخراج وقص صفحة ' + p + ' من ' + numPages + '...';
+    }
+
+    statusText.textContent = '🚀 تم استخراج ' + cleanImages.length + ' تصميم نظيف. جارٍ الرفع إلى السيرفر...';
+    await handleBrandFiles(cleanImages);
+
+  } catch (err) {
+    console.error('PDF extraction failed:', err);
+    alert('فشل استخراج الصور من الـ PDF: ' + err.message);
+    progressBar.style.display = 'none';
+    statusText.textContent = '';
+  }
 }
 
 async function handleBrandFiles(files) {
