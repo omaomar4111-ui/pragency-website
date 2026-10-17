@@ -118,25 +118,30 @@ export async function onRequestGet(context) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="robots" content="noindex, nofollow, noarchive"/>
-  <title>${brandName} — ${isEn ? 'Portfolio Gallery' : 'معرض أعمال البراند'} | PR Agency</title>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+  <title>${brandName} - Portfolio | PR Agency</title>
   <meta name="description" content="${brandDesc}"/>
   <link rel="canonical" href="https://pragency.pages.dev/portfolio/${brand.slug}"/>
   
-  <meta property="og:title" content="${brandName} — PR Agency Portfolio"/>
+  <meta property="og:title" content="${brandName} - Portfolio | PR Agency"/>
   <meta property="og:description" content="${brandDesc}"/>
   <meta property="og:type" content="article"/>
   <meta property="og:url" content="https://pragency.pages.dev/portfolio/${brand.slug}"/>
   <meta property="og:image" content="${designs[0]?.image_url ? (designs[0].image_url.startsWith('http') ? designs[0].image_url : 'https://pragency.pages.dev' + designs[0].image_url) : 'https://pragency.pages.dev/og.jpg'}"/>
   <meta property="og:site_name" content="PR Agency"/>
 
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="${brandName} - Portfolio | PR Agency"/>
+  <meta name="twitter:description" content="${brandDesc}"/>
+  <meta name="twitter:image" content="${designs[0]?.image_url ? (designs[0].image_url.startsWith('http') ? designs[0].image_url : 'https://pragency.pages.dev' + designs[0].image_url) : 'https://pragency.pages.dev/og.jpg'}"/>
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="stylesheet" href="/css/style.css?v=90"/>
-  <link rel="stylesheet" href="/css/pages.css?v=90"/>
-  <link rel="stylesheet" href="/css/portfolio.css?v=90"/>
-  <link rel="stylesheet" href="/css/chatbot.css?v=90"/>
+  <link rel="stylesheet" href="/css/style.css?v=95"/>
+  <link rel="stylesheet" href="/css/pages.css?v=95"/>
+  <link rel="stylesheet" href="/css/portfolio.css?v=95"/>
+  <link rel="stylesheet" href="/css/chatbot.css?v=95"/>
 
   <script type="application/ld+json">
     ${JSON.stringify(jsonLd)}
@@ -153,7 +158,7 @@ export async function onRequestGet(context) {
       <a href="/">${isEn ? 'Home' : 'الرئيسية'}</a>
       <a href="/about.html">${isEn ? 'About' : 'من نحن'}</a>
       <a href="/services.html">${isEn ? 'Services' : 'الخدمات'}</a>
-      <!-- PORTFOLIO_LINK_HIDDEN -->
+      <a href="/portfolio" class="active" data-i18n="nav.portfolio">${isEn ? 'Portfolio' : 'معرض الأعمال'}</a>
       <a href="/team">${isEn ? 'Team' : 'الفريق'}</a>
       <a href="/clients.html">${isEn ? 'Clients' : 'العملاء'}</a>
       <a href="/#register">${isEn ? 'Contact' : 'تواصل'}</a>
