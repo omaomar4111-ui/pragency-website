@@ -34,6 +34,8 @@ async function syncToAirtable(env, lead) {
 
 // In-Memory Rate Limiter for Contact Form (Max 5 submissions per 10 minutes per IP)
 const contactRateLimiter = new Map();
+// Concurrency & Duplicate Protection (De-duplication cache: locks submissions for 30 seconds per fingerprint)
+const recentSubmissions = new Map();
 
 function checkContactRateLimit(ip) {
   const now = Date.now();
@@ -52,6 +54,26 @@ function checkContactRateLimit(ip) {
     return { limited: true, remainingSec };
   }
   return { limited: false };
+}
+
+function checkDuplicateSubmission(fingerprint) {
+  const now = Date.now();
+  // Clean up entries older than 60 seconds
+  for (const [key, timestamp] of recentSubmissions.entries()) {
+    if (now - timestamp > 60000) {
+      recentSubmissions.delete(key);
+    }
+  }
+
+  if (recentSubmissions.has(fingerprint)) {
+    const elapsed = now - recentSubmissions.get(fingerprint);
+    if (elapsed < 30000) {
+      return true; // Duplicate detected within 30 seconds
+    }
+  }
+
+  recentSubmissions.set(fingerprint, now);
+  return false;
 }
 
 export async function onRequestPost(context) {
@@ -108,6 +130,20 @@ export async function onRequestPost(context) {
       return new Response(
         JSON.stringify({ success: false, errors }),
         { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Concurrency / Duplicate Submission Protection
+    const submissionFingerprint = `${clientIp}_${phone.replace(/[^0-9]/g, '')}`;
+    if (checkDuplicateSubmission(submissionFingerprint)) {
+      // Return idempotency success response without creating duplicate lead in DB / Telegram
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'تم استلام طلبك بنجاح وسنتواصل معك خلال 15 دقيقة.',
+          idempotent: true
+        }),
+        { status: 200, headers: corsHeaders }
       );
     }
 

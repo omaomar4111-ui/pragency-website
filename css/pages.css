@@ -2684,63 +2684,75 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
 
 
 /* ══════════════════════════════════════════════════════════════
-   INFINITE CLIENT LOGOS MARQUEE (HIGH VISIBILITY & PROPORTIONS)
+   INFINITE CLIENT LOGOS MARQUEE (DUAL REVERSE ROWS)
 ══════════════════════════════════════════════════════════════ */
 .clients-marquee-wrapper {
   overflow: hidden;
   width: 100%;
-  padding: 16px 0;
+  padding: 10px 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 .clients-marquee-track {
   display: flex;
-  gap: 64px;
+  gap: 56px;
   width: max-content;
-  animation: scroll-clients 50s linear infinite;
   align-items: center;
 }
+.clients-marquee-track.row-left {
+  animation: scroll-clients-left 42s linear infinite;
+}
+.clients-marquee-track.row-right {
+  animation: scroll-clients-right 42s linear infinite;
+}
+
 .clients-marquee-track:hover {
   animation-play-state: paused;
 }
 .clients-marquee-logo {
-  height: 68px;
+  height: 76px;
   width: auto;
-  max-width: 170px;
+  max-width: 180px;
   object-fit: contain;
   filter: brightness(0) invert(1);
-  opacity: 0.88;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.90;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 .clients-marquee-logo:hover {
-  filter: brightness(0) invert(1) drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+  filter: brightness(0) invert(1) drop-shadow(0 0 16px rgba(168, 85, 247, 0.7));
   opacity: 1;
-  transform: scale(1.08);
+  transform: scale(1.12);
 }
 
-@keyframes scroll-clients {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+@keyframes scroll-clients-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-[dir="rtl"] .clients-marquee-track {
-  animation: scroll-clients-rtl 50s linear infinite;
+
+@keyframes scroll-clients-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
-[dir="rtl"] .clients-marquee-track:hover {
-  animation-play-state: paused;
+
+[dir="rtl"] .clients-marquee-track.row-left {
+  animation: scroll-clients-rtl-left 42s linear infinite;
 }
-@keyframes scroll-clients-rtl {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(50%);
-  }
+[dir="rtl"] .clients-marquee-track.row-right {
+  animation: scroll-clients-rtl-right 42s linear infinite;
+}
+
+@keyframes scroll-clients-rtl-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+@keyframes scroll-clients-rtl-right {
+  0% { transform: translateX(50%); }
+  100% { transform: translateX(0); }
 }
 
 
