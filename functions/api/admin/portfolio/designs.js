@@ -17,7 +17,6 @@ function unauthResponse() {
   return new Response('Unauthorized Access to PR Agency Admin API', {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
       'Content-Type': 'text/plain; charset=utf-8'
     }
   });
@@ -35,28 +34,43 @@ export async function onRequestGet(context) {
     const url = new URL(request.url);
     const brandSlug = url.searchParams.get('brand');
     const brandId = url.searchParams.get('brand_id');
+    const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
+    const limit = Math.max(1, Math.min(100, parseInt(url.searchParams.get('limit') || '20', 10)));
+    const offset = (page - 1) * limit;
 
-    let query = `
-      SELECT d.*, b.name_ar AS brand_name_ar, b.name_en AS brand_name_en, b.slug AS brand_slug
-      FROM portfolio_designs d
-      INNER JOIN portfolio_brands b ON d.brand_id = b.id
-    `;
+    let countQuery = 'SELECT COUNT(*) as total FROM portfolio_designs d INNER JOIN portfolio_brands b ON d.brand_id = b.id';
+    let query = 'SELECT d.*, b.name_ar AS brand_name_ar, b.name_en AS brand_name_en, b.slug AS brand_slug FROM portfolio_designs d INNER JOIN portfolio_brands b ON d.brand_id = b.id';
     const params = [];
 
     if (brandSlug) {
-      query += ` WHERE b.slug = ?`;
+      query += ' WHERE b.slug = ?';
+      countQuery += ' WHERE b.slug = ?';
       params.push(brandSlug);
     } else if (brandId) {
-      query += ` WHERE d.brand_id = ?`;
+      query += ' WHERE d.brand_id = ?';
+      countQuery += ' WHERE d.brand_id = ?';
       params.push(parseInt(brandId, 10));
     }
 
-    query += ` ORDER BY d.display_order ASC, d.id DESC`;
+    const countRow = params.length > 0 ? await db.prepare(countQuery).bind(...params).first() : await db.prepare(countQuery).first();
+    const totalRecords = countRow?.total || 0;
+    const totalPages = Math.ceil(totalRecords / limit) || 1;
 
-    const stmt = params.length > 0 ? db.prepare(query).bind(...params) : db.prepare(query);
+    query += ' ORDER BY d.display_order ASC, d.id DESC LIMIT ? OFFSET ?';
+
+    const stmt = db.prepare(query).bind(...params, limit, offset);
     const { results } = await stmt.all();
 
-    return new Response(JSON.stringify(results || []), {
+    return new Response(JSON.stringify({
+      data: results || [],
+      designs: results || [],
+      pagination: {
+        total: totalRecords,
+        page,
+        limit,
+        totalPages
+      }
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     });

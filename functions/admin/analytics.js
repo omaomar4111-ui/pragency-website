@@ -1,27 +1,51 @@
-function checkAuth(request, env) {
+import { verifyAdminToken } from '../api/admin/login.js';
+
+async function checkAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
   const authHeader = request.headers.get('Authorization') || '';
-  if (!authHeader.startsWith('Basic ')) return false;
-  try {
-    const base64 = authHeader.slice(6).trim();
-    const decoded = atob(base64);
-    const colonIdx = decoded.indexOf(':');
-    if (colonIdx === -1) return false;
-    return decoded.slice(colonIdx + 1) === PASS;
-  } catch (e) {
-    return false;
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  // 1. JWT Bearer or Cookie
+  let token = null;
+  if (authHeader.startsWith('Bearer ')) {
+    token = authHeader.slice(7).trim();
+  } else {
+    const match = cookieHeader.match(/pr_admin_token=([^;]+)/);
+    if (match) token = match[1];
   }
+
+  if (token) {
+    const payload = await verifyAdminToken(token, env);
+    if (payload) return true;
+  }
+
+  // 2. Basic Auth Fallback
+  if (authHeader.startsWith('Basic ')) {
+    try {
+      const base64 = authHeader.slice(6).trim();
+      const decoded = atob(base64);
+      const colonIdx = decoded.indexOf(':');
+      if (colonIdx !== -1) {
+        return decoded.slice(colonIdx + 1) === PASS;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  return false;
 }
 
 export async function onRequestGet(context) {
   const { request, env } = context;
 
-  if (!checkAuth(request, env)) {
-    return new Response('Unauthorized Access to Analytics', {
-      status: 401,
+    const isAuthed = await checkAuth(request, env);
+  if (!isAuthed) {
+    return new Response(null, {
+      status: 302,
       headers: {
-        'WWW-Authenticate': 'Basic realm="PR Agency Analytics", charset="UTF-8"',
-        'Content-Type': 'text/html; charset=utf-8'
+        'Location': '/admin-agency',
+        'Cache-Control': 'no-store'
       }
     });
   }

@@ -20,7 +20,7 @@ export async function onRequestPost(context) {
     return new Response('Unauthorized', {
       status: 401,
       headers: {
-        'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
+      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
         'Content-Type': 'text/plain; charset=utf-8'
       }
     });

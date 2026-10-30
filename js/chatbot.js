@@ -25,8 +25,17 @@
             <span data-i18n="chat.status">متاح للرد فوراً</span>
           </div>
         </div>
-        <button class="ai-chat-close" id="ai-chat-close-btn" aria-label="Close chat">✕</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          
+          <a href="/portal-access-2026.html" class="ai-chat-client-btn" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.45);border-radius:20px;color:#fff;font-size:12px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(139,92,246,0.2);">
+            <span>Client</span>
+            <span style="font-size:13px;">🏢</span>
+          </a>
+          <button class="ai-chat-close" id="ai-chat-close-btn"  aria-label="Close chat">✕</button>
+        </div>
       </div>
+      
+      
 
       <div class="ai-chat-messages" id="ai-chat-msgs"></div>
 
@@ -69,7 +78,14 @@
   function renderMessage(role, text) {
     const msgDiv = document.createElement('div');
     msgDiv.className = `ai-msg ai-msg-${role}`;
-    msgDiv.textContent = text;
+
+    if (role === 'assistant') {
+      // Ensure HTML buttons and links render as HTML elements instead of raw text
+      msgDiv.innerHTML = text;
+    } else {
+      msgDiv.textContent = text;
+    }
+
     msgsContainer.appendChild(msgDiv);
     msgsContainer.scrollTop = msgsContainer.scrollHeight;
   }
@@ -116,6 +132,15 @@
     history.push({ role: 'user', content: text });
     saveHistory(history);
 
+    // Instant Client Redirect
+    const clientKeywords = ['عميل', 'بوابة', 'دخول', 'بوابه', 'حسابي', 'لوحة العميل', 'أنا عميل', 'انا عميل', 'بوابة العملاء', 'بوابة العميل', 'عميل سابق', 'login', 'portal', 'client', 'sign in'];
+    const lowerText = text.toLowerCase();
+    if (clientKeywords.some(kw => lowerText.includes(kw))) {
+      renderMessage('assistant', 'جاري تحويلك لبوابة العملاء مباشرة...');
+      setTimeout(() => { window.location.href = '/portal-access-2026.html'; }, 300);
+      return;
+    }
+
     // Show typing
     typing.style.display = 'flex';
     msgsContainer.scrollTop = msgsContainer.scrollHeight;
@@ -137,6 +162,15 @@
 
       const data = await res.json();
       typing.style.display = 'none';
+
+      // ── Instant Redirect for Clients / Portal Login ──
+      if (data.action === 'redirect' && data.url) {
+        renderMessage('assistant', data.reply || 'جاري تحويلك لبوابة العملاء مباشرة...');
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 500);
+        return;
+      }
 
       const reply = data.reply || (document.documentElement.lang === 'en' ? "Thank you for reaching out! A strategist will connect with you." : "شكراً لتواصلك! سيتواصل معك أحد خبرائنا.");
       renderMessage('assistant', reply);

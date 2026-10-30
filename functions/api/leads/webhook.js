@@ -216,6 +216,7 @@ export async function onRequestPost(context) {
 </body>
 </html>`;
 
+            const targetEmail = env.ADMIN_NOTIFICATION_EMAIL || 'admin@pragency.eg';
             await fetch('https://api.resend.com/emails', {
               method: 'POST',
               headers: {
@@ -224,8 +225,8 @@ export async function onRequestPost(context) {
               },
               body: JSON.stringify({
                 from: 'PR Agency <onboarding@resend.dev>',
-                to: 'omaomar4111@gmail.com',
-                reply_to: 'omaomar4111@gmail.com',
+                to: targetEmail,
+                reply_to: targetEmail,
                 subject: `📱 عميل جديد من Meta Ads: ${name}`,
                 html: emailHtml,
               }),

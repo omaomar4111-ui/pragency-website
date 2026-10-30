@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Collage Pitch Deck | PR Agency 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet"/>
+  
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    :root {
+      --bg-dark: #08090d;
+      --bg-card: #11131a;
+      --bg-surface: #171a24;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #8b5cf6;
+      --gold: #d4af37;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.ltr {
+      direction: ltr;
+      font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+    }
+
+    /* Floating Action Controls (Hidden when printing to PDF) */
+    .deck-controls {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 10000;
+      display: flex;
+      gap: 10px;
+      background: rgba(17, 19, 26, 0.85);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 8px 14px;
+      border-radius: 40px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    }
+    .deck-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .deck-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .deck-btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      color: #fff;
+    }
+    @media print {
+      .deck-controls { display: none !important; }
+      .slide {
+        page-break-after: always !important;
+        break-after: page !important;
+        height: 100vh !important;
+        width: 100vw !important;
+      }
+    }
+
+    /* Slide Frame (Exact A4 Landscape 297mm x 210mm) */
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      margin: 0 auto;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 34px 44px;
+      background: radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.14) 0%, rgba(8, 9, 13, 1) 70%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    /* Editorial Collage Elements */
+    .collage-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      height: 100%;
+      align-items: center;
+    }
+    .collage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+    }
+    .collage-card.highlight {
+      background: linear-gradient(145deg, rgba(139, 92, 246, 0.12), rgba(17, 19, 26, 0.8));
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .badge-purple {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: #c4b5fd;
+    }
+    .badge-gold {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: #fde047;
+    }
+
+    /* Top and Footer bars */
+    .slide-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      font-size: 12px;
+    }
+    .slide-footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Typography */
+    .title-hero {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #fff;
+      margin: 0 0 10px 0;
+    }
+    .title-slide {
+      font-size: 24px;
+      font-weight: 850;
+      color: #fff;
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+    }
+    .desc-text {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #cbd5e1;
+      margin: 0 0 14px 0;
+    }
+    .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+      line-height: 1.55;
+    }
+    .bullet-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Metric Counters */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stat-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #facc15;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation & Print Toolbar -->
+  <div class="deck-controls">
+    <button type="button" class="deck-btn deck-btn-primary" onclick="window.print()">
+      <span>Print / Save PDF</span>
+    </button>
+    <button type="button" class="deck-btn" onclick="toggleLanguage()">
+      <span id="langBtnText">English</span>
+    </button>
+    <a href="/sales-crm-2026.html" class="deck-btn">
+      <span>Back to CRM</span>
+    </a>
+  </div>
+
+  <div id="slidesContainer">
+    <!-- Slide 1: Cover Collage -->
+    <section class="slide">
+      <div class="slide-header-bar">
+        <div style="font-weight:800;letter-spacing:1px;color:#c4b5fd;">PR AGENCY · ENTERPRISE REVENUE OS</div>
+        <div class="badge-pill badge-gold">CONFIDENTIAL STRATEGY 2026</div>
+        <div style="color:var(--muted);font-family:monospace;">SLIDE 01 / 05</div>
+      </div>
+
+      <div class="collage-grid">
+        <div>
+          <span class="badge-pill badge-purple">STRATEGIC GROWTH & MARKET EXPANSION</span>
+          <h1 class="title-hero" id="coverClientTitle">أ/ محمد مشورة (مكتب محاماة واستشارات قانونية)</h1>
+          <p class="desc-text" id="coverSub">
+            دراسة حالة واستراتيجية استحواذ مخصصة لقطاع القضايا المدنية والإيجارات لعام 2026. تحويل حجم الاستفسارات إلى تعاقدات واستشارات مدفوعة ومضاعفة الحصة السوقية.
+          </p>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="stat-val">100+</div>
+              <div class="stat-lbl">استفسار أسبوعي حالي</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val">3X</div>
+              <div class="stat-lbl">مضاعفة معدل التحويل</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val">48h</div>
+              <div class="stat-lbl">سرعة بدء التنفيذ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collage-card highlight" style="display:flex;flex-direction:column;justify-content:center;gap:14px;">
+          <div style="font-size:12px;font-weight:800;color:#38bdf8;letter-spacing:0.5px;">EXECUTIVE SUMMARY</div>
+          <div style="font-size:14px;font-weight:700;color:#fff;line-height:1.6;">
+            "بناء منظومة استقطاب رقمية متكاملة تبرز مكانة المكتب كمرجع أول في قضايا الإيجار الجديد والقضايا المدنية، مع فلترة آلية للعملاء الراغبين في الاستشارات المدفوعة محلياً وللمصريين بالخارج."
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;display:flex;justify-content:space-between;font-size:11.5px;color:#94a3b8;">
+            <span>المقر: الجيزة، جمهورية مصر العربية</span>
+            <span>الاعتماد: InstaPay ومحافظ الدفع</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer-bar">
+        <div>Prepared by PR Agency Strategy & AI Intelligence Team</div>
+        <div>Cairo · Dubai · Riyadh</div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Market Opportunity & Competitor Benchmarks -->
+    <section class="slide">
+      <div class="slide-header-bar">
+        <div style="font-weight:800;color:#c4b5fd;">PR AGENCY · MARKET BENCHMARKING</div>
+        <div class="badge-pill badge-purple">COMPETITIVE GAP ANALYSIS</div>
+        <div style="color:var(--muted);font-family:monospace;">SLIDE 02 / 05</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <h2 class="title-slide">تحليل السوق والفجوة التنافسية (Competitive Landscape)</h2>
+        <p class="desc-text">دراسة وضع المنافسين المباشرين في السوق ورصد الفجوات التي تضمن التفوق البيعي.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;align-items:center;">
+        <div class="collage-card">
+          <div class="badge-pill" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;">نقاط ضعف المنافسين المرصودين</div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#ef4444;"></div><span>المحتوى مكرر ولا يقدم إجابات حاسمة للمشاكل المعقدة كقضايا الإيجار الجديد.</span></div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#ef4444;"></div><span>إهدار الوقت في الإجابة على استفسارات مجانية دون نظام فلترة وحجز مسبق.</span></div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#ef4444;"></div><span>غياب الاستهداف الرقمي الدقيق للمصريين المقيمين بالخارج وأصحاب العقارات في الخليج.</span></div>
+        </div>
+
+        <div class="collage-card highlight">
+          <div class="badge-pill badge-gold">خطة التفوق والاقتناص لمكتب مشورة</div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#facc15;"></div><span>تقديم قضايا وحالات حقيقية كقصص وتريندات تفاعلية دون ذكر أسماء لبناء مصداقية فورية.</span></div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#facc15;"></div><span>نظام توجيه وحجز فوري للاستشارات (500 جنيه للمحلي / 1,000 جنيه للمغتربين).</span></div>
+          <div class="bullet-item"><div class="bullet-dot" style="background:#facc15;"></div><span>إعلانات ممولة جغرافية دقيقة تغطي الجيزة، التجمع، والمغتربين في السعودية والإمارات.</span></div>
+        </div>
+      </div>
+
+      <div class="slide-footer-bar">
+        <div>Market Data verified via 77 PR Agency Marketing Skills</div>
+        <div>Confidential & Proprietary</div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Content Strategy & Viral Trend Angles -->
+    <section class="slide">
+      <div class="slide-header-bar">
+        <div style="font-weight:800;color:#c4b5fd;">PR AGENCY · EDITORIAL COLLAGE</div>
+        <div class="badge-pill badge-gold">CONTENT PILLARS & VIRAL HOOKS</div>
+        <div style="color:var(--muted);font-family:monospace;">SLIDE 03 / 05</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <h2 class="title-slide">ركائز المحتوى الإبداعي وصناعة الهيبة القانونية</h2>
+        <p class="desc-text">3 محاور محتوى رئيسية لتوليد طلب مستمر وخفض تكلفة الاستحواذ على العملاء.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;flex:1;align-items:center;">
+        <div class="collage-card">
+          <div class="badge-pill badge-purple">PILLAR 1: قضايا وحالات</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">سرد الحالات الواقعية</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            سرد كواليس استرجاع شقق وعقارات في وقت قياسي وثغرات عقود الإيجار التي تنقذ الملاك، بأسلوب درامي مشوق دون ذكر هويات.
+          </p>
+        </div>
+
+        <div class="collage-card highlight">
+          <div class="badge-pill badge-gold">PILLAR 2: تريندات الساعة</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">استغلال القضايا الرائجة</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            التعليق القانوني السريع والمنظم على تعديلات القوانين وأحكام المحكمة المدنية الأكثر تداولاً لحصد ملايين المشاهدات العضوية.
+          </p>
+        </div>
+
+        <div class="collage-card">
+          <div class="badge-pill badge-purple">PILLAR 3: مسار التحويل</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">فلترة الحجوزات المدفوعة</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            توجيه كل فيديو لحجز موعد استشارة محدد (500 ج محلي عبر انستاباي / 1000 ج دولي) وتأكيد المواعيد آلياً عبر الواتساب.
+          </p>
+        </div>
+      </div>
+
+      <div class="slide-footer-bar">
+        <div>High-Production Visual Framework (Seedance 6-Slot Motion & Lighting)</div>
+        <div>PR Agency Media Engine</div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Commercial Package & Retainer Structure -->
+    <section class="slide">
+      <div class="slide-header-bar">
+        <div style="font-weight:800;color:#c4b5fd;">PR AGENCY · COMMERCIAL PROPOSAL</div>
+        <div class="badge-pill badge-purple">MONTHLY RETAINER ARCHITECTURE</div>
+        <div style="color:var(--muted);font-family:monospace;">SLIDE 04 / 05</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <h2 class="title-slide">هيكلة التعاقد والباقة المتكاملة (Growth Retainer)</h2>
+        <p class="desc-text">فريق عمل متكامل يعمل كذراع تسويقي وإنتاجي للمكتب مع عائد استثماري متوقع وواضح.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;align-items:center;">
+        <div class="collage-card">
+          <div style="font-weight:850;font-size:16px;color:#fff;margin-bottom:12px;">المخرجات الشهرية المعتمدة</div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>إنتاج 8 إلى 12 فيديو قصير عالي الجودة (Reels / TikTok / Shorts) شهرياً.</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>كتابة اسكريبتات احترافية قانونية وجذابة مبنية على الـ 77 مهارة التسويقية.</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>إدارة الحملات الإعلانية الممولة مع تحسين يومي للاستهداف والميزانية.</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>بوابة عميل رقمية لمتابعة أرقام الإعلانات والعملاء المحتملين لحظياً.</span></div>
+        </div>
+
+        <div class="collage-card highlight" style="text-align:center;padding:28px;">
+          <div style="font-size:12px;font-weight:800;color:#c4b5fd;letter-spacing:1px;margin-bottom:6px;">INVESTMENT & TERMS</div>
+          <div style="font-size:32px;font-weight:900;color:#facc15;margin-bottom:6px;">عقد شهري مرن</div>
+          <div style="font-size:13px;color:#cbd5e1;margin-bottom:18px;">يشمل الاستراتيجية، التصوير، المونتاج، إدارة الإعلانات، وبوابة الـ CRM</div>
+          <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;display:flex;justify-content:space-around;font-size:12px;">
+            <div>
+              <div style="color:#94a3b8;">طرق التحصيل المعتمدة</div>
+              <strong style="color:#fff;">InstaPay / تحويل بنكي</strong>
+            </div>
+            <div>
+              <div style="color:#94a3b8;">انطلاق العمل</div>
+              <strong style="color:#34d399;">خلال 48 ساعة</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer-bar">
+        <div>All Rights Reserved · PR Agency Commercial Agreements 2026</div>
+        <div>Legal & Regulatory Compliant</div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Execution Protocol & Next Action Steps -->
+    <section class="slide">
+      <div class="slide-header-bar">
+        <div style="font-weight:800;color:#c4b5fd;">PR AGENCY · EXECUTION TIMELINE</div>
+        <div class="badge-pill badge-gold">ACTION PROTOCOL</div>
+        <div style="color:var(--muted);font-family:monospace;">SLIDE 05 / 05</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <h2 class="title-slide">خريطة الطريق التنفيذية للـ 90 يوماً القادمة</h2>
+        <p class="desc-text">جدول زمني فوري ومباشر لتحقيق النتائج من الأسبوع الأول.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;flex:1;align-items:center;">
+        <div class="collage-card">
+          <div class="badge-pill badge-purple">STAGE 1: DAYS 1 - 7</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">التأسيس والاسكريبتات</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            إعداد أول حزمة اسكريبتات مخصصة لقضايا الإيجار وتحديد مواعيد التصوير بالمكتب وتجهيز خطة الإعلانات.
+          </p>
+        </div>
+
+        <div class="collage-card highlight">
+          <div class="badge-pill badge-gold">STAGE 2: DAYS 8 - 30</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">إطلاق الحملات والإنتاج</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            نشر الفيديوهات وإطلاق الحملات الممولة، وبدء تحويل الاستفسارات وتأهيلها لحجوزات استشارات مدفوعة.
+          </p>
+        </div>
+
+        <div class="collage-card">
+          <div class="badge-pill badge-purple">STAGE 3: DAYS 31 - 90</div>
+          <div style="font-weight:800;color:#fff;font-size:14px;margin-bottom:8px;">التوسع والمضاعفة</div>
+          <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">
+            مضاعفة الميزانية على الإعلانات الأكثر ربحية، وتوسيع الاستهداف للمغتربين بالخليج ورفع معدل العقود المغلقة.
+          </p>
+        </div>
+      </div>
+
+      <div class="slide-footer-bar">
+        <div>PR Agency Account Executive: +20 100 990 4404 · sales@pragency.eg</div>
+        <div>Ready to Execute Today</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let currentLang = 'ar';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      document.body.classList.toggle('ltr', currentLang === 'en');
+      document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+      document.getElementById('langBtnText').textContent = currentLang === 'ar' ? 'English' : 'عربي';
+    }
+
+    // Auto load custom prompt if passed in URL
+    window.onload = async () => {
+      const url = new URL(window.location.href);
+      const leadId = url.searchParams.get('leadId');
+      if (leadId) {
+        try {
+          const res = await fetch('/api/admin/sales/leads?id=' + encodeURIComponent(leadId));
+          const data = await res.json();
+          if (data.success && data.lead) {
+            const l = data.lead;
+            const el = document.getElementById('coverClientTitle');
+            if (el) el.textContent = l.name;
+          }
+        } catch(e) {}
+      }
+    };
+  </script>
+</body>
+</html>

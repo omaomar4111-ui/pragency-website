@@ -37,7 +37,7 @@ export async function onRequest(context) {
   }
 
   // 2. Allow public auth route (/api/portal/auth) to handle its own login/logout/verify logic
-  if (pathname === '/api/portal/auth') {
+  if (pathname === '/api/portal/auth' || pathname === '/api/portal/settings/payment') {
     const res = await next();
     return res;
   }
@@ -48,7 +48,7 @@ export async function onRequest(context) {
       return new Response(JSON.stringify({ success: false, error: 'Unauthorized: Admin role required' }), {
         status: 401,
         headers: {
-          'WWW-Authenticate': 'Basic realm="PR Agency Admin"',
+      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin"',
           'Content-Type': 'application/json',
           'X-Robots-Tag': 'noindex, nofollow, noarchive'
         }

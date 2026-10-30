@@ -22,7 +22,7 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: {
-        'WWW-Authenticate': 'Basic realm="PR Agency Admin"',
+      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin"',
         'Content-Type': 'application/json'
       }
     });
@@ -79,6 +79,25 @@ export async function onRequestPost(context) {
         INSERT INTO portal_clients (id, company_name, contact_name, email, password_hash, logo_url, brand_color, active, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
       `).bind(clientId, companyName, contactName || null, email.trim().toLowerCase(), passHash, logoUrl || null, brandColor || '#8b5cf6', now).run();
+
+      
+      // Notify Super Admin via Telegram
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+        const adminMsg = `👤 *مستخدم جديد تم تسجيله في المنظومة*\n\n👤 *الاسم:* ${contactName || companyName}\n🏢 *النوع:* Client (عميل بورتال)\n🏷️ *الشركة:* ${companyName}\n📧 *البريد:* ${email}\n🔑 *كلمة المرور المؤقتة:* ${password}\n\n🔗 رابط الدخول: https://pragency.pages.dev/portal-access-2026.html`;
+        fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: adminMsg, parse_mode: 'Markdown' })
+        }).catch(() => {});
+      }
+
+      // Welcome Notification to Client if Telegram Chat ID provided
+      if (body.telegramChatId && env.TELEGRAM_BOT_TOKEN) {
+        const welcomeMsg = `🎉 *أهلاً بك في PR Agency!*\n\nتم تفعيل حسابك الرسمي في البوابة الخاصة بشركتك (*${companyName}*).\nيمكنك متابعة جدول الحملات، واعتماد التصاميم والفيديوهات، وتحميل الفواتير من الرابط التالي:\n\n🔗 https://pragency.pages.dev/portal-access-2026.html\n\n📧 البريد: ${email}\n🔑 كلمة المرور: ${password}`;
+        fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: body.telegramChatId, text: welcomeMsg, parse_mode: 'Markdown' })
+        }).catch(() => {});
+      }
 
       return new Response(JSON.stringify({ success: true, clientId }), { status: 200 });
     }

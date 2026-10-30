@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-  <title>Sales CRM | PR Agency</title>
+  <title>Revenue & Sales OS | PR Agency Enterprise</title>
   <meta name="robots" content="noindex, nofollow, noarchive"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,32 +11,32 @@
   
   <style>
     /* ══════════════════════════════════════════════════════════════════════════
-       LINEAR & TWENTY CRM DESIGN SYSTEM
-       Skill 1: Custom Easing Quads cubic-bezier(0.25, 0.8, 0.25, 1)
-       Skill 2: Strict 8px Spacing Grid & Zero-White Box Architecture
-       Skill 3: Linear.app Glassmorphism & High-Density SaaS Visuals
+       ENTERPRISE REVENUE & SALES CRM DESIGN SYSTEM
+       - Linear & Stripe Inspired High-Density Architecture
+       - Zero Consumer Emojis (Subtle Minimalist Vectors & Enterprise Typography)
+       - Strict 8px Spacing Grid & Glassmorphic Accents
+       - Dynamic Bi-Directional Layouts (RTL / LTR)
        ══════════════════════════════════════════════════════════════════════════ */
     :root {
-      --bg-base: #0d0e12;
-      --bg-elevated: #13151b;
-      --bg-surface: #181b24;
-      --bg-surface-hover: #1f2330;
-      --bg-glass: rgba(19, 21, 27, 0.75);
+      --bg-base: #090a0f;
+      --bg-elevated: #11131a;
+      --bg-surface: #161822;
+      --bg-surface-hover: #1c1f2c;
+      --bg-glass: rgba(17, 19, 26, 0.85);
       
       --border-subtle: rgba(255, 255, 255, 0.06);
       --border-default: rgba(255, 255, 255, 0.1);
-      --border-active: rgba(139, 92, 246, 0.4);
-      --border-glow: rgba(139, 92, 246, 0.6);
+      --border-active: rgba(139, 92, 246, 0.45);
+      --border-glow: rgba(139, 92, 246, 0.65);
 
       --accent: #8b5cf6;
       --accent-hover: #7c3aed;
-      --accent-light: rgba(139, 92, 246, 0.15);
-      --accent-glow: rgba(139, 92, 246, 0.35);
-
-      --text-main: #f4f4f6;
-      --text-muted: #8b8f9e;
-      --text-dim: #525866;
-
+      --accent-light: rgba(139, 92, 246, 0.12);
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
       --success: #10b981;
       --success-bg: rgba(16, 185, 129, 0.12);
       --warning: #f59e0b;
@@ -46,214 +46,232 @@
       --info: #06b6d4;
       --info-bg: rgba(6, 182, 212, 0.12);
 
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      
       --ease-quad: cubic-bezier(0.25, 0.8, 0.25, 1);
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --radius-full: 9999px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(139, 92, 246, 0.3) rgba(15, 15, 23, 0.6);
     }
 
     body {
-      font-family: 'Cairo', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-base);
+      background: var(--bg-base);
       color: var(--text-main);
+      font-family: 'Cairo', 'Plus Jakarta Sans', -apple-system, sans-serif;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       overflow-x: hidden;
-      line-height: 1.5;
-      letter-spacing: -0.01em;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── SCROLLBAR (LINEAR MINIMAL) ── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: var(--radius-full); }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
-
-    /* ── GLOBAL INPUTS, SELECTS & TEXTAREAS (STRICT DARK) ── */
-    input, select, textarea {
-      background: var(--bg-surface) !important;
-      border: 1px solid var(--border-default) !important;
-      color: var(--text-main) !important;
-      border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s var(--ease-quad), box-shadow 0.2s var(--ease-quad), background 0.2s var(--ease-quad);
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent) !important;
-      box-shadow: 0 0 0 2px var(--accent-light) !important;
-      background: var(--bg-surface-hover) !important;
-    }
-    input::placeholder, textarea::placeholder {
-      color: var(--text-dim) !important;
-    }
-    select option {
-      background: var(--bg-surface) !important;
-      color: var(--text-main) !important;
+    html[dir="ltr"] body {
+      font-family: 'Plus Jakarta Sans', 'Cairo', -apple-system, sans-serif;
     }
 
-    /* ── TOP NAV (LINEAR STYLE) ── */
+    /* ── TOPBAR NAVIGATION ── */
     .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       background: var(--bg-glass);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0 24px;
+      height: 60px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      height: 56px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      transition: background 0.3s var(--ease-quad);
+      justify-content: space-between;
+      padding: 0 20px;
+      gap: 16px;
     }
+
     .topnav-brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 15px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+      color: #fff;
+      text-decoration: none;
     }
-    .brand-pill {
-      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(6,182,212,0.15));
-      border: 1px solid var(--border-active);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 11px;
+    .brand-badge {
+      font-size: 10.5px;
       font-weight: 700;
-      color: #a78bfa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--accent-light);
+      color: #c4b5fd;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .sync-indicator {
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--success);
+      background: var(--success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 3px 10px;
+      border-radius: 20px;
     }
-    .brand-pill::before {
-      content: '';
+    .sync-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      background: var(--success);
+      animation: pulse 2s infinite;
     }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
     .topnav-actions {
       display: flex;
-      gap: 8px;
       align-items: center;
+      gap: 10px;
     }
-    .nav-pill {
-      padding: 6px 14px;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 8px 16px;
       border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s var(--ease-quad);
       border: 1px solid transparent;
-      background: rgba(255,255,255,0.04);
-      color: var(--text-muted);
       text-decoration: none;
+      touch-action: manipulation;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(139, 92, 246, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: var(--border-default);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-active);
+    }
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 11.5px;
+      border-radius: 6px;
+    }
+
+    /* Language Switcher Button */
+    .lang-toggle-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: #e2e8f0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 750;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.25s var(--ease-quad);
+      transition: all 0.2s ease;
     }
-    .nav-pill:hover {
-      background: rgba(255,255,255,0.08);
-      color: var(--text-main);
-      border-color: var(--border-default);
-      transform: translateY(-1px);
-    }
-    .nav-pill.active {
-      background: var(--accent);
+    .lang-toggle-btn:hover {
+      border-color: var(--accent);
       color: #fff;
-      box-shadow: 0 0 16px var(--accent-glow);
     }
 
-    /* ── LAYOUT & GLASS SIDEBAR ── */
+    /* ── LAYOUT SHELL ── */
     .layout {
       display: flex;
-      min-height: calc(100vh - 56px);
+      flex: 1;
+      min-height: calc(100vh - 60px);
     }
+
     .sidebar {
-      width: 240px;
-      background: var(--bg-glass);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-left: 1px solid var(--border-subtle);
-      padding: 16px 12px;
+      width: 230px;
+      background: var(--bg-elevated);
+      border-inline-end: 1px solid var(--border-subtle);
+      padding: 16px 10px;
       display: flex;
       flex-direction: column;
       gap: 4px;
       flex-shrink: 0;
-      transition: width 0.3s var(--ease-quad);
     }
     .sidebar-section {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-dim);
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      padding: 12px 10px 4px;
-      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 12px 12px 6px 12px;
     }
     .sidebar-btn {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 12px;
+      width: 100%;
+      padding: 9px 12px;
+      background: transparent;
+      border: 1px solid transparent;
       border-radius: var(--radius-sm);
       color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      background: transparent;
       font-family: inherit;
-      width: 100%;
-      text-align: right;
-      transition: all 0.2s var(--ease-quad);
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      text-align: start;
+      transition: all 0.15s ease;
     }
     .sidebar-btn:hover {
-      background: var(--bg-surface-hover);
-      color: var(--text-main);
-      border-color: var(--border-subtle);
-      transform: translateX(-2px);
+      background: var(--bg-surface);
+      color: #fff;
     }
     .sidebar-btn.active {
-      background: rgba(139, 92, 246, 0.12);
-      color: #c4b5fd;
-      border-color: rgba(139, 92, 246, 0.3);
-      font-weight: 700;
-    }
-    .sidebar-btn .icon {
-      font-size: 14px;
-      opacity: 0.8;
-      display: flex;
-      align-items: center;
+      background: var(--accent-light);
+      border-color: rgba(139, 92, 246, 0.35);
+      color: #fff;
+      font-weight: 750;
     }
 
-    /* ── MAIN WORKSPACE ── */
     .main {
       flex: 1;
-      padding: 32px;
+      padding: 24px 28px;
       overflow-y: auto;
-      max-width: 1600px;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
     }
+
+    /* ── PAGES & TABS ── */
     .page {
       display: none;
-      animation: fadeIn 0.3s var(--ease-quad) forwards;
     }
     .page.active {
       display: block;
+      animation: fadeIn 0.25s var(--ease-quad);
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -265,154 +283,62 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
-      gap: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
     .page-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: -0.4px;
+      color: #fff;
     }
-    .page-subtitle {
-      font-size: 13px;
+    .page-sub {
+      font-size: 12.5px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
-    /* ── LINEAR STATS STRIP ── */
+    /* ── KPI METRICS STRIP ── */
     .stats-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .stat-card {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 16px 20px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.25s var(--ease-quad);
+      padding: 18px 20px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
     .stat-card:hover {
       border-color: var(--border-default);
-      background: var(--bg-surface);
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5);
     }
     .stat-number {
       font-size: 28px;
-      font-weight: 800;
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      line-height: 1.2;
+      font-weight: 850;
+      color: #fff;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
     }
     .stat-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* ── TWENTY / LINEAR KANBAN BOARD ── */
-    .kanban {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding-bottom: 24px;
-      align-items: flex-start;
-    }
-    .kanban-col {
-      width: 280px;
-      min-width: 280px;
-      background: rgba(19, 21, 27, 0.6);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 14px;
-      flex-shrink: 0;
-      backdrop-filter: blur(8px);
-      transition: border-color 0.25s var(--ease-quad);
-    }
-    .kanban-col:hover {
-      border-color: var(--border-default);
-    }
-    .kanban-col-head {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-subtle);
-      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .kanban-count {
-      background: rgba(255,255,255,0.06);
-      border-radius: var(--radius-full);
-      padding: 2px 8px;
-      font-size: 11px;
-      color: var(--text-main);
-      font-weight: 700;
-    }
-    .kanban-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 10px;
-      cursor: grab;
-      position: relative;
-      transition: transform 0.25s var(--ease-quad), border-color 0.25s var(--ease-quad), box-shadow 0.25s var(--ease-quad), background 0.25s var(--ease-quad);
-    }
-    .kanban-card:hover {
-      border-color: var(--accent);
-      background: var(--bg-surface-hover);
-      transform: translateY(-3px) scale(1.01);
-      box-shadow: 0 10px 20px -8px rgba(139, 92, 246, 0.25);
-    }
-    .kanban-card:active {
-      cursor: grabbing;
-      transform: scale(0.98);
-    }
-    .kanban-card-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-    .kanban-card-meta {
-      font-size: 11px;
+      letter-spacing: 0.5px;
       color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .kanban-card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border-subtle);
+      margin-top: 8px;
     }
 
-    /* ── CARD & TABLES ── */
+    /* ── CARDS & TABLES ── */
     .card {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-md);
       overflow: hidden;
       margin-bottom: 24px;
-      transition: border-color 0.25s var(--ease-quad);
-    }
-    .card:hover {
-      border-color: var(--border-default);
     }
     .card-header {
       padding: 16px 20px;
@@ -420,188 +346,126 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.01);
+      background: rgba(255, 255, 255, 0.015);
     }
     .card-title {
       font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.2px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      text-align: right;
-    }
-    th, td {
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 13px;
+      text-align: start;
+      font-size: 12.5px;
     }
     th {
-      color: var(--text-dim);
+      padding: 12px 18px;
+      font-weight: 750;
       font-size: 11px;
-      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
       background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-subtle);
     }
-    tr {
-      transition: background 0.15s var(--ease-quad);
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #e2e8f0;
+      vertical-align: middle;
     }
     tr:hover td {
-      background: var(--bg-surface-hover);
-    }
-    tr:last-child td {
-      border-bottom: none;
+      background: rgba(255, 255, 255, 0.025);
     }
 
-    /* ── STATUS BADGES ── */
+    /* Clean Pill Badges (Zero Emojis) */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
+      padding: 3px 9px;
+      border-radius: 4px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
       border: 1px solid transparent;
     }
-    .badge-new { background: var(--info-bg); color: var(--info); border-color: rgba(6,182,212,0.3); }
-    .badge-contacted { background: var(--accent-light); color: #c4b5fd; border-color: var(--border-active); }
-    .badge-meeting { background: var(--warning-bg); color: var(--warning); border-color: rgba(245,158,11,0.3); }
-    .badge-proposal { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
-    .badge-won { background: var(--success-bg); color: var(--success); border-color: rgba(16,185,129,0.3); }
-    .badge-lost { background: var(--danger-bg); color: var(--danger); border-color: rgba(239,68,68,0.3); }
-    .badge-overdue { background: var(--danger-bg); color: var(--danger); border-color: rgba(239,68,68,0.3); }
+    .badge-new { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
+    .badge-contacted { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .badge-meeting_scheduled { background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3); }
+    .badge-proposal_sent { background: rgba(6, 182, 212, 0.12); color: #38bdf8; border-color: rgba(6, 182, 212, 0.3); }
+    .badge-won { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+    .badge-lost { background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
 
-    /* ── BUTTONS WITH EASING QUADS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1px solid transparent;
-      outline: none;
-      transition: transform 0.25s var(--ease-quad), background 0.25s var(--ease-quad), box-shadow 0.25s var(--ease-quad), border-color 0.25s var(--ease-quad);
+    /* ── KANBAN PIPELINE ── */
+    .kanban {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      min-height: 540px;
     }
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-    .btn:active {
-      transform: translateY(1px);
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 6px 20px var(--accent-glow);
-    }
-    .btn-secondary {
-      background: rgba(255,255,255,0.06);
-      color: var(--text-main);
-      border-color: var(--border-default);
-    }
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.2);
-    }
-    .btn-danger {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border-color: rgba(239,68,68,0.3);
-    }
-    .btn-danger:hover {
-      background: rgba(239,68,68,0.25);
-    }
-    .btn-sm {
-      padding: 5px 10px;
-      font-size: 11px;
-    }
-
-    /* ── SLEEK DARK VOICE-TO-TEXT RECORDER (ZERO WHITE BOX) ── */
-    .voice-suite-card {
-      background: linear-gradient(180deg, #13151b 0%, #0d0e12 100%);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      position: relative;
-      overflow: hidden;
-    }
-    .voice-suite-card::before {
-      content: '';
-      position: absolute;
-      top: -120px;
-      right: 50%;
-      transform: translateX(50%);
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .voice-console {
+    .kanban-col {
+      width: 290px;
+      min-width: 290px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      border: 1px dashed rgba(139, 92, 246, 0.3);
-      border-radius: var(--radius-md);
-      background: rgba(0, 0, 0, 0.4);
-      margin: 24px 0;
-      position: relative;
     }
-    .voice-mic-glow {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    .kanban-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 28px;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.5), inset 0 0 10px rgba(255,255,255,0.4);
-      transition: all 0.3s var(--ease-quad);
-      position: relative;
-    }
-    .voice-mic-glow:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 35px rgba(139, 92, 246, 0.8), inset 0 0 15px rgba(255,255,255,0.6);
-    }
-    .voice-mic-glow.recording {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      box-shadow: 0 0 40px rgba(239, 68, 68, 0.8);
-      animation: pulseMic 1.4s infinite var(--ease-quad);
-    }
-    @keyframes pulseMic {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-    .voice-transcript-dark {
-      width: 100%;
-      background: var(--bg-surface) !important;
-      border: 1px solid var(--border-subtle) !important;
-      border-radius: var(--radius-md);
-      padding: 16px;
-      min-height: 90px;
       font-size: 13px;
-      color: var(--text-main);
-      direction: rtl;
-      line-height: 1.7;
-      margin-top: 16px;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      font-weight: 800;
+      color: #fff;
+    }
+    .kanban-count {
+      font-size: 11px;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      padding: 2px 7px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+    .kanban-cards {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .kanban-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-quad);
+    }
+    .kanban-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    .kanban-card-title {
+      font-size: 13.5px;
+      font-weight: 750;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .kanban-card-meta {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
     /* ── FILTER PILLS ── */
@@ -609,32 +473,30 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
     .filter-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-muted);
       padding: 6px 14px;
-      border-radius: var(--radius-full);
+      border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      font-family: inherit;
-      transition: all 0.2s var(--ease-quad);
+      transition: all 0.15s ease;
     }
     .filter-pill:hover {
-      border-color: var(--border-default);
-      color: var(--text-main);
-      background: var(--bg-surface);
+      color: #fff;
+      border-color: var(--accent);
     }
     .filter-pill.active {
+      background: var(--accent);
       border-color: var(--accent);
-      background: rgba(139, 92, 246, 0.15);
-      color: #c4b5fd;
+      color: #fff;
     }
 
-    /* ── MODALS (SLIDE UP WITH EASING QUAD) ── */
+    /* ── MODALS (FIXED VISIBILITY & EASING) ── */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -649,7 +511,7 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.28s var(--ease-quad), visibility 0.28s var(--ease-quad);
+      transition: opacity 0.25s var(--ease-quad), visibility 0.25s var(--ease-quad);
     }
     .modal-overlay.open,
     .modal-overlay.active {
@@ -663,32 +525,17 @@
       border: 1px solid var(--border-default);
       border-radius: var(--radius-lg);
       padding: 24px;
-      width: 640px;
+      width: 660px;
       max-width: 95vw;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95);
-      animation: modalSlideUp 0.35s var(--ease-quad) forwards;
       position: relative;
-      touch-action: manipulation;
-    }
-    @keyframes modalSlideUp {
-      from { opacity: 0; transform: translateY(24px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .modal-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
     .modal-close {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      inset-inline-end: 18px;
       background: transparent;
       border: none;
       color: var(--text-muted);
@@ -696,1819 +543,1420 @@
       cursor: pointer;
       width: 32px;
       height: 32px;
-      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s var(--ease-quad);
+      border-radius: 6px;
+      transition: background 0.15s;
     }
     .modal-close:hover {
-      background: var(--bg-surface-hover);
+      background: rgba(255, 255, 255, 0.08);
       color: #fff;
     }
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border-subtle);
-    }
 
-    /* ── FORM GRIDS ── */
+    /* ── FORM ELEMENTS ── */
     .form-grid {
       display: grid;
-      gap: 16px;
+      gap: 14px;
     }
-    .form-grid-2 { grid-template-columns: 1fr 1fr; }
-    .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-    .field label {
-      display: block;
-      font-size: 12px;
+    .form-grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 11.5px;
+      font-weight: 700;
       color: var(--text-muted);
-      margin-bottom: 6px;
-      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
-    .field textarea {
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+    textarea {
       resize: vertical;
-      min-height: 80px;
+      line-height: 1.6;
     }
 
-    /* ── LEAD DETAILS POPUP ── */
-    .lead-detail-header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .lead-avatar {
-      width: 52px;
-      height: 52px;
+    /* ── AI SALES STUDIO SECTION (MINIMALIST & HIGH POWER) ── */
+    .ai-studio-container {
+      background: linear-gradient(145deg, rgba(139, 92, 246, 0.1), rgba(17, 19, 26, 0.8));
+      border: 1px solid rgba(139, 92, 246, 0.35);
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .ai-studio-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .ai-studio-title {
+      font-size: 13px;
       font-weight: 800;
-      color: #fff;
-      box-shadow: 0 4px 16px var(--accent-glow);
+      color: #c4b5fd;
+      letter-spacing: 0.3px;
     }
-    .followup-item {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      margin-top: 8px;
+    .ai-quick-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 10px 0;
     }
-    .followup-meta {
+    .ai-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-default);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 14px;
       font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
-  
-    /* ══════════════════════════════════════════════════════════════════════════
-       📱 MOBILE & TABLET RESPONSIVENESS SYSTEM (iOS Safari, Android, iPad)
-       ══════════════════════════════════════════════════════════════════════════ */
+    .ai-chip:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── RESPONSIVE MOBILE DOCK & SIDEBAR ── */
     .mobile-menu-btn {
       display: none;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      width: 36px;
-      height: 36px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
+      background: none;
+      border: none;
       cursor: pointer;
-      color: #fff;
-      padding: 0;
-      flex-shrink: 0;
+      padding: 6px;
+      flex-direction: column;
+      gap: 4px;
     }
     .mobile-menu-btn span {
       display: block;
-      width: 18px;
+      width: 20px;
       height: 2px;
-      background: #f4f4f6;
+      background: #fff;
       border-radius: 2px;
-      transition: all 0.25s var(--ease-quad);
     }
 
-    .mobile-sidebar-backdrop {
+    .mobile-dock {
       display: none;
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 998;
-      opacity: 0;
-      transition: opacity 0.3s var(--ease-quad);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(17, 19, 26, 0.95);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border-subtle);
+      z-index: 99;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 8px;
     }
-    .mobile-sidebar-backdrop.active {
-      display: block;
-      opacity: 1;
+    .dock-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px;
     }
-
-    .mobile-bottom-dock {
-      display: none;
-    }
-
-    .mobile-sidebar-header {
-      display: none;
+    .dock-btn.active {
+      color: var(--accent);
     }
 
     @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        top: 60px;
+        bottom: 0;
+        inset-inline-start: -260px;
+        z-index: 1000;
+        transition: inset-inline-start 0.3s var(--ease-quad);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
+      }
+      .sidebar.open {
+        inset-inline-start: 0;
+      }
       .mobile-menu-btn {
         display: flex;
       }
-
-      .topnav {
-        padding: 0 12px;
-        gap: 8px;
-        height: 52px;
+      .mobile-dock {
+        display: flex;
       }
-      .topnav-brand {
-        font-size: 13px;
-        gap: 5px;
-        flex-shrink: 0;
-      }
-      .topnav-brand .brand-pill {
-        display: none;
-      }
-
-      /* Hide bulky search box on mobile to prevent squishing */
-      .cmd-palette-wrapper {
-        display: none !important;
-      }
-
-      .topnav-actions {
-        gap: 6px;
-        flex-shrink: 0;
-      }
-      .topnav-actions .nav-pill {
-        padding: 5px 9px;
-        font-size: 11px;
-      }
-
-      /* Layout: stack vertically */
-      .layout {
-        display: block;
-        width: 100%;
-        min-height: calc(100vh - 52px);
-        position: relative;
-      }
-
-      /* Off-canvas mobile drawer */
-      .sidebar {
-        position: fixed;
-        top: 0;
-        right: -320px;
-        width: 280px;
-        height: 100vh;
-        height: 100dvh;
-        z-index: 999;
-        background: #0f1118;
-        border-left: 1px solid var(--border-default);
-        box-shadow: -15px 0 50px rgba(0, 0, 0, 0.9);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        padding: 16px;
-      }
-      .sidebar.open {
-        right: 0;
-      }
-      .mobile-sidebar-header {
-        display: flex !important;
-        justify-content: space-between;
-        align-items: center;
-        padding: 4px 6px 14px;
-        border-bottom: 1px solid var(--border-subtle);
-        margin-bottom: 8px;
-      }
-
-      /* Main container */
       .main {
-        padding: 16px 12px 90px;
-        width: 100%;
-        box-sizing: border-box;
+        padding: 16px;
+        padding-bottom: 80px;
       }
-
-      .page-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-      .page-title {
-        font-size: 18px;
-      }
-      .page-header .btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      /* Stats strip in 2 columns */
-      .stats-strip {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-        margin-bottom: 20px !important;
-      }
-      .stat-card {
-        padding: 12px 10px !important;
-      }
-      .stat-number {
-        font-size: 20px !important;
-      }
-      .stat-label {
-        font-size: 11px !important;
-      }
-
-      /* Kanban Board Horizontal Touch Carousel */
-      .kanban {
-        gap: 12px;
-        padding-bottom: 20px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-      }
-      .kanban-col {
-        width: 82vw !important;
-        min-width: 82vw !important;
-        scroll-snap-align: center;
-        border-radius: var(--radius-md);
-        padding: 12px;
-      }
-
-      /* Forms in single column */
-      .form-grid-2, .form-grid-3 {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-      }
-
-      /* Modals responsive */
-      .modal {
-        padding: 20px 16px;
-        width: 95vw;
-        max-height: 88vh;
-        border-radius: var(--radius-md);
-      }
-      .modal-title {
-        font-size: 16px;
-        margin-bottom: 14px;
-      }
-
-      /* Mobile Bottom Navigation Bar (Glassmorphic Dock) */
-      .mobile-bottom-dock {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        height: calc(60px + env(safe-area-inset-bottom, 0px));
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-        background: rgba(13, 15, 22, 0.96);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid var(--border-default);
-        z-index: 900;
-        justify-content: space-around;
-        align-items: center;
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
-      }
-      .dock-btn {
-        background: transparent;
-        border: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        color: #8b8f9e;
-        font-family: inherit;
-        font-size: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        flex: 1;
-        height: 100%;
-        transition: color 0.2s var(--ease-quad);
-      }
-      .dock-btn:active, .dock-btn.active {
-        color: #c4b5fd;
-      }
-      .dock-btn .dock-icon {
-        font-size: 18px;
-        line-height: 1;
-      }
-      .dock-btn.add-btn {
-        flex: 0 0 44px;
-        height: 44px;
-        background: linear-gradient(135deg, #8b5cf6, #6366f1);
-        border-radius: 50%;
-        color: #fff;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
-        transform: translateY(-8px);
-      }
-      .dock-btn.add-btn .dock-icon-plus {
-        font-size: 22px;
-        font-weight: 300;
-        line-height: 1;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .stats-strip {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
-      }
-      .stat-card {
-        padding: 10px 8px !important;
-      }
-      .stat-number {
-        font-size: 18px !important;
-      }
-      .stat-label {
-        font-size: 10px !important;
-      }
-      .kanban-col {
-        width: 86vw !important;
-        min-width: 86vw !important;
+      .form-grid-2 {
+        grid-template-columns: 1fr;
       }
     }
   </style>
-  <link rel="stylesheet" href="/css/enterprise-theme-2026.css" />
 </head>
 <body>
 
-<!-- ── TOPBAR ── -->
-<header class="topnav">
-  <button type="button" id="mobileMenuBtn" class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="القائمة">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="topnav-brand">
-    <span style="color:#fff;">PR Agency</span>
-    <span style="color:var(--accent);">Sales CRM</span>
-    <span class="brand-pill">Active</span>
-  </div>
-  
-  <!-- Global Command Palette Search -->
-  <div class="cmd-palette-wrapper" style="position:relative;width:260px;margin:0 14px;">
-      <div style="position:relative;display:flex;align-items:center;">
-        <span style="position:absolute;right:12px;pointer-events:none;color:#71717a;font-size:13px;display:flex;align-items:center;">🔍</span>
-        <input 
-          type="text" 
-          id="globalSearchInput" 
-          placeholder="بحث..." 
-          style="width:100%;box-sizing:border-box;padding:7px 34px 7px 58px;background:rgba(255,255,255,0.05);border:1px solid transparent;border-radius:8px;color:#fff;font-family:inherit;font-size:13px;outline:none;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);"
-          onfocus="this.style.borderColor='#8b5cf6';this.style.background='#13141f';this.style.boxShadow='0 0 0 3px rgba(139,92,246,0.2)';handleGlobalSearch(this.value);"
-          onblur="this.style.borderColor='transparent';this.style.background='rgba(255,255,255,0.05)';this.style.boxShadow='none';setTimeout(() => { const r = document.getElementById('globalSearchResults'); if(r) r.style.display='none'; }, 250);"
-          onmouseover="if(document.activeElement !== this) { this.style.borderColor='rgba(139,92,246,0.4)'; this.style.background='rgba(255,255,255,0.07)'; }"
-          onmouseout="if(document.activeElement !== this) { this.style.borderColor='transparent'; this.style.background='rgba(255,255,255,0.05)'; }"
-          oninput="handleGlobalSearch(this.value)"
-        />
-        <div style="position:absolute;left:8px;pointer-events:none;display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:5px;padding:2px 6px;font-size:10.5px;font-weight:700;color:#a1a1aa;font-family:monospace;letter-spacing:0.5px;">
-          <span>Ctrl</span><span>K</span>
-        </div>
-      </div>
-      <div id="globalSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:100%;background:#13151c;border:1px solid rgba(139,92,246,0.3);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.8);max-height:450px;overflow-y:auto;z-index:9999;padding:8px 0;backdrop-filter:blur(16px);">
-    </div>
-  </div>
-<div class="topnav-actions">
-    <button class="nav-pill btn-primary" onclick="openModal('addLeadModal')">+ إضافة Lead</button>
-    <a href="/admin-agency" class="nav-pill">👑 العودة للأدمن ↗</a>
-  </div>
-</header>
-<!-- Mobile Sidebar Backdrop -->
-<div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop" onclick="toggleMobileSidebar(false)"></div>
-
-<!-- ── LAYOUT ── -->
-<div class="layout">
-  
-  <!-- Sleek Glass Sidebar -->
-  <aside class="sidebar">
-    <div class="mobile-sidebar-header">
-      <div style="font-weight:800; font-size:15px; color:#fff;">القائمة الرئيسية</div>
-      <button type="button" onclick="toggleMobileSidebar(false)" style="background:none; border:none; color:#a1a1aa; font-size:22px; cursor:pointer; padding:4px;">✕</button>
-    </div>
-    <div class="sidebar-section">الرئيسية</div>
-    <button class="sidebar-btn active" onclick="showPage('dashboard', this)"><span class="icon">📊</span> لوحة التحكم</button>
-    <button class="sidebar-btn" onclick="showPage('kanban', this)"><span class="icon">🗂️</span> Kanban Pipeline</button>
-    <button class="sidebar-btn" onclick="showPage('leads', this)"><span class="icon">👥</span> جميع الـ Leads</button>
-
-    <div class="sidebar-section">المبيعات والصوت</div>
-    <button class="sidebar-btn" onclick="showPage('voice', this)"><span class="icon">🎙️</span> تسجيل صوتي ذكي</button>
-    <button class="sidebar-btn" onclick="showPage('overdue', this)"><span class="icon">⏰</span> متابعات متأخرة</button>
-    <button class="sidebar-btn" onclick="showPage('reports', this)"><span class="icon">📈</span> تقارير الإغلاق</button>
-  </aside>
-
-  <!-- Main Content Space -->
-  <main class="main">
-
-    <!-- ── DASHBOARD ── -->
-    <div id="page-dashboard" class="page active">
-      <div class="page-header">
-        <div>
-          <div class="page-title">لوحة التحكم</div>
-          
-        </div>
-        <button class="btn btn-secondary" onclick="refreshAll()">🔄 تحديث البيانات</button>
-      </div>
-
-      <div class="stats-strip" id="statsStrip">
-        <div class="stat-card">
-          <div class="stat-number" id="st-total">—</div>
-          <div class="stat-label">إجمالي الـ Leads</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="st-new" style="color:var(--info)">—</div>
-          <div class="stat-label">Leads جدد هذا الأسبوع</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="st-won" style="color:var(--success)">—</div>
-          <div class="stat-label">عقود تم إغلاقها (Won)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="st-overdue" style="color:var(--danger)">—</div>
-          <div class="stat-label">متابعات متأخرة</div>
-        </div>
-      </div>
-
-      <!-- Source breakdown -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">📡 قنوات استقطاب العملاء (Lead Sources)</div>
-        </div>
-        <div style="padding:20px;" id="sourceChart">جارٍ التحميل...</div>
-      </div>
-
-      <!-- Recent leads table -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🔥 أحدث الفرص البيعية</div>
-          <button class="btn btn-sm btn-secondary" onclick="showPage('leads', document.querySelector('.sidebar-btn:nth-child(4)'))">عرض الكل ↗</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>الاسم</th><th>المشروع</th><th>المصدر</th><th>المسؤول</th><th>المرحلة</th><th>التاريخ</th><th>إجراء</th></tr></thead>
-            <tbody id="recentLeadsBody"><tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">جارٍ تحميل أحدث الفرص...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── KANBAN ── -->
-    <div id="page-kanban" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Kanban Pipeline</div>
-          
-        </div>
-        <button class="btn btn-primary" onclick="openModal('addLeadModal')">+ إضافة Lead</button>
-      </div>
-      <div class="kanban" id="kanbanBoard">
-        <div style="color:var(--text-muted);padding:20px;">جارٍ تجهيز لوحة الـ Kanban...</div>
-      </div>
-    </div>
-
-    <!-- ── LEADS LIST ── -->
-    <div id="page-leads" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title">العملاء المحتملون (Leads)</div>
-          
-        </div>
-        <button class="btn btn-primary" onclick="openModal('addLeadModal')">+ إضافة Lead</button>
-      </div>
-
-      <div class="filter-pills" id="stageFilters">
-        <button class="filter-pill active" onclick="filterLeads('all', this)">🔵 الكل</button>
-        <button class="filter-pill" onclick="filterLeads('new', this)">🆕 جديد</button>
-        <button class="filter-pill" onclick="filterLeads('contacted', this)">📞 تم التواصل</button>
-        <button class="filter-pill" onclick="filterLeads('meeting_scheduled', this)">📅 ميتينج مجدول</button>
-        <button class="filter-pill" onclick="filterLeads('proposal_sent', this)">📄 تم إرسال عرض</button>
-        <button class="filter-pill" onclick="filterLeads('won', this)">✅ Won</button>
-        <button class="filter-pill" onclick="filterLeads('lost', this)">❌ Lost</button>
-      </div>
-
-      <div class="card">
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>الاسم</th><th>التليفون</th><th>المشروع</th><th>المصدر</th><th>المسؤول</th><th>المرحلة</th><th>آخر متابعة</th><th>إجراء</th></tr></thead>
-            <tbody id="leadsTableBody"><tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">جارٍ تحميل السجلات...</td></tr></tbody>
-          </table>
-        </div>
-        <!-- Leads Server-Side Pagination Bar -->
-        <div id="leadsPaginationBar" style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--card-bg, #16171d);border:1px solid var(--border, rgba(255,255,255,0.08));border-top:none;border-radius:0 0 10px 10px;margin-bottom:20px;">
-          <div style="font-size:13px;color:var(--text-muted, #9ca3af)">
-            صفحة <span id="leadsCurrentPage" style="color:#fff;font-weight:600">1</span> من <span id="leadsTotalPages" style="color:#fff;font-weight:600">1</span> (إجمالي <span id="leadsTotalRecords" style="color:#fff">0</span> عميل محتمل)
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button id="leadsPrevBtn" onclick="changeLeadsPage(-1)" class="btn" style="padding:6px 14px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border, rgba(255,255,255,0.08));color:#fff;cursor:pointer;border-radius:6px;" disabled>السابق</button>
-            <button id="leadsNextBtn" onclick="changeLeadsPage(1)" class="btn" style="padding:6px 14px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border, rgba(255,255,255,0.08));color:#fff;cursor:pointer;border-radius:6px;" disabled>التالي</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── VOICE FOLLOWUP (REDESIGNED: DARK SLEEK INTERFACE) ── -->
-    <div id="page-voice" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title">التسجيل الصوتي الذكي</div>
-          
-        </div>
-      </div>
-
-      <div class="voice-suite-card">
-        <div class="form-grid form-grid-2">
-          <div class="field">
-            <label>اختر الـ Lead</label>
-            <select id="voiceLeadSelect">
-              <option value="">-- اختر Lead للمتابعة --</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>نتيجة المكالمة</label>
-            <select id="voiceOutcome">
-              <option value="interested">مهتم وواضح في متطلباته ✅</option>
-              <option value="callback">يحتاج مكالمة متابعة أخرى 📞</option>
-              <option value="no_answer">لم يتم الرد 📵</option>
-              <option value="not_fit">غير مناسب للخدمات الحالية ❌</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>المرحلة الجديدة</label>
-            <select id="voiceNewStage">
-              <option value="">-- الاحتفاظ بالمرحلة الحالية --</option>
-              <option value="contacted">📞 تم التواصل</option>
-              <option value="meeting_scheduled">📅 ميتينج مجدول</option>
-              <option value="proposal_sent">📄 تم إرسال عرض</option>
-              <option value="won">✅ Won (تم التعاقد)</option>
-              <option value="lost">❌ Lost (خسارة الصفقة)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>تاريخ المتابعة القادمة</label>
-            <input type="date" id="voiceNextDate"/>
-          </div>
-        </div>
-
-        <!-- Sleek Dark Console with Glowing Mic -->
-        <div class="voice-console" id="voiceConsoleArea">
-          <button class="voice-mic-glow" id="voiceBtn" onclick="toggleVoice()" title="اضغط للتحدث">
-            🎙️
-          </button>
-          <div id="voiceStatus" style="font-size:13px;font-weight:700;color:var(--text-muted);margin-top:16px;text-align:center;">
-            اضغط على الميكروفون لبدء التسجيل الفوري
-          </div>
-          <div id="voiceFallbackNotice" style="display:none;margin-top:12px;padding:10px 16px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);color:#fca5a5;font-size:12px;text-align:center;">
-            متصفحك لا يدعم التسجيل الصوتي، يرجى كتابة الملاحظات يدوياً.
-          </div>
-          <div class="voice-transcript-dark" id="voiceTranscript">
-            سيظهر النص المفرغ هنا تلقائياً أثناء تحدثك...
-          </div>
-        </div>
-
-        <div class="field" style="margin-bottom:20px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <label style="margin:0;">ملاحظات وتفريغ المكالمة</label>
-            <button type="button" id="aiFormatVoiceBtn" onclick="formatVoiceNoteWithAI()" class="btn btn-secondary" style="background:linear-gradient(135deg, rgba(168,85,247,0.2) 0%, rgba(124,58,237,0.3) 100%);border:1px solid rgba(168,85,247,0.6);color:#e9d5ff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;box-shadow:0 0 15px rgba(168,85,247,0.25);transition:all 0.3s;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
-              <span>✨ تنسيق وتلخيص الملاحظة بالذكاء الاصطناعي</span>
-            </button>
-          </div>
-          <textarea id="voiceNotes" rows="4" placeholder="اكتب أي نقاط أو شروط خاصة ذكرها العميل أو تحدث بالصوت لتفريغها فوراً..."></textarea>
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;">
-          <button class="btn btn-primary" onclick="saveVoiceFollowup()" style="padding:10px 24px;">
-            💾 حفظ وتوثيق المتابعة في النظام
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── OVERDUE ── -->
-    <div id="page-overdue" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title">⏰ المتابعات المتأخرة</div>
-          
-        </div>
-        <button class="btn btn-secondary" onclick="loadOverdue()">🔄 تحديث</button>
-      </div>
-
-      <div class="card">
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>اسم العميل</th><th>رقم الهاتف</th><th>المسؤول</th><th>الموعد المحدد</th><th>المرحلة</th><th>إجراء فوري</th></tr></thead>
-            <tbody id="overdueBody"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">جاري التحقق...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── REPORTS ── -->
-    <div id="page-reports" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title">📈 تقارير التحويل والإغلاق</div>
-          <div class="page-subtitle">إحصائيات تفصيلية لنسب النجاح لكل قناة تسويقية</div>
-        </div>
-      </div>
-
-      <div class="stats-strip">
-        <div class="stat-card"><div class="stat-number" id="rp-total">—</div><div class="stat-label">إجمالي الفرص البيعية</div></div>
-        <div class="stat-card"><div class="stat-number" id="rp-won" style="color:var(--success)">—</div><div class="stat-label">الصفقات الناجحة (Won)</div></div>
-        <div class="stat-card"><div class="stat-number" id="rp-lost" style="color:var(--danger)">—</div><div class="stat-label">الصفقات الملغاة (Lost)</div></div>
-        <div class="stat-card"><div class="stat-number" id="rp-rate" style="color:var(--accent)">—</div><div class="stat-label">معدل التحويل الكلي</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🏆 أداء القنوات التسويقية ومصادر الـ Leads</div>
-        </div>
-        <div id="reportBody" style="padding:12px;">جاري تجهيز التقرير...</div>
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<!-- ═══════════════════════════════ MODALS ═══════════════════════════════ -->
-
-<!-- Sales Login Modal for Cross-Device Access -->
-<div class="modal-overlay" id="salesLoginModal">
-  <div class="modal" style="width:420px;max-width:92vw;text-align:center;">
-    <div style="font-size:38px;margin-bottom:8px;">🔒</div>
-    <div class="modal-title" style="margin-bottom:6px;font-size:18px;">تسجيل الدخول إلى نظام المبيعات</div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:18px;line-height:1.6;">أدخل بيانات حسابك للوصول إلى منظومة الـ CRM والمهارات الذكية وتفاصيل العملاء على أي جهاز.</p>
-    <form id="salesLoginForm" onsubmit="submitSalesLogin(event)">
-      <div class="field" style="margin-bottom:12px;text-align:right;">
-        <label style="font-size:12px;color:var(--text-muted);margin-bottom:4px;display:block;">اسم المستخدم أو البريد الإلكتروني</label>
-        <input type="text" id="sales-username" required placeholder="admin" value="admin" style="direction:ltr;text-align:left;width:100%;padding:10px 14px;border-radius:8px;background:var(--bg-surface);border:1px solid var(--border-default);color:#fff;"/>
-      </div>
-      <div class="field" style="margin-bottom:16px;text-align:right;">
-        <label style="font-size:12px;color:var(--text-muted);margin-bottom:4px;display:block;">كلمة المرور</label>
-        <input type="password" id="sales-password" required placeholder="••••••" value="pr2026" style="direction:ltr;text-align:left;width:100%;padding:10px 14px;border-radius:8px;background:var(--bg-surface);border:1px solid var(--border-default);color:#fff;"/>
-      </div>
-      <div id="salesLoginError" style="display:none;color:#f87171;font-size:12px;margin-bottom:12px;text-align:center;"></div>
-      <button type="submit" id="salesLoginSubmitBtn" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-weight:750;border-radius:8px;">
-        🚀 تسجيل الدخول وتحديث البيانات
+  <!-- Topbar Navigation -->
+  <header class="topnav">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button type="button" class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
       </button>
-    </form>
-  </div>
-</div>
-
-<!-- Add Lead Modal -->
-<div class="modal-overlay" id="addLeadModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('addLeadModal')">✕</button>
-    <div class="modal-title">➕ إضافة Lead جديد إلى المنظومة</div>
-    <form id="addLeadForm" onsubmit="submitNewLead(event)">
-      <div class="form-grid form-grid-2">
-        <div class="field"><label>اسم العميل *</label><input type="text" id="al-name" required placeholder="محمد أحمد"/></div>
-        <div class="field"><label>اسم المشروع *</label><input type="text" id="al-project" required placeholder="مطعم — فرع جديد"/></div>
-        <div class="field"><label>رقم الهاتف *</label><input type="tel" id="al-phone" required placeholder="+20xxxxxxxxx" dir="ltr"/></div>
-        <div class="field"><label>الإيميل</label><input type="email" id="al-email" placeholder="email@example.com" dir="ltr"/></div>
-        <div class="field">
-          <label>مصدر الـ Lead *</label>
-          <select id="al-source">
-            <option value="instagram_ads">إعلانات انستاجرام</option>
-            <option value="facebook_ads">إعلانات فيسبوك</option>
-            <option value="google_ads">إعلانات جوجل</option>
-            <option value="referral">توصية عميل</option>
-            <option value="cold_call">اتصال بارد</option>
-            <option value="website">الموقع الإلكتروني</option>
-            <option value="other">أخرى</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>الخدمة المهتم بها</label>
-          <select id="al-service">
-            <option value="social_media_management">إدارة السوشيال ميديا</option>
-            <option value="paid_ads">إدارة الإعلانات المدفوعة</option>
-            <option value="content_creation">إنتاج المحتوى</option>
-            <option value="branding">الهوية البصرية</option>
-            <option value="video_production">إنتاج الفيديو</option>
-            <option value="full_package">باقة متكاملة</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>الميزانية التقديرية</label>
-          <select id="al-budget">
-            <option value="starter">Starter (&lt; 5K ج.م.)</option>
-            <option value="growth">Growth (5K - 15K ج.م.)</option>
-            <option value="pro">Pro (15K - 30K ج.م.)</option>
-            <option value="enterprise">Enterprise (30K+ ج.م.)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>إذا توصية — من أي عميل؟</label>
-          <input type="text" id="al-refclient" placeholder="اسم العميل المُوصي (اختياري)"/>
-        </div>
+      <a href="/sales-crm-2026.html" class="topnav-brand">
+        <span style="color:#fff;">PR AGENCY</span>
+        <span class="brand-badge" data-i18n="brandBadge">REVENUE OS</span>
+      </a>
+      <div class="sync-indicator">
+        <span class="sync-dot"></span>
+        <span data-i18n="syncStatus">Cloud Synced</span>
       </div>
-      <div class="field" style="margin-top:14px;">
-        <label>التحدي الرئيسي أو ملاحظات أولية</label>
-        <textarea id="al-notes" rows="3" placeholder="تفاصيل متطلبات العميل..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('addLeadModal')">إلغاء</button>
-        <button type="submit" class="btn btn-primary">✅ إضافة الـ Lead</button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<!-- Lead Detail Modal -->
-<div class="modal-overlay" id="leadDetailModal">
-  <div class="modal" style="width:640px;">
-    <button class="modal-close" onclick="closeModal('leadDetailModal')">✕</button>
-    <div id="leadDetailContent">جارٍ التحميل...</div>
-  </div>
-</div>
+    <!-- Quick Search Input -->
+    <div style="position:relative;width:280px;max-width:35vw;">
+      <input type="text" id="globalSearchInput" placeholder="Search deals (Ctrl+K)..." oninput="handleSearch(this.value)" style="padding:6px 14px;border-radius:20px;font-size:12px;"/>
+    </div>
 
-<script>
-let allLeads = [];
-let currentStageFilter = 'all';
-const sourceNames = {
-  instagram_ads: 'انستاجرام',
-  facebook_ads: 'فيسبوك',
-  google_ads: 'جوجل',
-  referral: 'توصية',
-  cold_call: 'اتصال بارد',
-  website: 'الموقع',
-  other: 'أخرى'
-};
-let voiceRecognition = null;
-let isVoiceRecording = false;
-let activeMicStream = null;
-let voiceTranscriptText = '';
-let mediaRecorder = null;
-let audioChunks = [];
+    <div class="topnav-actions">
+      <!-- Language Toggle Switch -->
+      <button type="button" class="lang-toggle-btn" id="langToggleBtn" onclick="toggleLanguage()">
+        <span id="langBtnText">English</span>
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="openModal('addLeadModal')" data-i18n="btnNewDeal">
+        + New Deal
+      </button>
+      <a href="/admin-agency" class="btn btn-secondary btn-sm" data-i18n="adminLink">
+        Admin Console ↗
+      </a>
+    </div>
+  </header>
 
-// ── SCRIPT LOGIC PRESERVED & STRENGTHENED ──────────────────────────────────────
-function showPage(id, btn) {
-  if (typeof toggleMobileSidebar === "function") toggleMobileSidebar(false);
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-  const p = document.getElementById('page-' + id);
-  if (p) p.classList.add('active');
-  if (btn) btn.classList.add('active');
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section" data-i18n="navSecWorkspace">WORKSPACE</div>
+      <button class="sidebar-btn active" onclick="showPage('dashboard', this)">
+        <span data-i18n="navDashboard">Dashboard</span>
+      </button>
+      <button class="sidebar-btn" onclick="showPage('kanban', this)">
+        <span data-i18n="navPipeline">Pipeline (Kanban)</span>
+      </button>
+      <button class="sidebar-btn" onclick="showPage('leads', this)">
+        <span data-i18n="navLeads">Leads & Deals</span>
+      </button>
 
-  if (id === 'dashboard') refreshDashboard();
-  if (id === 'kanban') renderKanban(allLeads);
-  if (id === 'leads') renderLeadsTable(allLeads);
-  if (id === 'voice') populateLeadSelect();
-  if (id === 'overdue') loadOverdue();
-  if (id === 'reports') loadReports();
-}
+      <div class="sidebar-section" data-i18n="navSecOperations">OPERATIONS</div>
+      <button class="sidebar-btn" onclick="showPage('voice', this)">
+        <span data-i18n="navActivity">Activity & Notes</span>
+      </button>
+      <button class="sidebar-btn" onclick="showPage('overdue', this)">
+        <span data-i18n="navOverdue">Overdue Tasks</span>
+      </button>
+      <button class="sidebar-btn" onclick="showPage('reports', this)">
+        <span data-i18n="navReports">Analytics & Reports</span>
+      </button>
+    </aside>
 
-function openModal(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('open');
-  el.classList.add('active');
-  el.style.display = 'flex';
-  el.style.opacity = '1';
-  el.style.visibility = 'visible';
-  el.style.pointerEvents = 'auto';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('open');
-  el.classList.remove('active');
-  el.style.display = 'none';
-  el.style.opacity = '0';
-  el.style.visibility = 'hidden';
-  el.style.pointerEvents = 'none';
-  document.body.style.overflow = '';
-}
-
-function getAuthHeaders() {
-  const token = localStorage.getItem('admin_jwt') || localStorage.getItem('agency_admin_token') || '';
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  return headers;
-}
-
-function showSalesLoginModal() {
-  openModal('salesLoginModal');
-}
-
-async function submitSalesLogin(e) {
-  if (e) e.preventDefault();
-  const u = document.getElementById('sales-username').value.trim();
-  const p = document.getElementById('sales-password').value.trim();
-  const btn = document.getElementById('salesLoginSubmitBtn');
-  const errBox = document.getElementById('salesLoginError');
-  if (errBox) errBox.style.display = 'none';
-
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = '⏳ جاري التحقق...';
-  }
-
-  try {
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: u, password: p })
-    });
-    const d = await res.json();
-    if (d.success && d.token) {
-      localStorage.setItem('admin_jwt', d.token);
-      localStorage.setItem('agency_admin_token', d.token);
-      document.cookie = `pr_admin_token=${d.token}; path=/; max-age=2592000; SameSite=Lax`;
-      closeModal('salesLoginModal');
-      await refreshAll();
-    } else {
-      if (errBox) {
-        errBox.textContent = d.error || 'فشل تسجيل الدخول، تأكد من صحة البيانات.';
-        errBox.style.display = 'block';
-      }
-    }
-  } catch(err) {
-    if (errBox) {
-      errBox.textContent = 'تعذر الاتصال بالسيرفر، برجاء إعادة المحاولة.';
-      errBox.style.display = 'block';
-    }
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = '🚀 تسجيل الدخول وتحديث البيانات';
-    }
-  }
-}
-
-let currentLeadsPage = 1;
-let totalLeadsPages = 1;
-
-async function changeLeadsPage(delta) {
-  const newPage = currentLeadsPage + delta;
-  if (newPage >= 1 && newPage <= totalLeadsPages) {
-    currentLeadsPage = newPage;
-    await refreshLeadsTableOnly();
-  }
-}
-window.changeLeadsPage = changeLeadsPage;
-
-async function fetchLeads(stage = '', page = 1, limit = 20) {
-  const params = new URLSearchParams();
-  if (stage && stage !== 'all') params.set('stage', stage);
-  params.set('page', page);
-  params.set('limit', limit);
-  
-  try {
-    const r = await fetch('/api/admin/sales/leads?' + params.toString(), {
-      headers: getAuthHeaders()
-    });
-    if (r.status === 401) {
-      console.warn('[Sales CRM] 401 Unauthorized - prompting login');
-      showSalesLoginModal();
-      return [];
-    }
-    const d = await r.json();
-
-    if (d.pagination) {
-      totalLeadsPages = d.pagination.totalPages || 1;
-      currentLeadsPage = d.pagination.page || 1;
-      const pageSpan = document.getElementById('leadsCurrentPage');
-      const totalSpan = document.getElementById('leadsTotalPages');
-      const countSpan = document.getElementById('leadsTotalRecords');
-      const prevBtn = document.getElementById('leadsPrevBtn');
-      const nextBtn = document.getElementById('leadsNextBtn');
-
-      if (pageSpan) pageSpan.textContent = currentLeadsPage;
-      if (totalSpan) totalSpan.textContent = totalLeadsPages;
-      if (countSpan) countSpan.textContent = d.pagination.total;
-      if (prevBtn) prevBtn.disabled = currentLeadsPage <= 1;
-      if (nextBtn) nextBtn.disabled = currentLeadsPage >= totalLeadsPages;
-    }
-
-    return d.leads || d.data || [];
-  } catch(err) {
-    console.error('[Sales CRM] Fetch leads exception:', err);
-    return [];
-  }
-}
-
-async function refreshLeadsTableOnly() {
-  const leads = await fetchLeads(currentStageFilter, currentLeadsPage, 20);
-  renderLeadsTable(leads);
-}
-
-async function refreshAll() {
-  allLeads = await fetchLeads();
-  refreshDashboard();
-  if (document.getElementById('page-kanban').classList.contains('active')) renderKanban(allLeads);
-  if (document.getElementById('page-leads').classList.contains('active')) renderLeadsTable(allLeads);
-}
-
-async function refreshDashboard() {
-  if (!allLeads.length) allLeads = await fetchLeads();
-
-  const total = allLeads.length;
-  const newLeads = allLeads.filter(l => l.pipeline_stage === 'new').length;
-  const won = allLeads.filter(l => l.pipeline_stage === 'won').length;
-  const today = new Date().toISOString().split('T')[0];
-  const overdue = allLeads.filter(l =>
-    l.next_followup_due && l.next_followup_due < today &&
-    !['won','lost'].includes(l.pipeline_stage)
-  ).length;
-
-  document.getElementById('st-total').textContent = total;
-  document.getElementById('st-new').textContent = newLeads;
-  document.getElementById('st-won').textContent = won;
-  document.getElementById('st-overdue').textContent = overdue;
-
-  const sources = {};
-  allLeads.forEach(l => { sources[l.source_type] = (sources[l.source_type] || 0) + 1; });
-  const sourceNames = {
-    instagram_ads: 'إعلانات انستاجرام', facebook_ads: 'إعلانات فيسبوك',
-    google_ads: 'إعلانات جوجل', referral: 'توصية عميل',
-    cold_call: 'اتصال بارد', website: 'الموقع', other: 'أخرى'
-  };
-
-  const chartEl = document.getElementById('sourceChart');
-  if (Object.keys(sources).length === 0) {
-    chartEl.innerHTML = '<div style="color:var(--text-muted);text-align:center;">لا توجد بيانات مصادر بعد</div>';
-  } else {
-    chartEl.innerHTML = `
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        ${Object.entries(sources).map(([src, count]) => `
-          <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:8px 14px;display:flex;align-items:center;gap:8px;">
-            <span style="font-size:12px;color:var(--text-muted)">${sourceNames[src] || src}</span>
-            <span style="font-weight:800;color:#fff;font-size:13px">${count}</span>
+    <!-- Main Content -->
+    <main class="main">
+      <!-- ── PAGE 1: DASHBOARD ── -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" data-i18n="dashboardTitle">Revenue & Sales Dashboard</h1>
+            <p class="page-sub" data-i18n="dashboardSub">Real-time pipeline tracking and conversion analytics</p>
           </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  const recent = allLeads.slice(0, 5);
-  const tb = document.getElementById('recentLeadsBody');
-  if (!recent.length) {
-    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px">لا توجد Leads حالياً</td></tr>';
-  } else {
-    tb.innerHTML = recent.map(l => `
-      <tr>
-        <td><strong>${l.name}</strong></td>
-        <td>${l.project_name || '—'}</td>
-        <td>${sourceNames[l.source_type] || l.source_type || '—'}</td>
-        <td>${l.assigned_sales_name || '—'}</td>
-        <td><span class="badge badge-${l.pipeline_stage}">${l.pipeline_stage}</span></td>
-        <td style="color:var(--text-muted)">${(l.created_at||'').slice(0,10)}</td>
-        <td><button class="btn btn-sm btn-secondary" onclick="openLeadDetail('${l.id}')">تفاصيل</button></td>
-      </tr>
-    `).join('');
-  }
-}
-
-function renderKanban(leads) {
-  const stages = [
-    { key: 'new', label: '🆕 جديد' },
-    { key: 'contacted', label: '📞 تم التواصل' },
-    { key: 'meeting_scheduled', label: '📅 ميتينج مجدول' },
-    { key: 'proposal_sent', label: '📄 تم إرسال عرض' },
-    { key: 'won', label: '✅ Won' },
-    { key: 'lost', label: '❌ Lost' },
-  ];
-
-  const board = document.getElementById('kanbanBoard');
-  board.innerHTML = stages.map(s => {
-    const colLeads = leads.filter(l => l.pipeline_stage === s.key);
-    return `
-      <div class="kanban-col">
-        <div class="kanban-col-head">
-          <span>${s.label}</span>
-          <span class="kanban-count">${colLeads.length}</span>
+          <button class="btn btn-secondary btn-sm" onclick="refreshAll()" data-i18n="btnSyncCloud">
+            Sync Cloud
+          </button>
         </div>
-        <div>
-          ${colLeads.map(l => `
-            <div class="kanban-card" onclick="openLeadDetail('${l.id}')">
-              <div class="kanban-card-name">${l.name}</div>
-              <div class="kanban-card-meta">
-                <span>📁 ${l.project_name || 'مشروع بدون اسم'}</span>
-                <span>🏷️ ${l.service_interested || 'خدمات عامة'}</span>
+
+        <!-- KPI Strip -->
+        <div class="stats-strip">
+          <div class="stat-card">
+            <div class="stat-number" id="st-total">1</div>
+            <div class="stat-label" data-i18n="kpiTotalDeals">Active Pipeline Deals</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="st-new" style="color:var(--info);">0</div>
+            <div class="stat-label" data-i18n="kpiNewLeads">New Leads (This Week)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="st-won" style="color:var(--success);">0</div>
+            <div class="stat-label" data-i18n="kpiWonDeals">Closed Won Contracts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="st-overdue" style="color:var(--danger);">0</div>
+            <div class="stat-label" data-i18n="kpiPendingFollowups">Pending Follow-ups</div>
+          </div>
+        </div>
+
+        <!-- Recent Deals Table -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="recentDealsTitle">Recent Pipeline Activity</div>
+            <button class="btn btn-secondary btn-sm" onclick="showPage('leads')" data-i18n="btnViewAll">View All ↗</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="thName">Lead Name</th>
+                  <th data-i18n="thCompany">Company / Project</th>
+                  <th data-i18n="thSource">Channel</th>
+                  <th data-i18n="thOwner">Owner</th>
+                  <th data-i18n="thStage">Stage</th>
+                  <th data-i18n="thDate">Created Date</th>
+                  <th data-i18n="thAction">Action</th>
+                </tr>
+              </thead>
+              <tbody id="recentLeadsBody">
+                <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);" data-i18n="loadingMsg">Loading pipeline data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE 2: KANBAN PIPELINE ── -->
+      <div id="page-kanban" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" data-i18n="pipelineTitle">Deal Pipeline (Kanban)</h1>
+            <p class="page-sub" data-i18n="pipelineSub">Drag-free visual deal stages from New to Closed Won</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addLeadModal')" data-i18n="btnNewDeal">+ New Deal</button>
+        </div>
+        <div class="kanban" id="kanbanBoard"></div>
+      </div>
+
+      <!-- ── PAGE 3: LEADS LIST ── -->
+      <div id="page-leads" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" data-i18n="leadsTitle">All Leads & Deals</h1>
+            <p class="page-sub" data-i18n="leadsSub">Complete registry of potential clients and deal stages</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addLeadModal')" data-i18n="btnNewDeal">+ New Deal</button>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="filter-pills" id="stageFilters">
+          <button class="filter-pill active" onclick="filterLeads('all', this)" data-i18n="filterAll">All Deals</button>
+          <button class="filter-pill" onclick="filterLeads('new', this)" data-i18n="stageNew">New Lead</button>
+          <button class="filter-pill" onclick="filterLeads('contacted', this)" data-i18n="stageContacted">Contacted</button>
+          <button class="filter-pill" onclick="filterLeads('meeting_scheduled', this)" data-i18n="stageMeeting">Meeting Scheduled</button>
+          <button class="filter-pill" onclick="filterLeads('proposal_sent', this)" data-i18n="stageProposal">Proposal Sent</button>
+          <button class="filter-pill" onclick="filterLeads('won', this)" data-i18n="stageWon">Closed Won</button>
+          <button class="filter-pill" onclick="filterLeads('lost', this)" data-i18n="stageLost">Closed Lost</button>
+        </div>
+
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="thName">Lead Name</th>
+                  <th data-i18n="thPhone">Phone / WhatsApp</th>
+                  <th data-i18n="thCompany">Company</th>
+                  <th data-i18n="thSource">Channel</th>
+                  <th data-i18n="thOwner">Owner</th>
+                  <th data-i18n="thStage">Stage</th>
+                  <th data-i18n="thDate">Created Date</th>
+                  <th data-i18n="thAction">Action</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted);" data-i18n="loadingMsg">Loading pipeline data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE 4: VOICE / ACTIVITY NOTES ── -->
+      <div id="page-voice" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" data-i18n="activityTitle">Activity & Notes Log</h1>
+            <p class="page-sub" data-i18n="activitySub">Record follow-up summaries, call transcripts, and next steps</p>
+          </div>
+        </div>
+
+        <div class="card" style="padding:22px;">
+          <form onsubmit="submitFollowupNote(event)">
+            <div class="form-grid form-grid-2" style="margin-bottom:16px;">
+              <div class="field">
+                <label data-i18n="selectLeadLabel">Select Deal / Client *</label>
+                <select id="voiceLeadSelect" required></select>
               </div>
-              <div class="kanban-card-footer">
-                <span style="font-size:11px;color:var(--text-dim)">${(l.created_at||'').slice(0,10)}</span>
-                <span class="badge badge-${l.pipeline_stage}" style="font-size:10px">${l.pipeline_stage}</span>
+              <div class="field">
+                <label data-i18n="outcomeLabel">Call / Contact Outcome</label>
+                <select id="voiceOutcome">
+                  <option value="interested" data-i18n="outcomeInterested">Interested & Moving Forward</option>
+                  <option value="callback" data-i18n="outcomeCallback">Follow-up Call Scheduled</option>
+                  <option value="no_answer" data-i18n="outcomeNoAnswer">No Answer / Left Message</option>
+                  <option value="not_fit" data-i18n="outcomeNotFit">Disqualified / Not a Fit</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-i18n="stageUpdateLabel">Update Stage</label>
+                <select id="voiceNewStage">
+                  <option value="">Keep Current Stage</option>
+                  <option value="contacted" data-i18n="stageContacted">Contacted</option>
+                  <option value="meeting_scheduled" data-i18n="stageMeeting">Meeting Scheduled</option>
+                  <option value="proposal_sent" data-i18n="stageProposal">Proposal Sent</option>
+                  <option value="won" data-i18n="stageWon">Closed Won</option>
+                  <option value="lost" data-i18n="stageLost">Closed Lost</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-i18n="nextDateLabel">Next Follow-up Due Date</label>
+                <input type="date" id="voiceNextDate"/>
               </div>
             </div>
-          `).join('') || '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">لا توجد عناصر</div>'}
+
+            <div class="field" style="margin-bottom:16px;">
+              <label data-i18n="notesAreaLabel">Follow-up Notes / Transcript *</label>
+              <textarea id="voiceNotes" rows="4" required placeholder="Enter key conversation points, agreed deliverables, or client objections..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" data-i18n="btnSaveFollowup">
+              Save Follow-up to Cloud
+            </button>
+          </form>
         </div>
       </div>
-    `;
-  }).join('');
-}
 
-function filterLeads(stage, btn) {
-  currentStageFilter = stage;
-  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderLeadsTable(allLeads);
-}
-
-function renderLeadsTable(leads) {
-  const filtered = currentStageFilter === 'all' ? leads : leads.filter(l => l.pipeline_stage === currentStageFilter);
-  const tbody = document.getElementById('leadsTableBody');
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px">لا توجد نتائج مطابقة</td></tr>';
-    return;
-  }
-  tbody.innerHTML = filtered.map(l => `
-    <tr>
-      <td><strong>${l.name}</strong></td>
-      <td dir="ltr" style="text-align:right"><a href="https://wa.me/${(l.phone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success)">📱 ${l.phone||'—'}</a></td>
-      <td>${l.project_name || '—'}</td>
-      <td>${l.source_type || '—'}</td>
-      <td>${l.assigned_sales_name || '—'}</td>
-      <td><span class="badge badge-${l.pipeline_stage}">${l.pipeline_stage}</span></td>
-      <td style="color:var(--text-muted)">${l.next_followup_due || '—'}</td>
-      <td><button class="btn btn-sm btn-secondary" onclick="openLeadDetail('${l.id}')">عرض</button></td>
-    </tr>
-  `).join('');
-}
-
-function populateLeadSelect() {
-  const sel = document.getElementById('voiceLeadSelect');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">-- اختر Lead للمتابعة --</option>' +
-    allLeads.map(l => `<option value="${l.id}">${l.name} (${l.project_name || 'مشروع'})</option>`).join('');
-}
-
-function checkSpeechSupport() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const btn = document.getElementById('voiceBtn');
-  const notice = document.getElementById('voiceFallbackNotice');
-  const status = document.getElementById('voiceStatus');
-  if (!SpeechRecognition) {
-    if (btn) btn.style.display = 'none';
-    if (notice) notice.style.display = 'block';
-    if (status) status.textContent = 'متصفحك لا يدعم التسجيل الصوتي، يرجى كتابة الملاحظات يدوياً.';
-  }
-}
-
-async function checkMicPermissionStatus() {
-  if (navigator.permissions && navigator.permissions.query) {
-    try {
-      const p = await navigator.permissions.query({ name: 'microphone' });
-      return p.state; // 'granted', 'prompt', or 'denied'
-    } catch(e) {
-      console.warn('[Permissions API] query error:', e);
-    }
-  }
-  return 'prompt';
-}
-
-function showMicBlockedUI(statusEl) {
-  if (!statusEl) return;
-  statusEl.innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:16px;margin-top:14px;color:#fca5a5;text-align:right;">' +
-    '<div style="font-size:14px;font-weight:800;color:#f87171;margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
-      '<span>🔒 المتصفح قام بحظر الميكروفون</span>' +
-    '</div>' +
-    '<div style="font-size:13px;color:#e2e8f0;line-height:1.7;margin-bottom:10px;">' +
-      'المتصفح قام بحظر الميكروفون. يرجى فتح الإعدادات وتغيير الإذن إلى "سماح" ثم تحديث الصفحة.<br>' +
-      'أو اضغط على أيقونة <b>القفل / أذونات الموقع</b> 🔒 بجوار الرابط أعلى الصفحة واختر <b>Allow (سماح)</b> للميكروفون.' +
-    '</div>' +
-    '<div style="margin-bottom:12px;font-size:12px;color:#94a3b8;">' +
-      '💡 رابط إعدادات كروم: <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;color:#fbcfe8;user-select:all;">chrome://settings/content/microphone</code>' +
-    '</div>' +
-    '<div style="display:flex;gap:12px;justify-content:flex-end;align-items:center;flex-wrap:wrap;">' +
-      '<button type="button" onclick="resetMicPermissions()" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer;text-decoration:underline;padding:4px 8px;">' +
-        'إعادة تعيين أذونات الموقع' +
-      '</button>' +
-      '<button type="button" class="btn btn-primary" onclick="retryMicrophoneAccess()" style="background:#ef4444;border-color:#dc2626;padding:8px 18px;font-size:13px;">' +
-        '🔄 إعادة المحاولة' +
-      '</button>' +
-    '</div>' +
-  '</div>';
-}
-
-async function resetMicPermissions() {
-  if (navigator.permissions && navigator.permissions.revoke) {
-    try {
-      await navigator.permissions.revoke({ name: 'microphone' });
-      alert('تمت محاولة إعادة ضبط الإذن. اضغط الآن على "إعادة المحاولة" أو أعد تحميل الصفحة.');
-      retryMicrophoneAccess();
-      return;
-    } catch (e) {
-      console.warn('revoke error:', e);
-    }
-  }
-  alert('لإعادة تعيين الإذن يدويًا:\n1. اضغط على أيقونة القفل أو الضبط 🔒 بجوار رابط الموقع أعلى المتصفح\n2. اختر Reset permissions أو غيّر Microphone إلى Allow\n3. أعد تحميل الصفحة.');
-}
-
-function retryMicrophoneAccess() {
-  const status = document.getElementById('voiceStatus');
-  if (status) {
-    status.textContent = 'جاري طلب إذن الميكروفون مجدداً...';
-    status.style.color = '#38bdf8';
-  }
-  toggleVoice();
-}
-
-async function requestMicPermissionInteractive() {
-  retryMicrophoneAccess();
-}
-
-// ── STRICT USER GESTURE DRIVEN VOICE CONTROLLER ──
-async function toggleVoice() {
-  const btn = document.getElementById('voiceBtn');
-  const transcript = document.getElementById('voiceTranscript');
-  const notesTextarea = document.getElementById('voiceNotes');
-  const status = document.getElementById('voiceStatus');
-  const notice = document.getElementById('voiceFallbackNotice');
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  // 1. If currently recording -> Stop cleanly
-  if (isVoiceRecording) {
-    if (voiceRecognition) {
-      try { voiceRecognition.stop(); } catch(err) {}
-    }
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      try { mediaRecorder.stop(); } catch(err) {}
-    }
-    if (activeMicStream) {
-      try {
-        activeMicStream.getTracks().forEach(track => track.stop());
-      } catch(err) {}
-      activeMicStream = null;
-    }
-    isVoiceRecording = false;
-    btn.classList.remove('recording');
-    btn.innerHTML = '🎙️';
-    btn.style.background = '';
-    status.textContent = 'تم إيقاف التسجيل بنجاح';
-    status.style.color = 'var(--text-muted)';
-    return;
-  }
-
-  // 2. Permissions API Check (Rule 1)
-  const permState = await checkMicPermissionStatus();
-  console.log('[Permissions API] Microphone permission state:', permState);
-
-  if (permState === 'denied') {
-    showMicBlockedUI(status);
-    btn.classList.remove('recording');
-    btn.innerHTML = '🎙️';
-    return;
-  }
-
-  // 3. User Gesture Direct Hardware Acquisition (Rule 2)
-  if (!activeMicStream) {
-    status.textContent = 'جاري الاتصال بالميكروفون...';
-    status.style.color = '#a78bfa';
-
-    try {
-      activeMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('[Voice] Stream acquired via user gesture:', activeMicStream.id);
-    } catch (mediaErr) {
-      console.warn('[Voice] getUserMedia rejected:', mediaErr);
-      btn.classList.remove('recording');
-      btn.innerHTML = '🎙️';
-      showMicBlockedUI(status);
-      return;
-    }
-  }
-
-  // 4. Speech Recognition with Instant MediaRecorder Fallback (Rule 3)
-  let speechRecognitionStarted = false;
-  if (SpeechRecognition) {
-    try {
-      voiceRecognition = new SpeechRecognition();
-      voiceRecognition.lang = 'ar-EG';
-      voiceRecognition.continuous = true;
-      voiceRecognition.interimResults = true;
-
-      voiceRecognition.onstart = () => {
-        isVoiceRecording = true;
-        btn.classList.add('recording');
-        btn.innerHTML = '⏹️';
-        btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-        status.textContent = '🎙️ جاري الاستماع الفوري... تحدث الآن';
-        status.style.color = '#34d399';
-        if (!voiceTranscriptText) {
-          transcript.textContent = '';
-        }
-      };
-
-      voiceRecognition.onresult = (event) => {
-        let interim = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            const finalText = event.results[i][0].transcript.trim() + ' ';
-            voiceTranscriptText += finalText;
-            if (notesTextarea) {
-              notesTextarea.value = (notesTextarea.value + ' ' + finalText).trim();
-            }
-          } else {
-            interim += event.results[i][0].transcript;
-          }
-        }
-        transcript.textContent = (voiceTranscriptText + interim).trim() || 'جاري التقاط الصوت...';
-      };
-
-      voiceRecognition.onerror = (event) => {
-        console.warn('SpeechRecognition failed with event:', event.error);
-
-        // Fallback immediately to MediaRecorder if not allowed or network fails
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'network') {
-          if (activeMicStream && window.MediaRecorder) {
-            console.log('Triggering instant fallback to MediaRecorder...');
-            startMediaRecorderFallback(btn, status, transcript, notesTextarea);
-            return;
-          }
-        }
-
-        if (event.error === 'no-speech') {
-          status.textContent = 'تحدث بوضوح في الميكروفون...';
-          return;
-        }
-
-        btn.classList.remove('recording');
-        btn.innerHTML = '🎙️';
-        btn.style.background = '';
-        isVoiceRecording = false;
-        showMicBlockedUI(status);
-      };
-
-      voiceRecognition.onend = () => {
-        if (isVoiceRecording) {
-          try { voiceRecognition.start(); return; } catch(e) {}
-        }
-        btn.classList.remove('recording');
-        btn.innerHTML = '🎙️';
-        btn.style.background = '';
-        isVoiceRecording = false;
-        if (activeMicStream) {
-          try { activeMicStream.getTracks().forEach(t => t.stop()); } catch(e) {}
-          activeMicStream = null;
-        }
-        status.textContent = 'اكتمل التفريغ الصوتي بنجاح';
-        status.style.color = 'var(--text-muted)';
-      };
-
-      voiceRecognition.start();
-      speechRecognitionStarted = true;
-      return;
-    } catch(err) {
-      console.warn('SpeechRecognition instantiation failed, defaulting to MediaRecorder:', err);
-    }
-  }
-
-  // 5. Direct MediaRecorder if SpeechRecognition was blocked or unavailable
-  if (!speechRecognitionStarted && activeMicStream && window.MediaRecorder) {
-    startMediaRecorderFallback(btn, status, transcript, notesTextarea);
-  }
-}
-
-function startMediaRecorderFallback(btn, status, transcript, notesTextarea) {
-  try {
-    audioChunks = [];
-    mediaRecorder = new MediaRecorder(activeMicStream);
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunks.push(e.data);
-    };
-    mediaRecorder.onstart = () => {
-      isVoiceRecording = true;
-      btn.classList.add('recording');
-      btn.innerHTML = '⏹️';
-      btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-      status.textContent = '🎙️ جاري تسجيل الملاحظة الصوتية مباشرة...';
-      status.style.color = '#34d399';
-    };
-    mediaRecorder.onstop = () => {
-      isVoiceRecording = false;
-      btn.classList.remove('recording');
-      btn.innerHTML = '🎙️';
-      btn.style.background = '';
-      status.textContent = '✅ تم تسجيل الملاحظة الصوتية وجاهزة للحفظ';
-      status.style.color = '#34d399';
-      if (notesTextarea && !notesTextarea.value.includes('تسجيل صوتي')) {
-        notesTextarea.value = (notesTextarea.value + ' [تم إرفاق تسجيل صوتي للمتابعة ' + new Date().toLocaleTimeString('ar-EG') + ']').trim();
-      }
-    };
-    mediaRecorder.start(250);
-  } catch(e) {
-    status.textContent = 'تعذر تشغيل مسجل الصوت: ' + e.message;
-    status.style.color = '#ef4444';
-  }
-}
-
-async function formatVoiceNoteWithAI() {
-  const notesTextarea = document.getElementById('voiceNotes');
-  const transcriptEl = document.getElementById('voiceTranscript');
-  const btn = document.getElementById('aiFormatVoiceBtn');
-  const leadSelect = document.getElementById('voiceLeadSelect');
-  const status = document.getElementById('voiceStatus');
-
-  const rawText = (notesTextarea?.value || transcriptEl?.textContent || '').trim();
-
-  if (!rawText || rawText.includes('سيظهر النص المفرغ') || rawText.length < 5) {
-    alert('يرجى التحدث في الميكروفون أولاً أو كتابة ملاحظات لتلخيصها وتنسيقها.');
-    return;
-  }
-
-  const origBtnHtml = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm" style="display:inline-block;width:14px;height:14px;border:2px solid #c084fc;border-right-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-left:6px;"></span> جاري التحليل والتنسيق...';
-  if (status) {
-    status.textContent = '🤖 جاري استخراج البيانات واستبعاد الحشو بالذكاء الاصطناعي...';
-    status.style.color = '#c084fc';
-  }
-
-  const leadId = leadSelect?.value || '';
-  const selectedLead = allLeads.find(l => String(l.id) === String(leadId));
-
-  try {
-    const res = await fetch('/api/admin/sales/ai-skill', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '')
-      },
-      body: JSON.stringify({
-        action: 'format_voice_note',
-        raw_text: rawText,
-        lead_id: leadId || undefined,
-        lead_name: selectedLead?.name || '',
-        company: selectedLead?.project_name || '',
-        stage: selectedLead?.stage || ''
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.success && data.formatted_text) {
-      notesTextarea.value = data.formatted_text;
-      if (status) {
-        status.textContent = '✨ تم تنظيف وتنسيق الملاحظة باحترافية وتوثيقها!';
-        status.style.color = '#34d399';
-      }
-    } else {
-      throw new Error(data.error || 'تعذر تنسيق الملاحظة');
-    }
-  } catch (err) {
-    console.error('[AI Voice Note Formatter Error]:', err);
-    alert('تنبيه: تعذر إكمال التلخيص بالذكاء الاصطناعي (' + err.message + '). تم الاحتفاظ بالنص الأصلي.');
-    if (status) {
-      status.textContent = '⚠️ حدث خطأ في معالجة الذكاء الاصطناعي، تم الحفاظ على النص الأصلي';
-      status.style.color = '#f87171';
-    }
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = origBtnHtml;
-  }
-}
-
-async function saveVoiceFollowup() {
-  const lead_id = document.getElementById('voiceLeadSelect').value;
-  const outcome = document.getElementById('voiceOutcome').value;
-  const new_stage = document.getElementById('voiceNewStage').value;
-  const next_followup_due = document.getElementById('voiceNextDate').value;
-  const transcript = document.getElementById('voiceTranscript').textContent;
-  const notes = document.getElementById('voiceNotes').value;
-
-  if (!lead_id) {
-    alert('يرجى اختيار Lead للمتابعة');
-    return;
-  }
-
-  const summary = [transcript, notes].filter(Boolean).join(' | ');
-
-  try {
-    const res = await fetch('/api/admin/sales/followup', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        lead_id,
-        outcome,
-        new_stage: new_stage || undefined,
-        next_followup_due: next_followup_due || undefined,
-        notes: summary
-      })
-    });
-    const d = await res.json();
-    if (d.success) {
-      alert('✅ تم حفظ المتابعة بنجاح وتحديث بيانات العميل!');
-      document.getElementById('voiceTranscript').textContent = 'سيظهر النص المفرغ هنا تلقائياً...';
-      document.getElementById('voiceNotes').value = '';
-      refreshAll();
-    } else {
-      alert('خطأ: ' + d.error);
-    }
-  } catch (err) {
-    alert('تعذر حفظ المتابعة');
-  }
-}
-
-async function openLeadDetail(leadId) {
-  // 1. Immediately open modal with loading indicator
-  openModal('leadDetailModal');
-  const content = document.getElementById('leadDetailContent');
-  if (content) {
-    content.innerHTML = `
-      <div style="text-align:center;padding:48px 24px;color:var(--text-muted);">
-        <div style="font-size:36px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block;">⏳</div>
-        <div style="font-size:15px;font-weight:750;color:#c4b5fd;">جاري استرجاع تفاصيل العميل والمهارات الذكية...</div>
-      </div>
-    `;
-  }
-
-  // 2. Look up lead from cache or directly from server
-  let lead = allLeads.find(l => String(l.id) === String(leadId));
-  let followups = [];
-
-  try {
-    const r = await fetch('/api/admin/sales/leads?id=' + encodeURIComponent(leadId), {
-      headers: getAuthHeaders()
-    });
-    if (r.status === 401) {
-      closeModal('leadDetailModal');
-      showSalesLoginModal();
-      return;
-    }
-    const d = await r.json();
-    if (d.success && (d.lead || d.data)) {
-      lead = d.lead || d.data;
-      followups = d.followups || [];
-      // Also update or prepend to allLeads cache
-      const existingIdx = allLeads.findIndex(l => String(l.id) === String(leadId));
-      if (existingIdx !== -1) allLeads[existingIdx] = lead;
-      else allLeads.unshift(lead);
-    }
-  } catch(e) {
-    console.warn('[Sales CRM] Could not fetch single lead details from API:', e);
-  }
-
-  if (!lead) {
-    if (content) {
-      content.innerHTML = `
-        <div style="text-align:center;padding:32px 20px;">
-          <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
-          <div style="font-size:15px;font-weight:700;color:#f87171;margin-bottom:14px;">لم يتم العثور على بيانات هذا العميل.</div>
-          <button class="btn btn-secondary" onclick="closeModal('leadDetailModal')">إغلاق النافذة</button>
-        </div>
-      `;
-    }
-    return;
-  }
-
-  const initials = lead.name ? lead.name.slice(0, 2).toUpperCase() : 'LD';
-  const sNames = (typeof sourceNames !== 'undefined' ? sourceNames : (window.sourceNames || {})) || {};
-
-  content.innerHTML = `
-    <div class="lead-detail-header">
-      <div class="lead-avatar">${initials}</div>
-      <div style="flex:1;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <!-- ── PAGE 5: OVERDUE ── -->
+      <div id="page-overdue" class="page">
+        <div class="page-header">
           <div>
-            <div style="font-size:18px;font-weight:850;color:#fff;">${lead.name}</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${lead.project_name || 'مشروع'} · المصدر: ${sNames[lead.source_type] || lead.source_type || '—'}</div>
+            <h1 class="page-title" data-i18n="overdueTitle">Overdue Tasks & Follow-ups</h1>
+            <p class="page-sub" data-i18n="overdueSub">Clients requiring urgent outreach based on scheduled dates</p>
           </div>
-          <span class="badge badge-${lead.pipeline_stage}">${lead.pipeline_stage}</span>
         </div>
-        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="https://wa.me/${(lead.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-sm btn-secondary">📱 واتساب</a>
-          <a href="tel:${lead.phone||''}" class="btn btn-sm btn-secondary">📞 اتصال هاتف</a>
-          <button class="btn btn-sm btn-primary" onclick="convertLeadToClientUI('${lead.id}')" style="background:#10b981;border-color:#059669;color:#fff;font-weight:700;">🚀 تحويل إلى عميل بورتال (Convert)</button>
-          <button class="btn btn-sm btn-secondary" onclick="triggerDailyBrief()" style="margin-right:auto;border-color:rgba(139,92,246,0.4);color:#c4b5fd;">☀️ بريف اليوم (تليجرام)</button>
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="thName">Lead Name</th>
+                  <th data-i18n="thPhone">Phone</th>
+                  <th data-i18n="thOwner">Owner</th>
+                  <th data-i18n="thDueDate">Due Date</th>
+                  <th data-i18n="thStage">Stage</th>
+                  <th data-i18n="thAction">Action</th>
+                </tr>
+              </thead>
+              <tbody id="overdueBody">
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);" data-i18n="noOverdueMsg">No overdue tasks. All follow-ups are up to date.</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 🤖 SMART SALES CO-PILOT (POWERED BY 65+ MARKETING SKILLS & ARENA) -->
-    <div style="background:linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));border:1px solid rgba(139,92,246,0.35);border-radius:var(--radius-sm);padding:14px;margin-bottom:18px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div style="font-size:13px;font-weight:800;color:#c4b5fd;display:flex;align-items:center;gap:6px;">
-          <span>🤖 مساعد المبيعات الذكي (Sales Co-Pilot - Skills Active)</span>
+      <!-- ── PAGE 6: REPORTS ── -->
+      <div id="page-reports" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" data-i18n="reportsTitle">Conversion & Sales Reports</h1>
+            <p class="page-sub" data-i18n="reportsSub">Attribution by channel and closed won conversion performance</p>
+          </div>
         </div>
-        <span id="aiSkillBadge" style="font-size:11px;color:var(--text-muted);">توجيه ذكي مدعوم بـ 77 مهارة</span>
-      </div>
-
-      <!-- Suggested Action Box (Auto-Outreach) -->
-      <div id="smartOutreachBox" style="background:#0d0e12;border:1px dashed rgba(139,92,246,0.4);border-radius:8px;padding:12px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <strong style="font-size:12px;color:#38bdf8;">⚡ الرسالة المقترحة تلقائياً (Cold Email & WhatsApp):</strong>
-          <button type="button" class="btn btn-sm" onclick="copySmartOutreach()" style="padding:2px 8px;font-size:11px;background:rgba(255,255,255,0.08);color:#fff;">📋 نسخ النص</button>
+        <div class="card" id="reportBody" style="padding:20px;">
+          <div style="text-align:center;color:var(--text-muted);padding:24px;" data-i18n="loadingMsg">Loading analytics...</div>
         </div>
-        <div id="smartOutreachText" style="font-size:12.5px;color:#e2e8f0;line-height:1.6;white-space:pre-wrap;">⏳ جاري إعداد الرسالة المقترحة المخصصة لهذا العميل تلقائياً...</div>
       </div>
+    </main>
+  </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;">
-        <button type="button" class="btn btn-sm btn-secondary" onclick="callAiSkill('research', '${lead.id}')" style="justify-content:center;background:rgba(255,255,255,0.04);">
-          🔍 ابحث عن الشركة (Arena)
-        </button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="handleObjectionClick('${lead.id}')" style="justify-content:center;background:rgba(239,68,68,0.1);color:#fca5a5;border-color:rgba(239,68,68,0.3);">
-          🛡️ معالجة اعتراض
-        </button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="generateLeadProposal('${lead.id}')" style="justify-content:center;background:rgba(16,185,129,0.1);color:#6ee7b7;border-color:rgba(16,185,129,0.3);">
-          📄 توليد عرض سعر (Offers)
-        </button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="callAiSkill('competitor', '${lead.id}')" style="justify-content:center;background:rgba(255,255,255,0.04);">
-          ⚔️ تحليل المنافسين
-        </button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="callAiSkill('presentation', '${lead.id}')" style="justify-content:center;background:rgba(255,255,255,0.04);">
-          📊 Pitch Deck
-        </button>
+  <!-- Mobile Bottom Navigation Dock -->
+  <nav class="mobile-dock">
+    <button type="button" class="dock-btn active" onclick="showPage('dashboard')">
+      <span data-i18n="dockDashboard">Dashboard</span>
+    </button>
+    <button type="button" class="dock-btn" onclick="showPage('kanban')">
+      <span data-i18n="dockPipeline">Pipeline</span>
+    </button>
+    <button type="button" class="dock-btn" onclick="showPage('leads')">
+      <span data-i18n="dockDeals">Deals</span>
+    </button>
+    <button type="button" class="dock-btn" onclick="showPage('voice')">
+      <span data-i18n="dockActivity">Activity</span>
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════ MODALS ═══════════════════════════════ -->
+
+  <!-- Add New Deal Modal -->
+  <div class="modal-overlay" id="addLeadModal">
+    <div class="modal">
+      <button type="button" class="modal-close" onclick="closeModal('addLeadModal')">✕</button>
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:14px;" data-i18n="modalNewDealTitle">
+        Create New Deal in Pipeline
       </div>
-
-      <!-- AI Output Box -->
-      <div id="aiSkillResultBox" style="display:none;margin-top:12px;background:#0d0e12;border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;color:#e2e8f0;white-space:pre-wrap;max-height:280px;overflow-y:auto;"></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;font-size:12px;background:var(--bg-surface);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);">
-      <div><span style="color:var(--text-dim)">المصدر: </span><strong>${sNames[lead.source_type]||lead.source_type||'—'}</strong></div>
-      <div><span style="color:var(--text-dim)">الخدمة: </span><strong>${lead.service_interested||'—'}</strong></div>
-      <div><span style="color:var(--text-dim)">الميزانية: </span><strong>${lead.budget_tier||'—'}</strong></div>
-      <div><span style="color:var(--text-dim)">المسؤول: </span><strong>${lead.assigned_sales_name||'—'}</strong></div>
-      <div><span style="color:var(--text-dim)">المتابعة القادمة: </span><strong>${lead.next_followup_due||'—'}</strong></div>
-      <div><span style="color:var(--text-dim)">الهاتف: </span><strong dir="ltr">${lead.phone||'—'}</strong></div>
-    </div>
-
-    <div style="margin-top:16px;">
-      <div style="font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:8px;">سجل المتابعات (Followup History)</div>
-      ${followups.length ? followups.map(f => `
-        <div class="followup-item">
-          <div class="followup-meta">${f.created_at || ''} · ${f.outcome || ''}</div>
-          <div style="font-size:12px;color:var(--text-main);white-space:pre-wrap;">${f.notes || ''}</div>
+      <form id="addLeadForm" onsubmit="submitNewLead(event)">
+        <div class="form-grid form-grid-2">
+          <div class="field">
+            <label data-i18n="lblLeadName">Client / Decision Maker *</label>
+            <input type="text" id="al-name" required placeholder="e.g. John Doe"/>
+          </div>
+          <div class="field">
+            <label data-i18n="lblProjectName">Company / Project Name *</label>
+            <input type="text" id="al-project" required placeholder="e.g. Acme Corp"/>
+          </div>
+          <div class="field">
+            <label data-i18n="lblPhone">Phone / WhatsApp *</label>
+            <input type="tel" id="al-phone" required placeholder="+20xxxxxxxxxx" dir="ltr"/>
+          </div>
+          <div class="field">
+            <label data-i18n="lblEmail">Email Address</label>
+            <input type="email" id="al-email" placeholder="contact@company.com" dir="ltr"/>
+          </div>
+          <div class="field">
+            <label data-i18n="lblSource">Acquisition Channel *</label>
+            <select id="al-source">
+              <option value="meta_ad">Meta Ads (Instagram / Facebook)</option>
+              <option value="google_ad">Google Search / YouTube Ads</option>
+              <option value="client_referral">Client Referral</option>
+              <option value="website_form">Direct Website Inquiry</option>
+              <option value="cold_outreach">Direct / Cold Outreach</option>
+              <option value="other">Other Channel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="lblService">Service Interested *</label>
+            <select id="al-service">
+              <option value="full_package">Full Growth Retainer</option>
+              <option value="paid_ads">Paid Media & Ads Management</option>
+              <option value="video_production">Video Production & Reels</option>
+              <option value="branding">Brand Identity & Positioning</option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="lblBudget">Estimated Budget Tier</label>
+            <select id="al-budget">
+              <option value="starter">Starter (&lt; 15,000 EGP)</option>
+              <option value="growth">Growth (15,000 - 35,000 EGP)</option>
+              <option value="enterprise">Enterprise (35,000+ EGP)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="lblDueDate">Initial Follow-up Date</label>
+            <input type="date" id="al-due"/>
+          </div>
         </div>
-      `).join('') : '<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:12px;">لا توجد متابعات مسجلة بعد لهذا العميل</div>'}
+        <div class="field" style="margin-top:14px;">
+          <label data-i18n="lblNotes">Deal Notes & Initial Requirements</label>
+          <textarea id="al-notes" rows="3" placeholder="Enter key business challenges or client expectations..."></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addLeadModal')" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btnSaveDeal">Save to Cloud Database</button>
+        </div>
+      </form>
     </div>
-  `;
+  </div>
 
-  setTimeout(() => triggerAutoOutreach(lead), 80);
-}
+  <!-- Lead Detail & AI Sales Studio Modal -->
+  <div class="modal-overlay" id="leadDetailModal">
+    <div class="modal">
+      <button type="button" class="modal-close" onclick="closeModal('leadDetailModal')">✕</button>
+      <div id="leadDetailContent">
+        <div style="text-align:center;padding:32px;color:var(--text-muted);" data-i18n="loadingMsg">Loading deal details...</div>
+      </div>
+    </div>
+  </div>
 
-async function callAiSkill(skill, leadId) {
-  const lead = allLeads.find(l => l.id == leadId);
-  const badge = document.getElementById('aiSkillBadge');
-  const box = document.getElementById('aiSkillResultBox');
-  if (badge) {
-    badge.textContent = '⏳ جاري المعالجة بالذكاء الاصطناعي...';
-    badge.style.color = '#38bdf8';
-  }
-  if (box) {
-    box.style.display = 'block';
-    box.textContent = 'جاري التوليد والتحليل الذكي...';
-  }
-
-  try {
-    const res = await fetch('/api/admin/sales/ai-skill', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '')
-      },
-      body: JSON.stringify({
-        skill,
-        lead_id: leadId,
-        lead_name: lead?.name,
-        company: lead?.project_name,
-        project_name: lead?.project_name,
-        stage: lead?.pipeline_stage,
-        estimated_value: lead?.estimated_value
-      })
-    });
-    const d = await res.json();
-    if (d.success) {
-      if (badge) {
-        badge.textContent = '✅ ' + (d.actionTitle || 'تم بنجاح وحفظ في الملاحظات');
-        badge.style.color = '#34d399';
-      }
-      if (box) {
-        box.textContent = d.result;
-      }
-    } else {
-      if (box) box.textContent = 'خطأ: ' + d.error;
-    }
-  } catch (err) {
-    if (box) box.textContent = 'تعذر الاتصال بخدمة الذكاء الاصطناعي';
-  }
-}
-
-async function triggerDailyBrief() {
-  if (!confirm('هل تريد إرسال البريف اليومي لصفقات ومبيعات اليوم على تليجرام الإدارة الآن؟')) return;
-  try {
-    const res = await fetch('/api/admin/sales/daily-brief', {
-      headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '') }
-    });
-    const d = await res.json();
-    if (d.success) {
-      alert('☀️ تم إرسال البريف اليومي بنجاح على تليجرام!');
-    } else {
-      alert('خطأ: ' + d.error);
-    }
-  } catch(e) {
-    alert('تعذر إرسال البريف اليومي');
-  }
-}
-
-async function submitNewLead(e) {
-  e.preventDefault();
-  const name = document.getElementById('al-name').value;
-  const project_name = document.getElementById('al-project').value;
-  const phone = document.getElementById('al-phone').value;
-  const email = document.getElementById('al-email').value;
-  const source_type = document.getElementById('al-source').value;
-  const service_interested = document.getElementById('al-service').value;
-  const budget_tier = document.getElementById('al-budget').value;
-  const referral_client_name = document.getElementById('al-refclient').value;
-  const challenge_notes = document.getElementById('al-notes').value;
-
-  try {
-    const res = await fetch('/api/admin/sales/leads', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        name, project_name, phone, email, source_type,
-        service_interested, budget_tier, referral_client_name, challenge_notes
-      })
-    });
-    const d = await res.json();
-    if (d.success) {
-      closeModal('addLeadModal');
-      document.getElementById('addLeadForm').reset();
-      refreshAll();
-      alert('🎉 تم إضافة الـ Lead بنجاح!');
-    } else {
-      alert('خطأ: ' + d.error);
-    }
-  } catch(err) {
-    alert('تعذر إضافة الـ Lead');
-  }
-}
-
-async function loadOverdue() {
-  const today = new Date().toISOString().split('T')[0];
-  const overdue = allLeads.filter(l =>
-    l.next_followup_due && l.next_followup_due < today &&
-    !['won','lost'].includes(l.pipeline_stage)
-  );
-
-  const tbody = document.getElementById('overdueBody');
-  if (!overdue.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">🎉 لا توجد متابعات متأخرة!</td></tr>';
-    return;
-  }
-  tbody.innerHTML = overdue.map(l => `
-    <tr>
-      <td><strong>${l.name}</strong></td>
-      <td dir="ltr" style="text-align:right"><a href="https://wa.me/${(l.phone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success)">📱 ${l.phone||'—'}</a></td>
-      <td>${l.assigned_sales_name||'—'}</td>
-      <td><span class="badge badge-overdue">⚠️ ${l.next_followup_due}</span></td>
-      <td><span class="badge badge-${l.pipeline_stage}">${l.pipeline_stage}</span></td>
-      <td><button class="btn btn-sm btn-primary" onclick="openLeadDetail('${l.id}')">متابعة الآن</button></td>
-    </tr>
-  `).join('');
-}
-
-function loadReports() {
-  const total = allLeads.length;
-  const won = allLeads.filter(l => l.pipeline_stage === 'won').length;
-  const lost = allLeads.filter(l => l.pipeline_stage === 'lost').length;
-  const rate = total > 0 ? Math.round(won / total * 100) : 0;
-
-  document.getElementById('rp-total').textContent = total;
-  document.getElementById('rp-won').textContent = won;
-  document.getElementById('rp-lost').textContent = lost;
-  document.getElementById('rp-rate').textContent = rate + '%';
-
-  const sources = {};
-  allLeads.forEach(l => {
-    if (!sources[l.source_type]) sources[l.source_type] = { total:0, won:0 };
-    sources[l.source_type].total++;
-    if (l.pipeline_stage === 'won') sources[l.source_type].won++;
-  });
-
-  const sourceNames = { instagram_ads:'انستاجرام', facebook_ads:'فيسبوك', google_ads:'جوجل', referral:'توصية', cold_call:'اتصال بارد', website:'الموقع', other:'أخرى' };
-
-  document.getElementById('reportBody').innerHTML = `
-    <table>
-      <thead><tr><th>المصدر</th><th>إجمالي Leads</th><th>Won</th><th>نسبة التحويل</th></tr></thead>
-      <tbody>
-        ${Object.entries(sources).sort((a,b)=>b[1].total-a[1].total).map(([src, data]) => `
-          <tr>
-            <td><strong>${sourceNames[src]||src}</strong></td>
-            <td>${data.total}</td>
-            <td style="color:var(--success);font-weight:700;">${data.won}</td>
-            <td><strong style="color:var(--warning)">${Math.round(data.won/data.total*100)}%</strong></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-window.onload = async () => {
-  await refreshAll();
-  checkSpeechSupport();
-};
-
-// ── 📱 MOBILE SIDEBAR & DOCK HANDLERS ─────────────────────────────────
-function toggleMobileSidebar(forceState) {
-  const sidebar = document.querySelector('.sidebar');
-  const backdrop = document.getElementById('mobileSidebarBackdrop');
-  if (!sidebar) return;
-
-  const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
-  if (isOpen) {
-    sidebar.classList.add('open');
-    if (backdrop) backdrop.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  } else {
-    sidebar.classList.remove('open');
-    if (backdrop) backdrop.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-
-function updateDockActive(btn) {
-  document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-}
-
-// Auto-close mobile sidebar when selecting any page
-const originalShowPage = window.showPage;
-
-</script>
-
+  <!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
   <script>
-    let searchDebounceTimer = null;
-    async function handleGlobalSearch(query) {
-      const dropdown = document.getElementById('globalSearchResults');
-      if (!dropdown) return;
-      const q = (query || '').trim();
-      if (q.length < 2) {
-        dropdown.style.display = 'none';
-        dropdown.innerHTML = '';
+    // ── BILINGUAL INTERNATIONAL DICTIONARY (ZERO EMOJIS) ─────────────────
+    const I18N = {
+      ar: {
+        brandBadge: 'نظام الإيرادات',
+        syncStatus: 'متزامن سحابياً',
+        langBtnText: 'English',
+        adminLink: 'لوحة الإدارة ↗',
+        btnNewDeal: '+ إضافة صفقة',
+        btnSyncCloud: 'تحديث سحابي',
+        btnViewAll: 'عرض الكل ↗',
+        btnCancel: 'إلغاء',
+        btnSaveDeal: 'حفظ في السحابة',
+        navSecWorkspace: 'مساحة العمل',
+        navSecOperations: 'عمليات المبيعات',
+        navDashboard: 'لوحة التحكم',
+        navPipeline: 'مسار الصفقات (Pipeline)',
+        navLeads: 'العملاء والصفقات',
+        navActivity: 'المتابعات والملاحظات',
+        navOverdue: 'متابعات مستحقة',
+        navReports: 'التقارير والتحليلات',
+        dashboardTitle: 'لوحة تحكم المبيعات والإيرادات',
+        dashboardSub: 'متابعة لحظية لمسار الصفقات ومعدلات التحويل السحابية',
+        kpiTotalDeals: 'إجمالي الصفقات النشطة',
+        kpiNewLeads: 'صفقات جديدة هذا الأسبوع',
+        kpiWonDeals: 'عقود تم إغلاقها بنجاح',
+        kpiPendingFollowups: 'متابعات مستحقة',
+        recentDealsTitle: 'أحدث الصفقات والفرص البيعية',
+        pipelineTitle: 'مسار الصفقات (Pipeline)',
+        pipelineSub: 'متابعة مراحل الصفقات من البداية وحتى الفوز بالعقد',
+        leadsTitle: 'سجل العملاء والصفقات',
+        leadsSub: 'قاعدة بيانات موحدة لجميع العملاء المحتملين وتفاصيل التواصل',
+        filterAll: 'جميع الصفقات',
+        stageNew: 'ليد جديد',
+        stageContacted: 'تم التواصل',
+        stageMeeting: 'اجتماع مجدول',
+        stageProposal: 'عرض سعر مرسل',
+        stageWon: 'تم الفوز بالعقد',
+        stageLost: 'صفقة خاسرة',
+        thName: 'اسم العميل',
+        thCompany: 'المشروع / الشركة',
+        thPhone: 'الهاتف / واتساب',
+        thSource: 'القناة',
+        thOwner: 'المسؤول',
+        thStage: 'المرحلة',
+        thDate: 'التاريخ',
+        thAction: 'الإجراء',
+        thDueDate: 'الموعد المحدد',
+        actionDetails: 'التفاصيل',
+        actionCall: 'اتصال',
+        actionWhatsApp: 'واتساب',
+        actionConvert: 'تحويل لعميل',
+        actionBrief: 'بريف اليوم',
+        aiStudioTitle: 'استوديو الذكاء الاصطناعي للمبيعات (AI Sales Studio)',
+        aiStudioSub: 'توليد استراتيجيات، عروض أسعار، ومعالجة اعتراضات مدعومة بـ 77 مهارة',
+        aiPromptPlaceholder: 'اكتب ما تطلبه من الذكاء الاصطناعي لهذا العميل (مثال: دراسة حالة كولاج، تحليل منافسين، سيناريو إغلاق، عرض أسعار بالباقات)...',
+        btnGenerateAi: 'توليد بالذكاء الاصطناعي',
+        btnExportCollage: 'تصدير كولاج PDF',
+        btnCopy: 'نسخ المحتوى',
+        chipCollage: 'ملف تقديم كولاج',
+        chipProposal: 'عرض سعر متكامل',
+        chipObjection: 'معالجة اعتراض',
+        chipCompetitor: 'تحليل المنافسين',
+        activityTitle: 'سجل المتابعات والملاحظات',
+        activitySub: 'توثيق نتائج المكالمات وتحديد مواعيد المتابعة القادمة',
+        selectLeadLabel: 'اختر الصفقة / العميل *',
+        outcomeLabel: 'نتيجة المكالمة',
+        outcomeInterested: 'مهتم بالخدمة ومستعد للخطوة التالية',
+        outcomeCallback: 'مكالمة متابعة لاحقة',
+        outcomeNoAnswer: 'لم يتم الرد',
+        outcomeNotFit: 'غير مؤهل / غير مناسب حالياً',
+        stageUpdateLabel: 'تحديث المرحلة',
+        nextDateLabel: 'تاريخ المتابعة القادمة',
+        notesAreaLabel: 'الملاحظات والملخص *',
+        btnSaveFollowup: 'حفظ المتابعة في السحابة',
+        overdueTitle: 'المتابعات والمهام المستحقة',
+        overdueSub: 'عملاء يتطلبون تواصلاً فورياً بناءً على المواعيد المحددة',
+        noOverdueMsg: 'لا توجد مهام متأخرة حالياً. جميع المتابعات منتظمة.',
+        reportsTitle: 'تقارير الأداء ومعدل التحويل',
+        reportsSub: 'تحليل دقيق لمصادر التدفق ومعدل إغلاق العقود',
+        loadingMsg: 'جاري تحميل البيانات من السحابة...',
+        modalNewDealTitle: 'إضافة صفقة جديدة إلى مسار المبيعات',
+        lblLeadName: 'اسم العميل / صانع القرار *',
+        lblProjectName: 'اسم الشركة أو المشروع *',
+        lblPhone: 'الهاتف / واتساب *',
+        lblEmail: 'البريد الإلكتروني',
+        lblSource: 'قناة الاستقطاب *',
+        lblService: 'الخدمة المطلوبة *',
+        lblBudget: 'الميزانية التقديرية',
+        lblDueDate: 'تاريخ المتابعة الأولى',
+        lblNotes: 'ملاحظات الصفقة والتحديات',
+        dockDashboard: 'الرئيسية',
+        dockPipeline: 'المسار',
+        dockDeals: 'الصفقات',
+        dockActivity: 'المتابعة'
+      },
+      en: {
+        brandBadge: 'REVENUE OS',
+        syncStatus: 'Cloud Synced',
+        langBtnText: 'عربي',
+        adminLink: 'Admin Console ↗',
+        btnNewDeal: '+ New Deal',
+        btnSyncCloud: 'Sync Cloud',
+        btnViewAll: 'View All ↗',
+        btnCancel: 'Cancel',
+        btnSaveDeal: 'Save to Cloud',
+        navSecWorkspace: 'WORKSPACE',
+        navSecOperations: 'OPERATIONS',
+        navDashboard: 'Dashboard',
+        navPipeline: 'Pipeline (Kanban)',
+        navLeads: 'Leads & Deals',
+        navActivity: 'Activity & Notes',
+        navOverdue: 'Overdue Tasks',
+        navReports: 'Analytics & Reports',
+        dashboardTitle: 'Revenue & Sales Dashboard',
+        dashboardSub: 'Real-time pipeline tracking and conversion analytics',
+        kpiTotalDeals: 'Active Pipeline Deals',
+        kpiNewLeads: 'New Leads (This Week)',
+        kpiWonDeals: 'Closed Won Contracts',
+        kpiPendingFollowups: 'Pending Follow-ups',
+        recentDealsTitle: 'Recent Pipeline Activity',
+        pipelineTitle: 'Deal Pipeline (Kanban)',
+        pipelineSub: 'Visual stage progression from New to Closed Won',
+        leadsTitle: 'All Leads & Deals',
+        leadsSub: 'Central registry of potential clients and deal stages',
+        filterAll: 'All Deals',
+        stageNew: 'New Lead',
+        stageContacted: 'Contacted',
+        stageMeeting: 'Meeting Scheduled',
+        stageProposal: 'Proposal Sent',
+        stageWon: 'Closed Won',
+        stageLost: 'Closed Lost',
+        thName: 'Lead Name',
+        thCompany: 'Company / Project',
+        thPhone: 'Phone / WhatsApp',
+        thSource: 'Channel',
+        thOwner: 'Owner',
+        thStage: 'Stage',
+        thDate: 'Created Date',
+        thAction: 'Action',
+        thDueDate: 'Due Date',
+        actionDetails: 'Details',
+        actionCall: 'Call',
+        actionWhatsApp: 'WhatsApp',
+        actionConvert: 'Convert',
+        actionBrief: 'Daily Brief',
+        aiStudioTitle: 'AI Sales Studio & Copilot',
+        aiStudioSub: 'Custom strategy, proposals, and objection handling powered by 77 skills & Arena engine',
+        aiPromptPlaceholder: 'Enter custom AI prompt for this lead (e.g. customized retainer proposal, legal cases pitch, trend exploitation angles, closing script)...',
+        btnGenerateAi: 'Generate with AI',
+        btnExportCollage: 'Export Collage PDF',
+        btnCopy: 'Copy Output',
+        chipCollage: 'Collage Pitch Deck',
+        chipProposal: 'Pricing Proposal',
+        chipObjection: 'Objection Script',
+        chipCompetitor: 'Competitor Teardown',
+        activityTitle: 'Activity & Notes Log',
+        activitySub: 'Record call summaries and schedule next follow-up dates',
+        selectLeadLabel: 'Select Deal / Client *',
+        outcomeLabel: 'Call / Contact Outcome',
+        outcomeInterested: 'Interested & Moving Forward',
+        outcomeCallback: 'Follow-up Call Scheduled',
+        outcomeNoAnswer: 'No Answer / Left Message',
+        outcomeNotFit: 'Disqualified / Not a Fit',
+        stageUpdateLabel: 'Update Stage',
+        nextDateLabel: 'Next Follow-up Due Date',
+        notesAreaLabel: 'Follow-up Notes / Transcript *',
+        btnSaveFollowup: 'Save Follow-up to Cloud',
+        overdueTitle: 'Overdue Tasks & Follow-ups',
+        overdueSub: 'Deals requiring urgent contact based on scheduled dates',
+        noOverdueMsg: 'No overdue tasks. All follow-ups are up to date.',
+        reportsTitle: 'Conversion & Attribution Reports',
+        reportsSub: 'Channel performance and closed won conversion rates',
+        loadingMsg: 'Loading data from cloud database...',
+        modalNewDealTitle: 'Create New Deal in Pipeline',
+        lblLeadName: 'Client / Decision Maker *',
+        lblProjectName: 'Company / Project Name *',
+        lblPhone: 'Phone / WhatsApp *',
+        lblEmail: 'Email Address',
+        lblSource: 'Acquisition Channel *',
+        lblService: 'Service Interested *',
+        lblBudget: 'Estimated Budget Tier',
+        lblDueDate: 'Initial Follow-up Date',
+        lblNotes: 'Deal Notes & Requirements',
+        dockDashboard: 'Dashboard',
+        dockPipeline: 'Pipeline',
+        dockDeals: 'Deals',
+        dockActivity: 'Activity'
+      }
+    };
+
+    let currentLang = localStorage.getItem('crm_lang') || 'ar';
+    let allLeads = [];
+    let currentStageFilter = 'all';
+
+    function getAuthHeaders() {
+      const token = localStorage.getItem('admin_jwt') || localStorage.getItem('agency_admin_token') || '';
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      return headers;
+    }
+
+    // ── LANGUAGE SWITCHER ──────────────────────────────────────────────
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('crm_lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+      // Update all data-i18n elements
+      const dict = I18N[lang] || I18N.ar;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+
+      const langBtn = document.getElementById('langBtnText');
+      if (langBtn) langBtn.textContent = dict.langBtnText;
+
+      // Re-render components with translated texts
+      refreshDashboard();
+      renderKanban(allLeads);
+      renderLeadsTable(allLeads);
+    }
+
+    function toggleLanguage() {
+      setLanguage(currentLang === 'ar' ? 'en' : 'ar');
+    }
+
+    // ── NAVIGATION & SIDEBAR ───────────────────────────────────────────
+    function showPage(id, btn) {
+      toggleSidebar(false);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById('page-' + id);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (id === 'dashboard') refreshDashboard();
+      if (id === 'kanban') renderKanban(allLeads);
+      if (id === 'leads') renderLeadsTable(allLeads);
+      if (id === 'voice') populateLeadSelect();
+      if (id === 'overdue') loadOverdue();
+      if (id === 'reports') loadReports();
+    }
+
+    function toggleSidebar(forceState) {
+      const sb = document.getElementById('sidebar');
+      if (!sb) return;
+      const isOpen = forceState !== undefined ? forceState : !sb.classList.contains('open');
+      sb.classList.toggle('open', isOpen);
+    }
+
+    // ── MODAL MANAGEMENT ───────────────────────────────────────────────
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add('open', 'active');
+      el.style.display = 'flex';
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+      el.style.pointerEvents = 'auto';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('open', 'active');
+      el.style.display = 'none';
+      el.style.opacity = '0';
+      el.style.visibility = 'hidden';
+      el.style.pointerEvents = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // ── CLOUD SYNC & DATA FETCHING ─────────────────────────────────────
+    async function fetchLeads() {
+      try {
+        const r = await fetch('/api/admin/sales/leads?limit=100', {
+          headers: getAuthHeaders()
+        });
+        const d = await r.json();
+        return d.leads || d.data || [];
+      } catch (err) {
+        console.error('[Sales Cloud Sync Error]:', err);
+        return [];
+      }
+    }
+
+    async function refreshAll() {
+      allLeads = await fetchLeads();
+      refreshDashboard();
+      renderKanban(allLeads);
+      renderLeadsTable(allLeads);
+      populateLeadSelect();
+    }
+
+    function getStageLabel(stage) {
+      const dict = I18N[currentLang] || I18N.ar;
+      const map = {
+        new: dict.stageNew,
+        contacted: dict.stageContacted,
+        meeting_scheduled: dict.stageMeeting,
+        proposal_sent: dict.stageProposal,
+        won: dict.stageWon,
+        lost: dict.stageLost
+      };
+      return map[stage] || stage;
+    }
+
+    function getSourceLabel(src) {
+      const dict = I18N[currentLang] || I18N.ar;
+      const map = {
+        meta_ad: currentLang === 'ar' ? 'إعلانات ميتا' : 'Meta Ads',
+        google_ad: currentLang === 'ar' ? 'إعلانات جوجل' : 'Google Ads',
+        client_referral: currentLang === 'ar' ? 'توصية عميل' : 'Client Referral',
+        website_form: currentLang === 'ar' ? 'الموقع الإلكتروني' : 'Website',
+        cold_outreach: currentLang === 'ar' ? 'مباشر / بارد' : 'Direct / Cold',
+        other: currentLang === 'ar' ? 'أخرى' : 'Other'
+      };
+      return map[src] || src;
+    }
+
+    function refreshDashboard() {
+      const total = allLeads.length;
+      const newLeads = allLeads.filter(l => l.pipeline_stage === 'new').length;
+      const won = allLeads.filter(l => l.pipeline_stage === 'won').length;
+      const today = new Date().toISOString().split('T')[0];
+      const overdue = allLeads.filter(l =>
+        l.next_followup_due && l.next_followup_due < today &&
+        !['won', 'lost'].includes(l.pipeline_stage)
+      ).length;
+
+      document.getElementById('st-total').textContent = total;
+      document.getElementById('st-new').textContent = newLeads;
+      document.getElementById('st-won').textContent = won;
+      document.getElementById('st-overdue').textContent = overdue;
+
+      const recent = allLeads.slice(0, 5);
+      const tb = document.getElementById('recentLeadsBody');
+      const dict = I18N[currentLang] || I18N.ar;
+
+      if (!recent.length) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">' + (currentLang === 'ar' ? 'لا توجد صفقات حالياً' : 'No deals found') + '</td></tr>';
+      } else {
+        tb.innerHTML = recent.map(l => `
+          <tr>
+            <td><strong>${l.name}</strong></td>
+            <td>${l.project_name || '—'}</td>
+            <td><span class="badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);">${getSourceLabel(l.source_type)}</span></td>
+            <td>${l.assigned_sales_name || '—'}</td>
+            <td><span class="badge badge-${l.pipeline_stage}">${getStageLabel(l.pipeline_stage)}</span></td>
+            <td style="color:var(--text-muted);">${(l.created_at || '').slice(0, 10)}</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-secondary" onclick="openLeadDetail('${l.id}')">
+                ${dict.actionDetails}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // ── KANBAN BOARD ───────────────────────────────────────────────────
+    function renderKanban(leads) {
+      const dict = I18N[currentLang] || I18N.ar;
+      const stages = [
+        { key: 'new', label: dict.stageNew },
+        { key: 'contacted', label: dict.stageContacted },
+        { key: 'meeting_scheduled', label: dict.stageMeeting },
+        { key: 'proposal_sent', label: dict.stageProposal },
+        { key: 'won', label: dict.stageWon },
+        { key: 'lost', label: dict.stageLost }
+      ];
+
+      const board = document.getElementById('kanbanBoard');
+      board.innerHTML = stages.map(s => {
+        const colLeads = leads.filter(l => l.pipeline_stage === s.key);
+        return `
+          <div class="kanban-col">
+            <div class="kanban-header">
+              <span>${s.label}</span>
+              <span class="kanban-count">${colLeads.length}</span>
+            </div>
+            <div class="kanban-cards">
+              ${colLeads.map(l => `
+                <div class="kanban-card" onclick="openLeadDetail('${l.id}')">
+                  <div class="kanban-card-title">${l.name}</div>
+                  <div class="kanban-card-meta">${l.project_name || 'Project'}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                    <span class="badge" style="background:rgba(255,255,255,0.04);font-size:10px;">${getSourceLabel(l.source_type)}</span>
+                    <span style="font-size:10.5px;color:var(--text-dim);">${(l.created_at || '').slice(0, 10)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── LEADS DATA TABLE ───────────────────────────────────────────────
+    function renderLeadsTable(leads) {
+      const dict = I18N[currentLang] || I18N.ar;
+      const filtered = currentStageFilter === 'all' ? leads : leads.filter(l => l.pipeline_stage === currentStageFilter);
+      const tbody = document.getElementById('leadsTableBody');
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">' + (currentLang === 'ar' ? 'لا توجد نتائج مطابقة' : 'No matching records') + '</td></tr>';
         return;
       }
 
-      dropdown.style.display = 'block';
-      dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-muted);font-size:12px;">جاري البحث الفوري...</div>';
-
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(async () => {
-        try {
-          const res = await fetch('/api/admin/search?q=' + encodeURIComponent(q), {
-            headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '') }
-          });
-          const d = await res.json();
-          if (!d.success || d.totalCount === 0) {
-            dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:12px;">لا توجد نتائج مطابقة لـ "' + q + '"</div>';
-            return;
-          }
-
-          let html = '';
-          const categories = [
-            { key: 'leads', label: '💼 الصفقات (Leads)', icon: '🎯' },
-            { key: 'clients', label: '🏢 حسابات العملاء', icon: '🏢' },
-            { key: 'projects', label: '📈 المشاريع', icon: '📁' },
-            { key: 'team', label: '👥 فريق العمل', icon: '👤' }
-          ];
-
-          categories.forEach(cat => {
-            const items = d.results[cat.key] || [];
-            if (items.length > 0) {
-              html += '<div style="padding:6px 14px;font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid rgba(255,255,255,0.06);margin-top:4px;">' + cat.label + '</div>';
-              items.forEach(item => {
-                html += '<div onclick="navigateToSearchResult(\'' + item.targetTab + '\', \'' + item.id + '\')" style="padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.15s;" onmouseover="this.style.background=\'rgba(139,92,246,0.15)\'" onmouseout="this.style.background=\'transparent\'">';
-                html += '<div><div style="font-size:13px;font-weight:700;color:#fff;">' + item.title + '</div><div style="font-size:11px;color:var(--text-muted);">' + item.subtitle + '</div></div>';
-                html += '<span style="font-size:11px;background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:6px;color:var(--text-muted);">فتح ↗</span>';
-                html += '</div>';
-              });
-            }
-          });
-
-          dropdown.innerHTML = html;
-        } catch(e) {
-          dropdown.innerHTML = '<div style="padding:12px;text-align:center;color:var(--danger);font-size:12px;">تعذر استرجاع النتائج</div>';
-        }
-      }, 180);
+      tbody.innerHTML = filtered.map(l => `
+        <tr>
+          <td><strong>${l.name}</strong></td>
+          <td dir="ltr" style="text-align:start;">
+            <a href="https://wa.me/${(l.phone || '').replace(/\D/g, '')}" target="_blank" style="color:var(--success);text-decoration:none;font-weight:600;">
+              ${l.phone || '—'}
+            </a>
+          </td>
+          <td>${l.project_name || '—'}</td>
+          <td><span class="badge" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);">${getSourceLabel(l.source_type)}</span></td>
+          <td>${l.assigned_sales_name || '—'}</td>
+          <td><span class="badge badge-${l.pipeline_stage}">${getStageLabel(l.pipeline_stage)}</span></td>
+          <td style="color:var(--text-muted);">${(l.created_at || '').slice(0, 10)}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="openLeadDetail('${l.id}')">
+              ${dict.actionDetails}
+            </button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-    function navigateToSearchResult(tabKey, itemId) {
-      const dropdown = document.getElementById('globalSearchResults');
-      if (dropdown) dropdown.style.display = 'none';
-      if (tabKey === 'sales') {
-        showPage('leads', document.querySelector('.sidebar-btn:nth-child(4)'));
-        if (itemId) openLeadDetail(itemId);
-      } else {
-        window.location.href = '/admin-agency#' + tabKey;
+    function filterLeads(stage, btn) {
+      currentStageFilter = stage;
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderLeadsTable(allLeads);
+    }
+
+    // ── LEAD DETAIL & AI STUDIO MODAL ──────────────────────────────────
+    async function openLeadDetail(leadId) {
+      openModal('leadDetailModal');
+      const content = document.getElementById('leadDetailContent');
+      const dict = I18N[currentLang] || I18N.ar;
+
+      content.innerHTML = '<div style="text-align:center;padding:36px;color:var(--text-muted);">' + dict.loadingMsg + '</div>';
+
+      let lead = allLeads.find(l => String(l.id) === String(leadId));
+      let followups = [];
+
+      try {
+        const res = await fetch('/api/admin/sales/leads?id=' + encodeURIComponent(leadId), {
+          headers: getAuthHeaders()
+        });
+        const d = await res.json();
+        if (d.success && (d.lead || d.data)) {
+          lead = d.lead || d.data;
+          followups = d.followups || [];
+          const idx = allLeads.findIndex(l => String(l.id) === String(leadId));
+          if (idx !== -1) allLeads[idx] = lead;
+          else allLeads.unshift(lead);
+        }
+      } catch (e) {
+        console.warn('Could not fetch single lead details:', e);
+      }
+
+      if (!lead) {
+        content.innerHTML = '<div style="text-align:center;padding:24px;color:var(--danger);">' + (currentLang === 'ar' ? 'تعذر العثور على بيانات هذا العميل' : 'Deal not found') + '</div>';
+        return;
+      }
+
+      const initials = (lead.name || 'LD').slice(0, 2).toUpperCase();
+
+      content.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;border-bottom:1px solid var(--border-subtle);padding-bottom:16px;">
+          <div>
+            <div style="font-size:18px;font-weight:850;color:#fff;">${lead.name}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${lead.project_name || 'Project'} · ${getSourceLabel(lead.source_type)}</div>
+          </div>
+          <span class="badge badge-${lead.pipeline_stage}">${getStageLabel(lead.pipeline_stage)}</span>
+        </div>
+
+        <!-- Quick Outreach & Conversion Actions -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+          <a href="https://wa.me/${(lead.phone || '').replace(/\D/g, '')}" target="_blank" class="btn btn-sm btn-secondary">
+            ${dict.actionWhatsApp}
+          </a>
+          <a href="tel:${lead.phone || ''}" class="btn btn-sm btn-secondary">
+            ${dict.actionCall}
+          </a>
+          <button type="button" class="btn btn-sm btn-primary" onclick="convertLeadToClient('${lead.id}')">
+            ${dict.actionConvert}
+          </button>
+        </div>
+
+        <!-- ── AI SALES STUDIO & STRATEGY GENERATOR ── -->
+        <div class="ai-studio-container">
+          <div class="ai-studio-header">
+            <div>
+              <div class="ai-studio-title">${dict.aiStudioTitle}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${dict.aiStudioSub}</div>
+            </div>
+            <span id="aiStatusPill" style="font-size:11px;color:#c4b5fd;font-weight:700;">Ready</span>
+          </div>
+
+          <textarea id="aiCustomPromptInput" rows="2" placeholder="${dict.aiPromptPlaceholder}"></textarea>
+
+          <div class="ai-quick-chips">
+            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'collage')">${dict.chipCollage}</span>
+            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'proposal')">${dict.chipProposal}</span>
+            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'objection')">${dict.chipObjection}</span>
+            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'competitor')">${dict.chipCompetitor}</span>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm btn-primary" onclick="runAiStudio('${lead.id}')">
+              ${dict.btnGenerateAi}
+            </button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="openCollagePdfDeck('${lead.id}')" style="border-color:rgba(139,92,246,0.4);color:#c4b5fd;">
+              ${dict.btnExportCollage}
+            </button>
+          </div>
+
+          <!-- AI Output Area -->
+          <div id="aiStudioResult" style="display:none;margin-top:14px;background:#0d0e14;border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.65;color:#f1f5f9;white-space:pre-wrap;max-height:260px;overflow-y:auto;"></div>
+        </div>
+
+        <!-- Deal Metadata -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;font-size:12px;background:var(--bg-surface);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);">
+          <div><span style="color:var(--text-dim);">${dict.thPhone}: </span><strong dir="ltr">${lead.phone || '—'}</strong></div>
+          <div><span style="color:var(--text-dim);">${dict.thSource}: </span><strong>${getSourceLabel(lead.source_type)}</strong></div>
+          <div><span style="color:var(--text-dim);">${dict.lblService}: </span><strong>${lead.service_interested || '—'}</strong></div>
+          <div><span style="color:var(--text-dim);">${dict.lblBudget}: </span><strong>${lead.budget_tier || '—'}</strong></div>
+          <div><span style="color:var(--text-dim);">${dict.thOwner}: </span><strong>${lead.assigned_sales_name || '—'}</strong></div>
+          <div><span style="color:var(--text-dim);">${dict.thDueDate}: </span><strong>${lead.next_followup_due || '—'}</strong></div>
+        </div>
+
+        <!-- Timeline of Follow-up Notes -->
+        <div>
+          <div style="font-size:13px;font-weight:750;color:#fff;margin-bottom:10px;">${dict.followupsTitle}</div>
+          ${followups.length ? followups.map(f => `
+            <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;">
+                <span>${f.created_at || ''}</span>
+                <span class="badge" style="background:rgba(255,255,255,0.05);">${f.outcome || 'Note'}</span>
+              </div>
+              <div style="font-size:12px;color:#e2e8f0;line-height:1.6;">${f.notes || ''}</div>
+            </div>
+          `).join('') : '<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:14px;">' + dict.noFollowups + '</div>'}
+        </div>
+      `;
+    }
+
+    // ── AI STUDIO ACTIONS ──────────────────────────────────────────────
+    function setAiPromptPreset(leadId, preset) {
+      const input = document.getElementById('aiCustomPromptInput');
+      if (!input) return;
+      if (preset === 'collage') {
+        input.value = currentLang === 'ar' 
+          ? 'قم بإنشاء خطة استراتيجية كولاج مخصصة لعرضها على العميل لعام 2026 تشمل دراسة فجوة المنافسين وزوايا المحتوى الإبداعي وعرض أسعار الباقات.' 
+          : 'Create a tailored 2026 collage strategy deck including competitor gap analysis, editorial content pillars, and commercial retainer proposal.';
+      } else if (preset === 'proposal') {
+        input.value = currentLang === 'ar'
+          ? 'اكتب عرض سعر مالي متكامل بباقات شهرية واضحة تشمل التصوير وإدارة الإعلانات وطرق التحصيل عبر انستاباي والعائد المتوقع.'
+          : 'Draft a full commercial proposal with monthly retainer tiers, production scope, ads management, and expected ROI.';
+      } else if (preset === 'objection') {
+        input.value = currentLang === 'ar'
+          ? 'اكتب 3 سيناريوهات حاسمة للرد على اعتراض (السعر غالي / بنجرب بنفسنا الأول / عايزين نضمن النتيجة).'
+          : 'Provide 3 high-impact objection handling scripts addressing pricing concerns and proof of results.';
+      } else if (preset === 'competitor') {
+        input.value = currentLang === 'ar'
+          ? 'حلل المنافسين المباشرين للعميل واستخرج الفجوات التي تمنحنا الفوز بالتعاقد وتفوق العميل في مجاله.'
+          : 'Perform a competitive teardown identifying market gaps and our agency winning differentiation.';
       }
     }
 
+    async function runAiStudio(leadId) {
+      const input = document.getElementById('aiCustomPromptInput');
+      const box = document.getElementById('aiStudioResult');
+      const statusPill = document.getElementById('aiStatusPill');
+      const prompt = input ? input.value.trim() : '';
+
+      if (statusPill) statusPill.textContent = currentLang === 'ar' ? 'جاري التوليد...' : 'Generating...';
+      if (box) {
+        box.style.display = 'block';
+        box.textContent = currentLang === 'ar' ? 'جاري الاتصال بمحرك الذكاء الاصطناعي والأرينا...' : 'Calling AI Engine & Arena Router...';
+      }
+
+      const lead = allLeads.find(l => String(l.id) === String(leadId));
+
+      try {
+        const res = await fetch('/api/admin/sales/ai-skill', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            skill: 'custom',
+            prompt: prompt || 'خطة استراتيجية كولاج متكاملة',
+            lead_id: leadId,
+            lead_name: lead?.name,
+            company: lead?.project_name,
+            project_name: lead?.project_name,
+            stage: lead?.pipeline_stage
+          })
+        });
+
+        const d = await res.json();
+        if (d.success && d.result) {
+          if (box) box.textContent = d.result;
+          if (statusPill) statusPill.textContent = 'Completed';
+        } else {
+          if (box) box.textContent = 'Error: ' + (d.error || 'Failed to generate content');
+          if (statusPill) statusPill.textContent = 'Failed';
+        }
+      } catch (err) {
+        if (box) box.textContent = 'Connection error: ' + err.message;
+        if (statusPill) statusPill.textContent = 'Error';
+      }
+    }
+
+    function openCollagePdfDeck(leadId) {
+      window.open('/collage-deck.html?leadId=' + encodeURIComponent(leadId), '_blank');
+    }
+
+    // ── CREATE NEW DEAL ────────────────────────────────────────────────
+    async function submitNewLead(e) {
+      if (e) e.preventDefault();
+      const name = document.getElementById('al-name').value.trim();
+      const project_name = document.getElementById('al-project').value.trim();
+      const phone = document.getElementById('al-phone').value.trim();
+      const email = document.getElementById('al-email').value.trim();
+      const source_type = document.getElementById('al-source').value;
+      const service_interested = document.getElementById('al-service').value;
+      const budget_tier = document.getElementById('al-budget').value;
+      const next_followup_due = document.getElementById('al-due').value;
+      const challenge_notes = document.getElementById('al-notes').value.trim();
+
+      try {
+        const res = await fetch('/api/admin/sales/leads', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            name,
+            project_name,
+            phone,
+            email,
+            source_type,
+            service_interested,
+            budget_tier,
+            next_followup_due,
+            challenge_notes
+          })
+        });
+
+        const d = await res.json();
+        if (d.success) {
+          closeModal('addLeadModal');
+          document.getElementById('addLeadForm').reset();
+          await refreshAll();
+          alert(currentLang === 'ar' ? 'تم حفظ الصفقة في السحابة بنجاح!' : 'Deal saved to cloud successfully!');
+        } else {
+          alert('Error: ' + d.error);
+        }
+      } catch (err) {
+        alert('Could not save deal: ' + err.message);
+      }
+    }
+
+    // ── CONVERT TO CLIENT ──────────────────────────────────────────────
+    async function convertLeadToClient(leadId) {
+      const lead = allLeads.find(l => String(l.id) === String(leadId));
+      if (!lead) return;
+
+      const defaultEmail = lead.email || (lead.name.toLowerCase().replace(/\s+/g, '_') + '@client.com');
+      const tempPassword = 'pr_' + Math.random().toString(36).substring(2, 8);
+
+      const msg = currentLang === 'ar'
+        ? `هل تريد تحويل العميل (${lead.name}) إلى عميل رسمي في البوابة؟\n\nالبريد: ${defaultEmail}\nكلمة المرور: ${tempPassword}`
+        : `Convert lead (${lead.name}) into official client?\n\nEmail: ${defaultEmail}\nPassword: ${tempPassword}`;
+
+      if (!confirm(msg)) return;
+
+      try {
+        const res = await fetch('/api/admin/portal-clients', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            action: 'create',
+            company_name: lead.project_name || lead.name,
+            contact_name: lead.name,
+            email: defaultEmail,
+            phone: lead.phone,
+            password: tempPassword
+          })
+        });
+
+        const d = await res.json();
+        if (d.success) {
+          await fetch('/api/admin/sales/leads', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ id: lead.id, pipeline_stage: 'won' })
+          });
+          closeModal('leadDetailModal');
+          await refreshAll();
+          alert(currentLang === 'ar' ? 'تم تحويل العميل بنجاح وتحديث المرحلة إلى Won!' : 'Client converted successfully and deal stage marked as Won!');
+        } else {
+          alert('Error: ' + (d.error || 'Conversion failed'));
+        }
+      } catch (err) {
+        alert('Connection error: ' + err.message);
+      }
+    }
+
+    // ── FOLLOW-UP ACTIVITY SUBMIT ──────────────────────────────────────
+    function populateLeadSelect() {
+      const sel = document.getElementById('voiceLeadSelect');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">-- ' + (currentLang === 'ar' ? 'اختر العميل للمتابعة' : 'Select Deal') + ' --</option>' +
+        allLeads.map(l => `<option value="${l.id}">${l.name} (${l.project_name || 'Project'})` + `</option>`).join('');
+    }
+
+    async function submitFollowupNote(e) {
+      if (e) e.preventDefault();
+      const lead_id = document.getElementById('voiceLeadSelect').value;
+      const outcome = document.getElementById('voiceOutcome').value;
+      const new_stage = document.getElementById('voiceNewStage').value;
+      const next_followup_due = document.getElementById('voiceNextDate').value;
+      const notes = document.getElementById('voiceNotes').value.trim();
+
+      if (!lead_id) {
+        alert(currentLang === 'ar' ? 'يرجى اختيار العميل' : 'Please select a deal');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/sales/followup', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            lead_id,
+            outcome,
+            new_stage: new_stage || undefined,
+            next_followup_due: next_followup_due || undefined,
+            notes
+          })
+        });
+
+        const d = await res.json();
+        if (d.success) {
+          alert(currentLang === 'ar' ? 'تم حفظ المتابعة بنجاح في السحابة!' : 'Follow-up recorded successfully in cloud!');
+          document.getElementById('voiceNotes').value = '';
+          await refreshAll();
+        } else {
+          alert('Error: ' + d.error);
+        }
+      } catch (err) {
+        alert('Could not record follow-up: ' + err.message);
+      }
+    }
+
+    function loadOverdue() {
+      const today = new Date().toISOString().split('T')[0];
+      const overdue = allLeads.filter(l =>
+        l.next_followup_due && l.next_followup_due < today &&
+        !['won', 'lost'].includes(l.pipeline_stage)
+      );
+      const tb = document.getElementById('overdueBody');
+      const dict = I18N[currentLang] || I18N.ar;
+
+      if (!overdue.length) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">' + dict.noOverdueMsg + '</td></tr>';
+      } else {
+        tb.innerHTML = overdue.map(l => `
+          <tr>
+            <td><strong>${l.name}</strong></td>
+            <td dir="ltr" style="text-align:start;">${l.phone || '—'}</td>
+            <td>${l.assigned_sales_name || '—'}</td>
+            <td style="color:var(--danger);font-weight:700;">${l.next_followup_due}</td>
+            <td><span class="badge badge-${l.pipeline_stage}">${getStageLabel(l.pipeline_stage)}</span></td>
+            <td>
+              <button type="button" class="btn btn-sm btn-primary" onclick="openLeadDetail('${l.id}')">
+                ${dict.actionDetails}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function loadReports() {
+      const total = allLeads.length;
+      const won = allLeads.filter(l => l.pipeline_stage === 'won').length;
+      const lost = allLeads.filter(l => l.pipeline_stage === 'lost').length;
+      const rate = total > 0 ? Math.round((won / total) * 100) : 0;
+
+      const sources = {};
+      allLeads.forEach(l => {
+        if (!sources[l.source_type]) sources[l.source_type] = { total: 0, won: 0 };
+        sources[l.source_type].total++;
+        if (l.pipeline_stage === 'won') sources[l.source_type].won++;
+      });
+
+      const body = document.getElementById('reportBody');
+      body.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-number">${total}</div>
+            <div class="stat-label">Total Deals Logged</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--success);">${won}</div>
+            <div class="stat-label">Closed Won Deals</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--info);">${rate}%</div>
+            <div class="stat-label">Win Rate Percentage</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Channel / Source</th>
+              <th>Total Deals</th>
+              <th>Won Contracts</th>
+              <th>Conversion Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.entries(sources).map(([src, d]) => `
+              <tr>
+                <td><strong>${getSourceLabel(src)}</strong></td>
+                <td>${d.total}</td>
+                <td style="color:var(--success);font-weight:750;">${d.won}</td>
+                <td><strong style="color:var(--accent);">${Math.round((d.won / d.total) * 100)}%</strong></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function handleSearch(q) {
+      if (!q) {
+        renderLeadsTable(allLeads);
+        return;
+      }
+      const lower = q.toLowerCase();
+      const filtered = allLeads.filter(l =>
+        (l.name && l.name.toLowerCase().includes(lower)) ||
+        (l.project_name && l.project_name.toLowerCase().includes(lower)) ||
+        (l.phone && l.phone.includes(lower))
+      );
+      renderLeadsTable(filtered);
+    }
+
+    // Keyboard shortcut for search
     window.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -2516,194 +1964,12 @@ const originalShowPage = window.showPage;
         if (input) { input.focus(); input.select(); }
       }
     });
-  
 
-
-async function convertLeadToClientUI(leadId) {
-  const lead = allLeads.find(l => l.id == leadId);
-  if (!lead) return;
-
-  const defaultEmail = lead.email || (lead.name.toLowerCase().replace(/\s+/g, '_') + '@client.com');
-  const tempPassword = 'pr_' + Math.random().toString(36).substring(2, 8);
-
-  const confirmConvert = confirm(`هل تريد تحويل العميل المحتمل (${lead.name}) إلى عميل رسمي في البوابة؟\n\nالبريد: ${defaultEmail}\nكلمة المرور المؤقتة: ${tempPassword}`);
-  if (!confirmConvert) return;
-
-  try {
-    const res = await fetch('/api/admin/portal-clients', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '')
-      },
-      body: JSON.stringify({
-        action: 'create',
-        company_name: lead.project_name || lead.name,
-        contact_name: lead.name,
-        email: defaultEmail,
-        phone: lead.phone,
-        password: tempPassword
-      })
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert(`🎉 تم إنشاء حساب العميل بنجاح في البوابة وإرسال إشعار التليجرام للإدارة!\n\nالبريد: ${defaultEmail}\nالباسورد: ${tempPassword}`);
-      closeModal('leadDetailModal');
-      // Update pipeline stage to won
-      fetch('/api/admin/sales/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '') },
-        body: JSON.stringify({ id: lead.id, pipeline_stage: 'won' })
-      }).then(() => refreshDashboard());
-    } else {
-      alert('خطأ في التحويل: ' + (data.error || 'تعذر الاتصال'));
-    }
-  } catch (err) {
-    alert('حدث خطأ أثناء الاتصال بالخادم: ' + err.message);
-  }
-}
-
-</script>
-<script>
-// ── SMART SALES CO-PILOT HELPERS ──
-async function triggerAutoOutreach(lead) {
-  const box = document.getElementById('smartOutreachText');
-  if (!box || !lead) return;
-  try {
-    const res = await fetch('/api/admin/sales/ai-outreach', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        name: lead.name,
-        company: lead.project_name,
-        project_name: lead.project_name,
-        source_type: lead.source_type,
-        stage: lead.pipeline_stage,
-        budget: lead.budget_tier
-      })
-    });
-    const d = await res.json();
-    if (d.success && d.data && d.data.outreach) {
-      box.textContent = d.data.outreach;
-    } else {
-      box.textContent = 'أهلاً بك! يمكنك الضغط على أحد أزرار المهارات بالأسفل لتوليد نص التواصل المناسب.';
-    }
-  } catch(e) {
-    box.textContent = 'مساء الخير أستاذ ' + lead.name + '، تواصلنا معك بخصوص دراسة نمو مشروعكم، متى يناسبكم الحديث؟';
-  }
-}
-
-function copySmartOutreach() {
-  const text = document.getElementById('smartOutreachText')?.textContent;
-  if (text) {
-    navigator.clipboard.writeText(text);
-    alert('تم نسخ الرسالة المقترحة بنجاح! 📋');
-  }
-}
-
-async function handleObjectionClick(leadId) {
-  const objection = prompt('ما هو الاعتراض الذي أبداه العميل؟ (مثال: العميل قال غالي، أو مفيش ميزانية حالياً):', 'العميل قال السعر غالي مقارنة بالمنافسين');
-  if (!objection) return;
-
-  const lead = allLeads.find(l => l.id == leadId);
-  const box = document.getElementById('aiSkillResultBox');
-  const badge = document.getElementById('aiSkillBadge');
-  if (badge) badge.textContent = '🛡️ جاري تحليل الاعتراض وصياغة الردود...';
-  if (box) {
-    box.style.display = 'block';
-    box.textContent = 'جاري استدعاء مهارات sales-enablement & pricing...';
-  }
-
-  try {
-    const res = await fetch('/api/admin/sales/ai-skill', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '')
-      },
-      body: JSON.stringify({
-        skill: 'handle_objection',
-        lead_id: leadId,
-        lead_name: lead?.name,
-        company: lead?.project_name,
-        project_name: lead?.project_name,
-        objection: objection,
-        notes: objection
-      })
-    });
-    const d = await res.json();
-    if (d.success) {
-      box.textContent = d.result;
-      if (badge) badge.textContent = '✅ جاهز: 3 استراتيجيات رد مقنعة';
-    }
-  } catch(e) {
-    alert('حدث خطأ أثناء معالجة الاعتراض');
-  }
-}
-
-async function generateLeadProposal(leadId) {
-  const lead = allLeads.find(l => l.id == leadId);
-  const box = document.getElementById('aiSkillResultBox');
-  const badge = document.getElementById('aiSkillBadge');
-  if (badge) badge.textContent = '⚡ جاري توليد العرض المقترح (Arena)...';
-  if (box) {
-    box.style.display = 'block';
-    box.textContent = 'جاري بناء هيكل العرض التقديمي وحساب التسعير...';
-  }
-
-  try {
-    const res = await fetch('/api/admin/ai/generate-presentation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + (localStorage.getItem('admin_jwt') || '')
-      },
-      body: JSON.stringify({
-        client_name: lead?.name || 'العميل',
-        industry: lead?.project_name || 'التجارة والخدمات',
-        budget: lead?.budget_tier || '35,000 EGP'
-      })
-    });
-    const d = await res.json();
-    if (d.success) {
-      let preview = '📑 **' + d.data.title + '**\n\n';
-      preview += '🏆 **تقييم Arena:**\n' + d.data.arena_evaluation.join('\n') + '\n\n';
-      d.data.slides.forEach(s => {
-        preview += '--- [شريحة ' + s.slide_number + ': ' + s.title + '] ---\n';
-        s.bullet_points.forEach(b => preview += '• ' + b + '\n');
-        preview += '💡 ملاحظات الملقي: ' + s.speaker_notes + '\n\n';
-      });
-      box.textContent = preview;
-      if (badge) badge.textContent = '✅ تم إنشاء العرض التقديمي بنجاح';
-    }
-  } catch(e) {
-    alert('تعذر توليد العرض التقديمي');
-  }
-}
-</script>
-
-  <!-- Mobile Bottom Navigation Dock -->
-  <nav class="mobile-bottom-dock">
-    <button type="button" class="dock-btn active" onclick="showPage('dashboard', null); updateDockActive(this);">
-      <span class="dock-icon">📊</span>
-      <span class="dock-label">الرئيسية</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="showPage('kanban', null); updateDockActive(this);">
-      <span class="dock-icon">🗂️</span>
-      <span class="dock-label">كانبان</span>
-    </button>
-    <button type="button" class="dock-btn add-btn" onclick="openModal('addLeadModal');">
-      <span class="dock-icon-plus">＋</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="showPage('leads', null); updateDockActive(this);">
-      <span class="dock-icon">👥</span>
-      <span class="dock-label">الليدز</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="toggleMobileSidebar();">
-      <span class="dock-icon">☰</span>
-      <span class="dock-label">المزيد</span>
-    </button>
-  </nav>
+    // ── INITIALIZATION ─────────────────────────────────────────────────
+    window.onload = async () => {
+      setLanguage(currentLang);
+      await refreshAll();
+    };
+  </script>
 </body>
 </html>

@@ -73,6 +73,7 @@
 
       var payload = {
         name:         (formData.get('name')     || '').toString().trim(),
+        project_name: (formData.get('project_name') || '').toString().trim(),
         phone:        (formData.get('phone')    || '').toString().trim(),
         email:        emailVal,
         service:      serviceType,

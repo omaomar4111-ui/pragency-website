@@ -187,7 +187,27 @@ async function logVisit(context, visitorData) {
 export async function onRequest(context) {
   const { request, next, env } = context;
   const url = new URL(request.url);
-  const pathname = url.pathname;
+  const path = url.pathname;
+  const pathname = path;
+
+  // ── 1. STRICT PUBLIC BYPASS: NEVER BLOCK VISITORS OR CHALLENGE WITH BASIC AUTH ──
+  if (
+    path === '/' || 
+    path === '/index.html' ||
+    path.endsWith('.html') || 
+    path.startsWith('/css/') || 
+    path.startsWith('/js/') || 
+    path.startsWith('/assets/') || 
+    path.startsWith('/images/') ||
+    path.startsWith('/icons/') ||
+    path === '/robots.txt' || 
+    path === '/sitemap.xml' ||
+    path === '/manifest.json'
+  ) {
+    // If it's an admin/portal HTML page or any public route, let it pass through directly
+      // // so no 401 WWW-Authenticate is EVER returned!
+    return context.next(); 
+  }
 
   console.log('MIDDLEWARE_HIT:', pathname);
 
@@ -351,7 +371,7 @@ export async function onRequest(context) {
   }
 
   // 4. Cloudflare Cache API (Cache HTML responses per language and version)
-  const VERSION = 'v100';
+  const VERSION = 'v117';
   const cacheKey = new Request(`https://cache.internal/${VERSION}/${lang}${pathname}`);
   let cache = null;
   try {

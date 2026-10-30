@@ -1,44 +1,31 @@
+import { sendTelegramNotification } from '../../lib/telegram.js';
 import { verifyToken } from './auth.js';
 
-async function sendTelegramNotification(env, text) {
-  const token = env.TELEGRAM_BOT_TOKEN;
-  const chatId = env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return;
-
-  try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: 'HTML'
-      })
-    });
-  } catch (e) {
-    console.warn('[Portal] Telegram notify failed:', e.message);
-  }
-}
-
-// ── POST /api/portal/review (Approve / Reject / Comment) ──────────────────────
 export async function onRequestPost(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
 
-  const cookieHeader = request.headers.get('Cookie') || '';
-  const authHeader = request.headers.get('Authorization') || '';
-  let token = null;
-  if (authHeader.startsWith('Bearer ')) {
-    token = authHeader.slice(7).trim();
-  } else {
-    const match = cookieHeader.match(/pr_portal_token=([^;]+)/);
-    if (match) token = match[1];
+  if (!db) {
+    return new Response(JSON.stringify({ success: false, error: 'Database not available' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-  const secret = env.PORTAL_JWT_SECRET || 'pr-portal-secret-key-2026';
-  const auth = await verifyToken(token, secret);
 
-  if (!auth || !db) {
-    return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
+  // 1. Authenticate Client
+  const authHeader = request.headers.get('Authorization') || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized: Bearer token required' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  const token = authHeader.replace('Bearer ', '').trim();
+  const auth = await verifyToken(token, env);
+
+  if (!auth || !auth.sub) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized payload' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -48,17 +35,27 @@ export async function onRequestPost(context) {
     const body = await request.json();
     const { deliverableId, status, feedback } = body;
 
-    if (!deliverableId || !['approved', 'rejected', 'pending'].includes(status)) {
-      return new Response(JSON.stringify({ success: false, error: 'Missing or invalid parameters' }), {
+    if (!deliverableId || !status) {
+      return new Response(JSON.stringify({ success: false, error: 'deliverableId and status are required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    // Verify item belongs to this client
-    const item = await db.prepare('SELECT * FROM portal_deliverables WHERE id = ? AND client_id = ?').bind(deliverableId, auth.sub).first();
+    if (!['approved', 'rejected', 'revisions_requested'].includes(status)) {
+      return new Response(JSON.stringify({ success: false, error: 'Invalid status' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Verify ownership
+    const item = await db.prepare(
+      'SELECT id, title, scheduled_date, scheduled_time, parent_asset_id FROM portal_deliverables WHERE id = ? AND client_id = ?'
+    ).bind(deliverableId, auth.sub).first();
+
     if (!item) {
-      return new Response(JSON.stringify({ success: false, error: 'Item not found' }), {
+      return new Response(JSON.stringify({ success: false, error: 'Deliverable not found or unauthorized' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -67,33 +64,58 @@ export async function onRequestPost(context) {
     const now = new Date().toISOString();
 
     // 1. Update Deliverable Status & Feedback
+    const normalizedStatus = status === 'rejected' ? 'revisions_requested' : status;
     await db.prepare(`
       UPDATE portal_deliverables 
       SET status = ?, client_feedback = ?, reviewed_at = ?
       WHERE id = ? AND client_id = ?
-    `).bind(status, feedback || null, now, deliverableId, auth.sub).run();
+    `).bind(normalizedStatus, feedback || null, now, deliverableId, auth.sub).run();
 
-    // 2. Insert into History
+    // 2. Insert into Legacy History
     await db.prepare(`
       INSERT INTO portal_feedback_history (deliverable_id, client_id, action, comment, created_at)
       VALUES (?, ?, ?, ?, ?)
-    `).bind(deliverableId, auth.sub, status, feedback || null, now).run();
+    `).bind(deliverableId, auth.sub, normalizedStatus, feedback || null, now).run();
+
+    // 2b. Insert into Threaded Feedback System
+    if (feedback) {
+      await db.prepare(`
+        INSERT INTO asset_feedback (asset_id, parent_asset_id, author_role, author_name, comment, created_at)
+        VALUES (?, ?, 'client', ?, ?, ?)
+      `).bind(
+        deliverableId,
+        item.parent_asset_id || null,
+        auth.name || 'العميل',
+        feedback.trim(),
+        now
+      ).run();
+    }
 
     // 3. Send Instant Alert to Telegram
-    const statusEmoji = status === 'approved' ? '✅ تم الاعتماد' : '❌ مطلوب تعديل';
-    const tgMsg = `🔔 <b>تحديث مراجعة من العميل: ${auth.name}</b>\n\n` +
-      `📌 <b>العنصر:</b> ${item.title}\n` +
-      `📅 <b>تاريخ النشر:</b> ${item.scheduled_date} ${item.scheduled_time || ''}\n` +
-      `📊 <b>الحالة:</b> ${statusEmoji}\n` +
-      (feedback ? `💬 <b>ملاحظات العميل:</b>\n<i>"${feedback}"</i>\n` : '') +
-      `⏰ <b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}`;
+    const clientDisplayName = auth.name || auth.sub;
+    let tgMsg = '';
+
+    if (normalizedStatus === 'revisions_requested') {
+      tgMsg =
+        `⚠️ <b>العميل ${clientDisplayName} طلب تعديلات على تصميم</b>\n\n` +
+        `📌 <b>العنصر:</b> ${item.title}\n` +
+        `💬 <b>التعليق:</b> <i>"${feedback || 'لا توجد تفاصيل إضافية'}"</i>\n` +
+        `📅 <b>تاريخ النشر المستهدف:</b> ${item.scheduled_date}\n` +
+        `⏰ <b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}`;
+    } else {
+      tgMsg =
+        `✅ <b>تم اعتماد تصميم من العميل: ${clientDisplayName}</b>\n\n` +
+        `📌 <b>العنصر:</b> ${item.title}\n` +
+        `📅 <b>تاريخ النشر:</b> ${item.scheduled_date}\n` +
+        `⏰ <b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}`;
+    }
 
     context.waitUntil(sendTelegramNotification(env, tgMsg));
 
     return new Response(JSON.stringify({
       success: true,
       message: status === 'approved' ? 'تم اعتماد المحتوى بنجاح' : 'تم تسجيل طلب التعديل بنجاح',
-      status,
+      status: normalizedStatus,
       reviewedAt: now
     }), {
       status: 200,

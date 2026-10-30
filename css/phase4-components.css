@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Phase 4: 3D Credit Card, POS Receipt Roll & 3D Tilt Command Cards
+   PR Agency OS & Client Portal 2026
+   ========================================================================== */
+
+/* ---------------- 1. 3D Flippable Credit Card Component ---------------- */
+.card-scene {
+  width: 380px;
+  max-width: 100%;
+  height: 220px;
+  perspective: 1200px;
+  margin: 0 auto 24px;
+}
+
+.credit-card-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(139, 92, 246, 0.25);
+  cursor: pointer;
+}
+
+.credit-card-3d.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #18181b 0%, #27272a 45%, #0f172a 100%);
+}
+
+.card-front::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  right: -40%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.card-chip {
+  width: 48px;
+  height: 36px;
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  border-radius: 6px;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.card-chip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-logo {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-number {
+  font-size: 20px;
+  font-family: 'SF Pro Display', 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #f4f4f5;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  direction: ltr;
+  text-align: left;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  direction: ltr;
+}
+
+.card-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #a1a1aa;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.card-holder {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.card-expiry {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.card-back {
+  background: linear-gradient(135deg, #1e1e24 0%, #121214 100%);
+  transform: rotateY(180deg);
+  padding: 24px 0;
+}
+
+.card-mag-strip {
+  width: 100%;
+  height: 44px;
+  background: #09090b;
+  margin-top: 10px;
+}
+
+.card-cvv-strip {
+  padding: 0 28px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.card-white-bar {
+  width: 100%;
+  height: 38px;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 12px;
+  color: #09090b;
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+/* ---------------- 2. Thermal POS Receipt Drop Animation ---------------- */
+.pos-receipt-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  perspective: 1000px;
+}
+
+.pos-slot {
+  width: 290px;
+  height: 12px;
+  background: #18181b;
+  border: 2px solid #27272a;
+  border-radius: 6px;
+  box-shadow: inset 0 3px 6px #000, 0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 5;
+}
+
+.pos-receipt {
+  width: 260px;
+  background: #fdfbf7;
+  color: #18181b;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px 18px 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  position: relative;
+  margin-top: -6px;
+  z-index: 2;
+  transform-origin: top center;
+  animation: receiptEject 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes receiptEject {
+  0% {
+    transform: translateY(-100%) scaleY(0.1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+  }
+}
+
+.pos-receipt::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: radial-gradient(circle, transparent, transparent 50%, #fdfbf7 50%, #fdfbf7 100%);
+  background-size: 12px 10px;
+}
+
+.receipt-header {
+  text-align: center;
+  border-bottom: 1px dashed #71717a;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.receipt-header h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.receipt-total {
+  border-top: 1px dashed #71717a;
+  padding-top: 10px;
+  margin-top: 10px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+/* ---------------- 3. 3D Tilt Command KPI Cards (Admin OS) ---------------- */
+.tilt-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease;
+  position: relative;
+  will-change: transform;
+}
+
+.tilt-card-3d:hover {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.2) !important;
+}
+
+.tilt-card-content {
+  transform: translateZ(24px);
+  transition: transform 0.2s ease-out;
+}
+
+/* Glow pill indicator for live status */
+.pulse-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulseNeon 1.8s infinite;
+  margin-left: 6px;
+}
+
+@keyframes pulseNeon {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #10b981; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}

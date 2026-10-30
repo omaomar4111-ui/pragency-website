@@ -53,6 +53,16 @@ const RESPONSES = {
     ]
   },
 
+  industries: {
+    ar: [
+      "أكيد طبعاً! بنشتغل مع المصانع والشركات الكبيرة (B2B و B2C)، وبنقدملهم استراتيجيات تسويقية مخصصة لتوسيع شبكة الموزعين والوكلاء، زيادة طلبيات التوريد، وتصوير خطوط الإنتاج والماكينات بجودة سينمائية توضح قوة مصنعك في مصر وخارجها 🏭✨ إيه مجال تصنيعكم؟",
+      "أهلاً بيك! القطاع الصناعي والمصانع من أهم المجالات اللي بنشتغل معاها؛ بنركز على التسويق التجاري للشركات، استهداف التجار والمستوردين في الخليج وأفريقيا، وبناء هوية صناعية احترافية تفتحلك أسواق جديدة. تحب نتكلم في تفاصيل مصنعك؟ 🤝"
+    ],
+    en: [
+      "Absolutely! We work extensively with industrial manufacturers and factories (both B2B and B2C). We craft tailored strategies to generate distributor leads, export deals, and produce high-end factory cinematic videos that showcase your production capacity 🏭 What does your factory produce?",
+      "Yes, definitely! Industrial B2B marketing is one of our key specialties. We help manufacturers connect with corporate buyers and international importers across the Middle East. Let's discuss your factory's growth targets!"
+    ]
+  },
   services: {
     ar: [
       "في PR Agency نقدّم 5 حلول تسويقية متكاملة:\n1️⃣ إدارة السوشيال ميديا وصناعة المحتوى\n2️⃣ الإعلانات الممولة (Media Buying) بأعلى عائد استثمار\n3️⃣ الإنتاج المرئي وجلسات التصوير الاحترافية\n4️⃣ تصميم الهوية البصرية والبراندنج\n5️⃣ استراتيجيات النمو ودراسة السوق\nأي من هذه الخدمات تود التركيز عليها؟",
@@ -301,7 +311,7 @@ const KEYWORD_MAP = {
     'سعر', 'اسعار', 'بكام', 'تكلفه', 'ميزانيه', 'باقه', 'باقات', 'عرض سعر',
     'كم السعر', 'كام الشغل', 'كم يكلف', 'كم التكلفه', 'عروض', 'خصومات', 'خصم',
     'price', 'pricing', 'cost', 'budget', 'package', 'how much', 'rate', 'quote',
-    'فلوس', 'ارخص', 'غاليه', 'غالي'
+    'فلوس', 'ارخص', 'غاليه'
   ],
 
   objection: [
@@ -389,9 +399,14 @@ const KEYWORD_MAP = {
     'about us', 'about you', 'تاريخ الشركه'
   ],
 
+  industries: [
+    'مصنع', 'مصانع', 'تصنيع', 'خطوط انتاج', 'انتاج صناعي', 'صناعه', 'صناعي',
+    'شركات توريد', 'توريدات', 'b2b', 'تصدير', 'موزعين', 'وكلاء', 'مصنعنا'
+  ],
   services: [
     'خدمات', 'خدمه', 'بتعملوا ايه', 'بتقدموا ايه', 'تسوون', 'وش تسوون', 'بتسووا', 'ايه شغلكم', 'شغلكم ايه',
-    'مجالاتكم', 'نشاطكم', 'تخصصكم', 'services', 'offer', 'provide', 'what do you do',
+    'مجالاتكم', 'نشاطكم', 'تخصصكم', 'industries',
+  'services', 'offer', 'provide', 'what do you do',
     'what do you offer', 'help with', 'بتساعدوا في'
   ],
 
@@ -413,6 +428,7 @@ const TOPIC_PRIORITY = [
   'objection',
   'buying_intent',
   'comparison',
+  'industries',
   'process',
   'video',
   'branding',
@@ -444,12 +460,22 @@ function detectLang(msg) {
 }
 
 function detectTopic(normalizedMsg) {
+  // Normalize tokens and clean punctuation
+  const cleanMsg = normalizedMsg.replace(/[؟?.,!]/g, ' ');
+  const tokens = cleanMsg.split(/\s+/).filter(Boolean);
+
   for (const topic of TOPIC_PRIORITY) {
     const keywords = KEYWORD_MAP[topic] || [];
     for (const kw of keywords) {
       const cleanKw = kw.toLowerCase().trim();
-      if (normalizedMsg.includes(cleanKw)) {
-        return topic;
+      if (!cleanKw) continue;
+
+      if (cleanKw.includes(' ')) {
+        // Multi-word phrase matching
+        if (cleanMsg.includes(cleanKw)) return topic;
+      } else {
+        // Single word: MUST match as exact standalone word (prevents "شغالين" from triggering "غالي")
+        if (tokens.includes(cleanKw)) return topic;
       }
     }
   }
@@ -587,21 +613,161 @@ export async function onRequestPost(context) {
       }
     }
 
-    // ── Attempt Workers AI if available ──
+    // ── Fetch Conversation Memory (Multi-turn History) ──
+    let conversationHistory = [];
+    if (db) {
+      try {
+        const histResult = await db.prepare(`
+          SELECT role, content FROM chat_messages
+          WHERE session_id = ?
+          ORDER BY id ASC
+          LIMIT 12
+        `).bind(sessionId).all();
+        conversationHistory = histResult.results || [];
+      } catch (histErr) {
+        console.warn('[Chat] History fetch error:', histErr.message);
+      }
+    }
+
+    // ── Format history for LLM context ──
+    const llmMessages = [
+      {
+        role: 'system',
+        content: `أنت "مساعد النمو الذكي" في PR Agency (وكالة تسويق رقمي وإنتاج إعلاني رائدة في القاهرة، مصر).
+مهمتك: مساعدة أصحاب المشاريع والشركات على فهم أنسب الخدمات لنمو مبيعاتهم والإجابة بذكاء واحترافية وبشرية تامة على كل استفسار.
+
+معلومات الوكالة الأساسية:
+- المقر: الشيخ زايد والقاهرة، ونخدم مصر ودول الخليج (السعودية، الإمارات، قطر، الكويت).
+- الخدمات الأساسية:
+  1. إدارة السوشيال ميديا وصناعة المحتوى الإبداعي (إنستجرام، فيسبوك، تيك توك، لينكد إن).
+  2. الإعلانات الممولة (Media Buying) وتحقيق أعلى عائد على الإنفاق الإعلاني (ROAS).
+  3. الإنتاج المرئي والتصوير الإعلاني السينمائي للريلز والمنتجات وخطوط الإنتاج.
+  4. بناء الهوية البصرية والبراندنج المتكامل.
+  5. الاستراتيجيات التسويقية وخطط النمو.
+- القطاعات التي نخدمها: المصانع والشركات الصناعية (B2B)، العيادات والمراكز الطبية، المتاجر الإلكترونية، البراندات العقارية، الجيم والمطاعم، والشركات الناشئة.
+- نظام العقود: نبدأ بعقد تجريبي مدته 3 شهور كفترة أولى لإثبات كفاءة النظام وتحقيق الأرقام، وبعدها التجديد بناءً على رغبة العميل.
+- خطوات العمل: 1. استكشاف (Discover) -> 2. تخطيط واستراتيجية (Strategize) -> 3. تنفيذ وإنتاج (Create) -> 4. إطلاق وتحسين (Launch & Optimize).
+- للتواصل المباشر: هاتف/واتساب 01022753522، إيميل hello@pragency.eg، أو ملء فورم حجز الاستشارة بالموقع.
+
+قواعد الرد والأسلوب:
+1. تحدث كإنسان خبير، ودود، واثق، بلهجة عربية بيضاء واضحة ومفهومة لأي عميل (مصر أو الخليج)، واستخدم الإنجليزية إذا تحدث العميل بالإنجليزية.
+2. تجنب الردود الجافة والروبوتية والقوالب المحفوظة؛ أجب مباشرة على سؤال العميل وتفاصيل مشروعه.
+3. استغل سياق المحادثة وتاريخ الرسائل السابقة المرفقة معك لربط كلام العميل وإظهار أنك تتذكره تماماً.
+4. اجعل إجابتك ذكية ومقنعة وتنتهي بسؤال تفاعلي.
+5. توجيه العملاء الحاليين: إذا ذكر المستخدم أنه عميل حالي أو طلب الدخول لحسابه أو بوابته، رحب به وأضف في سطر جديد كود الزر التفاعلي التالي بالضبط دون أي كود HTML:
+[[ACTION:بوابة العملاء|/portal-access-2026.html]]`
+      }
+    ];
+
+    for (const msgItem of conversationHistory) {
+      if (msgItem.role === 'user' || msgItem.role === 'assistant') {
+        llmMessages.push({
+          role: msgItem.role,
+          content: msgItem.content
+        });
+      }
+    }
+
+    // Add latest user message if not already present
+    if (!llmMessages.some(m => m.role === 'user' && m.content === message)) {
+      llmMessages.push({ role: 'user', content: message });
+    }
+
+    // ── CLIENT PORTAL REDIRECTION INTENT CHECK ──
+    const normalizedMsg = message.trim().toLowerCase();
+    const portalKeywords = [
+      'عميل', 'بوابة', 'دخول', 'بوابه', 'حسابي', 'لوحة العميل',
+      'client', 'login', 'portal', 'client portal', 'sign in'
+    ];
+
+    const isClientIntent = portalKeywords.some(kw => normalizedMsg.includes(kw));
+    if (isClientIntent) {
+      const redirectReply = "جاري تحويلك لبوابة العملاء مباشرة...";
+
+      if (db) {
+        try {
+          await db.prepare(`
+            INSERT INTO chat_messages (session_id, role, content, timestamp)
+            VALUES (?, 'assistant', ?, ?)
+          `).bind(sessionId, redirectReply, now).run();
+        } catch (e) {}
+      }
+
+      return new Response(JSON.stringify({
+        reply: redirectReply,
+        action: "redirect",
+        url: "/portal-access-2026.html",
+        sessionId,
+        aiModel: "client_portal_router",
+        aiStatus: "instant_redirect"
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+    }
+
     let aiResponse = '';
     let aiModelUsed = null;
 
-    if (env.AI && typeof env.AI.run === 'function') {
+    // ── 1. Attempt Free Google Gemini Flash if API Key is configured ──
+    if (env.GEMINI_API_KEY) {
+      try {
+        const geminiContents = llmMessages.filter(m => m.role !== 'system').map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }]
+        }));
+
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: `أنت "مساعد النمو الذكي" في PR Agency (وكالة تسويق رقمي وإنتاج إعلاني رائدة في القاهرة، مصر).
+مهمتك: مساعدة أصحاب المشاريع والشركات على فهم أنسب الخدمات لنمو مبيعاتهم والإجابة بذكاء واحترافية وبشرية تامة على كل استفسار.
+
+معلومات الوكالة الأساسية:
+- المقر: الشيخ زايد والقاهرة، ونخدم مصر ودول الخليج (السعودية، الإمارات، قطر، الكويت).
+- الخدمات الأساسية:
+  1. إدارة السوشيال ميديا وصناعة المحتوى الإبداعي (إنستجرام، فيسبوك، تيك توك، لينكد إن).
+  2. الإعلانات الممولة (Media Buying) وتحقيق أعلى عائد على الإنفاق الإعلاني (ROAS).
+  3. الإنتاج المرئي والتصوير الإعلاني السينمائي للريلز والمنتجات وخطوط الإنتاج.
+  4. بناء الهوية البصرية والبراندنج المتكامل.
+  5. الاستراتيجيات التسويقية وخطط النمو.
+- القطاعات التي نخدمها: المصانع والشركات الصناعية (B2B)، العيادات والمراكز الطبية، المتاجر الإلكترونية، البراندات العقارية، الجيم والمطاعم، والشركات الناشئة.
+- نظام العقود: نبدأ بعقد تجريبي مدته 3 شهور كفترة أولى لإثبات كفاءة النظام وتحقيق الأرقام، وبعدها التجديد بناءً على رغبة العميل.
+- خطوات العمل: 1. استكشاف (Discover) -> 2. تخطيط واستراتيجية (Strategize) -> 3. تنفيذ وإنتاج (Create) -> 4. إطلاق وتحسين (Launch & Optimize).
+- للتواصل المباشر: هاتف/واتساب 01022753522، إيميل hello@pragency.eg، أو ملء فورم حجز الاستشارة بالموقع.
+
+قواعد الرد والأسلوب:
+1. تحدث كإنسان خبير، ودود، واثق، بلهجة عربية بيضاء واضحة ومفهومة لأي عميل (مصر أو الخليج)، واستخدم الإنجليزية إذا تحدث العميل بالإنجليزية.
+2. تجنب الردود الجافة والروبوتية والقوالب المحفوظة؛ أجب مباشرة على سؤال العميل وتفاصيل مشروعه.
+3. استغل سياق المحادثة وتاريخ الرسائل السابقة المرفقة معك لربط كلام العميل وإظهار أنك تتذكره تماماً.
+4. اجعل إجابتك ذكية ومقنعة وتنتهي بسؤال تفاعلي.
+5. توجيه العملاء الحاليين: إذا ذكر المستخدم أنه عميل حالي أو طلب الدخول لحسابه أو بوابته، رحب به وأضف في سطر جديد كود الزر التفاعلي التالي بالضبط دون أي كود HTML:
+[[ACTION:بوابة العملاء|/portal-access-2026.html]]` }] },
+            contents: geminiContents,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 450
+            }
+          })
+        });
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          aiResponse = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+          if (aiResponse) aiModelUsed = 'gemini-1.5-flash';
+        }
+      } catch (geminiErr) {
+        console.warn('[Chat] Gemini free API attempt warning:', geminiErr.message);
+      }
+    }
+
+    // ── 2. Attempt Cloudflare Workers AI (10,000 Neurons/day Free) ──
+    if (!aiResponse && env.AI && typeof env.AI.run === 'function') {
       try {
         const aiResult = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-          messages: [
-            {
-              role: 'system',
-              content: 'You are the smart AI Growth Assistant for PR Agency (pragency.pages.dev), a leading full-service marketing agency based in Cairo, Egypt. Speak fluently in professional Arabic or English. Be solution-oriented, concise, and helpful.'
-            },
-            { role: 'user', content: message }
-          ],
-          max_tokens: 350,
+          messages: llmMessages,
+          max_tokens: 400,
           temperature: 0.7
         });
         aiResponse = aiResult.response || aiResult.text || '';

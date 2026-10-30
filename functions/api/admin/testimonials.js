@@ -16,7 +16,7 @@ function unauthorized() {
   return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
+      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
       'Content-Type': 'application/json; charset=utf-8'
     }
   });

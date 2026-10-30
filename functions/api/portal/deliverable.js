@@ -48,27 +48,34 @@ export async function onRequestGet(context) {
   }
 
   // 3. Query Deliverable
-  const item = await db.prepare('SELECT * FROM portal_deliverables WHERE id = ?').bind(id).first();
-  if (!item) {
-    return new Response(JSON.stringify({ success: false, error: 'Deliverable not found' }), {
-      status: 404,
+  try {
+    const item = await db.prepare('SELECT * FROM portal_deliverables WHERE id = ?').bind(id).first();
+    if (!item) {
+      return new Response(JSON.stringify({ success: false, error: 'Deliverable not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 4. Strict Data Isolation: Must belong to authenticated client
+    if (item.client_id !== auth.sub) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Forbidden: Access denied. You do not have permission to view deliverables from another organization.'
+      }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true, item }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ success: false, error: err.message }), {
+      status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
   }
-
-  // 4. Strict Data Isolation: Must belong to authenticated client
-  if (item.client_id !== auth.sub) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Forbidden: Access denied. You do not have permission to view deliverables from another organization.'
-    }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  return new Response(JSON.stringify({ success: true, item }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
 }

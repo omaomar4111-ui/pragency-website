@@ -40,7 +40,7 @@
   margin: 0 auto;
   flex: 1;
   display: grid !important;
-  grid-template-columns: 1.15fr 0.85fr !important;
+  grid-template-columns: 1fr 1.25fr !important;
   gap: clamp(32px, 4vw, 64px);
   align-items: center;
   padding-bottom: clamp(30px, 6vh, 60px);
@@ -121,14 +121,12 @@
 .hero-vr-logo-wrap {
   position: relative;
   width: 100%;
-  max-width: 900px;
-  min-height: 620px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  max-width: 1000px;
+  min-height: 680px;
+  height: 680px;
   isolation: isolate;
-  padding-left: 20px;
   direction: ltr;
+  overflow: visible;
 }
 
 /* ═══ التمثال — Bulletproof Blend with Purple Hero ═══ */
@@ -140,11 +138,11 @@
 
 .hero-statue-layer {
   position: absolute;
-  top: 70%;
-  left: 25%;
+  top: 76%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 700px;
+  width: 100%;
+  max-width: 650px;
   z-index: 1;
   pointer-events: none;
 }
@@ -159,22 +157,22 @@
 
 /* PR Logo على الصدر */
 .hero-brand-lockup {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  top: 8%;
+  left: -4%;
+  z-index: 5;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 32px;
-  margin-left: 90px;
-  margin-top: -80px;           /* ← نقلل من 20px لـ -80px (يرتفع) */
-  /* أو استخدم transform */
-  transform: translateY(-40px);
+  gap: 22px;
+  margin: 0;
+  transform: none;
 }
 
 .hero-logo-layer {
   flex-shrink: 0;
-  width: 420px;                 /* ← أكبر */
-  max-width: 420px;
+  width: 280px;
+  max-width: 280px;
 }
 
 .hero-logo-layer img {
@@ -2699,7 +2697,7 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
 }
 .clients-marquee-track {
   display: flex;
-  gap: 56px;
+  gap: 36px;
   width: max-content;
   align-items: center;
 }
@@ -2713,20 +2711,33 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
 .clients-marquee-track:hover {
   animation-play-state: paused;
 }
+.clients-marquee-track picture {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 90px;
+  flex-shrink: 0;
+}
 .clients-marquee-logo {
-  height: 76px;
+  max-height: 72px;
+  max-width: 145px;
   width: auto;
-  max-width: 180px;
+  height: auto;
   object-fit: contain;
   filter: brightness(0) invert(1);
-  opacity: 0.90;
+  opacity: 0.88;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+}
+.clients-marquee-logo[src*="client-03-kangaroo"] {
+  max-height: 52px;
+  max-width: 130px;
 }
 .clients-marquee-logo:hover {
   filter: brightness(0) invert(1) drop-shadow(0 0 16px rgba(168, 85, 247, 0.7));
   opacity: 1;
-  transform: scale(1.12);
+  transform: scale(1.1);
 }
 
 @keyframes scroll-clients-left {
@@ -2882,4 +2893,164 @@ body.lang-en h1, body.lang-en h2, body.lang-en h3, body.lang-en h4, body.lang-en
   .process-card {
     padding: 28px 22px;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STATIC 2-ROW CLIENT LOGOS GRID (CLEAN ENTERPRISE LOOK)
+══════════════════════════════════════════════════════════════ */
+.clients-static-grid-wrapper {
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+  padding: 10px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  box-sizing: border-box !important;
+}
+
+.clients-static-row {
+  display: grid !important;
+  grid-template-columns: repeat(10, 1fr) !important;
+  gap: 16px !important;
+  align-items: center !important;
+  justify-items: center !important;
+  width: 100% !important;
+}
+
+@media (max-width: 1024px) {
+  .clients-static-row {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 14px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .clients-static-row {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .clients-static-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+.client-logo-card,
+.clients-static-row picture {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 64px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+  transition: all 0.25s ease !important;
+}
+
+.client-logo-card:hover,
+.clients-static-row picture:hover {
+  background: rgba(168, 85, 247, 0.08) !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+.clients-grid-logo {
+  max-height: 38px !important;
+  max-width: 85% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.82 !important;
+  transition: all 0.25s ease !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.client-logo-card:hover .clients-grid-logo,
+.clients-static-row picture:hover .clients-grid-logo {
+  opacity: 1 !important;
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(168, 85, 247, 0.8)) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CLIENT LOGOS GRID (STRICT 2-ROW REFERENCE SPEC)
+══════════════════════════════════════════════════════════════════════════ */
+.clients-logos-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 40px 30px !important;
+  align-items: center !important;
+  justify-items: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 40px 20px !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1024px) {
+  .clients-logos-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 30px 24px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .clients-logos-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px 18px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .clients-logos-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px 14px !important;
+  }
+}
+
+.client-logo-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 70px !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+  transition: transform 0.25s ease, opacity 0.25s ease !important;
+}
+
+.client-logo-item picture {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.client-grid-img {
+  max-height: 48px !important;
+  max-width: 140px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85 !important;
+  transition: all 0.25s ease !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.client-logo-item:hover .client-grid-img {
+  opacity: 1 !important;
+  filter: brightness(0) invert(1) drop-shadow(0 0 12px rgba(139, 92, 246, 0.7)) !important;
+  transform: scale(1.05) !important;
 }

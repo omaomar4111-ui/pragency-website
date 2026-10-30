@@ -17,7 +17,7 @@ function unauthResponse() {
   return new Response('Unauthorized Access to PR Agency Admin API', {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
+      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin", charset="UTF-8"',
       'Content-Type': 'text/plain; charset=utf-8'
     }
   });

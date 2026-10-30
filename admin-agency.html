@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PR Agency Admin</title>
+  <meta name="robots" content="noindex, nofollow, noarchive"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/admin.css?v=2026">
+  <link rel="stylesheet" href="/css/phase2-components.css?v=102"/>
+  <link rel="stylesheet" href="/css/phase4-components.css?v=104"/>
+  <link rel="stylesheet" href="/css/enterprise-theme-2026.css" />
+</head>
+<body>
+
+  <!-- Modern JWT Login Overlay Screen -->
+  <div id="admin-login-overlay">
+    <div class="login-box">
+      <div class="login-brand">PR <span>Agency</span></div>
+      <div class="login-sub">تسجيل الدخول المركزي لإدارة الوكالة 2026 (جلسة آمنة لمدة 30 يوماً)</div>
+      
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="input-group" style="text-align:right;">
+          <label for="loginUsername">اسم المستخدم أو البريد الإلكتروني</label>
+          <input type="text" id="loginUsername" required placeholder="admin أو بريدك الوظيفي" autocomplete="username"/>
+        </div>
+        
+        <div class="input-group" style="text-align:right;">
+          <label for="loginPassword">كلمة المرور</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+
+        <div id="loginErrorMsg" style="color:var(--danger);font-size:13px;margin-bottom:14px;display:none;"></div>
+        
+        <button type="submit" class="login-btn" id="loginSubmitBtn">🔐 تسجيل الدخول إلى المنظومة</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Top Sticky Navigation Bar (Modern Linear / Vercel Enterprise Style) -->
+  <header class="top-navbar" style="position:sticky;top:0;z-index:1000;background:rgba(18,18,22,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+    
+    <!-- LEFT: Logo & Core Tabs -->
+    <div style="display:flex;align-items:center;gap:20px;flex-shrink:0;">
+      <a href="/admin-agency" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.5px;">PR <span style="color:var(--accent);">Agency</span></span>
+      </a>
+
+      <!-- Primary Tabs -->
+      <nav class="nav-tabs-wrapper" id="topNavTabs" style="display:flex;align-items:center;gap:4px;margin:0;padding:0;">
+        <button type="button" class="nav-btn active" onclick="switchTab('daily-tasks', this)" data-tab="daily-tasks">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span>المهام اليومية</span>
+        </button>
+        <button type="button" class="nav-btn" onclick="switchTab('profitability', this)" data-tab="profitability">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>الربحية</span>
+        </button>
+        <button type="button" class="nav-btn" onclick="switchTab('team', this)" data-tab="team">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>الفريق</span>
+        </button>
+        <button type="button" class="nav-btn" onclick="switchTab('creative', this)" data-tab="creative">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><span>مسار العمل</span>
+        </button>
+        <button type="button" class="nav-btn" onclick="switchTab('invoices', this)" data-tab="invoices">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span>الفواتير</span>
+        </button>
+        <button class="nav-btn" data-tab="workflows" onclick="switchTab('workflows')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="14" y="2" width="8" height="8" rx="2"></rect><rect x="8" y="14" width="8" height="8" rx="2"></rect><line x1="6" y1="10" x2="6" y2="12"></line><line x1="18" y1="10" x2="18" y2="12"></line><line x1="6" y1="12" x2="18" y2="12"></line><line x1="12" y1="12" x2="12" y2="14"></line></svg><span>الأتمتة</span>
+        </button>
+                <button type="button" class="nav-btn" onclick="switchTab('skills', this)" data-tab="skills" style="color:#c084fc;border-color:rgba(192,132,252,0.3);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93l-.75.14V14h2a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v2H4v-2a2 2 0 0 1 2-2h1v-1a2 2 0 0 1 2-2h2v-3.93l-.75-.14A4.002 4.002 0 0 1 12 2z"></path></svg><span>🧠 محرك المهارات (77)</span>
+        </button>
+        <a href="/sales-crm-2026.html" target="_blank" class="nav-btn" style="color:#38bdf8;border-color:rgba(56,189,248,0.25);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Sales CRM ↗</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- CENTER: Global Command Palette Search (Linear.app Style) -->
+    <div class="cmd-palette-wrapper" style="position:relative;width:240px;margin:0 12px;">
+      <div class="cmd-input-container" style="position:relative;display:flex;align-items:center;">
+        <span style="position:absolute;right:12px;pointer-events:none;color:#71717a;display:flex;align-items:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input 
+          type="text" 
+          id="globalSearchInput" 
+          placeholder="بحث..." 
+          style="width:100%;box-sizing:border-box;padding:7px 32px 7px 54px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#fff;font-family:inherit;font-size:13px;outline:none;transition:all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);"
+          onfocus="this.style.borderColor='rgba(139,92,246,0.6)';this.style.background='#16171d';this.style.boxShadow='0 0 0 3px rgba(139,92,246,0.15)';handleGlobalSearch(this.value);"
+          onblur="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)';this.style.boxShadow='none';setTimeout(() => { const r = document.getElementById('globalSearchResults'); if(r) r.style.display='none'; }, 250);"
+          onmouseover="if(document.activeElement !== this) { this.style.borderColor='rgba(255,255,255,0.15)'; this.style.background='rgba(255,255,255,0.05)'; }"
+          onmouseout="if(document.activeElement !== this) { this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='rgba(255,255,255,0.03)'; }"
+          oninput="handleGlobalSearch(this.value)"
+        />
+        <div class="cmd-shortcut" style="position:absolute;left:8px;pointer-events:none;display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:1px 5px;font-size:10px;font-weight:600;color:#71717a;font-family:monospace;letter-spacing:0.5px;opacity:0.75;transition:opacity 0.2s cubic-bezier(0.25,0.8,0.25,1);">
+          <span>Ctrl</span><span>K</span>
+        </div>
+      </div>
+      <div id="globalSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:100%;background:#16171d;border:1px solid rgba(139,92,246,0.3);border-radius:8px;box-shadow:0 16px 40px rgba(0,0,0,0.8);max-height:450px;overflow-y:auto;z-index:9999;padding:6px 0;backdrop-filter:blur(16px);">
+      </div>
+    </div>
+      <div id="globalSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:100%;background:#13151c;border:1px solid rgba(139,92,246,0.3);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.8);max-height:450px;overflow-y:auto;z-index:9999;padding:8px 0;backdrop-filter:blur(16px);">
+      </div>
+    </div>
+
+    <!-- RIGHT: User Profile & Operations Dropdown -->
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      
+      <!-- More Tools Menu Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleMoreMenu(event)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg><span>المزيد</span>
+          <span style="font-size:10px;">▼</span>
+        </button>
+        <div id="adminMoreDropdown" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#18181b;border:1px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,0.7);min-width:200px;z-index:1001;padding:6px 0;backdrop-filter:blur(12px);">
+          <button type="button" onclick="switchTab('audit'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>سجل المراقبة (Audit)</span>
+          </button>
+          <button type="button" onclick="switchTab('clients'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><line x1="9" y1="9" x2="10" y2="9"></line><line x1="9" y1="13" x2="10" y2="13"></line><line x1="14" y1="9" x2="15" y2="9"></line><line x1="14" y1="13" x2="15" y2="13"></line></svg><span>حسابات العملاء</span>
+          </button>
+          <button type="button" onclick="switchTab('strategies'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <span>الاستراتيجيات الحية</span>
+          </button>
+          <button type="button" onclick="switchTab('ads'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg><span>إعلانات Meta و Google</span>
+          </button>
+          <button type="button" onclick="switchTab('workflows'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="14" y="2" width="8" height="8" rx="2"></rect><rect x="8" y="14" width="8" height="8" rx="2"></rect><line x1="6" y1="10" x2="6" y2="12"></line><line x1="18" y1="10" x2="18" y2="12"></line><line x1="6" y1="12" x2="18" y2="12"></line><line x1="12" y1="12" x2="12" y2="14"></line></svg><span>محرك الأتمتة</span>
+          </button>
+          <button type="button" onclick="switchTab('payment-settings'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg><span>إعدادات الدفع وإنستاباي</span>
+          </button>
+          <button type="button" onclick="switchTab('permissions'); toggleMoreMenu();" style="width:100%;text-align:right;background:none;border:none;color:#e4e4e7;padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>الصلاحيات RBAC</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin User Badge -->
+      <span class="badge badge-accent" id="adminUserBadge" style="padding:6px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path></svg><span>Super Admin</span>
+      </span>
+
+      <!-- Logout Button -->
+      <button class="btn btn-secondary btn-sm" onclick="handleAdminLogout()" style="color:var(--danger);border-color:rgba(239,68,68,0.3);padding:6px 12px;font-size:12px;" title="تسجيل الخروج">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg><span>خروج</span>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- Main Area -->
+  <main class="main-area">
+    <div class="top-bar">
+      <div>
+        <h1 class="page-heading" id="topHeading">سجل المراقبة</h1>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="badge badge-accent" style="padding:6px 12px;font-size:13px;">Super Admin</span>
+        <button class="btn btn-secondary" id="btn-manual-reminders" onclick="triggerManualReminders()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span>تشغيل التذكيرات</span>
+        </button>
+        <button class="btn" onclick="refreshCurrentTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg><span>تحديث</span></button>
+      </div>
+    </div>
+
+    <!-- GLOBAL EXECUTIVE KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card tilt-card-3d">
+        <div class="kpi-info">
+          <h4>إجمالي العملاء النشطين</h4>
+          <div class="kpi-num" id="kpi-total-clients">0</div>
+          
+        </div>
+        <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg></div>
+      </div>
+
+      <div class="kpi-card tilt-card-3d">
+        <div class="kpi-info">
+          <h4>فريق العمل</h4>
+          <div class="kpi-num" id="kpi-total-team">0</div>
+          
+        </div>
+        <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      </div>
+
+      <div class="kpi-card tilt-card-3d">
+        <div class="kpi-info">
+          <h4>إجمالي التحصيل المالي</h4>
+          <div class="kpi-num" id="kpi-total-revenue">0 EGP</div>
+          
+        </div>
+        <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      </div>
+
+      <div class="kpi-card tilt-card-3d">
+        <div class="kpi-info">
+          <h4>صفقات الـ CRM قيد المتابعة</h4>
+          <div class="kpi-num" id="kpi-total-leads">0</div>
+          
+        </div>
+        <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      </div>
+    </div>
+
+    <!-- 1. Audit Log Tab -->
+    
+    <!-- 🗓️ TAB: DAILY TASKS WORKSPACE -->
+    <div id="tab-daily-tasks" class="tab-content active">
+      <!-- Top Action Bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <input type="date" id="dailyTaskDatePicker" class="form-control" style="width:auto;padding:9px 14px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;" onchange="loadDailyTasksWorkspace()" />
+          <button class="btn btn-secondary btn-sm" onclick="setDailyTaskToday()" style="padding:8px 14px;font-size:13px;">📅 اليوم</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <button class="btn btn-secondary" onclick="openAddTaskModal()" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;font-size:13px;border-color:rgba(255,255,255,0.2);">
+            <span>مهمة جديدة</span>
+          </button>
+          <button class="btn btn-primary" onclick="openPublishDayModal()" style="display:inline-flex;align-items:center;gap:8px;background:#8b5cf6;border:none;box-shadow:none;padding:10px 22px;font-size:13.5px;font-weight:700;">
+            <span>نشر اليوم</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Split Layout (PeakTime Model) -->
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;">
+        <!-- Left: Planned & Completed -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <!-- Planned Tasks List -->
+          <div class="card" style="margin-bottom:0;border:1px solid rgba(255,255,255,0.08);background:#0d0e12;background:#0d0e12;border-radius:16px;padding:20px;">
+            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:16px;font-weight:800;color:#fff;">مهام اليوم المجدولة</span>
+              </div>
+              <span class="badge badge-accent" id="plannedTasksBadge" style="font-size:12px;padding:4px 10px;">0 مهام</span>
+            </div>
+            <div id="plannedTasksContainer" style="display:flex;flex-direction:column;gap:12px;min-height:120px;">
+              <div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">جاري تحميل المهام...</div>
+            </div>
+          </div>
+
+          <!-- Today's Achievements -->
+          <div class="card" style="margin-bottom:0;background:rgba(18,18,22,0.85);border:1px solid rgba(255,255,255,0.08);background:#0d0e12;border-radius:16px;padding:20px;">
+            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:16px;font-weight:800;color:#34d399;">إنجازات اليوم</span>
+              </div>
+              <span class="badge badge-success" id="achievementsBadge" style="font-size:12px;padding:4px 10px;">0 مكتملة</span>
+            </div>
+            <div id="achievementsTasksContainer" style="display:flex;flex-direction:column;gap:12px;min-height:100px;">
+              <div style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">لا توجد مهام منجزة اليوم بعد</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: To-Do Backlog Sidebar -->
+        <div class="card" style="margin-bottom:0;display:flex;flex-direction:column;background:rgba(18,18,22,0.85);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;">
+          <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <span style="font-size:15px;font-weight:800;color:#e4e4e7;">صندوق المهام</span>
+            <span class="badge badge-secondary" id="backlogBadge" style="font-size:12px;padding:4px 10px;">0</span>
+          </div>
+          
+          <div id="backlogTasksContainer" style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:600px;min-height:140px;">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">جاري التحميل...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📈 TAB: PROFITABILITY REPORT -->
+    <div id="tab-profitability" class="tab-content">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+          <div>
+            <span>📊 تقرير ربحية المشاريع</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <select id="profitabilityPeriodSelect" class="form-control" style="width:auto;padding:8px 14px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:10px;" onchange="loadProfitabilityReport()">
+              <option value="all">كل الفترات (All Time)</option>
+              <option value="current" selected>هذا الشهر (This Month)</option>
+              <option value="last">الشهر الماضي (Last Month)</option>
+            </select>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);">
+              <span>معدل الساعة الافتراضي:</span>
+              <input type="number" id="globalHourlyRateInput" value="150" style="width:70px;padding:6px 10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-align:center;" onchange="loadProfitabilityReport()" />
+              <span>$/ساعة</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="matrix-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>المشروع / المفتاح</th>
+                <th>اسم العميل</th>
+                <th>قيمة العقد (Retainer)</th>
+                <th>ساعات العمل</th>
+                <th>التكلفة الفعلية (Cost)</th>
+                <th>صافي الربح (Net Profit)</th>
+                <th>هامش الربح (Margin %)</th>
+                <th>نسبة التأخير</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="profitabilityTableBody">
+              <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted);">جاري حساب المؤشرات المالية...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Invoices Server-Side Pagination Bar -->
+        <div id="invoicesPaginationBar" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;margin-bottom:20px;">
+          <div style="font-size:13px;color:var(--text-muted)">
+            صفحة <span id="invoicesCurrentPage" style="color:#fff;font-weight:600">1</span> من <span id="invoicesTotalPages" style="color:#fff;font-weight:600">1</span> (إجمالي <span id="invoicesTotalRecords" style="color:#fff">0</span> فاتورة)
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button id="invoicesPrevBtn" onclick="changeInvoicesPage(-1)" class="btn" style="padding:6px 14px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;cursor:pointer;border-radius:6px;" disabled>السابق</button>
+            <button id="invoicesNextBtn" onclick="changeInvoicesPage(1)" class="btn" style="padding:6px 14px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;cursor:pointer;border-radius:6px;" disabled>التالي</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-audit" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>سجل العمليات</span>
+          <span class="badge badge-accent">Live Monitoring</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>الوقت</th>
+              <th>المسؤول (Actor)</th>
+              <th>الدور</th>
+              <th>نوع العملية</th>
+              <th>الهدف</th>
+              <th>العميل المستهدف</th>
+              <th>التفاصيل</th>
+            </tr>
+          </thead>
+          <tbody id="auditTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted)">جارٍ تحميل سجل العمليات...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 1.2. Team Management Tab (CRM Data Grid Style) -->
+    <div id="tab-team" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <div>
+            <span>فريق العمل والأدوار</span>
+          </div>
+          <button class="btn" onclick="openAddTeamMemberModal()">+ إضافة عضو جديد للفريق</button>
+        </div>
+
+        <!-- CRM Filters Toolbar -->
+        <div class="crm-toolbar">
+          <div class="crm-filters">
+            <div class="crm-search">
+              <input type="text" id="teamSearchInput" placeholder="بحث بالاسم أو البريد الإلكتروني..." oninput="handleTeamFilterChange()" dir="rtl"/>
+              <span class="crm-search-icon">🔍</span>
+            </div>
+            <select id="teamRoleFilter" onchange="handleTeamFilterChange()" style="padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:inherit;font-size:14px;min-width:180px;">
+              <option value="all">كل الأدوار الوظيفية</option>
+              <option value="Designer">مصمم (Designer)</option>
+              <option value="Video Editor">مونتير (Video Editor)</option>
+              <option value="Copywriter">كاتب محتوى (Copywriter)</option>
+              <option value="Strategist">مخطط استراتيجي (Strategist)</option>
+              <option value="Account Manager">مدير حسابات (Account Manager)</option>
+              <option value="Sales">مسؤول مبيعات (Sales)</option>
+              <option value="Super Admin">مدير نظام (Super Admin)</option>
+            </select>
+            <select id="teamStatusFilter" onchange="handleTeamFilterChange()" style="padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:inherit;font-size:14px;min-width:140px;">
+              <option value="all">كل الحالات</option>
+              <option value="1">نشط فقط</option>
+              <option value="0">معطل فقط</option>
+            </select>
+          </div>
+          <div>
+            <button class="btn btn-secondary btn-sm" onclick="loadTeamMembers()">تحديث</button>
+          </div>
+        </div>
+
+        <!-- Team Data Table -->
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>الدور الوظيفي</th>
+                <th>القسم</th>
+                <th>رقم الهاتف</th>
+                <th>الحالة</th>
+                <th>تاريخ الإضافة</th>
+                <th style="text-align:center;">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="teamTableBody">
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted)">جارٍ تحميل أعضاء الفريق...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination & Summary Bar -->
+        <div class="pagination-bar">
+          <div>إجمالي الأعضاء: <strong id="teamTotalCount" style="color:var(--accent);">0</strong></div>
+          <div id="teamPaginationControls" style="display:flex;gap:8px;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.5. Clients Management Tab -->
+    <div id="tab-clients" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>إنشاء حساب عميل جديد (Email + Password + إشعار تلقائي)</span>
+          <span class="badge badge-success">Client Portal Onboarding</span>
+        </div>
+        <form id="createClientForm" onsubmit="handleCreateClient(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>اسم الشركة / البراند *</label>
+              <input type="text" id="cl-company" placeholder="مثال: Homex Furniture" required/>
+            </div>
+            <div class="input-group">
+              <label>اسم جهة الاتصال (Contact Name)</label>
+              <input type="text" id="cl-contact" placeholder="أحمد السيد"/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>البريد الإلكتروني للعميل *</label>
+              <input type="email" id="cl-email" placeholder="client@company.com" required dir="ltr"/>
+            </div>
+            <div class="input-group">
+              <label>كلمة المرور الأولية *</label>
+              <input type="text" id="cl-password" placeholder="Pass1234@" required dir="ltr"/>
+            </div>
+            <div class="input-group">
+              <label>رقم هاتف العميل (WhatsApp / SMS) *</label>
+              <input type="tel" id="cl-phone" placeholder="+2010xxxxxxxx" required dir="ltr"/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>لون البراند (Brand Color Hex)</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" id="cl-color-picker" value="#8b5cf6" style="width:42px;height:42px;padding:2px;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:8px;cursor:pointer;" onchange="document.getElementById('cl-color').value = this.value"/>
+                <input type="text" id="cl-color" value="#8b5cf6" placeholder="#8b5cf6" dir="ltr" style="flex:1;" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) document.getElementById('cl-color-picker').value = this.value"/>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>رابط اللوجو (Logo URL)</label>
+              <input type="url" id="cl-logo" placeholder="https://..."/>
+            </div>
+          </div>
+          <button type="submit" class="btn">👤 إنشاء الحساب وتفعيله فوراً</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">قائمة حسابات العملاء المسجلين بالبوابة</div>
+        <table>
+          <thead>
+            <tr>
+              <th>الشركة</th>
+              <th>جهة الاتصال</th>
+              <th>البريد الإلكتروني</th>
+              <th>الهاتف</th>
+              <th>المحتوى المعتمد</th>
+              <th>بانتظار الموافقة</th>
+              <th>الحالة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text-muted)">جارٍ تحميل العملاء...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. Creative Team Workflow Tab -->
+    <div id="tab-creative" class="tab-content">
+      <div class="card">
+        <div class="card-title">رفع محتوى جديد أو نسخة معدلة (فريق الإبداع ➜ مراجعة Account Manager)</div>
+        <form id="creativeUploadForm" onsubmit="handleCreativeSubmit(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>العميل المستهدف *</label>
+              <input type="text" id="cr-clientId" placeholder="client_id (مثال: c_demo_2026)" required/>
+            </div>
+            <div class="input-group">
+              <label>عنوان المحتوى / البوست *</label>
+              <input type="text" id="cr-title" placeholder="ريلز ترويجي لخط الإنتاج" required/>
+            </div>
+            <div class="input-group">
+              <label>كود المحتوى الأصلي (في حالة رفع V2 / V3 فقط)</label>
+              <input type="text" id="cr-parentId" placeholder="ast_xxx (اتركه فارغاً إذا كان عملاً جديداً)"/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>نوع الملف</label>
+              <select id="cr-type">
+                <option value="video">فيديو (Reels / TikTok)</option>
+                <option value="design">تصميم (Post / Story)</option>
+                <option value="carousel">كاروسيل</option>
+                <option value="canva">رابط كانفا (Canva Link)</option>
+                <option value="drive">رابط درايف (Google Drive)</option>
+                <option value="sheet">شيت إكسيل (Google Sheet)</option>
+                <option value="pdf">ملف PDF</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>تاريخ النشر المجدول</label>
+              <input type="date" id="cr-date" required/>
+            </div>
+            <div class="input-group">
+              <label>اسم الرافع ودوره</label>
+              <input type="text" id="cr-author" placeholder="أحمد - Video Creator" required/>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>رابط الملف أو الفيديو (Media URL / Drive Link / Canva Link)</label>
+            <input type="url" id="cr-url" placeholder="https://..." required/>
+          </div>
+          <div class="input-group">
+            <label>الكابشن والهاشتاجات</label>
+            <textarea id="cr-caption" rows="3" placeholder="اكتب الكابشن المعتمد..."></textarea>
+          </div>
+
+          <!-- Interactive Basket Uploader Component (Phase 2 UI Interaction) -->
+          <div class="basket-uploader-wrapper">
+            <div class="basket-drop-zone" id="basketDropZone" onclick="document.getElementById('basketFileInput').click()">
+              <input type="file" id="basketFileInput" multiple style="display:none;" onchange="handleBasketFiles(this.files)"/>
+              <div class="basket-icon-container">🧺</div>
+              <div class="basket-title">اسحب وأفلت التصاميم والفيديوهات في السلة التفاعلية</div>
+              <div class="basket-sub">أو اضغط هنا للاختيار المباشر من جهازك (PNG, JPG, MP4, PDF)</div>
+            </div>
+            <div class="basket-preview-grid" id="basketPreviewGrid"></div>
+          </div>
+    
+          <button type="submit" class="btn">إرسال المحتوى للمراجعة</button>
+        </form>
+      </div>
+
+      <!-- Assets Under Review & Revisions Feed -->
+      <div class="card">
+        <div class="card-title">
+          <span>قائمة المحتويات وقيد المراجعة / طلبات التعديل من العملاء</span>
+          <button class="btn" style="padding:4px 10px;font-size:12px;" onclick="loadCreativeAssets()">🔄 تحديث القائمة</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>كود المحتوى</th>
+              <th>العميل</th>
+              <th>العنوان والنسخة</th>
+              <th>النوع</th>
+              <th>موعد النشر</th>
+              <th>الحالة</th>
+              <th>إجراء وسجل الردود</th>
+            </tr>
+          </thead>
+          <tbody id="creativeAssetsBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted)">اضغط على تحديث القائمة أو اختر التبويب لعرض الأعمال</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. Strategies Tab -->
+    <div id="tab-strategies" class="tab-content">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>كتابة استراتيجية حية للعميل (بدون وورد أو PDF)</span>
+          <button type="button" onclick="triggerAIStrategyGenerator()" class="btn btn-sm" style="background:linear-gradient(135deg, #8b5cf6, #6366f1);color:#fff;border:none;padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;">
+            ✨ توليد استراتيجية بالذكاء الاصطناعي
+          </button>
+        </div>
+        <form id="strategyForm" onsubmit="handleStrategySubmit(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>كود العميل (Client ID)</label>
+              <input type="text" id="st-clientId" placeholder="homex" required/>
+            </div>
+            <div class="input-group">
+              <label>عنوان الاستراتيجية</label>
+              <input type="text" id="st-title" placeholder="خطة نمو الربع الأخير 2026" required/>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>تحليل السوق والمنافسين (Market & Competitor Analysis)</label>
+            <textarea id="st-market" rows="3" placeholder="تحليل نقاط القوة والفرص في مصر والخليج..."></textarea>
+          </div>
+          <div class="input-group">
+            <label>الجمهور المستهدف (Target Personas)</label>
+            <textarea id="st-personas" rows="2" placeholder="الشرائح المستهدفة واهتماماتهم..."></textarea>
+          </div>
+          <div class="input-group">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">محاور المحتوى (Content Pillars & Hooks)</label>
+            <button type="button" id="btn-suggest-pillars" onclick="suggestContentPillars()" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+              🤖 اقترح محاور المحتوى (CRO & Copywriting)
+            </button>
+          </div>
+            <textarea id="st-pillars" rows="3" placeholder="المحاور الأساسية وزوايا الإعلانات..."></textarea>
+          </div>
+          <div class="input-group">
+            <label>الأهداف البيعية والأرقام (Quarterly KPIs & Sales Goals)</label>
+            <textarea id="st-goals" rows="2" placeholder="المبيعات المستهدفة وتكلفة الاستحواذ..."></textarea>
+          </div>
+          <button type="submit" class="btn">💾 حفظ ونشر الاستراتيجية لحساب العميل</button>
+        </form>
+      </div>
+    </div>
+
+    
+    <!-- 3.2. Ads Integration Tab -->
+    <div id="tab-ads" class="tab-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div>
+          <h2 style="font-size:20px;font-weight:800;color:#fff;margin:0 0 6px;">ربط وإدارة إعلانات Meta و Google Ads</h2>
+          <span style="font-size:13px;color:#a1a1aa;">مزامنة الصرف الإعلاني، مرات الظهور، والـ ROAS وربطها ببوابة العميل مباشرة</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="triggerManualAdsSync()" class="btn btn-secondary btn-sm" id="btn-sync-ads" style="display:inline-flex;align-items:center;gap:6px;">
+            مزامنة الصرف والـ ROAS الآن
+          </button>
+          <button type="button" onclick="openConnectAdModal()" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;">
+            ➕ ربط حساب إعلاني جديد
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick KPI Stats -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
+        <div class="card" style="margin:0;padding:18px;">
+          <span style="font-size:12px;color:#a1a1aa;">الحسابات الإعلانية المتصلة</span>
+          <h3 id="ads-stat-accounts" style="font-size:24px;font-weight:800;color:#fff;margin:6px 0 0;">0</h3>
+        </div>
+        <div class="card" style="margin:0;padding:18px;">
+          <span style="font-size:12px;color:#a1a1aa;">إجمالي الصرف المدار (EGP)</span>
+          <h3 id="ads-stat-spend" style="font-size:24px;font-weight:800;color:#10b981;margin:6px 0 0;">0 EGP</h3>
+        </div>
+        <div class="card" style="margin:0;padding:18px;">
+          <span style="font-size:12px;color:#a1a1aa;">متوسط العائد الإعلاني (ROAS)</span>
+          <h3 id="ads-stat-roas" style="font-size:24px;font-weight:800;color:#8b5cf6;margin:6px 0 0;">0x</h3>
+        </div>
+        <div class="card" style="margin:0;padding:18px;">
+          <span style="font-size:12px;color:#a1a1aa;">حالة المزامنة السحابية</span>
+          <h3 style="font-size:15px;font-weight:700;color:#34d399;margin:8px 0 0;">نشط وتلقائي (Active) ✅</h3>
+        </div>
+      </div>
+
+      <!-- Connected Accounts Table -->
+      <div class="card">
+        <div class="card-title">قائمة الحسابات الإعلانية المتصلة للعملاء</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:right;">
+            <thead>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:#a1a1aa;">
+                <th style="padding:12px 14px;">المنصة</th>
+                <th style="padding:12px 14px;">العميل</th>
+                <th style="padding:12px 14px;">اسم ومعرف الحساب</th>
+                <th style="padding:12px 14px;">العملة</th>
+                <th style="padding:12px 14px;">الحالة</th>
+                <th style="padding:12px 14px;">آخر مزامنة</th>
+                <th style="padding:12px 14px;text-align:center;">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="adAccountsTableBody">
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:#a1a1aa;">جاري تحميل الحسابات الإعلانية...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Payment & InstaPay Settings Tab -->
+    <div id="tab-payment-settings" class="tab-content">
+      <div class="card" style="max-width: 650px;">
+        <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>⚡ إعدادات الدفع وتحويلات إنستاباي (InstaPay & Gateway)</span>
+          <span class="badge badge-accent">Payments Setup</span>
+        </div>
+        <p style="font-size: 13px; color: #a1a1aa; margin: 0 0 20px;">
+          هذه البيانات تظهر تلقائياً في بوابة العميل عند اختيار السداد عبر إنستاباي مع توليد QR Code ديناميكي.
+        </p>
+
+        <form id="paymentSettingsForm" onsubmit="handlePaymentSettingsSubmit(event)">
+          <div class="input-group">
+            <label>عنوان إنستاباي المباشر (InstaPay IPA / Address) *</label>
+            <input type="text" id="set-instapay-ipa" placeholder="pragency@instapay" required dir="ltr" style="font-family: monospace; font-weight: 700;" />
+            <span style="font-size: 11px; color: #71717a; display: block; margin-top: 4px;">مثال: yourname@instapay أو الرقم المسجل بالشبكة.</span>
+          </div>
+
+          <div class="input-group">
+            <label>اسم الحساب البنكي / المستلم (Account Name) *</label>
+            <input type="text" id="set-instapay-name" placeholder="PR Agency Egypt" required />
+            <span style="font-size: 11px; color: #71717a; display: block; margin-top: 4px;">يظهر للعميل ليتأكد من صحة المستلم قبل إتمام التحويل.</span>
+          </div>
+
+          <div class="input-group">
+            <label>معرّف تاجر Apple Pay (Merchant ID) - اختياري</label>
+            <input type="text" id="set-apple-pay-merchant" placeholder="merchant.com.pragency.portal" dir="ltr" style="font-family: monospace;" />
+            <span style="font-size: 11px; color: #71717a; display: block; margin-top: 4px;">مطلوب عند تفعيل شهادات Apple Pay المباشرة على Safari.</span>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+              💾 حفظ إعدادات إنستاباي
+            </button>
+            <span id="paymentSettingsSaveStatus" style="font-size: 13px; font-weight: 700;"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3.45. Workflows Automation Dashboard -->
+    <div id="tab-workflows" class="tab-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div>
+          <h2 style="margin:0 0 4px;font-size:20px;display:flex;align-items:center;gap:8px;">
+            <span>محرك الأتمتة السحابي (Workflows)</span>
+            <span class="badge badge-accent" style="font-size:11px;">Native & AI-Powered</span>
+          </h2>
+          <span style="font-size:13px;color:#a1a1aa;">إدارة مسارات العمل المؤتمتة متعددة المراحل بالذكاء الاصطناعي وتتبع سجل التنفيذ الحي.</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="loadWorkflowsData()" class="btn btn-secondary btn-sm">🔄 تحديث</button>
+          <button type="button" onclick="openCreateWorkflowModal()" class="btn btn-sm" style="background:linear-gradient(135deg, #10b981, #059669);">
+            ➕ إنشاء سير عمل جديد (Workflow)
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKFLOWS LIST CARDS -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:16px;margin-bottom:28px;" id="workflowsListContainer">
+        <!-- Injected via JS -->
+      </div>
+
+      <!-- EXECUTION LOGS TABLE -->
+      <div class="table-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <h3 style="margin:0;font-size:16px;display:flex;align-items:center;gap:8px;">
+            <span>📜 سجل التنفيذ الحي (Execution History)</span>
+          </h3>
+          <span style="font-size:12px;color:#a1a1aa;">آخر 20 عملية تشغيل</span>
+        </div>
+        <div class="table-responsive">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;color:#a1a1aa;">
+                <th style="padding:10px 12px;">سير العمل</th>
+                <th style="padding:10px 12px;">الحدث المشغّل</th>
+                <th style="padding:10px 12px;">الحالة</th>
+                <th style="padding:10px 12px;">تفاصيل الخطوات</th>
+                <th style="padding:10px 12px;">وقت التنفيذ</th>
+              </tr>
+            </thead>
+            <tbody id="workflowLogsTableBody">
+              <tr><td colspan="5" style="text-align:center;padding:20px;color:#71717a;">جاري تحميل سجلات التنفيذ...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+        <!-- Tab: Skills Engine (77 Active Marketing & Creative Skills) -->
+    <div id="tab-skills" class="tab-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2 style="margin:0 0 4px;font-size:20px;display:flex;align-items:center;gap:10px;">
+            <span>🧠 محرك المهارات الذكي (Agent Skills Hub)</span>
+            <span class="badge badge-accent" id="activeSkillsBadge" style="font-size:12px;background:rgba(168,85,247,0.2);color:#d8b4fe;border:1px solid rgba(168,85,247,0.4);">المهارات النشطة: 77</span>
+          </h2>
+          <span style="font-size:13px;color:#a1a1aa;">تكامل عميق لـ 77 مهارة تسويقية وإبداعية وتحكيمية (Skill Arena & YouTube) مدمجة في مسارات المبيعات والمهام اليومية والاستراتيجيات.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" id="skillsFilterSearch" placeholder="بحث في المهارات..." oninput="handleSkillsFilterSearch()" style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:12px;width:180px;" />
+          <button type="button" onclick="loadSkillsCatalog()" class="btn btn-secondary btn-sm">🔄 تحديث المهارات</button>
+        </div>
+      </div>
+
+      <!-- Categories Pills -->
+      <div id="skillsCategoriesBar" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:6px;">
+        <button type="button" class="btn btn-sm btn-category-pill active" onclick="filterSkillsCategory('all', this)" style="background:rgba(168,85,247,0.25);color:#fff;border:1px solid rgba(168,85,247,0.5);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          الكل (77)
+        </button>
+        <button type="button" class="btn btn-sm btn-category-pill" onclick="filterSkillsCategory('Sales', this)" style="background:rgba(255,255,255,0.05);color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          المبيعات والأوتريتش (12)
+        </button>
+        <button type="button" class="btn btn-sm btn-category-pill" onclick="filterSkillsCategory('Creative', this)" style="background:rgba(255,255,255,0.05);color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          الإبداع والإعلانات (20)
+        </button>
+        <button type="button" class="btn btn-sm btn-category-pill" onclick="filterSkillsCategory('YouTube', this)" style="background:rgba(255,255,255,0.05);color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          يوتيوب والفيديو (11)
+        </button>
+        <button type="button" class="btn btn-sm btn-category-pill" onclick="filterSkillsCategory('Quality & Decision', this)" style="background:rgba(255,255,255,0.05);color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          القرارات والأرينا (16)
+        </button>
+        <button type="button" class="btn btn-sm btn-category-pill" onclick="filterSkillsCategory('SEO & Technical', this)" style="background:rgba(255,255,255,0.05);color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">
+          السيو والأنظمة (18)
+        </button>
+      </div>
+
+      <!-- Skills Grid Container -->
+      <div id="skillsGridContainer" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:#a1a1aa;">جاري تحميل محرك المهارات... ⏳</div>
+      </div>
+    </div>
+
+    <!-- 3.5. Invoices Tab -->
+    <div id="tab-invoices" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>إصدار فاتورة جديدة للعميل</span>
+          <span class="badge badge-accent">Billing & Finance</span>
+        </div>
+        <form id="createInvoiceForm" onsubmit="handleCreateInvoice(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>كود العميل (Client ID) *</label>
+              <input type="text" id="inv-clientId" placeholder="client_xxx" required/>
+            </div>
+            <div class="input-group">
+              <label>المبلغ *</label>
+              <input type="number" step="0.01" id="inv-amount" placeholder="15000" required/>
+            </div>
+            <div class="input-group">
+              <label>العملة</label>
+              <select id="inv-currency">
+                <option value="EGP">EGP (جنيه مصري)</option>
+                <option value="SAR">SAR (ريال سعودي)</option>
+                <option value="AED">AED (درهم إماراتي)</option>
+                <option value="USD">USD ($)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="input-group">
+              <label>تاريخ الاستحقاق *</label>
+              <input type="date" id="inv-dueDate" required/>
+            </div>
+            <div class="input-group">
+              <label>رقم الفاتورة (اختياري - سيتم توليده تلقائياً)</label>
+              <input type="text" id="inv-number" placeholder="INV-2026-001"/>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>ملاحظات وبنود الفاتورة</label>
+            <textarea id="inv-notes" rows="2" placeholder="باقة إدارة السوشيال ميديا والحملات الإعلانية لشهر نوفمبر"></textarea>
+          </div>
+          <button type="submit" class="btn">🧾 إصدار الفاتورة</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">سجل الفواتير والتحصيل</div>
+        <table>
+          <thead>
+            <tr>
+              <th>رقم الفاتورة</th>
+              <th>العميل</th>
+              <th>المبلغ</th>
+              <th>تاريخ الاستحقاق</th>
+              <th>الحالة</th>
+              <th>تاريخ السداد</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted)">جارٍ تحميل الفواتير...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. Sales CRM Tab (Twenty CRM Style with Kanban Pipeline) -->
+    <div id="tab-sales" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <div>
+            <span>مبيعات CRM</span>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-mic" id="voiceBtn" onclick="toggleVoiceRecording()">🎙️ تفريغ متابعة صوتية AI</button>
+            <button class="btn" onclick="openAddLeadModal()">+ إضافة Lead جديد</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-sm btn-secondary" id="btn-view-kanban" onclick="switchSalesView('kanban')" style="background:var(--accent);">عرض خط الأنابيب</button>
+            <button class="btn btn-sm btn-secondary" id="btn-view-table" onclick="switchSalesView('table')">عرض الجدول (Data Grid)</button>
+          </div>
+          <span id="voiceStatus" style="font-size:13px;color:var(--accent);"></span>
+        </div>
+
+        <!-- Kanban Board View -->
+        <div id="sales-kanban-view" class="kanban-board">
+          <!-- 1. New Leads Column -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">📥 عملاء جدد <span class="kanban-col-badge" id="kb-count-new">0</span></span>
+            </div>
+            <div class="kanban-cards-wrapper" id="kb-cards-new">
+              <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:20px;">جارٍ التحميل...</div>
+            </div>
+          </div>
+
+          <!-- 2. Contacted Column -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">📞 جاري التواصل <span class="kanban-col-badge" id="kb-count-contacted">0</span></span>
+            </div>
+            <div class="kanban-cards-wrapper" id="kb-cards-contacted"></div>
+          </div>
+
+          <!-- 3. Meeting / Proposal Column -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">🤝 عرض سعر / اجتماع <span class="kanban-col-badge" id="kb-count-proposal">0</span></span>
+            </div>
+            <div class="kanban-cards-wrapper" id="kb-cards-proposal"></div>
+          </div>
+
+          <!-- 4. Won / Closed Column -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title" style="color:var(--success)">تم التعاقد <span class="kanban-col-badge" id="kb-count-won">0</span></span>
+            </div>
+            <div class="kanban-cards-wrapper" id="kb-cards-won"></div>
+          </div>
+        </div>
+
+        <!-- Table View (Hidden by default) -->
+        <div id="sales-table-view" style="display:none;margin-top:16px;">
+          <table>
+            <thead>
+              <tr>
+                <th>تاريخ الدخول</th>
+                <th>اسم العميل</th>
+                <th>المشروع</th>
+                <th>رقم الهاتف</th>
+                <th>المصدر</th>
+                <th>تقييم الـ Lead</th>
+                <th>مسؤول المبيعات</th>
+                <th>المرحلة</th>
+                <th>إجراءات / تفاصيل AI</th>
+              </tr>
+            </thead>
+            <tbody id="salesTableBody">
+              <tr><td colspan="9" style="text-align:center;color:var(--text-muted)">جارٍ تحميل الـ Leads...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Sales Automation & Sequences Sub-section -->
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div>
+              <h3 style="font-size:16px;font-weight:700;">⚙️ مسارات الأتمتة والمتابعة التلقائية (Sales Sequences)</h3>
+              <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">تفعيل سلاسل تواصل آلية (Email / WhatsApp) فور تحول العميل إلى مرحلة معينة</p>
+            </div>
+            <button class="btn btn-sm" onclick="openCreateSequenceModal()">+ إنشاء مسار أتمتة جديد</button>
+          </div>
+          <div id="salesSequencesContainer" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:14px;">
+            <div style="color:var(--text-muted);font-size:13px;">جارٍ تحميل مسارات الأتمتة...</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. RBAC & Security Permissions Matrix Tab -->
+    <div id="tab-permissions" class="tab-content">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span style="font-size:18px;font-weight:800;">🔐 مصفوفة الصلاحيات الديناميكية (Dynamic RBAC Permissions Matrix)</span>
+            <div style="font-size:12px;color:var(--text-muted);font-weight:normal;margin-top:4px">
+              التحكم الحي بصلاحيات كل دور وظيفي. التغييرات تُطبق فورياً وتُفرض على مستوى الـ API Middleware.
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveAllRbacMatrix()" id="saveRbacBtn">💾 حفظ وتطبيق الصلاحيات</button>
+        </div>
+
+        <div style="overflow-x:auto;margin-top:16px;">
+          <table class="matrix-table" style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;">
+                <th style="padding:12px 14px;">الدور الوظيفي (Role)</th>
+                <th style="padding:12px 14px;text-align:center;">اعتماد الأصول والتصاميم<br><span style="font-size:11px;color:var(--text-muted);">can_approve_assets</span></th>
+                <th style="padding:12px 14px;text-align:center;">عرض المالية والفواتير<br><span style="font-size:11px;color:var(--text-muted);">can_view_financials</span></th>
+                <th style="padding:12px 14px;text-align:center;">إدارة أعضاء الفريق<br><span style="font-size:11px;color:var(--text-muted);">can_manage_team</span></th>
+                <th style="padding:12px 14px;text-align:center;">إدارة حسابات العملاء<br><span style="font-size:11px;color:var(--text-muted);">can_manage_clients</span></th>
+                <th style="padding:12px 14px;text-align:center;">سجل المراقبة والتدقيق<br><span style="font-size:11px;color:var(--text-muted);">can_view_audit</span></th>
+                <th style="padding:12px 14px;text-align:center;">إدارة المهام وتحديثها<br><span style="font-size:11px;color:var(--text-muted);">can_manage_tasks</span></th>
+              </tr>
+            </thead>
+            <tbody id="dynamicRbacTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">جاري تحميل مصفوفة الصلاحيات...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:20px;padding:16px;background:rgba(139, 92, 246, 0.08);border:1px dashed var(--accent);border-radius:10px;font-size:13px;line-height:1.7;">
+          <strong>كيف تعمل الحماية؟</strong><br>
+          كل طلب API يمر عبر حارس البوابة <code>functions/api/team/_middleware.js</code> أو مصادقة العميل <code>functions/api/portal/auth.js</code>. إذا حاول مصمم الوصول للفواتير أو سجل المراقبة، يُرد عليه مباشرة بـ <code>403 Forbidden</code> ويتم تسجيل محاولة الدخول غير المصرح بها فوراً في سجل التدقيق (Audit Trail).
+        </div>
+      </div>
+    </div>
+
+  
+  <!-- MODAL: ADD TASK -->
+  <div id="addTaskModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;">
+    <div class="card" style="width:500px;max-width:90%;margin:0;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.15);">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <span style="font-size:18px;">➕ إضافة مهمة جديدة</span>
+        <button onclick="closeAddTaskModal()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">المشروع التابع له</label>
+          <select id="taskProjectSelect" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+            <option value="">جاري تحميل المشاريع...</option>
+          </select>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="font-size:12px;color:var(--text-muted);margin:0;">عنوان وتفاصيل المهمة</label>
+            <button type="button" onclick="openAICopywriterModal('task')" style="background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+              ✨ كتابة بوست بالذكاء الاصطناعي
+            </button>
+          </div>
+          <input type="text" id="taskTitleInput" class="form-control" placeholder="مثال: تجهيز أصول الحملة الإعلانية..." style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+        <!-- 🤖 مساعد الإبداع (Creative Assistant) -->
+        <div style="background:rgba(139,92,246,0.07);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:12px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:700;color:#c4b5fd;display:flex;align-items:center;gap:6px;">
+              🤖 مساعد الإبداع (Creative Co-Pilot)
+            </span>
+            <div style="display:flex;gap:6px;">
+              <button type="button" id="btn-creative-brief" onclick="generateTaskBrief()" style="background:rgba(139,92,246,0.2);color:#ddd6fe;border:1px solid rgba(139,92,246,0.4);padding:3px 8px;font-size:11px;border-radius:5px;cursor:pointer;font-weight:600;">
+                📋 بريف إبداعي
+              </button>
+              <button type="button" id="btn-creative-video" onclick="generateTaskVideoScript()" style="background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.4);padding:3px 8px;font-size:11px;border-radius:5px;cursor:pointer;font-weight:600;">
+                🎬 سكريبت يوتيوب
+              </button>
+            </div>
+          </div>
+          <div id="creativeAssistantOutput" style="display:none;background:#0d0e15;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px;font-size:11px;line-height:1.6;color:#e4e4e7;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
+          <div id="creativeAssistantActions" style="display:none;justify-content:flex-end;gap:6px;margin-top:8px;">
+            <button type="button" onclick="copyCreativeOutput()" style="background:rgba(255,255,255,0.08);color:#fff;border:none;padding:3px 8px;font-size:10px;border-radius:4px;cursor:pointer;">
+              📋 نسخ
+            </button>
+            <button type="button" onclick="applyCreativeToTask()" style="background:#8b5cf6;color:#fff;border:none;padding:3px 8px;font-size:10px;border-radius:4px;cursor:pointer;">
+              📥 إدراج في المهمة
+            </button>
+          </div>
+        </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">الأولوية</label>
+            <select id="taskPrioritySelect" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+              <option value="low">منخفضة (Low)</option>
+              <option value="medium" selected>متوسطة (Medium)</option>
+              <option value="high">عالية (High)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">الحالة المبدئية</label>
+            <select id="taskStatusSelect" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+              <option value="planned" selected>مهام اليوم </option>
+              <option value="backlog">صندوق المؤجلات </option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">الساعات المقدرة</label>
+            <input type="number" id="taskEstimateInput" value="2" step="0.5" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">تاريخ التخطيط</label>
+            <input type="date" id="taskPlannedDateInput" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">
+        <button class="btn btn-secondary" onclick="closeAddTaskModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitCreateTask()">حفظ المهمة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LOG TIME -->
+  <div id="logTimeModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;">
+    <div class="card" style="width:450px;max-width:90%;margin:0;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.15);">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <span style="font-size:18px;">تسجيل ساعات عمل على المهمة</span>
+        <button onclick="closeLogTimeModal()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <input type="hidden" id="logTimeTaskId" />
+      <div style="font-size:13px;color:var(--accent);margin-bottom:14px;" id="logTimeTaskTitle"></div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">عدد الساعات</label>
+          <input type="number" id="logHoursInput" value="1" step="0.25" min="0.25" class="form-control" style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">ملاحظات الإنجاز</label>
+          <textarea id="logNotesInput" class="form-control" rows="3" placeholder="ما الذي تم إنجازه خلال هذه الساعات..." style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">
+        <button class="btn btn-secondary" onclick="closeLogTimeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitLogTime()">تسجيل الساعات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PUBLISH MY DAY -->
+  <div id="publishDayModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;">
+    <div class="card" style="width:520px;max-width:90%;margin:0;box-shadow:0 25px 50px -12px rgba(139,92,246,0.3);border:1px solid rgba(139,92,246,0.4);">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="font-size:18px;">اعتماد ونشر إنجازات اليوم</span>
+        <button onclick="closePublishDayModal()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">
+        سيتم تجميع كافة الساعات والمهام المنجزة وتوثيقها في سجل الوكالة اليومي مع إشعار الفريق.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;">ملخص إنجاز اليوم (Daily Summary)</label>
+          <textarea id="publishSummaryInput" class="form-control" rows="4" placeholder="مثال: تم إنهاء التصاميم الأولية واعتماد الألوان مع العميل، وتجهيز خطة إطلاق الحملة..." style="width:100%;padding:10px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">
+        <button class="btn btn-secondary" onclick="closePublishDayModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitPublishDay()" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">تأكيد ونشر اليوم 🎉</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+  <!-- TEAM MEMBER MODAL (ADD / EDIT) -->
+  <div id="teamMemberModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="teamModalTitle" style="font-size:18px;font-weight:700;">إضافة عضو جديد للفريق</h3>
+        <button class="modal-close" onclick="closeTeamModal()">&times;</button>
+      </div>
+      <form id="teamMemberForm" onsubmit="handleSaveTeamMember(event)">
+        <input type="hidden" id="tm-id"/>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="input-group">
+            <label>الاسم بالكامل *</label>
+            <input type="text" id="tm-name" placeholder="مثال: يوسف أحمد" required/>
+          </div>
+          <div class="input-group">
+            <label>البريد الإلكتروني المهني *</label>
+            <input type="email" id="tm-email" placeholder="member@pragency.com" required dir="ltr"/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="input-group">
+            <label>الدور الوظيفي (Role) *</label>
+            <select id="tm-role" required>
+              <option value="Designer">مصمم (Designer)</option>
+              <option value="Video Editor">مونتير (Video Editor)</option>
+              <option value="Copywriter">كاتب محتوى (Copywriter)</option>
+              <option value="Strategist">مخطط استراتيجي (Strategist)</option>
+              <option value="Account Manager">مدير حسابات (Account Manager)</option>
+              <option value="Sales">مسؤول مبيعات (Sales)</option>
+              <option value="Super Admin">مدير نظام (Super Admin)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>القسم (Department)</label>
+            <select id="tm-department">
+              <option value="Creative">Creative</option>
+              <option value="Client Success">Client Success</option>
+              <option value="Strategy">Strategy</option>
+              <option value="Business Dev">Business Dev</option>
+              <option value="Operations">Operations</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="input-group">
+            <label>رقم الهاتف (WhatsApp)</label>
+            <input type="tel" id="tm-phone" placeholder="+2010xxxxxxxx" dir="ltr"/>
+          </div>
+          <div class="input-group">
+            <label>الحالة (Status)</label>
+            <select id="tm-active">
+              <option value="1">نشط (Active)</option>
+              <option value="0">معطل (Inactive)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group" id="tm-password-group">
+          <label id="tm-password-label">كلمة المرور *</label>
+          <input type="password" id="tm-password" placeholder="••••••••" dir="ltr"/>
+          <small id="tm-password-help" style="display:none;color:var(--text-muted);font-size:11px;margin-top:4px;">اترك الحقل فارغاً إذا كنت لا ترغب بتغيير كلمة المرور الحالية.</small>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTeamModal()">إلغاء</button>
+          <button type="submit" class="btn" id="tm-submit-btn">حفظ وتفعيل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="deleteConfirmModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:440px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">تأكيد حذف عضو الفريق</h3>
+      <p id="deleteConfirmMessage" style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">هل أنت متأكد من رغبتك في حذف هذا العضو نهائياً من النظام؟</p>
+      <div style="display:flex;justify-content:center;gap:12px;">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">تراجع</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn" onclick="executeDeleteTeamMember()">نعم، احذف العضو</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Lead Detail & AI Summarizer Modal -->
+  <div class="modal-overlay" id="leadDetailModal">
+    <div class="modal-card" style="max-width:650px;">
+      <div class="modal-header">
+        <h3 style="font-size:18px;font-weight:800;" id="leadModalTitle">تفاصيل العميل المحتمل والذكاء الاصطناعي</h3>
+        <button class="modal-close" onclick="closeLeadModal()">✕</button>
+      </div>
+      <div id="leadModalBody">
+        <div class="input-group">
+          <label>ملاحظات المكالمة / التسجيل الصوتي المفرغ (Notes / Voice-to-Text)</label>
+          <textarea id="leadModalNotes" rows="4" placeholder="اكتب أو انسخ تفريغ المكالمة هنا لتلخيصه بالذكاء الاصطناعي..."></textarea>
+        </div>
+        
+        <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-sm btn-mic" id="btnSummarizeAI" onclick="triggerAISummarizer()">
+              ✨ تلخيص بالذكاء الاصطناعي
+            </button>
+            <button type="button" class="btn btn-sm" onclick="openAICopywriterModal('lead')" style="background:rgba(139,92,246,0.2);color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);font-size:12px;cursor:pointer;">
+              ✨ كتابة رسالة متابعة بالـ AI
+            </button>
+          </div>
+          <span id="aiSummarizerStatus" style="font-size:12px;color:var(--accent);"></span>
+        </div>
+
+        <!-- AI Structured Output Box -->
+        <div id="aiSummaryResultBox" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:16px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px;">التحليل الهيكلي المستخرج بالذكاء الاصطناعي:</div>
+          <div style="margin-bottom:8px;font-size:13px;"><strong>🎯 احتياجات العميل (Client Needs):</strong> <span id="aiResNeeds" style="color:#fff;"></span></div>
+          <div style="margin-bottom:8px;font-size:13px;"><strong>⚠️ الاعتراضات / الشروط (Objections):</strong> <span id="aiResObjections" style="color:#f59e0b;"></span></div>
+          <div style="margin-bottom:8px;font-size:13px;"><strong>الخطوة القادمة المقترحة:</strong> <span id="aiResNextStep" style="color:#10b981;"></span></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+          <button class="btn btn-secondary" onclick="closeLeadModal()">إغلاق</button>
+          <button class="btn" onclick="saveLeadNotesFromModal()">حفظ الملاحظات والمتابعة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Sales Sequence Modal -->
+  <div class="modal-overlay" id="createSequenceModal">
+    <div class="modal-card" style="max-width:550px;">
+      <div class="modal-header">
+        <h3 style="font-size:18px;font-weight:800;">إنشاء مسار أتمتة جديد (Sales Sequence)</h3>
+        <button class="modal-close" onclick="closeSequenceModal()">✕</button>
+      </div>
+      <form onsubmit="handleCreateSequence(event)">
+        <div class="input-group">
+          <label>اسم المسار</label>
+          <input type="text" id="seqName" required placeholder="مثال: سلسلة الترحيب والمتابعة السريعة"/>
+        </div>
+        <div class="input-group">
+          <label>المرحلة المحفزة (Trigger Pipeline Stage)</label>
+          <select id="seqTriggerStage" required>
+            <option value="new">📥 عملاء جدد (New)</option>
+            <option value="contacted" selected>📞 جاري التواصل (Contacted)</option>
+            <option value="proposal">🤝 عرض سعر / اجتماع (Proposal)</option>
+            <option value="won">تم التعاقد</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>خطوة 1: القناة والتأخير</label>
+          <div style="display:flex;gap:10px;">
+            <select id="step1Channel" style="flex:1;">
+              <option value="email">📧 بريد إلكتروني (Email)</option>
+              <option value="whatsapp">💬 واتساب (WhatsApp)</option>
+            </select>
+            <input type="number" id="step1Delay" value="0" placeholder="التأخير بالساعات" style="width:120px;"/>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>محتوى الخطوة 1</label>
+          <textarea id="step1Content" rows="2" placeholder="مرحباً بك، سعداء بالتواصل معك لمناقشة مشروعك..."></textarea>
+        </div>
+        
+        <div class="input-group">
+          <label>خطوة 2: القناة والتأخير</label>
+          <div style="display:flex;gap:10px;">
+            <select id="step2Channel" style="flex:1;">
+              <option value="whatsapp" selected>💬 واتساب (WhatsApp)</option>
+              <option value="email">📧 بريد إلكتروني (Email)</option>
+            </select>
+            <input type="number" id="step2Delay" value="24" placeholder="التأخير بالساعات" style="width:120px;"/>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>محتوى الخطوة 2</label>
+          <textarea id="step2Content" rows="2" placeholder="أهلاً بك مرة أخرى، أحببنا مشاركة نموذج أعمالنا السابقة في مجالك..."></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeSequenceModal()">إلغاء</button>
+          <button type="submit" class="btn">حفظ وتفعيل المسار</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/assets/js/phase4-engine.js?v=104"></script>
+
+  
+
+  <!-- AI Marketing Copywriter Modal -->
+  <div id="aiCopywriterModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);z-index:10005;align-items:center;justify-content:center;">
+    <div class="card" style="width:550px;max-width:92%;margin:0;box-shadow:0 30px 60px rgba(0,0,0,0.8);border:1px solid rgba(139,92,246,0.3);background:#0d0e15;">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="font-size:16px;font-weight:800;color:#c4b5fd;display:flex;align-items:center;gap:6px;">
+          ✨ كاتب المحتوى التسويقي بالذكاء الاصطناعي (AI Copywriter)
+        </span>
+        <button onclick="closeAICopywriterModal()" style="background:none;border:none;color:#a1a1aa;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">موضوع المنشور أو الخدمة أو العرض *</label>
+          <input type="text" id="ai-topic-input" class="form-control" placeholder="مثال: خصم 30% على باقة إدارة الحملات الإعلانية ومحتوى السوشيال ميديا" style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">المنصة المستهدفة</label>
+            <select id="ai-platform-select" class="form-control" style="width:100%;padding:10px;background:#151520;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+              <option value="Instagram">Instagram</option>
+              <option value="Facebook">Facebook</option>
+              <option value="TikTok">TikTok</option>
+              <option value="LinkedIn">LinkedIn</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">نبرة الصوت (Tone)</label>
+            <select id="ai-tone-select" class="form-control" style="width:100%;padding:10px;background:#151520;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+              <option value="Sales">بيعي جذاب ومحفز (Sales)</option>
+              <option value="Professional">احترافي ومؤسسي (Professional)</option>
+              <option value="Funny">عفوي وخفيف الظل (Funny)</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btn-run-ai-copy" onclick="runAICopywriter()" class="btn" style="width:100%;padding:10px;margin-top:6px;background:linear-gradient(135deg, #8b5cf6, #6366f1);color:#fff;font-weight:700;border:none;border-radius:8px;cursor:pointer;">
+          🚀 توليد الكابشن والهاشتاجات الآن
+        </button>
+
+        <div id="ai-result-area" style="display:none;margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="font-size:12px;color:#34d399;font-weight:700;">الكابشن المولد بالذكاء الاصطناعي:</label>
+            <button onclick="copyAICaption()" style="background:#27272a;color:#fff;border:1px solid #3f3f46;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;">
+              📋 نسخ النص
+            </button>
+          </div>
+          <textarea id="ai-output-caption" rows="7" style="width:100%;padding:12px;background:rgba(0,0,0,0.6);color:#e4e4e7;border:1px solid rgba(139,92,246,0.3);border-radius:8px;font-size:13px;line-height:1.7;white-space:pre-wrap;"></textarea>
+          
+          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end;">
+            <button id="btn-insert-ai-caption" onclick="insertAICaptionToTarget()" class="btn btn-sm" style="background:#10b981;color:#fff;border:none;border-radius:6px;font-weight:700;padding:6px 14px;cursor:pointer;">
+              ➕ إدراج في المهمة / الرسالة
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+
+  <!-- Connect Ad Account Modal -->
+  <div id="connectAdModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:10006;align-items:center;justify-content:center;">
+    <div class="card" style="width:480px;max-width:92%;margin:0;border:1px solid rgba(139,92,246,0.3);background:#0d0e15;">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="font-size:16px;font-weight:800;color:#fff;">➕ ربط حساب إعلاني جديد</span>
+        <button onclick="closeConnectAdModal()" style="background:none;border:none;color:#a1a1aa;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+
+      <form id="connectAdForm" onsubmit="handleConnectAdSubmit(event)" style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">العميل *</label>
+          <select id="ad-client-select" class="form-control" required style="width:100%;padding:10px;background:#151520;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+            <option value="">اختر العميل...</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">المنصة الإعلانية *</label>
+          <select id="ad-platform-select" class="form-control" required style="width:100%;padding:10px;background:#151520;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;">
+            <option value="meta">Meta Ads (Facebook & Instagram)</option>
+            <option value="google">Google Ads (Search & Performance Max)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">معرّف الحساب الإعلاني (Account ID) *</label>
+          <input type="text" id="ad-account-id" placeholder="act_1234567890 أو 123-456-7890" required dir="ltr" style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;color:#a1a1aa;margin-bottom:6px;">اسم الحساب التوضيحي</label>
+          <input type="text" id="ad-account-name" placeholder="مثال: Meta Business Manager - Growth" style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;" />
+        </div>
+
+        <button type="submit" class="btn" style="width:100%;padding:12px;margin-top:6px;background:linear-gradient(135deg, #8b5cf6, #6366f1);color:#fff;font-weight:700;border:none;border-radius:8px;cursor:pointer;">
+          🔗 تأكيد الربط والمزامنة السحابية
+        </button>
+      </form>
+    </div>
+  </div>
+
+  
+
+  <script src="/js/admin.js?v=2026" defer></script>
+</body>
+</html>

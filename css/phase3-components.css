@@ -1,0 +1,156 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PHASE 3 COMPONENTS: GLASSY LOGIN FORM & OTP VERIFICATION V2
+══════════════════════════════════════════════════════════════════════════ */
+
+/* Neon Glass Glow Container */
+.glassy-portal-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(15, 12, 24, 0.72) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 28px !important;
+  padding: 44px 36px !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(139, 92, 246, 0.25), 0 0 50px rgba(139, 92, 246, 0.18) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glassy-portal-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.25), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glassy-portal-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.glassy-input-wrap {
+  position: relative;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.glassy-input-wrap label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #c4b5fd;
+  margin-bottom: 8px;
+}
+
+.glassy-input-field {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  color: #fff !important;
+  font-family: inherit;
+  font-size: 14.5px;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.glassy-input-field:focus {
+  border-color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.glassy-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glassy-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 35px rgba(139, 92, 246, 0.6) !important;
+  background: linear-gradient(135deg, #9d75fa, #7c3aed) !important;
+}
+
+/* ── OTP VERIFICATION V2 COMPONENT ── */
+.otp-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  direction: ltr;
+  margin: 24px 0;
+}
+
+.otp-box {
+  width: 50px;
+  height: 58px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.otp-box:focus {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.45), inset 0 2px 4px rgba(0,0,0,0.2);
+  transform: scale(1.08) translateY(-2px);
+}
+
+.otp-box.filled {
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.otp-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.otp-timer {
+  color: #a1a1aa;
+}
+
+.otp-resend {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.otp-resend:hover {
+  text-decoration: underline;
+}

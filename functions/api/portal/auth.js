@@ -6,35 +6,97 @@
    • Strict Session Expiry (expiresIn: "30d")
 ═══════════════════════════════════════════════════════════════════════════ */
 
-// ── In-Memory Rate Limiter (Per IP / Email) ──────────────────────────────────
-const loginRateLimiter = new Map();
+import { logSystemAction } from '../../lib/audit.js';
 
-function checkRateLimit(clientIp, email) {
-  const key = `${clientIp}:${email}`;
-  const now = Date.now();
-  const record = loginRateLimiter.get(key) || { attempts: 0, blockedUntil: 0 };
+// ── Rate Limiter Engine (D1-Backed Persistent & In-Memory Hybrid) ─────────────
+const WINDOW_SECONDS = 900; // 15-minute block
+const MAX_ATTEMPTS = 5;
 
-  if (record.blockedUntil > now) {
-    const remainingSec = Math.ceil((record.blockedUntil - now) / 1000);
-    return { limited: true, remainingSec };
+async function checkRateLimitD1(db, clientIp, email) {
+  const normEmail = (email || '').trim().toLowerCase();
+  const key = `client:${clientIp}:${normEmail}`;
+  const now = Math.floor(Date.now() / 1000);
+
+  if (!db) return { limited: false };
+
+  try {
+    const record = await db.prepare(
+      'SELECT attempts, first_attempt_at, last_attempt_at, blocked_until FROM login_attempts WHERE ip = ?'
+    ).bind(key).first();
+
+    if (record) {
+      if (record.blocked_until && record.blocked_until > now) {
+        return { limited: true, remainingSec: record.blocked_until - now };
+      }
+      if (now - record.first_attempt_at > WINDOW_SECONDS) {
+        await db.prepare('DELETE FROM login_attempts WHERE ip = ?').bind(key).run();
+      }
+    }
+  } catch (e) {
+    console.warn('[Portal RateLimiter Pre-check]:', e.message);
   }
-  return { limited: false, record, key };
+  return { limited: false };
 }
 
-function recordFailedAttempt(clientIp, email) {
-  const key = `${clientIp}:${email}`;
-  const now = Date.now();
-  const record = loginRateLimiter.get(key) || { attempts: 0, blockedUntil: 0 };
-  record.attempts += 1;
-  if (record.attempts >= 5) {
-    record.blockedUntil = now + (15 * 60 * 1000); // 15-minute block
+async function recordFailedAttemptD1(db, clientIp, email) {
+  const normEmail = (email || '').trim().toLowerCase();
+  const key = `client:${clientIp}:${normEmail}`;
+  const now = Math.floor(Date.now() / 1000);
+
+  if (!db) return { attempts: 1, isBlocked: false };
+
+  try {
+    const record = await db.prepare(
+      'SELECT attempts, first_attempt_at FROM login_attempts WHERE ip = ?'
+    ).bind(key).first();
+
+    if (!record || (now - record.first_attempt_at > WINDOW_SECONDS)) {
+      await db.prepare(
+        'INSERT INTO login_attempts (ip, attempts, first_attempt_at, last_attempt_at, blocked_until) VALUES (?, 1, ?, ?, NULL) ON CONFLICT(ip) DO UPDATE SET attempts = 1, first_attempt_at = ?, last_attempt_at = ?, blocked_until = NULL'
+      ).bind(key, now, now, now, now).run();
+      return { attempts: 1, isBlocked: false };
+    } else {
+      const attemptsCount = record.attempts + 1;
+      if (attemptsCount > MAX_ATTEMPTS) {
+        const blockedUntil = now + WINDOW_SECONDS;
+        await db.prepare(
+          'UPDATE login_attempts SET attempts = ?, last_attempt_at = ?, blocked_until = ? WHERE ip = ?'
+        ).bind(attemptsCount, now, blockedUntil, key).run();
+
+        await logSystemAction(db, {
+          actor_id: 'anonymous',
+          actor_name: 'Blocked Client IP',
+          actor_role: 'system',
+          action: 'portal_login_rate_limited',
+          target_type: 'portal_auth',
+          target_id: key,
+          details: { reason: 'Exceeded 5 failed login attempts', attempts: attemptsCount, email: normEmail },
+          ip_address: clientIp
+        });
+
+        return { attempts: attemptsCount, isBlocked: true, remainingSec: WINDOW_SECONDS };
+      } else {
+        await db.prepare(
+          'UPDATE login_attempts SET attempts = ?, last_attempt_at = ? WHERE ip = ?'
+        ).bind(attemptsCount, now, key).run();
+        return { attempts: attemptsCount, isBlocked: false };
+      }
+    }
+  } catch (e) {
+    console.warn('[Portal RateLimiter Increment]:', e.message);
+    return { attempts: 1, isBlocked: false };
   }
-  loginRateLimiter.set(key, record);
-  return record.attempts;
 }
 
-function resetRateLimit(clientIp, email) {
-  loginRateLimiter.delete(`${clientIp}:${email}`);
+async function resetRateLimitD1(db, clientIp, email) {
+  const normEmail = (email || '').trim().toLowerCase();
+  const key = `client:${clientIp}:${normEmail}`;
+  if (!db) return;
+  try {
+    await db.prepare('DELETE FROM login_attempts WHERE ip = ?').bind(key).run();
+  } catch (e) {
+    console.warn('[Portal RateLimiter Reset]:', e.message);
+  }
 }
 
 // ── Secure Password Derivation (PBKDF2 / scrypt / bcrypt multi-scheme) ───────
@@ -135,11 +197,17 @@ export async function createToken(client, env) {
     sub: client.id,
     name: client.company_name,
     email: client.email,
+    token_type: 'client',
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + (86400 * 30),
     expiresIn: '30d' // 30-day session
   };
-  const str = btoa(JSON.stringify(payload));
+  const jsonBytes = new TextEncoder().encode(JSON.stringify(payload));
+  let binary = '';
+  for (let i = 0; i < jsonBytes.byteLength; i++) {
+    binary += String.fromCharCode(jsonBytes[i]);
+  }
+  const str = btoa(binary);
   const sigBuf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${str}.${secretKey}`));
   const sig = Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
   return `${str}.${sig}`;
@@ -153,8 +221,17 @@ export async function verifyToken(token, env) {
   const expectedSig = Array.from(new Uint8Array(expectedBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
   if (sig !== expectedSig) return null;
   try {
-    const payload = JSON.parse(atob(str));
+    const binary = atob(str);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const decodedText = new TextDecoder().decode(bytes);
+    const payload = JSON.parse(decodedText);
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    // Enforce token segregation: Admin tokens cannot access Client Portal data
+    if (payload.token_type && payload.token_type !== 'client') return null;
+    if (payload.role && !payload.token_type) return null;
     return payload;
   } catch (e) {
     return null;
@@ -198,12 +275,13 @@ export async function onRequestPost(context) {
 
     const normEmail = email.trim().toLowerCase();
 
-    // Rate Limiting Check (Brute force protection)
-    const rateCheck = checkRateLimit(clientIp, normEmail);
+    // Persistent & Distributed Rate Limiting Check
+    const rateCheck = await checkRateLimitD1(db, clientIp, normEmail);
     if (rateCheck.limited) {
       return new Response(JSON.stringify({
         success: false,
-        error: `تم تجاوز الحد المسموح لمحاولات تسجيل الدخول. تم حظر المحاولات مؤقتاً لحماية الحساب. يرجى المحاولة بعد ${rateCheck.remainingSec} ثانية.`,
+        error: `تم تجاوز الحد المسموح لمحاولات تسجيل الدخول (5 محاولات). تم حظر المحاولات مؤقتاً لمدة 15 دقيقة لحماية الحساب.`,
+        retry_after: rateCheck.remainingSec,
         rateLimited: true
       }), {
         status: 429,
@@ -216,34 +294,42 @@ export async function onRequestPost(context) {
 
     const client = await db.prepare('SELECT * FROM portal_clients WHERE email = ? AND active = 1').bind(normEmail).first();
     if (!client) {
-      const attempts = recordFailedAttempt(clientIp, normEmail);
-      const isBlocked = attempts >= 5;
+      const { attempts, isBlocked, remainingSec } = await recordFailedAttemptD1(db, clientIp, normEmail);
       return new Response(JSON.stringify({
         success: false,
-        error: isBlocked ? 'تم حظر المحاولات مؤقتاً بسبب تكرار المحاولات الخاطئة' : 'بيانات الدخول غير صحيحة أو الحساب غير مفعل',
+        error: isBlocked ? 'تم تجاوز الحد الأقصى لمحاولات تسجيل الدخول (5 محاولات). تم حظر المحاولات مؤقتاً لمدة 15 دقيقة لحماية الحساب.' : 'بيانات الدخول غير صحيحة أو الحساب غير مفعل',
+        remaining_attempts: Math.max(0, MAX_ATTEMPTS - attempts),
+        retry_after: isBlocked ? (remainingSec || WINDOW_SECONDS) : undefined,
         rateLimited: isBlocked
       }), {
         status: isBlocked ? 429 : 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          ...(isBlocked ? { 'Retry-After': String(remainingSec || WINDOW_SECONDS) } : {})
+        }
       });
     }
 
     const isValid = await verifyPassword(password.trim(), client.password_hash);
     if (!isValid) {
-      const attempts = recordFailedAttempt(clientIp, normEmail);
-      const isBlocked = attempts >= 5;
+      const { attempts, isBlocked, remainingSec } = await recordFailedAttemptD1(db, clientIp, normEmail);
       return new Response(JSON.stringify({
         success: false,
-        error: isBlocked ? 'تم حظر المحاولات مؤقتاً بعد 5 محاولات خاطئة لحماية الحساب' : 'كلمة المرور غير صحيحة',
+        error: isBlocked ? 'تم تجاوز الحد الأقصى لمحاولات تسجيل الدخول (5 محاولات). تم حظر المحاولات مؤقتاً لمدة 15 دقيقة لحماية الحساب.' : 'كلمة المرور غير صحيحة',
+        remaining_attempts: Math.max(0, MAX_ATTEMPTS - attempts),
+        retry_after: isBlocked ? (remainingSec || WINDOW_SECONDS) : undefined,
         rateLimited: isBlocked
       }), {
         status: isBlocked ? 429 : 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          ...(isBlocked ? { 'Retry-After': String(remainingSec || WINDOW_SECONDS) } : {})
+        }
       });
     }
 
     // Success -> Reset rate limit & generate token
-    resetRateLimit(clientIp, normEmail);
+    await resetRateLimitD1(db, clientIp, normEmail);
     const token = await createToken(client, env);
 
     return new Response(JSON.stringify({

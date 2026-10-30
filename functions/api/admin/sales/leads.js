@@ -138,6 +138,36 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
+
+    // If updating an existing lead:
+    if (body.id) {
+      const existing = await db.prepare('SELECT id FROM sales_leads WHERE id = ?').bind(body.id).first();
+      if (existing) {
+        const updates = [];
+        const uParams = [];
+        if (body.pipeline_stage) { updates.push('pipeline_stage = ?'); uParams.push(body.pipeline_stage); }
+        if (body.notes || body.challenge_notes) { updates.push('challenge_notes = ?'); uParams.push(body.notes || body.challenge_notes); }
+        if (body.name) { updates.push('name = ?'); uParams.push(body.name); }
+        if (body.phone) { updates.push('phone = ?'); uParams.push(body.phone); }
+        if (body.project_name) { updates.push('project_name = ?'); uParams.push(body.project_name); }
+        if (body.service_interested) { updates.push('service_interested = ?'); uParams.push(body.service_interested); }
+        if (body.budget_tier) { updates.push('budget_tier = ?'); uParams.push(body.budget_tier); }
+        if (body.assigned_sales_name) { updates.push('assigned_sales_name = ?'); uParams.push(body.assigned_sales_name); }
+        if (body.assigned_sales_id) { updates.push('assigned_sales_id = ?'); uParams.push(body.assigned_sales_id); }
+        if (body.next_followup_due) { updates.push('next_followup_due = ?'); uParams.push(body.next_followup_due); }
+        updates.push('updated_at = ?'); uParams.push(new Date().toISOString());
+        uParams.push(body.id);
+
+        if (updates.length > 1) {
+          await db.prepare(`UPDATE sales_leads SET ${updates.join(', ')} WHERE id = ?`).bind(...uParams).run();
+        }
+
+        return new Response(JSON.stringify({ success: true, updated: true, id: body.id }), {
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
+      }
+    }
+
     const {
       name,
       project_name,

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>خطة الهيمنة القانونية والنمو الرقمي 2026 | أ/ محمد مشورة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #090a10;
+      color: #f3f4f6;
+    }
+    
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 38px 48px;
+      background: radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.12) 0%, rgba(9, 10, 16, 1) 65%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .slide:last-child {
+      page-break-after: auto;
+    }
+
+    /* Decorative background lines */
+    .slide::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Top Bar */
+    .slide-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+    .brand-tag {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-tag span {
+      color: #c084fc;
+    }
+    .client-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: #facc15;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .slide-number {
+      font-size: 12px;
+      font-family: monospace;
+      color: #71717a;
+    }
+
+    /* Content Area */
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    
+    .slide-header {
+      margin-bottom: 22px;
+    }
+    .slide-category {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #a855f7;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .slide-title {
+      font-size: 26px;
+      font-weight: 900;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .slide-subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+    }
+    .feature-card.highlight {
+      background: rgba(139, 92, 246, 0.08);
+      border-color: rgba(139, 92, 246, 0.35);
+    }
+    .feature-card.gold {
+      background: rgba(212, 175, 55, 0.06);
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+    .card-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 8px 0;
+    }
+    .card-desc {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    /* Metric Box */
+    .metric-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 26px;
+      font-weight: 900;
+      color: #facc15;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    .slide-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .speaker-note-pill {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 10px;
+      border-radius: 6px;
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Cover Slide Specifics */
+    .cover-slide {
+      background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18) 0%, rgba(9, 10, 16, 1) 75%);
+      text-align: center;
+      justify-content: center;
+      gap: 30px;
+    }
+    .cover-title {
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .cover-title span {
+      background: linear-gradient(135deg, #c084fc, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cover-subtitle {
+      font-size: 18px;
+      color: #cbd5e1;
+      max-width: 780px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 1: COVER
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide cover-slide">
+    <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:10px;">
+      <span style="font-size:14px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.4);color:#fde047;padding:5px 16px;border-radius:24px;font-weight:800;">
+        ⚖️ ملف العرض الاستراتيجي الحصري 2026
+      </span>
+    </div>
+
+    <div>
+      <h1 class="cover-title">
+        استراتيجية الهيمنة القانونية والاستحواذ الرقمي<br>
+        <span>لمكتب الأستاذ محمد مشورة للمحاماة</span>
+      </h1>
+      <p class="cover-subtitle" style="margin-top:16px;">
+        خطة عملية متكاملة لتحويل 100+ رسالة أسبوعية إلى استشارات مدفوعة وتوكيلات كبرى عبر محتوى التريندات القانونية وقمع التحويل الفوري (InstaPay Funnel).
+      </p>
+    </div>
+
+    <div style="display:flex;justify-content:center;gap:36px;margin-top:20px;">
+      <div style="text-align:right;">
+        <span style="font-size:11px;color:#94a3b8;display:block;">مقدم إلى:</span>
+        <strong style="font-size:14px;color:#fff;">المستشار أ/ محمد مشورة (الجيزة)</strong>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+      <div style="text-align:right;">
+        <span style="font-size:11px;color:#94a3b8;display:block;">إعداد وتطوير:</span>
+        <strong style="font-size:14px;color:#c084fc;">PR Agency — وحدة نمو المكاتب القانونية</strong>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+      <div style="text-align:right;">
+        <span style="font-size:11px;color:#94a3b8;display:block;">تاريخ الإصدار:</span>
+        <strong style="font-size:14px;color:#fff;">أكتوبر 2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 2: DIAGNOSTIC & THE 100-MESSAGE OPPORTUNITY
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">02 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">التشخيص وفرصة السوق (Diagnostic)</span>
+        <h2 class="slide-title">أين تكمن الفجوة التسويقية؟ وكيف نستثمر الـ 100 رسالة الحالية؟</h2>
+        <p class="slide-subtitle">المكتب يستقبل تدفقاً ممتازاً من الاستفسارات، لكن غياب الفلترة والأتمتة يؤدي إلى إهدار ساعات العمل في شات غير مدفوع.</p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:16px;">
+        <div class="feature-card highlight">
+          <span class="card-icon">📥</span>
+          <h3 class="card-title">100+ رسالة أسبوعياً</h3>
+          <p class="card-desc">طلب عالٍ وحقيقي على قضايا الإيجار الجديد والمدني، يؤكد وجود رغبة ملحة لدى الجمهور في الاستعانة بمحامٍ سريع وحاسم.</p>
+        </div>
+        <div class="feature-card">
+          <span class="card-icon">⏳</span>
+          <h3 class="card-title">تحدي التسرب (Leaking Funnel)</h3>
+          <p class="card-desc">سؤال العميل المتكرر عن الرسوم أو سرد تفاصيل المشكلة دون تحصيل مسبق يرهق طاقة فريق العمل دون عائد مالي مباشر.</p>
+        </div>
+        <div class="feature-card gold">
+          <span class="card-icon">⚡</span>
+          <h3 class="card-title">ميزة التسعير الجاهزة</h3>
+          <p class="card-desc">وجود تسعير واضح وصريح: 500 ج محلياً / 1000 ج للمغتربين مع انستاباي يمثل سلاحاً تنافسياً فتاكاً إذا وُضع داخل قمع حجز ذكي.</p>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="metric-box">
+          <div class="metric-value">100+</div>
+          <div class="metric-label">رسالة شهرياً / أسبوعياً</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value">500 ج</div>
+          <div class="metric-label">استشارة محلية (مكتب / اتصال)</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value">1,000 ج</div>
+          <div class="metric-label">استشارة المغتربين بالخارج</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value">+40%</div>
+          <div class="metric-label">معدل التحويل المستهدف للمدفوع</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>سرية تامة ومخصصة لمكتب المستشار محمد مشورة</span>
+      <span class="speaker-note-pill">ملاحظة: تأكيد أن المشكلة ليست في جودة الخدمة، بل في طريقة إدارة وتسييل حركة المرور الحالية.</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 3: COMPETITOR BREAKDOWN
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">03 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">تحليل المنافسين والتموضع (Competitive Positioning)</span>
+        <h2 class="slide-title">تفكيك المنافسين (محمد ناصر & محامي TV) ونقاط التفوق عليهم</h2>
+        <p class="slide-subtitle">المنافسون يمتلكون انتشاراً واسعاً، لكنهم يعانون من فجوة كبيرة في سرعة التحويل والتنظيم المؤسسي.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="feature-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <h3 class="card-title" style="margin:0;color:#f87171;">🔴 نقاط ضعف المنافسين (محمد ناصر ومحامي TV)</h3>
+            <span style="font-size:11px;background:rgba(239,68,68,0.15);color:#fca5a5;padding:2px 8px;border-radius:4px;">المنافسون</span>
+          </div>
+          <ul style="font-size:12.5px;color:#cbd5e1;line-height:1.7;padding-right:18px;margin:8px 0 0;">
+            <li><strong>محتوى عام وفضفاض:</strong> التحدث في مواضيع قانونية عامة دون تقديم حلول سريعة ومباشرة للمواطن المتضرر.</li>
+            <li><strong>بطء الاستجابة وضياع الليدز:</strong> آلاف التعليقات والرسائل تترك مهملة دون ردود فورية أو فلترة.</li>
+            <li><strong>ضبابية التسعير:</strong> غياب سعر محدد ومعلن للاستشارة يسبب تردد العملاء وخوفهم من المبالغة في الأتعاب.</li>
+            <li><strong>عدم التركيز على المغتربين:</strong> إهمال شريحة ملاك العقارات في الخليج التي تدفع بالعملة الأجنبية أو بالتحويل الفوري.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card gold">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <h3 class="card-title" style="margin:0;color:#facc15;">🟢 ميزتنا التنافسية بمكتب أ/ محمد مشورة</h3>
+            <span style="font-size:11px;background:rgba(212,175,55,0.2);color:#fef08a;padding:2px 8px;border-radius:4px;">الهيمنة</span>
+          </div>
+          <ul style="font-size:12.5px;color:#cbd5e1;line-height:1.7;padding-right:18px;margin:8px 0 0;">
+            <li><strong>التخصص فائق السرعة:</strong> التموضع كـ <em>"المرجع الأسرع في حسم قضايا الإيجار الجديد والإخلاء وتأمين الصيغة التنفيذية"</em>.</li>
+            <li><strong>فريق عمل منظم ومتكامل:</strong> إبراز قوة المؤسسة والمتابعة خطوة بخطوة وليس مجرد جهد فردي.</li>
+            <li><strong>الشفافية وسهولة الدفع:</strong> (500 ج محلي / 1000 ج دولي) تحول فوراً عبر انستاباي لتأكيد الميعاد خلال دقائق.</li>
+            <li><strong>استهداف مباشر للمغتربين:</strong> حملات متخصصة للسعودية والإمارات والكويت تطمئن المالك بإدارة أملاكه بالتوكيل الرسمي.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>تحليل مبني على مراقبة أداء السوشيال ميديا للمنافسين 2026</span>
+      <span class="speaker-note-pill">المفتاح هنا: التحول من "محامٍ عام" إلى "المستشار المتخصص الذي يحل أزمة الإيجار والملك بأسرع وقت".</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 4: CONTENT & VIRAL REELS STRATEGY
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">04 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">صناعة المحتوى الفيروسي (Viral Reels & Storytelling)</span>
+        <h2 class="slide-title">تحويل القضايا الواقعية إلى تريندات تخطف المشاهدات بدون أسماء</h2>
+        <p class="slide-subtitle">صياغة سيناريوهات مستوحاة من أروقة المحاكم تحمي سرية الموكلين بنسبة 100% وتحقق أعلى معدل انتشار.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="feature-card highlight">
+          <span style="font-size:11px;background:rgba(168,85,247,0.2);color:#d8b4fe;padding:2px 8px;border-radius:4px;font-weight:700;">الزاوية 1: الملاك والإخلاء</span>
+          <h3 class="card-title" style="margin-top:10px;">طرد المستأجر الممتنع في 30 يوم</h3>
+          <p class="card-desc">
+            <strong>الهوك الافتتاحي:</strong> "إزاي مالك شقة قدر يسترد عقاره في أقل من شهر وبدون قضايا تاخد سنين؟ السر في بند واحد وتوثيق الصيغة التنفيذية.. اسمع الكلمتين دول لو بتأجر شقتك."
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <span style="font-size:11px;background:rgba(56,189,248,0.2);color:#7dd3fc;padding:2px 8px;border-radius:4px;font-weight:700;">الزاوية 2: المستأجر وحقه القانوني</span>
+          <h3 class="card-title" style="margin-top:10px;">حماية حقوق المستأجرين</h3>
+          <p class="card-desc">
+            <strong>الهوك الافتتاحي:</strong> "لو صاحب الشقة بيهددك يطردك عشان يرفع الإيجار زيادة عن العقد.. اعرف موقفك القانوني اللي بيحميك، ومحدش يقدر يخرجك طالما العقد ساري وموثق صح."
+          </p>
+        </div>
+
+        <div class="feature-card gold">
+          <span style="font-size:11px;background:rgba(212,175,55,0.2);color:#fef08a;padding:2px 8px;border-radius:4px;font-weight:700;">الزاوية 3: المغتربون بالخارج</span>
+          <h3 class="card-title" style="margin-top:10px;">عقارات المصريين في الخليج</h3>
+          <p class="card-desc">
+            <strong>الهوك الافتتاحي:</strong> "عايش في السعودية أو الإمارات ومأجر شقتك في مصر والمستأجر مبيبعتش الفلوس؟ إزاي تحرك دعوى طرد وتسترد حقك بتوكيل رسمي من القنصلية ومن غير ما تنزل إجازة."
+          </p>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 16px;margin-top:14px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px;">💡</span>
+        <span style="font-size:12.5px;color:#e2e8f0;">
+          <strong>معادلة الـ 21 Hooks:</strong> سنقوم بتصوير 12 فيديو شهرياً داخل المكتب بالجيزة بأسلوب سينمائي داكن (Dark Studio) يعكس هيبة ومصداقية المحاماة.
+        </span>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>مبني على مهارات يوتيوب والفيديو (yt-script & ad-creative)</span>
+      <span class="speaker-note-pill">المحتوى لا يبيع بشكل مباشر، بل يزرع الخوف من الخسارة ويبرز الأستاذ محمد كطوق نجاة.</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 5: INSTAPAY FUNNEL & CONVERSION
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">05 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">قمع التحويل والتحصيل الفوري (InstaPay Funnel)</span>
+        <h2 class="slide-title">تحويل الـ 100 رسالة إلى دخل استشارات مؤكد (60K - 100K ج شهرياً)</h2>
+        <p class="slide-subtitle">بناء نظام أوتوماتيكي عبر واتساب يفرز الحالات ويحصل رسوم الاستشارة قبل حجز موعد المكالمة أو زيارة المكتب.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="feature-card highlight">
+          <h3 class="card-title">🔄 مسار العميل الآلي (WhatsApp Triage):</h3>
+          <div style="font-size:12px;color:#cbd5e1;line-height:1.7;">
+            <p style="margin:4px 0;"><strong>1. رسالة ترحيبية فورية:</strong> تحدد نوع القضية (إيجار جديد مستعجل / قضايا مدنية / استشارة للمغتربين).</p>
+            <p style="margin:4px 0;"><strong>2. رسالة تأكيد الحجز والرسوم:</strong> "لتأكيد موعد استشارتك مع المستشار محمد مشورة (500 ج محلي / 1000 ج للمغتربين)، يرجى التحويل عبر InstaPay أو المحفظة الإلكترونية."</p>
+            <p style="margin:4px 0;"><strong>3. إرسال إيصال التحويل:</strong> يقوم النظام بحجز موعد فوري على تقويم المكتب وإشعار فريق العمل.</p>
+          </div>
+        </div>
+
+        <div class="feature-card gold">
+          <h3 class="card-title">💰 العائد المالي المتوقع شهرياً من الاستشارات فقط:</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div class="metric-box">
+              <div class="metric-value" style="font-size:22px;">40 استشارة</div>
+              <div class="metric-label">استشارات محلية (500 ج) = 20,000 ج شهرياً</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" style="font-size:22px;">20 استشارة</div>
+              <div class="metric-label">استشارات دولية (1000 ج) = 20,000 ج شهرياً</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:#fef08a;margin:12px 0 0;line-height:1.5;">
+            ⭐ <strong>ملاحظة هامة:</strong> 20% على الأقل من هذه الاستشارات تتحول تلقائياً إلى <strong>توكيلات وقضايا كبرى</strong> بعوائد تتخطى أضعاف رسوم الاستشارة!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>مبني على مهارة عروض القيمة والتسعير (offers & pricing)</span>
+      <span class="speaker-note-pill">تحصيل رسوم الاستشارة مقدماً يرفع هيبة المحامي لدى الموكل ويضمن جديته 100%.</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 6: AGENCY RETAINER PACKAGE
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">06 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">عرض التعاقد الشهري (Agency Retainer Package)</span>
+        <h2 class="slide-title">باقة الهيمنة القانونية الشاملة (Legal Growth Retainer)</h2>
+        <p class="slide-subtitle">إدارة تسويقية وإنتاجية ورقمية كاملة لا تشغل وقت المستشار وتضمن له تفرغاً تاماً للمرافعة والإدارة.</p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:14px;">
+        <div class="feature-card highlight">
+          <span class="card-icon">🎬</span>
+          <h3 class="card-title">صناعة وإنتاج المحتوى</h3>
+          <ul style="font-size:12px;color:#cbd5e1;line-height:1.6;padding-right:16px;margin:0;">
+            <li>تصوير ومونتاج 12 فيديو ريلز/تيك توك عالي الجودة بالمكتب.</li>
+            <li>كتابة السكريبتات القانونية بـ 21 معادلة هوك تريند.</li>
+            <li>تصميم 8 بوستات إنفوجرافيك للمنصات.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <span class="card-icon">🎯</span>
+          <h3 class="card-title">إدارة الحملات الممولة</h3>
+          <ul style="font-size:12px;color:#cbd5e1;line-height:1.6;padding-right:16px;margin:0;">
+            <li>إطلاق حملات استهداف ملاك العقارات بالجيزة والقاهرة.</li>
+            <li>إطلاق حملات المغتربين في دول الخليج العربي.</li>
+            <li>تحسين مستمر لخفض تكلفة الرسالة المؤهلة.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card gold">
+          <span class="card-icon">⚡</span>
+          <h3 class="card-title">نظام التحويل والمتابعة</h3>
+          <ul style="font-size:12px;color:#cbd5e1;line-height:1.6;padding-right:16px;margin:0;">
+            <li>إعداد قمع ردود الواتساب الآلي لفلترة الحجوزات.</li>
+            <li>ربط الدفع الفوري عبر InstaPay والمحافظ.</li>
+            <li>لوحة تحكم حية وتقرير أسبوعي لمتابعة النتائج.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <span style="font-size:11px;color:#fde047;display:block;font-weight:700;">الاستثمار الشهري المقترح للباقة الشاملة:</span>
+          <strong style="font-size:22px;color:#fff;">25,000 إلى 30,000 جنيه شهرياً</strong>
+        </div>
+        <div style="text-align:left;font-size:12px;color:#cbd5e1;">
+          💡 استشارتان أو صفقة قضية واحدة فقط كفيلة بتغطية تكلفة الباقة بالكامل!
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>عقد مرن قابل للتطوير وربطه بمؤشرات الأداء (KPIs) ربع السنوية</span>
+      <span class="speaker-note-pill">نحن شركاء نجاح ولسنا مجرد شركة إعلانات.. نأتي بالموكل المؤهل حتى باب المكتب.</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SLIDE 7: NEXT STEPS & ONBOARDING
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-topbar">
+      <div class="brand-tag">PR <span>Agency</span> • Legal Growth OS</div>
+      <div class="client-badge">مكتب أ/ محمد مشورة — الجيزة</div>
+      <div class="slide-number">07 / 07</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="slide-header">
+        <span class="slide-category">خارطة الطريق وبدء التنفيذ (Next Steps & Launch)</span>
+        <h2 class="slide-title">كيف نبدأ العمل المشترك خلال الـ 7 أيام القادمة؟</h2>
+        <p class="slide-subtitle">خطة إطلاق سريعة ومحكمة لضمان ظهور أولى النتائج وتفعيل الحجوزات في أقرب وقت.</p>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="feature-card highlight">
+          <div style="font-size:24px;font-weight:900;color:#c084fc;margin-bottom:6px;">01</div>
+          <h4 style="margin:0 0 6px;color:#fff;font-size:14px;">توقيع الاتفاق والاعتماد</h4>
+          <p style="font-size:11.5px;color:#cbd5e1;line-height:1.5;margin:0;">جلسة عمل لتوثيق بنود التعاقد وتحديد المستهدفات الشهرية بدقة.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:24px;font-weight:900;color:#38bdf8;margin-bottom:6px;">02</div>
+          <h4 style="margin:0 0 6px;color:#fff;font-size:14px;">جلسة التصوير الأولى</h4>
+          <p style="font-size:11.5px;color:#cbd5e1;line-height:1.5;margin:0;">تصوير أول 6 فيديوهات تريند داخل مقر المكتب بالجيزة في ساعتين فقط.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:24px;font-weight:900;color:#facc15;margin-bottom:6px;">03</div>
+          <h4 style="margin:0 0 6px;color:#fff;font-size:14px;">ضبط قمع الردود بانستاباي</h4>
+          <p style="font-size:11.5px;color:#cbd5e1;line-height:1.5;margin:0;">تجهيز رسائل الواتساب الآلية وربط كيو آر كود الدفع لتأهيل العملاء.</p>
+        </div>
+
+        <div class="feature-card gold">
+          <div style="font-size:24px;font-weight:900;color:#4ade80;margin-bottom:6px;">04</div>
+          <h4 style="margin:0 0 6px;color:#fff;font-size:14px;">إطلاق الحملات الممولة</h4>
+          <p style="font-size:11.5px;color:#cbd5e1;line-height:1.5;margin:0;">بدء تدفق الليدز المؤهلين وحجوزات الاستشارات المدفوعة محلياً ودولياً.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:20px;">
+        <h3 style="margin:0 0 8px;color:#fff;font-size:18px;">جاهزون لنقل حضوركم القانوني لمستوى الريادة؟ ⚖️🚀</h3>
+        <p style="margin:0 0 14px;color:#cbd5e1;font-size:13px;">تواصلوا معنا لتحديد موعد جلسة العمل الأولى بمقر المكتب أو عبر مكالمة زووم.</p>
+        <div style="display:inline-flex;gap:20px;font-size:13px;font-weight:700;color:#fff;">
+          <span>📞 هاتف / واتساب الوكالة: متاح 24/7</span>
+          <span>•</span>
+          <span>🌐 المنظومة الرقمية: pragency.pages.dev</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>PR Agency © 2026 — كافة حقوق الطرح الاستراتيجي محفوظة</span>
+      <span class="speaker-note-pill">سؤال الإغلاق: "هل يناسب سيادتك نبدأ ورشة التصوير الأولى يوم الأحد أم ترشح موعداً آخر؟"</span>
+    </div>
+  </div>
+
+</body>
+</html>
