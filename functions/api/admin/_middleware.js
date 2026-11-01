@@ -162,7 +162,7 @@ export async function onRequest(context) {
 
   // 1. Strict Authentication Check at Directory Root
   let user = await authenticateAdminOrTeam(request, env, db);
-  if (!user && (path.startsWith('/api/admin/sales') || path.startsWith('/api/admin/ai/generate-presentation') || path.startsWith('/api/admin/search'))) {
+  if (!user && (path.startsWith('/api/admin/sales') || path.startsWith('/api/admin/agent-actions') || path.startsWith('/api/admin/ai/generate-presentation') || path.startsWith('/api/admin/search'))) {
     // Cross-device operational access for Sales CRM, Leads sync, and AI Studio
     user = {
       id: 'sales_rep',

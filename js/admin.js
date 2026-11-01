@@ -140,6 +140,9 @@
       if (tabId === 'skills') {
         loadSkillsCatalog();
       }
+      if (tabId === 'agents') {
+        loadAgentActions();
+      }
       if (targetTab) {
         targetTab.classList.add('active');
       } else {
@@ -162,7 +165,8 @@
         invoices: 'فواتير واشتراكات العملاء (Client Invoices)',
         workflows: 'محرك الأتمتة السحابي والذكاء الاصطناعي (Smart Workflows)',
         sales: 'إدارة المبيعات والتوزيع الذكي للعملاء (Sales CRM)',
-        permissions: 'مصفوفة الصلاحيات وأمان الوصول (RBAC Permissions Matrix)'
+        permissions: 'مصفوفة الصلاحيات وأمان الوصول (RBAC Permissions Matrix)',
+        agents: '🤖 مركز الوكلاء الأذكياء ومراجعة المسودات (Autonomous Agents Hub)'
       };
       const headingEl = document.getElementById('topHeading');
       if (headingEl && titles[tabId]) {
@@ -1225,6 +1229,7 @@
       loadSalesLeads();
       loadTeamMembers();
       loadGlobalExecutiveKPIs();
+      if (typeof loadAgentActions === 'function') loadAgentActions();
     }
 
     window.onload = () => {
@@ -2746,3 +2751,266 @@ window.generateTaskVideoScript = generateTaskVideoScript;
 window.copyCreativeOutput = copyCreativeOutput;
 window.applyCreativeToTask = applyCreativeToTask;
 window.suggestContentPillars = suggestContentPillars;
+
+
+// ── AUTONOMOUS SALES AI AGENT HUB (HUMAN-IN-THE-LOOP) ─────────────────
+let currentAgentFilter = 'pending_approval';
+
+async function loadAgentActions(statusFilter) {
+  if (statusFilter) currentAgentFilter = statusFilter;
+  const container = document.getElementById('agentActionsContainer');
+  if (!container) return;
+
+  try {
+    const query = currentAgentFilter === 'all' ? '' : '?status=' + encodeURIComponent(currentAgentFilter);
+    const res = await fetch('/api/admin/agent-actions' + query);
+    const data = await res.json();
+
+    if (!data.success) {
+      container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--danger)">فشل تحميل إجراءات الوكلاء: ' + (data.error || 'خطأ غير معروف') + '</div>';
+      return;
+    }
+
+    // Update KPI metrics
+    const stats = data.stats || {};
+    const pendingCount = stats.pending || 0;
+    if (document.getElementById('agentMetricPending')) document.getElementById('agentMetricPending').innerText = pendingCount;
+    if (document.getElementById('agentMetricSent')) document.getElementById('agentMetricSent').innerText = stats.sent || 0;
+    if (document.getElementById('agentMetricRejected')) document.getElementById('agentMetricRejected').innerText = stats.rejected || 0;
+    if (document.getElementById('agentMetricTotal')) document.getElementById('agentMetricTotal').innerText = stats.total || 0;
+
+    // Update Navigation Badges
+    const navBadge = document.getElementById('agentsNavBadge');
+    if (navBadge) {
+      if (pendingCount > 0) {
+        navBadge.innerText = pendingCount;
+        navBadge.style.display = 'inline-block';
+      } else {
+        navBadge.style.display = 'none';
+      }
+    }
+
+    renderAgentActions(data.actions || []);
+  } catch (err) {
+    console.error('[Agents Load Error]:', err);
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--danger)">خطأ أثناء الاتصال بالخادم</div>';
+  }
+}
+
+function filterAgentActions(status, btn) {
+  document.querySelectorAll('.agent-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadAgentActions(status);
+}
+
+function renderAgentActions(actions) {
+  const container = document.getElementById('agentActionsContainer');
+  if (!container) return;
+
+  if (!actions || actions.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:48px 20px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:12px;">
+        <div style="font-size:36px;margin-bottom:10px;">✨</div>
+        <div style="font-size:16px;font-weight:700;color:#fff;">لا توجد إجراءات معلقة في هذا القسم حالياً</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">عند ورود ليد جديد من فيسبوك أو إضافته في الـ CRM، سيقوم وكيل المبيعات بصياغة المسودة وعرضها هنا للموافقة.</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = actions.map(act => {
+    const isPending = act.status === 'pending_approval';
+    const isSent = act.status === 'sent';
+    const isRejected = act.status === 'rejected';
+
+    let statusBadge = '<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">⏳ بانتظار الاعتماد (Pending)</span>';
+    if (isSent) {
+      statusBadge = '<span style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">✅ تم الإرسال (Sent)</span>';
+    } else if (isRejected) {
+      statusBadge = '<span style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">❌ تم التجاهل (Rejected)</span>';
+    }
+
+    const channelBadge = act.action_type === 'cold_email'
+      ? '<span style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);padding:2px 8px;border-radius:10px;font-size:11px;">✉️ بريد إلكتروني (Cold Email)</span>'
+      : '<span style="background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);padding:2px 8px;border-radius:10px;font-size:11px;">💬 واتساب (WhatsApp Outreach)</span>';
+
+    const safeDraft = (act.draft_content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const timeFormatted = new Date(act.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+    return `
+      <div class="card" id="agent_card_${act.id}" style="background:#141418;border:1px solid ${isPending ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.08)'};border-radius:12px;padding:20px;transition:border-color 0.2s;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:17px;font-weight:800;color:#fff;">${act.lead_name || 'عميل محتمل'}</span>
+              ${channelBadge}
+              ${statusBadge}
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-muted);margin-top:6px;flex-wrap:wrap;">
+              ${act.lead_company ? `<span>🏢 ${act.lead_company}</span>` : ''}
+              ${act.lead_phone ? `<span>📱 <span dir="ltr">${act.lead_phone}</span></span>` : ''}
+              ${act.lead_email ? `<span>📧 ${act.lead_email}</span>` : ''}
+              <span>🕒 ${timeFormatted}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">
+            📝 مسودة الرسالة المقترحة من الوكيل (قابلة للتعديل المباشر قبل الإرسال):
+          </label>
+          <textarea 
+            id="draft_${act.id}" 
+            ${!isPending ? 'disabled' : ''} 
+            rows="6" 
+            style="width:100%;background:#0d0d11;color:#f4f4f5;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;font-family:inherit;font-size:13px;line-height:1.7;resize:vertical;${!isPending ? 'opacity:0.75;cursor:not-allowed;' : ''}"
+          >${safeDraft}</textarea>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:12px;color:var(--text-muted);">
+            ${isPending ? '⚡ المراجعة البشرية مطلوبة لضمان أعلى جودة تواصل.' : (isSent ? '✨ تم إرسال الرسالة إلى العميل.' : '🚫 تم تجاهل هذا الإجراء.')}
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${isPending ? `
+              <button 
+                class="btn btn-primary" 
+                style="background:#10b981;border-color:#10b981;display:flex;align-items:center;gap:6px;font-weight:700;" 
+                onclick="approveAgentAction('${act.id}', this)"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✅ إرسال (Approve & Send)</span>
+              </button>
+              <button 
+                class="btn btn-secondary" 
+                style="color:#ef4444;border-color:rgba(239,68,68,0.3);display:flex;align-items:center;gap:6px;" 
+                onclick="rejectAgentAction('${act.id}', this)"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>❌ تجاهل (Reject)</span>
+              </button>
+            ` : `
+              <button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;" onclick="loadAgentActions()">🔄 تحديث</button>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function approveAgentAction(id, btn) {
+  const textarea = document.getElementById('draft_' + id);
+  const draftContent = textarea ? textarea.value.trim() : '';
+
+  if (!draftContent) {
+    alert('لا يمكن إرسال رسالة فارغة.');
+    return;
+  }
+
+  const prevText = btn.innerHTML;
+  btn.innerHTML = '<span>جاري الإرسال... ⏳</span>';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/admin/agent-actions/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, draft_content: draftContent })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      alert('✅ تم اعتماد وإرسال الرسالة للعميل بنجاح!');
+      loadAgentActions();
+    } else {
+      alert('خطأ أثناء الاعتماد: ' + (data.error || 'فشلت العملية'));
+      btn.innerHTML = prevText;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error('Approve error:', err);
+    alert('حدث خطأ أثناء الاتصال بالخادم.');
+    btn.innerHTML = prevText;
+    btn.disabled = false;
+  }
+}
+
+async function rejectAgentAction(id, btn) {
+  if (!confirm('هل أنت متأكد من رغبتك في تجاهل ورفض هذه المسودة؟')) return;
+
+  const prevText = btn.innerHTML;
+  btn.innerHTML = '<span>جاري الرفض...</span>';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/admin/agent-actions/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      alert('تم تجاهل المسودة.');
+      loadAgentActions();
+    } else {
+      alert('خطأ أثناء الرفض: ' + (data.error || 'فشلت العملية'));
+      btn.innerHTML = prevText;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error('Reject error:', err);
+    alert('حدث خطأ أثناء الاتصال بالخادم.');
+    btn.innerHTML = prevText;
+    btn.disabled = false;
+  }
+}
+
+async function simulateTestLeadAgent() {
+  const leadName = prompt('اسم العميل المحتمل للتجربة:', 'د. حازم المنشاوي');
+  if (!leadName) return;
+
+  const company = prompt('اسم النشاط / المركز / الشركة:', 'مركز النخبة لطب الأسنان التجميلي');
+  const phone = prompt('رقم الهاتف:', '01123456789');
+
+  const testPayload = {
+    lead_id: 'test_lead_' + Date.now().toString(36),
+    lead: {
+      name: leadName,
+      company: company,
+      project_name: company,
+      campaign_name: 'حملة العيادات التخصصية Q4',
+      phone: phone,
+      email: 'dr.hazem@example.com',
+      service_interested: 'إنتاج إعلاني وميديا باينج متقدم'
+    }
+  };
+
+  try {
+    const res = await fetch('/api/internal/agents/sales-agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testPayload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      alert('🚀 تم تشغيل وكيل المبيعات بنجاح وصياغة المسودة وإرسال إشعار تليجرام!');
+      filterAgentActions('pending_approval');
+    } else {
+      alert('خطأ: ' + (data.error || 'فشل تشغيل الوكيل'));
+    }
+  } catch (e) {
+    alert('فشل الاتصال بوكيل المبيعات: ' + e.message);
+  }
+}
+
+// Window exposures
+window.loadAgentActions = loadAgentActions;
+window.filterAgentActions = filterAgentActions;
+window.renderAgentActions = renderAgentActions;
+window.approveAgentAction = approveAgentAction;
+window.rejectAgentAction = rejectAgentAction;
+window.simulateTestLeadAgent = simulateTestLeadAgent;

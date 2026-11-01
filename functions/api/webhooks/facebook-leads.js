@@ -159,8 +159,9 @@ export async function onRequestPost(context) {
       }).catch(e => console.error('Telegram notification error:', e));
     }
 
-    // ── 6. Trigger Automation Engine (lead.created) ──
     const origin = new URL(request.url).origin;
+
+    // ── 6. Trigger Automation Engine (lead.created) ──
     fetch(`${origin}/api/internal/emit-event`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -179,18 +180,41 @@ export async function onRequestPost(context) {
       })
     }).catch(e => console.warn('Automation emit error:', e));
 
+    // ── 7. Trigger Autonomous Sales AI Agent (Human-in-the-Loop) ──
+    const agentTriggerPromise = fetch(`${origin}/api/internal/agents/sales-agent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lead_id: leadId,
+        lead: {
+          id: leadId,
+          name: fullName,
+          email,
+          phone,
+          project_name: campaignName,
+          campaign_name: campaignName,
+          source_type: 'meta_ad',
+          assigned_sales_name: assignedSalesName
+        }
+      })
+    }).catch(agentErr => console.error('[Sales Agent Trigger Error]:', agentErr));
+
+    if (context.waitUntil) {
+      context.waitUntil(agentTriggerPromise);
+    }
+
     await logSystemAction(db, {
       adminId: 'meta_webhook',
       adminEmail: 'meta@pragency.eg',
       action: 'facebook_lead_ingested',
       targetType: 'sales_leads',
       targetId: leadId,
-      details: `Lead ${fullName} captured and auto-assigned to ${assignedSalesName}`
+      details: `Lead ${fullName} captured, auto-assigned to ${assignedSalesName}, and sales AI agent triggered.`
     });
 
     return jsonResponse({
       success: true,
-      message: 'تم استقبال الليد وتوزيعه آلياً بنجاح',
+      message: 'تم استقبال الليد وتوزيعه آلياً وتشغيل وكيل المبيعات بنجاح',
       lead_id: leadId,
       assigned_to: {
         id: assignedSalesId,
