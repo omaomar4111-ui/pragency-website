@@ -6,24 +6,24 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`👥 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 3 بنجاح (PHASE 3: Clients & Leads)</b> 🚀
+`🧾 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 4 بنجاح (PHASE 4: Invoices & Projects)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>إدارة العملاء (Clients Hub):</b>
-   - مسار <code>menu:clients</code> لاستعراض عملاء الوكالة مع اشتراكاتهم وتفاصيل التواصل.
-   - <b>📄 ملف العميل (Client Details):</b> إحصاء التسليمات النشطة والفواتير غير المسددة مع رابط مباشر للبوابة.
-   - <b>🗑️ إدارة الحسابات:</b> إمكانية حذف أو أرشفة العميل من تليجرام.
+1. <b>إدارة الفواتير والتحصيل المالي (Invoices Hub):</b>
+   - مسار <code>menu:invoices</code> يعرض ملخص الفواتير المحصلة، المعلقة، والمتأخرة.
+   - <b>✅ اعتماد السداد الفوري (One-Click Payment Approval):</b>
+     • زر اعتماد سداد لكل فاتورة معلقة يحدث حالة الفاتورة لـ paid ويسجل paid_at لحظياً في D1.
+   - <b>➕ إصدار فواتير جديدة حوارياً:</b>
+     • تفعيل وضع <code>awaiting_invoice_data</code> لإصدار الفواتير مع التحقق التلقائي من ربط العميل وحماية القيود المرجعية.
 
-2. <b>إدارة الصفقات والـ Pipeline (Leads & Sales Funnel):</b>
-   - مسار <code>menu:leads</code> لعرض أحدث 10 صفقات مع تصنيف الميزانية وحالة المسار ورقم الهاتف.
-   - <b>🔄 تحديث المراحل اللحظي (Stage Transitions):</b>
-     • أزرار لنقل الليد بين المراحل: (جديد 🆕، تم التواصل 📞، عرض سعر 📑، تعاقد بنجاح 🏆، خسارة ❌).
-     • تحديث قاعدة بيانات D1 فورياً ومزامنتها مع CRM المبيعات.
-   - <b>💬 المتابعات والمراسلة:</b>
-     • تفعيل وضع إدخال الرسائل الفوري <code>awaiting_lead_msg</code> وحفظ الملاحظات في سجلات المتابعة.
+2. <b>إدارة المشاريع وهوامش الربحية (Projects & Margins):</b>
+   - مسار <code>menu:projects</code> يعرض المشاريع النشطة مع قيمة العقد الشهري (Retainer).
+   - <b>📈 احتساب هوامش الربح الصافية:</b> احتساب التكاليف التشغيلية بناءً على ساعات العمل المسجلة ومقارنتها بقيمة العقد.
+   - <b>فريق العمل ومهام المشروع:</b> أزرار لاستعراض مهام كل مشروع وفريق العمل المشارك فيه.
 
 3. <b>اختبارات وفحوصات السلامة:</b>
-   - Phase 3 Unit & D1 Integration Tests: <b>PASSED 100%</b>.
+   - Phase 4 Invoices & Profitability Tests: <b>PASSED 100%</b>.
+   - Foreign Key Integrity & D1 Payment Verification: <b>PASSED</b>.
    - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
 
 const payload = JSON.stringify({

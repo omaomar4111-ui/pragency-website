@@ -349,5 +349,130 @@ export function buildMenu(chatId, menuId, context = {}) {
         }
       };
     }
+
+    // ── PHASE 4: INVOICES & PROJECTS MENUS ──
+    case 'menu:invoices': {
+      const {
+        paidCount = 0,
+        paidTotal = 0,
+        pendingCount = 0,
+        pendingTotal = 0,
+        overdueCount = 0,
+        overdueTotal = 0,
+        pendingInvoices = [],
+        currency = 'EGP'
+      } = context;
+
+      let text = `🧾 <b>إدارة الفواتير والتحصيل المالي | Invoices Hub</b>\n` +
+                 `────────────────────\n` +
+                 `💰 <b>إجمالي المحصل:</b> ${Number(paidTotal).toLocaleString('en-US')} ${currency} (${paidCount} فاتورة)\n` +
+                 `⏳ <b>فواتير معلقة (قيد السداد):</b> ${Number(pendingTotal).toLocaleString('en-US')} ${currency} (${pendingCount} فاتورة)\n` +
+                 `⏰ <b>فواتير متأخرة:</b> ${Number(overdueTotal).toLocaleString('en-US')} ${currency} (${overdueCount} فاتورة)\n` +
+                 `────────────────────\n`;
+
+      const keyboard = [];
+
+      if (!pendingInvoices || pendingInvoices.length === 0) {
+        text += `<i>لا توجد فواتير معلقة بانتظار الاعتماد حالياً 🎉</i>\n`;
+      } else {
+        text += `<b>الفواتير المستحقة للمتابعة والاعتماد:</b>\n`;
+        pendingInvoices.slice(0, 5).forEach((inv, idx) => {
+          text += `\n<b>${idx + 1}. #${inv.invoice_number}</b> - ${inv.client_name || 'عميل'}\n` +
+                  `   • المبلغ: 💰 ${Number(inv.amount || 0).toLocaleString('en-US')} ${inv.currency || currency}\n` +
+                  `   • الاستحقاق: 📅 ${inv.due_date}\n` +
+                  `   • الحالة: ⏳ ${inv.status}\n`;
+
+          keyboard.push([
+            { text: `✅ اعتماد سداد #${inv.invoice_number}`, callback_data: `action:invoice:pay:${inv.id}` },
+            { text: `📄 عرض`, callback_data: `action:invoice:view:${inv.id}` }
+          ]);
+        });
+      }
+
+      keyboard.push([
+        { text: '➕ إصدار فاتورة جديدة', callback_data: 'action:invoice:new' },
+        { text: '🔄 تحديث', callback_data: 'menu:invoices' }
+      ]);
+      keyboard.push([
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    case 'menu:invoice:detail': {
+      const { invoice = {} } = context;
+      return {
+        chat_id: chatId,
+        text: `🧾 <b>تفاصيل الفاتورة #${invoice.invoice_number}</b>\n` +
+              `────────────────────\n` +
+              `🏢 <b>العميل:</b> ${invoice.client_name || invoice.client_id || 'غير محدد'}\n` +
+              `💰 <b>المبلغ:</b> ${Number(invoice.amount || 0).toLocaleString('en-US')} ${invoice.currency || 'EGP'}\n` +
+              `📅 <b>تاريخ الاستحقاق:</b> ${invoice.due_date}\n` +
+              `📌 <b>الحالة:</b> ${invoice.status === 'paid' ? '✅ مدفوعة' : '⏳ غير مدفوعة'}\n` +
+              `📝 <b>ملاحظات:</b> ${invoice.notes || 'لا توجد ملاحظات إضافية'}\n` +
+              `────────────────────`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            invoice.status !== 'paid' ? [
+              { text: '✅ اعتماد سداد الفاتورة الآن', callback_data: `action:invoice:pay:${invoice.id}` }
+            ] : [],
+            [
+              { text: '⬅️ رجوع لقائمة الفواتير', callback_data: 'menu:invoices' }
+            ]
+          ].filter(row => row.length > 0)
+        }
+      };
+    }
+
+    case 'menu:projects': {
+      const { projects = [] } = context;
+      let text = `📂 <b>المشاريع النشطة والربحية | Projects & Profitability</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      if (!projects || projects.length === 0) {
+        text += `<i>لا توجد مشاريع مسجلة حالياً.</i>\n`;
+      } else {
+        projects.slice(0, 5).forEach((proj, idx) => {
+          const retainer = Number(proj.retainer_amount || 0);
+          const loggedHours = Number(proj.logged_hours || 0);
+          const cost = loggedHours * 150; // estimated internal hourly cost
+          const margin = retainer > 0 ? (((retainer - cost) / retainer) * 100).toFixed(0) : 0;
+          const marginEmoji = margin >= 50 ? '🟢' : (margin >= 25 ? '🟡' : '🔴');
+
+          text += `\n<b>${idx + 1}. ${proj.name}</b> [<code>${proj.key}</code>]\n` +
+                  `   • العميل: 🏢 ${proj.client_name || 'داخلي'}\n` +
+                  `   • العقد: 💰 ${retainer.toLocaleString('en-US')} ج.م\n` +
+                  `   • الساعات المسجلة: ⏱️ ${loggedHours.toFixed(1)} س\n` +
+                  `   • هامش الربح التقديري: ${marginEmoji} <b>${margin}%</b>\n`;
+
+          keyboard.push([
+            { text: `📊 تفاصيل`, callback_data: `action:project:view:${proj.id}` },
+            { text: `👥 الفريق`, callback_data: `action:project:team:${proj.id}` },
+            { text: `📋 المهام`, callback_data: `action:project:tasks:${proj.id}` }
+          ]);
+        });
+      }
+
+      text += `────────────────────\n⚡ <i>بيانات الربحية محسوبة لحظياً من سجلات الوقت والمهام</i>`;
+
+      keyboard.push([
+        { text: '🔄 تحديث المشاريع', callback_data: 'menu:projects' },
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
   }
 }

@@ -451,6 +451,196 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // ── PHASE 4: INVOICES & PROJECTS CALLBACKS ──
+      if (callbackData === 'menu:invoices') {
+        let paidRow = { cnt: 0, total: 0 };
+        let pendingRow = { cnt: 0, total: 0 };
+        let overdueRow = { cnt: 0, total: 0 };
+        let pendingInvoices = [];
+
+        try {
+          paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || paidRow;
+          pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || pendingRow;
+          overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || overdueRow;
+
+          const res = await dbAnalytics.prepare(`
+            SELECT i.*, COALESCE(c.company_name, i.client_id) as client_name 
+            FROM client_invoices i 
+            LEFT JOIN portal_clients c ON i.client_id = c.id 
+            WHERE i.status != 'paid' 
+            ORDER BY i.due_date ASC LIMIT 5
+          `).all();
+          pendingInvoices = res?.results || [];
+        } catch (e) {
+          console.warn('[Invoices Query] Error:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:invoices', {
+          paidCount: paidRow.cnt,
+          paidTotal: paidRow.total,
+          pendingCount: pendingRow.cnt,
+          pendingTotal: pendingRow.total,
+          overdueCount: overdueRow.cnt,
+          overdueTotal: overdueRow.total,
+          pendingInvoices
+        });
+        await setSession(dbAnalytics, incomingChatId, 'menu:invoices', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:invoice:view:')) {
+        const invId = callbackData.replace('action:invoice:view:', '');
+        const invoice = await dbAnalytics.prepare(`
+          SELECT i.*, COALESCE(c.company_name, i.client_id) as client_name 
+          FROM client_invoices i 
+          LEFT JOIN portal_clients c ON i.client_id = c.id 
+          WHERE i.id = ?
+        `).bind(invId).first();
+
+        const payload = buildMenu(incomingChatId, 'menu:invoice:detail', { invoice: invoice || { invoice_number: invId } });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:invoice:pay:')) {
+        const invId = callbackData.replace('action:invoice:pay:', '');
+        await dbAnalytics.prepare("UPDATE client_invoices SET status = 'paid', paid_at = CURRENT_TIMESTAMP WHERE id = ?").bind(invId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '✅ تم اعتماد سداد الفاتورة بنجاح!');
+
+        // Reload invoices menu
+        const paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || {};
+        const pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || {};
+        const overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || {};
+        const res = await dbAnalytics.prepare(`
+          SELECT i.*, COALESCE(c.company_name, i.client_id) as client_name 
+          FROM client_invoices i 
+          LEFT JOIN portal_clients c ON i.client_id = c.id 
+          WHERE i.status != 'paid' 
+          ORDER BY i.due_date ASC LIMIT 5
+        `).all();
+
+        const payload = buildMenu(incomingChatId, 'menu:invoices', {
+          paidCount: paidRow.cnt || 0,
+          paidTotal: paidRow.total || 0,
+          pendingCount: pendingRow.cnt || 0,
+          pendingTotal: pendingRow.total || 0,
+          overdueCount: overdueRow.cnt || 0,
+          overdueTotal: overdueRow.total || 0,
+          pendingInvoices: res?.results || []
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:invoice:new') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_invoice_data', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `🧾 <b>إصدار فاتورة جديدة</b>\n\nأرسل بيانات الفاتورة مفصولة بفواصل بالصيغة التالية:\n<code>اسم أو كود العميل، المبلغ، تاريخ الاستحقاق YYYY-MM-DD</code>\n\n<i>مثال: شركة الأفق، 25000، 2026-11-20</i>`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للفواتير', callback_data: 'menu:invoices' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:projects') {
+        let projects = [];
+        try {
+          const res = await dbMain.prepare(`
+            SELECT p.*, COALESCE(SUM(te.hours), 0) as logged_hours 
+            FROM projects p 
+            LEFT JOIN tasks t ON p.id = t.project_id 
+            LEFT JOIN time_entries te ON t.id = te.task_id 
+            GROUP BY p.id 
+            ORDER BY p.created_at DESC LIMIT 5
+          `).all();
+          projects = res?.results || [];
+        } catch (e) {
+          console.warn('[Projects Query] Error:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:projects', { projects });
+        await setSession(dbAnalytics, incomingChatId, 'menu:projects', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:project:view:')) {
+        const projId = callbackData.replace('action:project:view:', '');
+        const proj = await dbMain.prepare('SELECT * FROM projects WHERE id = ?').bind(projId).first();
+        const hoursRow = await dbMain.prepare(`
+          SELECT COALESCE(SUM(te.hours), 0) as total_hours 
+          FROM tasks t 
+          JOIN time_entries te ON t.id = te.task_id 
+          WHERE t.project_id = ?
+        `).bind(projId).first();
+        const tasksRow = await dbMain.prepare(`
+          SELECT COUNT(*) as total, SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) as done_cnt 
+          FROM tasks 
+          WHERE project_id = ?
+        `).bind(projId).first();
+
+        const totalHours = Number(hoursRow?.total_hours || 0);
+        const retainer = Number(proj?.retainer_amount || 0);
+        const cost = totalHours * 150;
+        const margin = retainer > 0 ? (((retainer - cost) / retainer) * 100).toFixed(0) : 0;
+
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `📊 <b>تقرير صحة وربحية المشروع: ${proj?.name || projId}</b>\n` +
+                `────────────────────\n` +
+                `🏢 <b>العميل:</b> ${proj?.client_name || 'داخلي'}\n` +
+                `💰 <b>قيمة العقد (Retainer):</b> ${retainer.toLocaleString('en-US')} ج.م\n` +
+                `⏱️ <b>إجمالي الساعات المسجلة:</b> ${totalHours.toFixed(1)} ساعة\n` +
+                `💸 <b>التكلفة التشغيلية التقديرية:</b> ${cost.toLocaleString('en-US')} ج.م\n` +
+                `📈 <b>هامش الربح الصافي:</b> <b>${margin}%</b>\n` +
+                `📋 <b>المهام:</b> ${tasksRow?.done_cnt || 0} منجزة من أصل ${tasksRow?.total || 0}\n` +
+                `────────────────────`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📋 عرض مهام المشروع', callback_data: `action:project:tasks:${projId}` }],
+              [{ text: '⬅️ رجوع للمشاريع', callback_data: 'menu:projects' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:project:tasks:')) {
+        const projId = callbackData.replace('action:project:tasks:', '');
+        const tasks = await dbMain.prepare('SELECT * FROM tasks WHERE project_id = ? ORDER BY created_at DESC LIMIT 5').bind(projId).all();
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: `مهام المشروع (${projId})`,
+          tasks: tasks?.results || [],
+          listType: 'today'
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:project:team:')) {
+        const projId = callbackData.replace('action:project:team:', '');
+        const members = await dbMain.prepare('SELECT DISTINCT user_name FROM time_entries WHERE task_id IN (SELECT id FROM tasks WHERE project_id = ?)').bind(projId).all();
+        const names = (members?.results || []).map(m => m.user_name).filter(Boolean);
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `👥 <b>فريق العمل المخصص للمشروع:</b>\n\n` + (names.length > 0 ? names.map(n => `• 👤 ${n}`).join('\n') : '• 👤 Super Admin (إدارة كاملة)'),
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '⬅️ رجوع للمشاريع', callback_data: 'menu:projects' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Temporary placeholder for sub-menus during subsequent sequential phases
       const payload = {
         chat_id: incomingChatId,
@@ -555,6 +745,67 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // State: Awaiting Invoice Data (Phase 4)
+      if (currentSession?.current_menu === 'awaiting_invoice_data') {
+        const parts = text.split(/[,،]/).map(s => s.trim());
+        const clientName = parts[0] || 'شركة تجريبية';
+        const amount = parseFloat(parts[1]) || 15000;
+        const dueDate = parts[2] || new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+        const invNumber = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+        const invId = 'inv_' + Date.now();
+
+        // Ensure Client exists in portal_clients to satisfy Foreign Key
+        let client = await dbAnalytics.prepare('SELECT id FROM portal_clients WHERE company_name = ? OR id = ?').bind(clientName, clientName).first();
+        let finalClientId = client?.id;
+        if (!finalClientId) {
+          finalClientId = 'client_' + Date.now();
+          await dbAnalytics.prepare(`
+            INSERT INTO portal_clients (id, company_name, email, password_hash, retainer_amount, created_at)
+            VALUES (?, ?, ?, 'tg_hash', ?, CURRENT_TIMESTAMP)
+          `).bind(finalClientId, clientName, `${finalClientId}@client.agency`, amount).run();
+        }
+
+        await dbAnalytics.prepare(`
+          INSERT INTO client_invoices (id, client_id, invoice_number, amount, currency, due_date, status, notes, created_at)
+          VALUES (?, ?, ?, ?, 'EGP', ?, 'unpaid', ?, CURRENT_TIMESTAMP)
+        `).bind(invId, finalClientId, invNumber, amount, dueDate, `فاتورة صادرة عبر بوت تليجرام لـ ${clientName}`).run();
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:invoices', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تم إصدار الفاتورة #${invNumber} بنجاح!</b>\n\n` +
+                `🏢 <b>العميل:</b> ${clientName}\n` +
+                `💰 <b>المبلغ:</b> ${amount.toLocaleString('en-US')} ج.م\n` +
+                `📅 <b>تاريخ الاستحقاق:</b> ${dueDate}\n` +
+                `📌 <b>الحالة:</b> ⏳ غير مدفوعة`,
+          parse_mode: 'HTML'
+        });
+
+        // Show updated invoices menu
+        const paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || {};
+        const pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || {};
+        const overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || {};
+        const res = await dbAnalytics.prepare(`
+          SELECT i.*, COALESCE(c.company_name, i.client_id) as client_name 
+          FROM client_invoices i 
+          LEFT JOIN portal_clients c ON i.client_id = c.id 
+          WHERE i.status != 'paid' 
+          ORDER BY i.due_date ASC LIMIT 5
+        `).all();
+
+        const payload = buildMenu(incomingChatId, 'menu:invoices', {
+          paidCount: paidRow.cnt || 0,
+          paidTotal: paidRow.total || 0,
+          pendingCount: pendingRow.cnt || 0,
+          pendingTotal: pendingRow.total || 0,
+          overdueCount: overdueRow.cnt || 0,
+          overdueTotal: overdueRow.total || 0,
+          pendingInvoices: res?.results || []
+        });
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Standard Navigation Shortcuts
       if (text === '/start' || text === '/menu' || text === '/admin' || text === 'الرئيسية') {
         const payload = buildMenu(incomingChatId, 'menu:main');
@@ -598,6 +849,57 @@ export async function onRequestPost(context) {
         } catch (e) {}
         const payload = buildMenu(incomingChatId, 'menu:leads', { leads });
         await setSession(dbAnalytics, incomingChatId, 'menu:leads', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/invoices' || text === 'الفواتير') {
+        let paidRow = { cnt: 0, total: 0 };
+        let pendingRow = { cnt: 0, total: 0 };
+        let overdueRow = { cnt: 0, total: 0 };
+        let pendingInvoices = [];
+        try {
+          paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || paidRow;
+          pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || pendingRow;
+          overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || overdueRow;
+          const res = await dbAnalytics.prepare(`
+            SELECT i.*, COALESCE(c.company_name, i.client_id) as client_name 
+            FROM client_invoices i 
+            LEFT JOIN portal_clients c ON i.client_id = c.id 
+            WHERE i.status != 'paid' 
+            ORDER BY i.due_date ASC LIMIT 5
+          `).all();
+          pendingInvoices = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:invoices', {
+          paidCount: paidRow.cnt,
+          paidTotal: paidRow.total,
+          pendingCount: pendingRow.cnt,
+          pendingTotal: pendingRow.total,
+          overdueCount: overdueRow.cnt,
+          overdueTotal: overdueRow.total,
+          pendingInvoices
+        });
+        await setSession(dbAnalytics, incomingChatId, 'menu:invoices', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/projects' || text === 'المشاريع') {
+        let projects = [];
+        try {
+          const res = await dbMain.prepare(`
+            SELECT p.*, COALESCE(SUM(te.hours), 0) as logged_hours 
+            FROM projects p 
+            LEFT JOIN tasks t ON p.id = t.project_id 
+            LEFT JOIN time_entries te ON t.id = te.task_id 
+            GROUP BY p.id 
+            ORDER BY p.created_at DESC LIMIT 5
+          `).all();
+          projects = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:projects', { projects });
+        await setSession(dbAnalytics, incomingChatId, 'menu:projects', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
