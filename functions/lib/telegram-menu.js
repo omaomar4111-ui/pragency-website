@@ -84,5 +84,125 @@ export function buildMenu(chatId, menuId, context = {}) {
         }
       };
     }
+
+    // ── PHASE 2: TASKS MENUS ──
+    case 'menu:tasks': {
+      return {
+        chat_id: chatId,
+        text: `📋 <b>إدارة المهام والعمليات اليومية | Tasks OS</b>\n\nاختر الإجراء المطلوب لمتابعة مهام الفريق أو إضافة مهام جديدة:`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '➕ إضافة مهمة جديدة', callback_data: 'menu:tasks:add' }
+            ],
+            [
+              { text: '📋 مهام اليوم', callback_data: 'menu:tasks:today' },
+              { text: '⏰ المتأخرة', callback_data: 'menu:tasks:overdue' }
+            ],
+            [
+              { text: '✅ المنجزة', callback_data: 'menu:tasks:done' },
+              { text: '📊 إحصائيات المهام', callback_data: 'menu:tasks:stats' }
+            ],
+            [
+              { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+            ]
+          ]
+        }
+      };
+    }
+
+    case 'menu:tasks:list': {
+      const {
+        title = 'قائمة المهام',
+        tasks = [],
+        listType = 'today'
+      } = context;
+
+      let msgText = `📋 <b>${title}</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      if (!tasks || tasks.length === 0) {
+        msgText += `<i>لا توجد مهام مسجلة في هذا القسم حالياً 🎉</i>\n`;
+      } else {
+        tasks.slice(0, 6).forEach((task, idx) => {
+          const statusIcon = task.status === 'done' ? '✅' : (task.status === 'in-progress' ? '⚡' : '📌');
+          const priorityIcon = task.priority === 'urgent' ? '🔴' : (task.priority === 'high' ? '🟠' : '🟢');
+          
+          msgText += `\n<b>${idx + 1}. ${task.title}</b>\n` +
+                     `   • الحالة: ${statusIcon} ${task.status}\n` +
+                     `   • الأولوية: ${priorityIcon} ${task.priority || 'medium'}\n` +
+                     `   • المسؤول: 👤 ${task.assigned_to || 'Super Admin'}\n` +
+                     `   • التاريخ: 📅 ${task.planned_date || 'اليوم'}\n`;
+
+          // Inline action controls per task
+          keyboard.push([
+            { text: `✅ إتمام`, callback_data: `action:task:done:${task.id}` },
+            { text: `⏸️ تايمر`, callback_data: `action:task:timer:${task.id}` },
+            { text: `✏️ تعديل`, callback_data: `action:task:edit:${task.id}` },
+            { text: `🗑️ حذف`, callback_data: `action:task:delete:${task.id}` }
+          ]);
+        });
+      }
+
+      msgText += `────────────────────\n⚡ <i>استخدم الأزرار أدناه للتحكم المباشر في كل مهمة:</i>`;
+
+      // Global Navigation buttons
+      keyboard.push([
+        { text: '➕ إضافة مهمة جديدة', callback_data: 'menu:tasks:add' },
+        { text: '🔄 تحديث', callback_data: `menu:tasks:${listType}` }
+      ]);
+      keyboard.push([
+        { text: '⬅️ رجوع لقسم المهام', callback_data: 'menu:tasks' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text: msgText,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: keyboard
+        }
+      };
+    }
+
+    case 'menu:tasks:stats': {
+      const {
+        planned = 0,
+        inProgress = 0,
+        done = 0,
+        overdue = 0,
+        weekHours = 0
+      } = context;
+
+      return {
+        chat_id: chatId,
+        text: `📊 <b>إحصائيات ومؤشرات إنجاز المهام</b>\n` +
+              `────────────────────\n` +
+              `📌 <b>المهام المخططة:</b> ${planned} مهمة\n` +
+              `⚡ <b>قيد التنفيذ الآن:</b> ${inProgress} مهمة\n` +
+              `✅ <b>المهام المنجزة:</b> ${done} مهمة\n` +
+              `⏰ <b>المهام المتأخرة:</b> ${overdue} مهمة\n` +
+              `⏱️ <b>ساعات العمل المسجلة (هذا الأسبوع):</b> ${Number(weekHours).toFixed(1)} ساعة\n` +
+              `────────────────────\n` +
+              `⚡ <i>تم الاحتساب من جدول المهام وسجلات الوقت الحية</i>`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '📋 مهام اليوم', callback_data: 'menu:tasks:today' },
+              { text: '⏰ المهام المتأخرة', callback_data: 'menu:tasks:overdue' }
+            ],
+            [
+              { text: '➕ إضافة مهمة جديدة', callback_data: 'menu:tasks:add' },
+              { text: '🔄 تحديث الإحصائيات', callback_data: 'menu:tasks:stats' }
+            ],
+            [
+              { text: '⬅️ رجوع لقسم المهام', callback_data: 'menu:tasks' }
+            ]
+          ]
+        }
+      };
+    }
   }
 }

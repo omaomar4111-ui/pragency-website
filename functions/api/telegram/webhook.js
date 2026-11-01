@@ -25,7 +25,6 @@ async function fetchOverviewMetrics(env) {
 
   try {
     if (dbAnalytics) {
-      // 1. Total Clients
       try {
         const clientRow = await dbAnalytics.prepare('SELECT COUNT(*) as cnt FROM portal_clients').first();
         totalClients = clientRow?.cnt || 0;
@@ -34,7 +33,6 @@ async function fetchOverviewMetrics(env) {
         totalClients = fallbackClient?.cnt || 0;
       }
 
-      // 2. Paid Invoices This Month
       try {
         const invRow = await dbAnalytics.prepare(`
           SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total 
@@ -47,7 +45,6 @@ async function fetchOverviewMetrics(env) {
         console.warn('[Overview Metrics] Invoices query notice:', e.message);
       }
 
-      // 3. New Leads This Week
       try {
         const leadRow = await dbAnalytics.prepare(`
           SELECT COUNT(*) as cnt 
@@ -60,7 +57,6 @@ async function fetchOverviewMetrics(env) {
       }
     }
 
-    // 4. Active Tasks from DB
     if (dbMain) {
       try {
         const taskRow = await dbMain.prepare(`
@@ -87,9 +83,64 @@ async function fetchOverviewMetrics(env) {
   };
 }
 
+/**
+ * Helper to fetch tasks by filter type from D1
+ */
+async function fetchTasks(dbMain, type = 'today') {
+  if (!dbMain) return [];
+  try {
+    let sql = '';
+    if (type === 'today') {
+      sql = `SELECT * FROM tasks WHERE (planned_date = date('now') OR status != 'done') ORDER BY CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END, created_at DESC LIMIT 5`;
+    } else if (type === 'overdue') {
+      sql = `SELECT * FROM tasks WHERE planned_date < date('now') AND status != 'done' ORDER BY planned_date ASC LIMIT 5`;
+    } else if (type === 'done') {
+      sql = `SELECT * FROM tasks WHERE status = 'done' ORDER BY done_at DESC, created_at DESC LIMIT 5`;
+    } else {
+      sql = `SELECT * FROM tasks ORDER BY created_at DESC LIMIT 5`;
+    }
+    const { results } = await dbMain.prepare(sql).all();
+    return results || [];
+  } catch (err) {
+    console.error('[Fetch Tasks] Error:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Helper to fetch tasks performance statistics
+ */
+async function fetchTaskStats(dbMain) {
+  if (!dbMain) return { planned: 0, inProgress: 0, done: 0, overdue: 0, weekHours: 0 };
+  try {
+    const plannedRow = await dbMain.prepare("SELECT COUNT(*) as cnt FROM tasks WHERE status = 'planned'").first();
+    const inProgressRow = await dbMain.prepare("SELECT COUNT(*) as cnt FROM tasks WHERE status = 'in-progress'").first();
+    const doneRow = await dbMain.prepare("SELECT COUNT(*) as cnt FROM tasks WHERE status = 'done'").first();
+    const overdueRow = await dbMain.prepare("SELECT COUNT(*) as cnt FROM tasks WHERE planned_date < date('now') AND status != 'done'").first();
+    
+    let weekHours = 0;
+    try {
+      const hoursRow = await dbMain.prepare("SELECT COALESCE(SUM(hours), 0) as total FROM time_entries WHERE date >= date('now', '-7 days')").first();
+      weekHours = hoursRow?.total || 0;
+    } catch (e) {}
+
+    return {
+      planned: plannedRow?.cnt || 0,
+      inProgress: inProgressRow?.cnt || 0,
+      done: doneRow?.cnt || 0,
+      overdue: overdueRow?.cnt || 0,
+      weekHours
+    };
+  } catch (err) {
+    console.error('[Fetch Task Stats] Error:', err.message);
+    return { planned: 0, inProgress: 0, done: 0, overdue: 0, weekHours: 0 };
+  }
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const db = env.ANALYTICS_DB || env.DB;
+  const dbAnalytics = env.ANALYTICS_DB || env.DB;
+  const dbMain = env.DB || env.ANALYTICS_DB;
 
   try {
     const update = await request.json();
@@ -125,23 +176,162 @@ export async function onRequestPost(context) {
       // Immediately answer callback query to clear the Telegram loader spinner
       await answerCallbackQuery(env, callbackQuery.id);
 
-      // Route based on callback_data
+      // Main Menu
       if (callbackData === 'menu:main') {
         const payload = buildMenu(incomingChatId, 'menu:main');
-        await setSession(db, incomingChatId, 'menu:main', {});
+        await setSession(dbAnalytics, incomingChatId, 'menu:main', {});
         await editTelegramMessage(env, { ...payload, message_id: messageId });
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // Executive Overview
       if (callbackData === 'menu:overview') {
         const stats = await fetchOverviewMetrics(env);
         const payload = buildMenu(incomingChatId, 'menu:overview', stats);
-        await setSession(db, incomingChatId, 'menu:overview', stats);
+        await setSession(dbAnalytics, incomingChatId, 'menu:overview', stats);
         await editTelegramMessage(env, { ...payload, message_id: messageId });
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // Temporary placeholder for sub-menus during sequential phase rollouts
+      // ── PHASE 2: TASKS CALLBACKS ──
+      if (callbackData === 'menu:tasks') {
+        const payload = buildMenu(incomingChatId, 'menu:tasks');
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:tasks:today') {
+        const tasks = await fetchTasks(dbMain, 'today');
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'مهام اليوم المجدولة (Today Tasks)',
+          tasks,
+          listType: 'today'
+        });
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks:today', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:tasks:overdue') {
+        const tasks = await fetchTasks(dbMain, 'overdue');
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'المهام المتأخرة (Overdue Tasks ⏰)',
+          tasks,
+          listType: 'overdue'
+        });
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks:overdue', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:tasks:done') {
+        const tasks = await fetchTasks(dbMain, 'done');
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'المهام المنجزة حديثاً (Completed Tasks ✅)',
+          tasks,
+          listType: 'done'
+        });
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks:done', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:tasks:stats') {
+        const stats = await fetchTaskStats(dbMain);
+        const payload = buildMenu(incomingChatId, 'menu:tasks:stats', stats);
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks:stats', stats);
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:tasks:add') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_task_title', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✍️ <b>اكتب عنوان المهمة الجديدة في رسالتك التالية:</b>\n\n<i>(مثال: إطلاق حملة سناب شات لشركة الأمل)</i>`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للمهام', callback_data: 'menu:tasks' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // ── Task Action: Complete (Done) ──
+      if (callbackData.startsWith('action:task:done:')) {
+        const taskId = callbackData.replace('action:task:done:', '');
+        await dbMain.prepare("UPDATE tasks SET status = 'done', done_at = CURRENT_TIMESTAMP WHERE id = ?").bind(taskId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '✅ تم إتمام المهمة بنجاح!');
+        
+        // Refresh list
+        const tasks = await fetchTasks(dbMain, 'today');
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'مهام اليوم المجدولة (Today Tasks)',
+          tasks,
+          listType: 'today'
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // ── Task Action: Timer ──
+      if (callbackData.startsWith('action:task:timer:')) {
+        const taskId = callbackData.replace('action:task:timer:', '');
+        const timeId = 'time_' + Date.now();
+        await dbMain.prepare(`
+          INSERT INTO time_entries (id, task_id, user_id, user_name, hours, hourly_cost, date, notes)
+          VALUES (?, ?, 'admin', 'Super Admin', 1.0, 150, date('now'), 'ساعة عمل مسجلة عبر بوت تليجرام')
+        `).bind(timeId, taskId).run();
+
+        const row = await dbMain.prepare("SELECT COALESCE(SUM(hours), 0) as total FROM time_entries WHERE task_id = ?").bind(taskId).first();
+        const total = row?.total || 1.0;
+
+        await answerCallbackQuery(env, callbackQuery.id, `⏱️ تم تسجيل +1 ساعة عمل (الإجمالي: ${total} س)`, true);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // ── Task Action: Edit ──
+      if (callbackData.startsWith('action:task:edit:')) {
+        const taskId = callbackData.replace('action:task:edit:', '');
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_task_edit', { task_id: taskId });
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✏️ <b>اكتب العنوان الجديد للمهمة:</b>`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للمهام', callback_data: 'menu:tasks' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // ── Task Action: Delete ──
+      if (callbackData.startsWith('action:task:delete:')) {
+        const taskId = callbackData.replace('action:task:delete:', '');
+        await dbMain.prepare("DELETE FROM tasks WHERE id = ?").bind(taskId).run();
+        try {
+          await dbMain.prepare("DELETE FROM time_entries WHERE task_id = ?").bind(taskId).run();
+        } catch (e) {}
+        
+        await answerCallbackQuery(env, callbackQuery.id, '🗑️ تم حذف المهمة نهائياً.');
+
+        // Refresh list
+        const tasks = await fetchTasks(dbMain, 'today');
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'مهام اليوم المجدولة (Today Tasks)',
+          tasks,
+          listType: 'today'
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // Temporary placeholder for sub-menus during subsequent sequential phases
       const payload = {
         chat_id: incomingChatId,
         message_id: messageId,
@@ -161,10 +351,61 @@ export async function onRequestPost(context) {
     if (message && message.text) {
       const text = message.text.trim();
 
+      // Check current session state first
+      const currentSession = await getSession(dbAnalytics, incomingChatId);
+
+      // State: Awaiting Task Title
+      if (currentSession?.current_menu === 'awaiting_task_title') {
+        const taskId = 'task_' + Date.now();
+        await dbMain.prepare(`
+          INSERT INTO tasks (id, project_id, title, status, priority, planned_date, assigned_to)
+          VALUES (?, 'proj_agency', ?, 'planned', 'medium', date('now'), 'Super Admin')
+        `).bind(taskId, text).run();
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks', {});
+        
+        const tasks = await fetchTasks(dbMain, 'today');
+        const listPayload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'مهام اليوم المجدولة (Today Tasks)',
+          tasks,
+          listType: 'today'
+        });
+
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تمت إضافة المهمة بنجاح:</b>\n"<i>${text}</i>"`,
+          parse_mode: 'HTML'
+        });
+        await sendTelegramMessage(env, listPayload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting Task Edit
+      if (currentSession?.current_menu === 'awaiting_task_edit' && currentSession?.context?.task_id) {
+        const taskId = currentSession.context.task_id;
+        await dbMain.prepare("UPDATE tasks SET title = ? WHERE id = ?").bind(text, taskId).run();
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks', {});
+
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تم تعديل عنوان المهمة بنجاح إلى:</b>\n"<i>${text}</i>"`,
+          parse_mode: 'HTML'
+        });
+
+        const tasks = await fetchTasks(dbMain, 'today');
+        const listPayload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: 'مهام اليوم المجدولة (Today Tasks)',
+          tasks,
+          listType: 'today'
+        });
+        await sendTelegramMessage(env, listPayload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Standard Navigation Shortcuts
       if (text === '/start' || text === '/menu' || text === '/admin' || text === 'الرئيسية') {
         const payload = buildMenu(incomingChatId, 'menu:main');
-        await setSession(db, incomingChatId, 'menu:main', {});
+        await setSession(dbAnalytics, incomingChatId, 'menu:main', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
@@ -172,14 +413,21 @@ export async function onRequestPost(context) {
       if (text === '/overview' || text === 'نظرة عامة') {
         const stats = await fetchOverviewMetrics(env);
         const payload = buildMenu(incomingChatId, 'menu:overview', stats);
-        await setSession(db, incomingChatId, 'menu:overview', stats);
+        await setSession(dbAnalytics, incomingChatId, 'menu:overview', stats);
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/tasks' || text === 'المهام') {
+        const payload = buildMenu(incomingChatId, 'menu:tasks');
+        await setSession(dbAnalytics, incomingChatId, 'menu:tasks', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
       // Fallback default message: return main menu
       const payload = buildMenu(incomingChatId, 'menu:main');
-      await setSession(db, incomingChatId, 'menu:main', {});
+      await setSession(dbAnalytics, incomingChatId, 'menu:main', {});
       await sendTelegramMessage(env, payload);
       return new Response(JSON.stringify({ ok: true }), { status: 200 });
     }
