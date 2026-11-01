@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كروت المحفظة الرقمية الذكية للكافيهات والأنشطة | Apple Wallet Geofencing - PR Agency</title>
+  <meta name="description" content="محاكي كروت الولاء الرقمية لمحفظة Apple Wallet و Google Wallet مع ميزة إشعارات الـ Geofencing عند اقتراب العميل.">
+  <link rel="icon" type="image/png" href="og-pr-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(16, 21, 32, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --success: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 14, 0.85);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #07090e;
+      border: none;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+    }
+    .btn-gold:hover {
+      box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid var(--card-border);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #fbbf24;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Studio Layout */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin-top: 40px;
+    }
+
+    /* Card Controls */
+    .control-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+    }
+    .control-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #fff;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #e2e8f0;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    .color-presets {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .color-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .color-btn.active {
+      border-color: #fff;
+      transform: scale(1.15);
+    }
+
+    /* 3D Apple Wallet Pass Preview */
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .wallet-pass {
+      width: 340px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border-radius: 22px;
+      padding: 24px 22px;
+      color: #fff;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    .wallet-pass::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.06) 50%, transparent 60%);
+      transform: rotate(30deg);
+      pointer-events: none;
+    }
+
+    .pass-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .pass-brand-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .pass-type-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .pass-body {
+      margin-bottom: 24px;
+    }
+    .pass-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .pass-value-hero {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .pass-row {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+    }
+
+    /* Barcode styling */
+    .pass-barcode {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .barcode-svg {
+      width: 100%;
+      height: 48px;
+    }
+    .barcode-code {
+      font-family: 'Plus Jakarta Sans', monospace;
+      font-size: 11px;
+      color: #000;
+      font-weight: 700;
+      margin-top: 4px;
+      letter-spacing: 2px;
+    }
+
+    /* Mock Push Notification */
+    .push-notification {
+      width: 340px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-top: 24px;
+      display: none;
+      align-items: flex-start;
+      gap: 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .push-notification.active {
+      display: flex;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .push-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .push-content {
+      flex: 1;
+    }
+    .push-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 2px;
+    }
+    .push-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .push-text {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 800px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <span>PR AGENCY</span>
+      <span class="brand-badge">Wallet OS</span>
+    </a>
+    <div style="display:flex;gap:12px;">
+      <a href="/audit.html" class="btn btn-secondary">فحص الـ 12 أمان</a>
+      <a href="/sales-crm-2026.html" class="btn btn-secondary">Sales CRM</a>
+      <a href="#request-system" class="btn btn-gold">طلب النظام لنشاطك</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-section">
+      <div class="hero-badge">⚡ Geofencing & Digital Wallet Cards للكافيهات والأنشطة</div>
+      <h1 class="hero-title">كارت ولاء في محفظة العميل.. يفكّره بيك كل ما يعدي قدامك</h1>
+      <p class="hero-subtitle">
+        بدون ما ينزل تطبيق إضافي يتقل موبايله؛ مجرد كارت ذكي داخل Apple Wallet أو Google Wallet، ومعاه دايرة جغرافية (100 متر) ترن على شاشة الموبايل أول ما يقرّب من المحل.
+      </p>
+    </div>
+
+    <div class="studio-grid">
+      <!-- Controls -->
+      <div class="control-box">
+        <div class="control-title">خصص كارت الولاء الذكي لنشاطك</div>
+
+        <div class="form-group">
+          <label class="form-label">اسم النشاط أو الكافيه</label>
+          <input type="text" id="brandInput" class="form-input" value="The Roastery Cafe" oninput="updatePass()" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">نوع العرض والولاء</label>
+          <select id="offerSelect" class="form-select" onchange="updatePass()">
+            <option value="القهوة العاشرة مجاناً (9/10)">القهوة العاشرة مجاناً (9/10)</option>
+            <option value="خصم VIP فوري 20%">خصم VIP فوري 20%</option>
+            <option value="رصيد استرداد نقدي (Cashback 15%)">رصيد استرداد نقدي (Cashback 15%)</option>
+            <option value="عضوية كبار العملاء الذهبية">عضوية كبار العملاء الذهبية</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">لون الكارت بالمحفظة</label>
+          <div class="color-presets">
+            <button type="button" class="color-btn active" style="background:#1e1b4b;" onclick="setColor(this, '#1e1b4b', '#0f172a')"></button>
+            <button type="button" class="color-btn" style="background:#78350f;" onclick="setColor(this, '#78350f', '#451a03')"></button>
+            <button type="button" class="color-btn" style="background:#064e3b;" onclick="setColor(this, '#064e3b', '#022c22')"></button>
+            <button type="button" class="color-btn" style="background:#831843;" onclick="setColor(this, '#831843', '#500724')"></button>
+            <button type="button" class="color-btn" style="background:#18181b;" onclick="setColor(this, '#18181b', '#09090b')"></button>
+          </div>
+        </div>
+
+        <div style="margin-top:28px;">
+          <button type="button" class="btn btn-gold" style="width:100%;padding:14px;font-size:15px;" onclick="simulateGeofence()">
+            🔔 اختبر إشعار الـ Geofencing (محاكاة الاقتراب من المحل)
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview-container">
+        <div class="wallet-pass" id="walletPass">
+          <div class="pass-header">
+            <div class="pass-brand-name" id="previewBrand">The Roastery Cafe</div>
+            <div class="pass-type-badge">VIP Pass</div>
+          </div>
+
+          <div class="pass-body">
+            <div class="pass-label">مستوى العضوية والرصيد</div>
+            <div class="pass-value-hero" id="previewOffer">القهوة العاشرة مجاناً (9/10)</div>
+
+            <div class="pass-row">
+              <div>
+                <div class="pass-label">حامل الكارت</div>
+                <div style="font-weight:700;font-size:13px;">Ahmed Ibrahim</div>
+              </div>
+              <div style="text-align:left;">
+                <div class="pass-label">تاريخ التجديد</div>
+                <div style="font-weight:700;font-size:13px;">2026 / 12</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pass-barcode">
+            <svg class="barcode-svg" viewBox="0 0 200 40">
+              <rect x="0" y="0" width="3" height="40" fill="#000"/>
+              <rect x="6" y="0" width="5" height="40" fill="#000"/>
+              <rect x="14" y="0" width="2" height="40" fill="#000"/>
+              <rect x="18" y="0" width="4" height="40" fill="#000"/>
+              <rect x="25" y="0" width="6" height="40" fill="#000"/>
+              <rect x="34" y="0" width="2" height="40" fill="#000"/>
+              <rect x="39" y="0" width="5" height="40" fill="#000"/>
+              <rect x="47" y="0" width="3" height="40" fill="#000"/>
+              <rect x="53" y="0" width="6" height="40" fill="#000"/>
+              <rect x="62" y="0" width="2" height="40" fill="#000"/>
+              <rect x="67" y="0" width="4" height="40" fill="#000"/>
+              <rect x="74" y="0" width="7" height="40" fill="#000"/>
+              <rect x="84" y="0" width="2" height="40" fill="#000"/>
+              <rect x="89" y="0" width="5" height="40" fill="#000"/>
+              <rect x="97" y="0" width="3" height="40" fill="#000"/>
+              <rect x="103" y="0" width="6" height="40" fill="#000"/>
+              <rect x="112" y="0" width="4" height="40" fill="#000"/>
+              <rect x="119" y="0" width="2" height="40" fill="#000"/>
+              <rect x="124" y="0" width="5" height="40" fill="#000"/>
+              <rect x="132" y="0" width="3" height="40" fill="#000"/>
+              <rect x="138" y="0" width="6" height="40" fill="#000"/>
+              <rect x="147" y="0" width="2" height="40" fill="#000"/>
+              <rect x="152" y="0" width="5" height="40" fill="#000"/>
+              <rect x="160" y="0" width="3" height="40" fill="#000"/>
+              <rect x="166" y="0" width="6" height="40" fill="#000"/>
+              <rect x="175" y="0" width="2" height="40" fill="#000"/>
+              <rect x="180" y="0" width="5" height="40" fill="#000"/>
+              <rect x="188" y="0" width="4" height="40" fill="#000"/>
+              <rect x="195" y="0" width="3" height="40" fill="#000"/>
+            </svg>
+            <div class="barcode-code">PASS-9482-2026</div>
+          </div>
+        </div>
+
+        <!-- Push notification pop -->
+        <div class="push-notification" id="pushNotification">
+          <div class="push-icon">☕</div>
+          <div class="push-content">
+            <div class="push-top">
+              <span id="pushBrandName">The Roastery Cafe</span>
+              <span>الآن</span>
+            </div>
+            <div class="push-title">أهلاً بك! أنت على بُعد 80 متر فقط 📍</div>
+            <div class="push-text">قهوتك المفضلة بانتظارك اليوم، اظهر هذا الإشعار للكاشير واستمتع بعرضك الفوري!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request System Form -->
+    <div id="request-system" style="margin-top:60px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:36px;max-width:680px;margin-left:auto;margin-right:auto;">
+      <h2 style="font-size:24px;font-weight:900;text-align:center;margin-bottom:8px;">اطلب نظام المحفظة الرقمية لعلامتك التجارية</h2>
+      <p style="font-size:14px;color:var(--text-muted);text-align:center;margin-bottom:24px;">
+        سنقوم بإنشاء كارت الولاء وربطه بإشعارات الـ Geofencing ومحفظة Apple و Google لزبائنك مع لوحة تحكم كاملة.
+      </p>
+
+      <form onsubmit="handleWalletLeadSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">الاسم بالكامل</label>
+          <input type="text" id="reqName" class="form-input" placeholder="مثال: كريم سامي" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم الكافيه أو النشاط التجاري</label>
+          <input type="text" id="reqBrand" class="form-input" placeholder="مثال: كافيه روستيكا / صالون باربر" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف / الواتساب</label>
+          <input type="tel" id="reqPhone" class="form-input" placeholder="+20 100 000 0000" dir="ltr" style="text-align:right;" required />
+        </div>
+
+        <button type="submit" id="reqBtn" class="btn btn-gold" style="width:100%;padding:14px;font-size:16px;margin-top:10px;">
+          إرسال الطلب والتواصل مع فريق الوكالة 📲
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function updatePass() {
+      const brand = document.getElementById('brandInput').value.trim() || 'My Business';
+      const offer = document.getElementById('offerSelect').value;
+      
+      document.getElementById('previewBrand').textContent = brand;
+      document.getElementById('previewOffer').textContent = offer;
+      document.getElementById('pushBrandName').textContent = brand;
+    }
+
+    function setColor(btn, c1, c2) {
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('walletPass').style.background = `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`;
+    }
+
+    function simulateGeofence() {
+      const notif = document.getElementById('pushNotification');
+      notif.classList.remove('active');
+      void notif.offsetWidth; // trigger reflow
+      notif.classList.add('active');
+
+      if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+      }
+    }
+
+    async function handleWalletLeadSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('reqBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري تسجيل الطلب...';
+
+      const name = document.getElementById('reqName').value.trim();
+      const brand = document.getElementById('reqBrand').value.trim();
+      const phone = document.getElementById('reqPhone').value.trim();
+
+      try {
+        await fetch('/api/admin/sales/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            project_name: brand,
+            phone,
+            source_type: 'website_form',
+            service_interested: 'نظام كروت المحفظة الرقمية وإشعارات الجيوفينسنج (Geofencing Loyalty)',
+            budget_tier: 'Growth',
+            challenge_notes: `طلب نظام كروت المحفظة الرقمية (Apple/Google Wallet) للنشاط: ${brand}`
+          })
+        });
+
+        alert('تم استلام طلبكم بنجاح! سيتواصل معكم فريق المبيعات لشرح وتفعيل النظام.');
+        document.getElementById('reqName').value = '';
+        document.getElementById('reqBrand').value = '';
+        document.getElementById('reqPhone').value = '';
+      } catch (err) {
+        alert('شكراً لك، تم تسجيل طلبك وسنتواصل معك قريباً!');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'إرسال الطلب والتواصل مع فريق الوكالة 📲';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+const checkSchema = async () => {
+  const { execSync } = require('child_process');
+  const sql = "PRAGMA table_info(events);";
+  const cmd = `npx wrangler d1 execute pragency-analytics --remote --command="${sql}"`;
+  try {
+    const out = execSync(cmd, { encoding: 'utf8' });
+    console.log('Events schema:\n', out);
+  } catch (e) {
+    console.error('Error:', e.message);
+  }
+};
+checkSchema();

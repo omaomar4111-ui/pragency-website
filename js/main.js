@@ -149,6 +149,37 @@ function initWhatsAppTracking() {
     });
   });
 }
+function initNavActive(){
+  var path = (window.location.pathname.replace(/^\/|\.html$/g, '') || 'index');
+  document.querySelectorAll('nav a, .nav-links a, .header-nav a').forEach(function(a){
+    var href = ((a.getAttribute('href') || '').replace(/^\/|\.html$/g, '') || 'index');
+    if(href === path){
+      a.classList.add('active');
+    }
+  });
+}
+function initFooterYear() {
+  var el = document.getElementById('year') || document.querySelector('.current-year') || document.querySelector('.footer-year');
+  if (el) {
+    el.textContent = new Date().getFullYear();
+  }
+}
+
+function initBackToTop() {
+  var btn = document.getElementById('backToTop') || document.querySelector('.back-to-top');
+  if (!btn) return;
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 400) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
 function init(){
   initLoader();
   initProgressBar();
@@ -173,11 +204,7 @@ if(document.readyState==='loading'){
 }
 
 window.__2D={
-  track:track,
-  saveLocal:saveLocal,
-  saveSupabase:saveSupabase,
-  validatePhone:validatePhone,
-  normalizePhone:normalizePhone
+  track: typeof track !== 'undefined' ? track : null
 };
 })();
 

@@ -1228,9 +1228,12 @@
     }
 
     window.onload = () => {
-      loadAvailableProjects();
-      loadDailyTasksWorkspace();
-      loadGlobalExecutiveKPIs();
+      const token = localStorage.getItem('agency_admin_token') || localStorage.getItem('admin_jwt');
+      if (token) {
+        loadAvailableProjects();
+        loadDailyTasksWorkspace();
+        loadGlobalExecutiveKPIs();
+      }
     };
   
 

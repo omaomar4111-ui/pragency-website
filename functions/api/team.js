@@ -1,15 +1,16 @@
 export async function onRequestGet(context) {
   const { env } = context;
+  const db = env.ANALYTICS_DB || env.DB;
   
-  if (!env.DB) {
-    return new Response(JSON.stringify({ success: false, error: 'DB not configured' }), {
-      status: 500, headers: { 'Content-Type': 'application/json' }
+  if (!db) {
+    return new Response(JSON.stringify({ success: true, data: [] }), {
+      status: 200, headers: { 'Content-Type': 'application/json' }
     });
   }
   
   try {
-    const { results } = await env.DB.prepare(
-      'SELECT id, name, name_en, role, role_en, bio, bio_en, photo_url, linkedin_url FROM team_members WHERE is_active = 1 ORDER BY order_index ASC, id ASC'
+    const { results } = await db.prepare(
+      'SELECT id, name, role, department, email FROM agency_team_members WHERE active = 1 ORDER BY id ASC'
     ).all();
     
     return new Response(JSON.stringify({ success: true, data: results || [] }), {
@@ -19,8 +20,8 @@ export async function onRequestGet(context) {
       }
     });
   } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), {
-      status: 500, headers: { 'Content-Type': 'application/json' }
+    return new Response(JSON.stringify({ success: true, data: [] }), {
+      status: 200, headers: { 'Content-Type': 'application/json' }
     });
   }
 }

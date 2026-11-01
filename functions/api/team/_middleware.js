@@ -114,6 +114,12 @@ export async function onRequest(context) {
     });
   }
 
+  // 1.5. Allow public GET /api/team (public team members endpoint for website)
+  const reqUrl = new URL(request.url);
+  if (request.method === 'GET' && (reqUrl.pathname === '/api/team' || reqUrl.pathname === '/api/team/')) {
+    return next();
+  }
+
   // 2. Strict Authentication & Role Check
   const teamUser = await checkTeamAuth(request, env, db);
   if (!teamUser) {

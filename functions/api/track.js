@@ -19,28 +19,60 @@ export async function onRequestPost(context) {
     const eventDataStr = typeof event_data === 'object' ? JSON.stringify(event_data) : (event_data || null);
 
     if (db) {
-      // 1. Insert Event
-      const insertEvent = db.prepare(
-        'INSERT INTO events (session_id, visitor_id, event_type, event_data, page_url, timestamp) VALUES (?, ?, ?, ?, ?, ?)'
-      ).bind(session_id, visitor_id || null, event_type, eventDataStr, page_url || null, now);
+      const cf = request.cf || {};
 
-      // 2. Update Session last_seen and exit_page
-      const updateSession = db.prepare(
-        'UPDATE sessions SET last_seen = ?, exit_page = ? WHERE id = ?'
-      ).bind(now, page_url || null, session_id);
+      // 1. Ensure Session exists (satisfies FOREIGN KEY constraint on events.session_id)
+      try {
+        await db.prepare(`
+          INSERT INTO sessions (id, visitor_id, first_seen, last_seen, entry_page, exit_page, country, city, user_agent, page_views)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+          ON CONFLICT(id) DO UPDATE SET
+            last_seen = excluded.last_seen,
+            exit_page = excluded.exit_page,
+            page_views = COALESCE(sessions.page_views, 0) + 1
+        `).bind(
+          session_id,
+          visitor_id || session_id,
+          now,
+          now,
+          page_url || '/',
+          page_url || '/',
+          cf.country || null,
+          cf.city || null,
+          request.headers.get('user-agent') || null
+        ).run();
+      } catch (sessErr) {
+        console.warn('[Track API] Session upsert notice:', sessErr.message);
+      }
 
-      await db.batch([insertEvent, updateSession]);
+      // 2. Insert Event record
+      try {
+        await db.prepare(
+          'INSERT INTO events (session_id, visitor_id, event_type, event_data, page_url, timestamp) VALUES (?, ?, ?, ?, ?, ?)'
+        ).bind(session_id, visitor_id || null, event_type, eventDataStr, page_url || null, now).run();
+      } catch (evErr) {
+        try {
+          await db.prepare(
+            'INSERT INTO events (session_id, event_type, event_data, page_url, timestamp) VALUES (?, ?, ?, ?, ?)'
+          ).bind(session_id, event_type, eventDataStr, page_url || null, now).run();
+        } catch (evFallbackErr) {
+          console.warn('[Track API] Event insert notice:', evFallbackErr.message);
+        }
+      }
 
       // 3. Update Lead Scoring dynamically
-      const cf = request.cf || {};
-      await addLeadScore(env, {
-        sessionId: session_id,
-        visitorId: visitor_id,
-        eventType: event_type,
-        pageUrl: page_url,
-        eventData: event_data,
-        locationInfo: { city: cf.city, country: cf.country }
-      });
+      try {
+        await addLeadScore(env, {
+          sessionId: session_id,
+          visitorId: visitor_id,
+          eventType: event_type,
+          pageUrl: page_url,
+          eventData: event_data,
+          locationInfo: { city: cf.city, country: cf.country }
+        });
+      } catch (scoreErr) {
+        console.warn('[Track API] Lead score notice:', scoreErr.message);
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {
@@ -52,7 +84,7 @@ export async function onRequestPost(context) {
     });
   } catch (err) {
     return new Response(JSON.stringify({ success: false, error: err.message }), {
-      status: 500,
+      status: 200, // Return 200 with error details so analytics beacons never block the client browser
       headers: { 'Content-Type': 'application/json' }
     });
   }

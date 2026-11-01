@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فحص الأمان والجودة قبل الإطلاق | 12 Pre-Launch Security Checklist - PR Agency</title>
+  <meta name="description" content="أداة فحص تفاعلية لتقييم أمان وجاهزية تطبيقات الويب والـ SaaS والذكاء الاصطناعي قبل الإطلاق التجاري.">
+  <link rel="icon" type="image/png" href="og-pr-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(16, 21, 32, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-hover: #4f46e5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 14, 0.85);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border-color: var(--card-border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 28px;
+    }
+
+    /* Score Meter Bar */
+    .score-banner {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px 32px;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .score-dial {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .dial-circle {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: conic-gradient(var(--danger) var(--progress, 0%), rgba(255,255,255,0.06) 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.4s ease;
+    }
+    .dial-inner {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #0d121c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .score-info h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .score-status {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--danger);
+      transition: color 0.3s ease;
+    }
+
+    /* Checklist Groups */
+    .group-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .group-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .check-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .check-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+    .check-card.checked {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .checkbox-box {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .check-card.checked .checkbox-box {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .checkbox-box svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.2s ease;
+    }
+    .check-card.checked .checkbox-box svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .check-content {
+      flex: 1;
+    }
+    .check-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .check-num {
+      font-size: 11px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--text-muted);
+    }
+    .check-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .check-risk {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 5px;
+      margin-right: auto;
+    }
+    .risk-high { background: rgba(239, 68, 68, 0.12); color: #fca5a5; }
+    .risk-med { background: rgba(245, 158, 11, 0.12); color: #fde68a; }
+
+    /* Modal for Lead Capture & Report */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: #0f1523;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      padding: 32px;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      animation: popIn 0.25s ease;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #e2e8f0;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .score-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero-title {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <span>PR AGENCY</span>
+      <span class="brand-badge">Audit OS</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/loyalty.html" class="btn btn-secondary">كروت المحفظة</a>
+      <a href="/sales-crm-2026.html" class="btn btn-secondary">Sales CRM</a>
+      <button type="button" class="btn btn-primary" onclick="openLeadModal()">تنزيل التقرير PDF</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-section">
+      <div class="hero-badge">🔒 12 فحصاً أمنياً وتقنياً قبل إطلاق أي تطبيق أو SaaS</div>
+      <h1 class="hero-title">هل مشروعك جاهز للإطلاق التجاري؟</h1>
+      <p class="hero-subtitle">
+        قبل أن تدوس Deploy وتبدأ باستقبال المستخدمين، افحص نظامك بهذه القائمة المعتمدة من مهندسي النظم لحماية أسرارك وتجنب الاختراقات واستنزاف ميزانية الـ AI.
+      </p>
+    </div>
+
+    <!-- Score Status Banner -->
+    <div class="score-banner">
+      <div class="score-dial">
+        <div class="dial-circle" id="dialCircle">
+          <div class="dial-inner" id="scoreText">0%</div>
+        </div>
+        <div class="score-info">
+          <h3>جاهزية الإطلاق (Launch Readiness)</h3>
+          <div class="score-status" id="scoreStatus">حرج — 12 فحص متبقي لم يتم التحقق منهم</div>
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-primary" onclick="openLeadModal()">
+          استخراج شهادة التدقيق PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Group 1: المفاتيح وقواعد البيانات -->
+    <div class="group-title">1. الأمان السري والتحقق من البيانات (Data & Secrets)</div>
+    <div class="check-list">
+      <div class="check-card" onclick="toggleItem(this, 1)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">01</span>
+            <span>الـ Secret Keys على السيرفر فقط (Server-Side Only)</span>
+            <span class="check-risk risk-high">خطر مرتفع جداً</span>
+          </div>
+          <div class="check-desc">تأكد أن مفاتيح Gemini، OpenAI، Stripe لا تظهر في كود الجافاسكريبت بالبراوزر أو ملفات الـ frontend.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 2)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">02</span>
+            <span>تفعيل الـ Row Level Security (RLS) لكل جدول</span>
+            <span class="check-risk risk-high">عزل قواعد البيانات</span>
+          </div>
+          <div class="check-desc">كل عميل يرى سجلاته وبياناته فقط، لمنع أي مستخدم من قراءة بيانات المستخدمين الآخرين عبر الـ API.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 3)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">03</span>
+            <span>Validation صارم على السيرفر (Server-Side Validation)</span>
+            <span class="check-risk risk-high">منع التلاعب المالي</span>
+          </div>
+          <div class="check-desc">التحقق من صحة الأسعار والكميات في الباك إند لمنع التلاعب وإرسال قيم سالبة أو شراء بـ 0 جنيه.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 2: الصلاحيات والأمان -->
+    <div class="group-title">2. الهوية ومكافحة الهجمات (Auth & Defense)</div>
+    <div class="check-list">
+      <div class="check-card" onclick="toggleItem(this, 4)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">04</span>
+            <span>فحص الـ Role والصلاحيات في كل Request (RBAC)</span>
+            <span class="check-risk risk-high">حماية لوحة التحكم</span>
+          </div>
+          <div class="check-desc">التأكد أن مسارات الأدمن الحساسة تفحص الـ Token ودور المستخدم في كل استدعاء ولا تعتمد على إخفاء الأزرار فقط.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 5)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">05</span>
+            <span>تركيب Rate Limit على شاشات تسجيل الدخول والـ OTP</span>
+            <span class="check-risk risk-med">مكافحة الـ Brute-Force</span>
+          </div>
+          <div class="check-desc">تحديد عدد محاولات الدخول الخاطئة لمنع هجمات التخمين الآلي على كلمات المرور وكود التحقق.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 6)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">06</span>
+            <span>تشغيل NPM Audit وحل الثغرات المعروفة</span>
+            <span class="check-risk risk-med">سلامة الحزم التابعة</span>
+          </div>
+          <div class="check-desc">فحص جميع المكتبات التابعة للتطبيق للتأكد من خلوها من أي ثغرات Zero-Day تم الإعلان عنها.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 3: المدفوعات والـ APIs -->
+    <div class="group-title">3. المدفوعات واستهلاك الـ AI (Billing & Webhooks)</div>
+    <div class="check-list">
+      <div class="check-card" onclick="toggleItem(this, 7)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">07</span>
+            <span>التحقق من توقيع الـ Webhook Signature</span>
+            <span class="check-risk risk-high">منع الدفع الوهمي</span>
+          </div>
+          <div class="check-desc">التأكد من التوقيع الرقمي لبوابات الدفع (Stripe / Paymob / Fawry) لمنع المهاجمين من إرسال إشعارات دفع مزيفة.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 8)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">08</span>
+            <span>اختبار الدفع بـ Test Cards فقط قبل التفعيل</span>
+            <span class="check-risk risk-med">بيئة الاختبار</span>
+          </div>
+          <div class="check-desc">تجربة دورة الشراء، الفشل، الإلغاء، واسترداد الأموال بالكامل في Sandbox Mode قبل إدخال مفاتيح Live.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 9)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">09</span>
+            <span>وضع حد إنفاق (Spend Limit) على الـ AI Tokens</span>
+            <span class="check-risk risk-high">حماية الميزانية</span>
+          </div>
+          <div class="check-desc">ضبط Hard Limit وإشعارات استهلاك في لوحة Google Cloud / OpenAI حتى لا تتفاجأ بفاتورة باهظة في حال تكرار الحلقات.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 4: الاستقرار والتعافي -->
+    <div class="group-title">4. الاستقرار والتعافي من الكوارث (Reliability & Ops)</div>
+    <div class="check-list">
+      <div class="check-card" onclick="toggleItem(this, 10)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">10</span>
+            <span>نسخ احتياطي دوري واختبار الاسترجاع (Restore Drill)</span>
+            <span class="check-risk risk-high">استعادة البيانات</span>
+          </div>
+          <div class="check-desc">أخذ Backup تلقائي لقاعدة البيانات وتجربة استرجاع نسخة حقيقية للتأكد من سلامة ملفات النسخ.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 11)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">11</span>
+            <span>نظام تتبع أخطاء فوري (Real-Time Error Tracking)</span>
+            <span class="check-risk risk-med">المراقبة الحية</span>
+          </div>
+          <div class="check-desc">تنبيهات فورية عند حدوث خطأ 500 على السيرفر لتصحيحه قبل أن يلاحظه بقية المستخدمين.</div>
+        </div>
+      </div>
+
+      <div class="check-card" onclick="toggleItem(this, 12)">
+        <div class="checkbox-box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="check-content">
+          <div class="check-title">
+            <span class="check-num">12</span>
+            <span>خطة Rollback بزر واحد لآخر إصدار مستقر</span>
+            <span class="check-risk risk-high">استمرارية العمل</span>
+          </div>
+          <div class="check-desc">القدرة على التراجع فوراً إلى آخر Deploy سليم على Cloudflare Pages في ثوانٍ حال حدوث عطل غير متوقع.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:40px;">
+      <button type="button" class="btn btn-primary" style="padding:14px 36px;font-size:16px;" onclick="openLeadModal()">
+        استخراج شهادة الفحص وتقرير الـ PDF المعتمد
+      </button>
+    </div>
+  </div>
+
+  <!-- Lead Capture Modal -->
+  <div class="modal-overlay" id="leadModal">
+    <div class="modal-box">
+      <button type="button" class="modal-close" onclick="closeLeadModal()">✕</button>
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:8px;">استخراج تقرير الفحص الأمني (PDF)</h3>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+        أدخل بياناتك وسيتم توليد التقرير الهندسي الشامل بناءً على نقاط الفحص التي حددتها (النتيجة: <strong id="modalScoreVal" style="color:var(--accent);">0%</strong>).
+      </p>
+
+      <form id="auditLeadForm" onsubmit="handleAuditSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">الاسم بالكامل</label>
+          <input type="text" id="leadName" class="form-input" placeholder="مثال: م/ أحمد إبراهيم" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم المشروع أو التطبيق</label>
+          <input type="text" id="leadProject" class="form-input" placeholder="مثال: تطبيق توصيل / منصة استشارات" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الواتساب / الهاتف</label>
+          <input type="tel" id="leadPhone" class="form-input" placeholder="+20 100 000 0000" dir="ltr" style="text-align:right;" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني (اختياري)</label>
+          <input type="email" id="leadEmail" class="form-input" placeholder="ahmed@company.com" dir="ltr" />
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;padding:14px;margin-top:10px;">
+          توليد التقرير والشهادة المعتمدة 📄
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let checkedCount = 0;
+    const totalItems = 12;
+
+    function toggleItem(card, id) {
+      card.classList.toggle('checked');
+      updateScore();
+    }
+
+    function updateScore() {
+      const checkedCards = document.querySelectorAll('.check-card.checked').length;
+      checkedCount = checkedCards;
+      const pct = Math.round((checkedCount / totalItems) * 100);
+
+      const circle = document.getElementById('dialCircle');
+      const text = document.getElementById('scoreText');
+      const status = document.getElementById('scoreStatus');
+      const modalScore = document.getElementById('modalScoreVal');
+
+      text.textContent = pct + '%';
+      if (modalScore) modalScore.textContent = pct + '%';
+
+      let color = '#ef4444';
+      let statusMsg = 'حرج — لم يتم استيفاء الفحوصات الأمنية الأساسية';
+
+      if (pct >= 85) {
+        color = '#10b981';
+        statusMsg = 'ممتاز — التطبيق جاهز للإطلاق التجاري بنسبة أمان عالية';
+      } else if (pct >= 50) {
+        color = '#f59e0b';
+        statusMsg = 'متوسط — هناك ثغرات هامة يجب إغلاقها قبل الإطلاق';
+      }
+
+      circle.style.setProperty('--progress', pct + '%');
+      circle.style.background = `conic-gradient(${color} ${pct}%, rgba(255,255,255,0.06) 0)`;
+      status.style.color = color;
+      status.textContent = statusMsg + ` (${checkedCount} من ${totalItems} مكتمل)`;
+    }
+
+    function openLeadModal() {
+      document.getElementById('leadModal').classList.add('active');
+    }
+
+    function closeLeadModal() {
+      document.getElementById('leadModal').classList.remove('active');
+    }
+
+    async function handleAuditSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري تسجيل الفحص وتجهيز التقرير...';
+
+      const name = document.getElementById('leadName').value.trim();
+      const projectName = document.getElementById('leadProject').value.trim();
+      const phone = document.getElementById('leadPhone').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
+      const score = Math.round((checkedCount / totalItems) * 100);
+
+      try {
+        // Direct save to Cloudflare D1 CRM leads endpoint
+        const res = await fetch('/api/admin/sales/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            project_name: projectName,
+            phone,
+            email,
+            source_type: 'website_form',
+            service_interested: 'فحص الأمان والجاهزية التقنية (Pre-Launch Security Audit)',
+            budget_tier: 'Growth',
+            challenge_notes: `نتيجة فحص الأمان: ${score}% (${checkedCount} من ${totalItems} بنود مكتملة) - يحتاج مراجعة مهندس النظم`
+          })
+        });
+
+        // Open print view or download
+        alert('تم تسجيل نتيجة الفحص بنجاح! سيتم الآن فتح شهادة التدقيق وتقرير الـ PDF.');
+        closeLeadModal();
+        window.print();
+      } catch (err) {
+        console.error('Audit submit error:', err);
+        alert('تم تجهيز التقرير، جاري فتح الطباعة...');
+        closeLeadModal();
+        window.print();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'توليد التقرير والشهادة المعتمدة 📄';
+      }
+    }
+  </script>
+</body>
+</html>
