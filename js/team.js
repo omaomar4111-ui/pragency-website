@@ -80,6 +80,11 @@
     var grid = document.getElementById('teamGrid');
     if (!grid) return;
     
+    // Skip re-rendering if static HTML is already loaded in default Arabic
+    if (grid.children.length > 0 && (!window.i18n || window.i18n.get() === 'ar') && !window._forceTeamRender) {
+      return;
+    }
+    
     // Fetch once and cache in window
     if (!window._teamData) {
       const apiData = await fetchTeam();

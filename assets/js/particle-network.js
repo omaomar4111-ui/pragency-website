@@ -1,5 +1,9 @@
 // Interactive Particle Network Engine (Lightweight, 60 FPS, Mouse-reactive)
 (function initParticleEngine() {
+  // Disable canvas animation on mobile to save CPU & battery
+  if (window.innerWidth < 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');

@@ -17,8 +17,7 @@
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored && SUPPORTED.includes(stored)) return stored;
     } catch (e) {}
-    const browser = (navigator.language || 'ar').toLowerCase().slice(0, 2);
-    return SUPPORTED.includes(browser) ? browser : DEFAULT_LANG;
+    return DEFAULT_LANG;
   }
 
   async function loadTranslations(lang) {

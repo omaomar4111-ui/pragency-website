@@ -5,7 +5,7 @@
 <script>document.documentElement.classList.remove('no-js');</script>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0"/>
 <title>PR Agency</title>
-<meta name="description" content=""/>
+<meta name="description" content="وكالة PR للتسويق المتكامل في القاهرة — استراتيجيات نمو، إدارة سوشيال ميديا، إعلانات ممولة، إنتاج مرئي وهويات بصرية متكاملة."/>
 <meta name="keywords" content="PR, PR Agency, وكالة PR, وكالة تسويق, شركة تسويق رقمي, وكالة تسويق في القاهرة, وكالة تسويق في مصر, إدارة سوشيال ميديا, إعلانات ممولة, تسويق إلكتروني, وكالة دعاية وإعلان, إنتاج مرئي, تصوير إعلاني"/>
 <link rel="canonical" href="https://pragency.pages.dev/"/>
 <meta property="og:title" content="PR Agency"/>
@@ -188,11 +188,13 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://www.googletagmanager.com"/>
 <link rel="preconnect" href="https://www.google-analytics.com"/>
 <link rel="preconnect" href="https://connect.facebook.net"/>
-<link rel="preload" href="css/main.css?v=98" as="style"/>
+<link rel="preload" href="css/main.css?v=122" as="style"/>
+<link rel="preload" href="assets/images/hero-statue.webp?v=117" as="image" type="image/webp" fetchpriority="high"/>
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/main.css?v=98"/>
-<link rel="stylesheet" href="css/pages.css?v=120"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/></noscript>
+<link rel="stylesheet" href="css/main.css?v=122"/>
+<link rel="stylesheet" href="css/pages.css?v=122"/>
 
 
 <!-- Favicons -->
@@ -203,41 +205,50 @@ window.dataLayer = window.dataLayer || [];
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 <meta name="theme-color" content="#0A0612" />
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZH6DDLJ77C"></script>
+<!-- Performance-Optimized Third-Party Tracking (Deferred to prevent main thread blocking) -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-ZH6DDLJ77C', {
-    'send_page_view': true
+  gtag('config', 'G-ZH6DDLJ77C', { 'send_page_view': true });
+
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];}(window, document);
+  fbq('init', '1510619060791532');
+  fbq('track', 'PageView');
+
+  function initAnalytics() {
+    if (window._analyticsInitialized) return;
+    window._analyticsInitialized = true;
+    
+    var s1 = document.createElement('script');
+    s1.async = true;
+    s1.src = 'https://www.googletagmanager.com/gtag/js?id=G-ZH6DDLJ77C';
+    document.head.appendChild(s1);
+
+    var s2 = document.createElement('script');
+    s2.async = true;
+    s2.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    document.head.appendChild(s2);
+
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, 'clarity', 'script', 'yjs9vg1xxe');
+  }
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(function() { setTimeout(initAnalytics, 4000); });
+  } else {
+    window.addEventListener('load', function() { setTimeout(initAnalytics, 4000); });
+  }
+  ['scroll', 'touchstart', 'click'].forEach(function(ev) {
+    window.addEventListener(ev, initAnalytics, { once: true, passive: true });
   });
 </script>
-
-<!-- Meta Pixel -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1510619060791532');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
-/ alt="PR Agency — وكالة تسويق متكاملة في القاهرة"></noscript>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">
-  (function(c,l,a,r,i,t,y){
-    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-  })(window, document, "clarity", "script", "yjs9vg1xxe");
-</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1" alt="PR Agency"/></noscript>
 <link rel="stylesheet" href="css/multi-step-form.css?v=98"/>
 <link rel="stylesheet" href="/css/chatbot.css?v=98"/>
   <link rel="stylesheet" href="/css/phase2-components.css?v=108"/>
@@ -393,11 +404,12 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       <!-- التمثال في منتصف اليمين متوازن -->
       <div class="hero-statue-layer" aria-hidden="true">
         <picture>
-          <source srcset="assets/images/hero-statue.webp?v=116" type="image/webp">
+          <source srcset="assets/images/hero-statue.webp?v=117" type="image/webp">
           <img 
             src="assets/images/hero-statue.png?v=116" 
             alt="PR Agency Sculpture"
             loading="eager"
+            fetchpriority="high"
             width="1000" 
             height="1091"
           />
@@ -413,6 +425,7 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
               src="assets/logos/pr-agency.png?v=116" 
               alt="PR Agency — وكالة تسويق متكاملة في القاهرة" 
               loading="eager"
+            fetchpriority="high"
               width="400" 
               height="400"
             />
@@ -1055,109 +1068,109 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-01-bliltna.webp" type="image/webp">
-          <img src="assets/logos/clients/client-01-bliltna.png" alt="شعار بليلتنا - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-01-bliltna.png" alt="شعار بليلتنا - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-02-home-ix.webp" type="image/webp">
-          <img src="assets/logos/clients/client-02-home-ix.png" alt="شعار Home IX - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-02-home-ix.png" alt="شعار Home IX - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-03-kangaroo.webp" type="image/webp">
-          <img src="assets/logos/clients/client-03-kangaroo.png" alt="شعار كانجارو - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-03-kangaroo.png" alt="شعار كانجارو - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-04-dar.webp" type="image/webp">
-          <img src="assets/logos/clients/client-04-dar.png" alt="شعار دار العقارية - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-04-dar.png" alt="شعار دار العقارية - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-05-nh-clinics.webp" type="image/webp">
-          <img src="assets/logos/clients/client-05-nh-clinics.png" alt="شعار NH Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-05-nh-clinics.png" alt="شعار NH Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-06-unit-x.webp" type="image/webp">
-          <img src="assets/logos/clients/client-06-unit-x.png" alt="شعار Unit X - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-06-unit-x.png" alt="شعار Unit X - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-07-mountain-view.webp" type="image/webp">
-          <img src="assets/logos/clients/client-07-mountain-view.png" alt="شعار Mountain View - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-07-mountain-view.png" alt="شعار Mountain View - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-08-merath.webp" type="image/webp">
-          <img src="assets/logos/clients/client-08-merath.png" alt="شعار ميراث - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-08-merath.png" alt="شعار ميراث - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-09-memaar.webp" type="image/webp">
-          <img src="assets/logos/clients/client-09-memaar.png" alt="شعار معمار - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-09-memaar.png" alt="شعار معمار - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-10-sak.webp" type="image/webp">
-          <img src="assets/logos/clients/client-10-sak.png" alt="شعار SAK - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-10-sak.png" alt="شعار SAK - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-11-address.webp" type="image/webp">
-          <img src="assets/logos/clients/client-11-address.png" alt="شعار The Address - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-11-address.png" alt="شعار The Address - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-12-evergreen.webp" type="image/webp">
-          <img src="assets/logos/clients/client-12-evergreen.png" alt="شعار Evergreen - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-12-evergreen.png" alt="شعار Evergreen - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-13-jg.webp" type="image/webp">
-          <img src="assets/logos/clients/client-13-jg.png" alt="شعار JG - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-13-jg.png" alt="شعار JG - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-14-island-gym.webp" type="image/webp">
-          <img src="assets/logos/clients/client-14-island-gym.png" alt="شعار Island Gym - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-14-island-gym.png" alt="شعار Island Gym - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-15-iskin.webp" type="image/webp">
-          <img src="assets/logos/clients/client-15-iskin.png" alt="شعار iSkin Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-15-iskin.png" alt="شعار iSkin Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-16-paws.webp" type="image/webp">
-          <img src="assets/logos/clients/client-16-paws.png" alt="شعار Paws - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-16-paws.png" alt="شعار Paws - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-18-ovo.webp" type="image/webp">
-          <img src="assets/logos/clients/client-18-ovo.png" alt="شعار OVO - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-18-ovo.png" alt="شعار OVO - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-19-swan.webp" type="image/webp">
-          <img src="assets/logos/clients/client-19-swan.png" alt="شعار Swan - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" />
+          <img src="assets/logos/clients/client-19-swan.png" alt="شعار Swan - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
     </div>
@@ -1317,14 +1330,32 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
 <button id="back-to-top" aria-label="ارجع لأعلى"><svg class="svgi" style="font-size:18px;transform:rotate(90deg)"><use href="#fa-arrow-left"></use></svg></button>
 
 
-<script src="js/clients.js?v=98" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+<script>
+  function loadGSAP() {
+    if (window._gsapLoaded) return;
+    window._gsapLoaded = true;
+    var s1 = document.createElement('script');
+    s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+    s1.onload = function() {
+      var s2 = document.createElement('script');
+      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js';
+      s2.onload = function() {
+        if (typeof initGSAP === 'function') initGSAP();
+      };
+      document.body.appendChild(s2);
+    };
+    document.body.appendChild(s1);
+  }
+  ['scroll', 'touchstart', 'mousemove', 'keydown'].forEach(function(ev) {
+    window.addEventListener(ev, loadGSAP, { once: true, passive: true });
+  });
+</script>
 <script src="js/team.js?v=98" defer></script>
 <script src="js/main.js?v=98" defer></script>
 <script src="js/faqs.js?v=98" defer></script>
 <script src="js/search.js?v=98" defer></script>
-<script src="js/ads.js?v=98" defer></script>
+
 <script src="js/reveal.js?v=98" defer></script>
 <script src="js/contact-form.js?v=98" defer></script>
 
@@ -1425,10 +1456,10 @@ src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1"
   })();
   </script>
   
-  <script src="/assets/js/particle-network.js"></script>
+  <script src="/assets/js/particle-network.js" defer></script>
   
-  <script src="/assets/js/process-carousel.js?v=108"></script>
-  <script src="/js/native-sync.js"></script>
+  <script src="/assets/js/process-carousel.js?v=108" defer></script>
+  <script src="/js/native-sync.js" defer></script>
 </body>
 </html>
 

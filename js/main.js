@@ -210,11 +210,17 @@ window.__2D={
 
 function initGSAP() {
   if (typeof gsap === 'undefined') {
-    setTimeout(initGSAP, 300);
     return;
   }
   
-  gsap.registerPlugin(ScrollTrigger);
+  // On mobile or reduced motion, skip heavy ScrollTrigger loops for lightning-fast performance
+  if (window.innerWidth < 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  if (typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+  }
   
   var tl = gsap.timeline({ delay: 0.2 });
   
@@ -231,12 +237,14 @@ function initGSAP() {
     scale: 0.7, opacity: 0, duration: 1.3, ease: 'power3.out'
   }, 0);
   
-  gsap.utils.toArray('.section-h2').forEach(function(el) {
-    gsap.from(el, {
-      opacity: 0, y: 40, duration: 0.9, ease: 'power3.out',
-      scrollTrigger: { trigger: el, start: 'top 85%' }
+  if (typeof ScrollTrigger !== 'undefined') {
+    gsap.utils.toArray('.section-h2').forEach(function(el) {
+      gsap.from(el, {
+        opacity: 0, y: 40, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%' }
+      });
     });
-  });
+  }
 }
 
 /* ═══ PWA Service Worker & Install Prompt ═══ */
