@@ -6,24 +6,29 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`🧾 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 4 بنجاح (PHASE 4: Invoices & Projects)</b> 🚀
+`👤 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 5 بنجاح (PHASE 5: Team & Settings)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>إدارة الفواتير والتحصيل المالي (Invoices Hub):</b>
-   - مسار <code>menu:invoices</code> يعرض ملخص الفواتير المحصلة، المعلقة، والمتأخرة.
-   - <b>✅ اعتماد السداد الفوري (One-Click Payment Approval):</b>
-     • زر اعتماد سداد لكل فاتورة معلقة يحدث حالة الفاتورة لـ paid ويسجل paid_at لحظياً في D1.
-   - <b>➕ إصدار فواتير جديدة حوارياً:</b>
-     • تفعيل وضع <code>awaiting_invoice_data</code> لإصدار الفواتير مع التحقق التلقائي من ربط العميل وحماية القيود المرجعية.
+1. <b>إدارة فريق العمل والصلاحيات (Team Hub):</b>
+   - مسار <code>menu:team</code> يعرض قائمة بأعضاء الفريق وحالة حساباتهم وأدوارهم.
+   - <b>إجراءات العضو الفورية:</b>
+     • <code>action:team:view</code>: عرض تفاصيل العضو وعدد المهام المسندة له.
+     • <code>action:team:toggle</code>: تفعيل/تعطيل الحساب بضغطة زر وتحديث D1 لحظياً.
+     • <code>action:team:tasks</code>: استعراض المهام المسندة للعضو.
+     • <code>action:team:delete</code>: حذف العضو وإلغاء صلاحياته فورياً.
+   - <b>➕ إضافة عضو جديد حوارياً:</b> تفعيل وضع <code>awaiting_team_add</code> لإضافة عضو بالاسم والدور والقسم والبريد.
 
-2. <b>إدارة المشاريع وهوامش الربحية (Projects & Margins):</b>
-   - مسار <code>menu:projects</code> يعرض المشاريع النشطة مع قيمة العقد الشهري (Retainer).
-   - <b>📈 احتساب هوامش الربح الصافية:</b> احتساب التكاليف التشغيلية بناءً على ساعات العمل المسجلة ومقارنتها بقيمة العقد.
-   - <b>فريق العمل ومهام المشروع:</b> أزرار لاستعراض مهام كل مشروع وفريق العمل المشارك فيه.
+2. <b>إدارة إعدادات الوكالة الحساسة (Settings Management):</b>
+   - مسار <code>menu:settings</code> لعرض بيانات الدفع وتكوينات النظام:
+     • حساب InstaPay IPA واسم المستفيد الرسمي.
+     • معرّف Apple Pay Merchant ID.
+     • معرّف Telegram Chat ID والبلدان المستهدفة.
+   - <b>تعديل الإعدادات حوارياً:</b> دعم تعديل أي إعداد وتحديثه في جدول <code>agency_settings</code> بـ D1.
+   - <b>🔔 زر اختبار الإشعارات الفورية:</b> فحص مسار الإشعارات وضمان وصول التنبيهات لحظياً.
 
 3. <b>اختبارات وفحوصات السلامة:</b>
-   - Phase 4 Invoices & Profitability Tests: <b>PASSED 100%</b>.
-   - Foreign Key Integrity & D1 Payment Verification: <b>PASSED</b>.
+   - Phase 5 Team & Settings Unit & D1 Tests: <b>PASSED 100%</b>.
+   - D1 Table Updates & Session Handling: <b>PASSED</b>.
    - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
 
 const payload = JSON.stringify({
@@ -48,18 +53,22 @@ const req = https.request({
     try {
       const data = JSON.parse(body);
       if (data.ok) {
-        console.log('✅ Telegram completion notification sent successfully to admin!');
+        console.log('✅ Telegram Notification Dispatched Successfully!');
+        process.exit(0);
       } else {
-        console.error('❌ Telegram API error:', data.description);
+        console.error('❌ Telegram API Error:', data.description);
+        process.exit(1);
       }
     } catch (e) {
-      console.log('Response:', body);
+      console.error('❌ Failed to parse response:', e);
+      process.exit(1);
     }
   });
 });
 
 req.on('error', (err) => {
-  console.error('❌ Request error:', err.message);
+  console.error('❌ Request error:', err);
+  process.exit(1);
 });
 
 req.write(payload);

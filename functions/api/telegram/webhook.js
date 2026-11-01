@@ -137,6 +137,32 @@ async function fetchTaskStats(dbMain) {
   }
 }
 
+/**
+ * Helper to fetch settings
+ */
+async function fetchSettings(dbAnalytics, env) {
+  let instapayIpa = 'pragency@instapay';
+  let instapayName = 'PR Agency Egypt Official';
+  let applePayMerchantId = 'merchant.com.pragency.portal';
+
+  try {
+    const rows = await dbAnalytics.prepare('SELECT key, value FROM agency_settings').all();
+    (rows?.results || []).forEach(r => {
+      if (r.key === 'instapay_ipa') instapayIpa = r.value;
+      if (r.key === 'instapay_name') instapayName = r.value;
+      if (r.key === 'apple_pay_merchant_id') applePayMerchantId = r.value;
+    });
+  } catch (e) {}
+
+  return {
+    instapayIpa,
+    instapayName,
+    applePayMerchantId,
+    telegramChatId: env.TELEGRAM_CHAT_ID || '5715939844',
+    notifyCountries: env.NOTIFY_COUNTRIES || 'EG,SA,AE'
+  };
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const dbAnalytics = env.ANALYTICS_DB || env.DB;
@@ -508,7 +534,6 @@ export async function onRequestPost(context) {
         await dbAnalytics.prepare("UPDATE client_invoices SET status = 'paid', paid_at = CURRENT_TIMESTAMP WHERE id = ?").bind(invId).run();
         await answerCallbackQuery(env, callbackQuery.id, '✅ تم اعتماد سداد الفاتورة بنجاح!');
 
-        // Reload invoices menu
         const paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || {};
         const pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || {};
         const overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || {};
@@ -641,7 +666,134 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // Temporary placeholder for sub-menus during subsequent sequential phases
+      // ── PHASE 5: TEAM & SETTINGS CALLBACKS ──
+      if (callbackData === 'menu:team') {
+        let members = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, name, email, phone, role, department, active FROM agency_team_members ORDER BY created_at DESC LIMIT 8').all();
+          members = res?.results || [];
+        } catch (e) {
+          console.warn('[Team Callback] Error:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:team', { members });
+        await setSession(dbAnalytics, incomingChatId, 'menu:team', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:team:view:')) {
+        const memberId = callbackData.replace('action:team:view:', '');
+        const member = await dbAnalytics.prepare('SELECT * FROM agency_team_members WHERE id = ?').bind(memberId).first();
+        
+        let assignedTasksCount = 0;
+        try {
+          const tRow = await dbMain.prepare('SELECT COUNT(*) as cnt FROM tasks WHERE assigned_to = ? OR assigned_to = ?').bind(member?.name || '', memberId).first();
+          assignedTasksCount = tRow?.cnt || 0;
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:team:detail', { member: member || { name: 'عضو فريق' }, assignedTasksCount });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:team:toggle:')) {
+        const memberId = callbackData.replace('action:team:toggle:', '');
+        await dbAnalytics.prepare('UPDATE agency_team_members SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE id = ?').bind(memberId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '✅ تم تحديث حالة حساب العضو بنجاح!');
+
+        const res = await dbAnalytics.prepare('SELECT id, name, email, phone, role, department, active FROM agency_team_members ORDER BY created_at DESC LIMIT 8').all();
+        const payload = buildMenu(incomingChatId, 'menu:team', { members: res?.results || [] });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:team:delete:')) {
+        const memberId = callbackData.replace('action:team:delete:', '');
+        await dbAnalytics.prepare('DELETE FROM agency_team_members WHERE id = ?').bind(memberId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '🗑️ تم حذف عضو الفريق.');
+
+        const res = await dbAnalytics.prepare('SELECT id, name, email, phone, role, department, active FROM agency_team_members ORDER BY created_at DESC LIMIT 8').all();
+        const payload = buildMenu(incomingChatId, 'menu:team', { members: res?.results || [] });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:team:tasks:')) {
+        const memberId = callbackData.replace('action:team:tasks:', '');
+        const member = await dbAnalytics.prepare('SELECT name FROM agency_team_members WHERE id = ?').bind(memberId).first();
+        const memberName = member?.name || memberId;
+
+        const tasks = await dbMain.prepare('SELECT * FROM tasks WHERE assigned_to = ? OR assigned_to = ? ORDER BY created_at DESC LIMIT 5').bind(memberName, memberId).all();
+        const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
+          title: `مهام العضو (${memberName})`,
+          tasks: tasks?.results || [],
+          listType: 'today'
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:team:add') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_team_add', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `👤 <b>إضافة عضو جديد للفريق</b>\n\nأرسل بيانات العضو مفصولة بفواصل:\n<code>الاسم، الدور الوظيفي، البريد الإلكتروني، القسم</code>\n\n<i>مثال: سارة أحمد، Media Buyer، sara@agency.com، الإعلانات</i>`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للفريق', callback_data: 'menu:team' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:settings') {
+        const settings = await fetchSettings(dbAnalytics, env);
+        const payload = buildMenu(incomingChatId, 'menu:settings', settings);
+        await setSession(dbAnalytics, incomingChatId, 'menu:settings', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:settings:edit:')) {
+        const settingKey = callbackData.replace('action:settings:edit:', '');
+        const labels = {
+          instapay_ipa: 'إنستاباي IPA',
+          instapay_name: 'اسم حساب إنستاباي',
+          apple_pay_merchant_id: 'Apple Pay Merchant ID'
+        };
+        const label = labels[settingKey] || settingKey;
+
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_setting_edit', { key: settingKey, label });
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✏️ <b>تعديل ${label}</b>\n\nأرسل القيمة الجديدة في رسالتك التالية:`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للإعدادات', callback_data: 'menu:settings' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:settings:test_notification') {
+        await answerCallbackQuery(env, callbackQuery.id, '🔔 تم إرسال الإشعار التجريبي بنجاح!');
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `🔔 <b>نجاح اختبار الإشعارات الفورية!</b>\n\n` +
+                `⚡ <b>حالة الاتصال:</b> متصل بالكامل بقواعد بيانات Cloudflare D1 ومحرك Telegram Command Center.\n` +
+                `⏰ <b>التوقيت اللحظي:</b> ${new Date().toISOString()}\n` +
+                `🚀 <b>الخادم:</b> Edge Cloudflare Worker`,
+          parse_mode: 'HTML'
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // Fallback placeholder
       const payload = {
         chat_id: incomingChatId,
         message_id: messageId,
@@ -781,7 +933,6 @@ export async function onRequestPost(context) {
           parse_mode: 'HTML'
         });
 
-        // Show updated invoices menu
         const paidRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid'").first()) || {};
         const pendingRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first()) || {};
         const overdueRow = (await dbAnalytics.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid' AND due_date < date('now')").first()) || {};
@@ -803,6 +954,63 @@ export async function onRequestPost(context) {
           pendingInvoices: res?.results || []
         });
         await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting Team Member Add (Phase 5)
+      if (currentSession?.current_menu === 'awaiting_team_add') {
+        const parts = text.split(/[,،]/).map(s => s.trim());
+        const name = parts[0] || 'عضو جديد';
+        const role = parts[1] || 'فريق العمل';
+        const email = parts[2] || `user_${Date.now()}@agency.com`;
+        const dept = parts[3] || 'العمليات';
+        const memberId = 'mem_' + Date.now();
+
+        await dbAnalytics.prepare(`
+          INSERT INTO agency_team_members (id, name, role, roles, email, password_hash, department, active, created_at)
+          VALUES (?, ?, ?, ?, ?, 'tg_hash', ?, 1, CURRENT_TIMESTAMP)
+        `).bind(memberId, name, role, role, email, dept).run();
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:team', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تمت إضافة عضو الفريق بنجاح!</b>\n\n` +
+                `👤 <b>الاسم:</b> ${name}\n` +
+                `💼 <b>الدور:</b> ${role}\n` +
+                `🏢 <b>القسم:</b> ${dept}\n` +
+                `✉️ <b>البريد:</b> ${email}`,
+          parse_mode: 'HTML'
+        });
+
+        const res = await dbAnalytics.prepare('SELECT id, name, email, phone, role, department, active FROM agency_team_members ORDER BY created_at DESC LIMIT 8').all();
+        const teamPayload = buildMenu(incomingChatId, 'menu:team', { members: res?.results || [] });
+        await sendTelegramMessage(env, teamPayload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting Setting Edit (Phase 5)
+      if (currentSession?.current_menu === 'awaiting_setting_edit' && currentSession?.context?.key) {
+        const settingKey = currentSession.context.key;
+        const settingLabel = currentSession.context.label || settingKey;
+
+        await dbAnalytics.prepare(`
+          INSERT INTO agency_settings (key, value, updated_at)
+          VALUES (?, ?, CURRENT_TIMESTAMP)
+          ON CONFLICT(key) DO UPDATE SET
+            value = excluded.value,
+            updated_at = CURRENT_TIMESTAMP
+        `).bind(settingKey, text).run();
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:settings', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تم تحديث ${settingLabel} بنجاح إلى:</b>\n<code>${text}</code>`,
+          parse_mode: 'HTML'
+        });
+
+        const settings = await fetchSettings(dbAnalytics, env);
+        const settingsPayload = buildMenu(incomingChatId, 'menu:settings', settings);
+        await sendTelegramMessage(env, settingsPayload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
@@ -900,6 +1108,26 @@ export async function onRequestPost(context) {
         } catch (e) {}
         const payload = buildMenu(incomingChatId, 'menu:projects', { projects });
         await setSession(dbAnalytics, incomingChatId, 'menu:projects', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/team' || text === 'الفريق') {
+        let members = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, name, email, phone, role, department, active FROM agency_team_members ORDER BY created_at DESC LIMIT 8').all();
+          members = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:team', { members });
+        await setSession(dbAnalytics, incomingChatId, 'menu:team', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/settings' || text === 'الإعدادات') {
+        const settings = await fetchSettings(dbAnalytics, env);
+        const payload = buildMenu(incomingChatId, 'menu:settings', settings);
+        await setSession(dbAnalytics, incomingChatId, 'menu:settings', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }

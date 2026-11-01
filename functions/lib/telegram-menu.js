@@ -135,7 +135,6 @@ export function buildMenu(chatId, menuId, context = {}) {
                      `   • المسؤول: 👤 ${task.assigned_to || 'Super Admin'}\n` +
                      `   • التاريخ: 📅 ${task.planned_date || 'اليوم'}\n`;
 
-          // Inline action controls per task
           keyboard.push([
             { text: `✅ إتمام`, callback_data: `action:task:done:${task.id}` },
             { text: `⏸️ تايمر`, callback_data: `action:task:timer:${task.id}` },
@@ -147,7 +146,6 @@ export function buildMenu(chatId, menuId, context = {}) {
 
       msgText += `────────────────────\n⚡ <i>استخدم الأزرار أدناه للتحكم المباشر في كل مهمة:</i>`;
 
-      // Global Navigation buttons
       keyboard.push([
         { text: '➕ إضافة مهمة جديدة', callback_data: 'menu:tasks:add' },
         { text: '🔄 تحديث', callback_data: `menu:tasks:${listType}` }
@@ -160,9 +158,7 @@ export function buildMenu(chatId, menuId, context = {}) {
         chat_id: chatId,
         text: msgText,
         parse_mode: 'HTML',
-        reply_markup: {
-          inline_keyboard: keyboard
-        }
+        reply_markup: { inline_keyboard: keyboard }
       };
     }
 
@@ -472,6 +468,215 @@ export function buildMenu(chatId, menuId, context = {}) {
         text,
         parse_mode: 'HTML',
         reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    // ── PHASE 5: TEAM & SETTINGS MENUS ──
+    case 'menu:team': {
+      const { members = [] } = context;
+      let text = `👤 <b>فريق عمل الوكالة والصلاحيات | Team Hub</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      if (!members || members.length === 0) {
+        text += `<i>لا يوجد أعضاء مسجلين حالياً.</i>\n`;
+      } else {
+        members.slice(0, 6).forEach((m, idx) => {
+          const statusIcon = m.active ? '🟢 نشط' : '🔴 معطل';
+          text += `\n<b>${idx + 1}. ${m.name}</b> (${statusIcon})\n` +
+                  `   • المسمى: 💼 ${m.role || m.roles || 'عضو فريق'}\n` +
+                  `   • القسم: 🏢 ${m.department || 'العمليات'}\n` +
+                  `   • البريد: ✉️ ${m.email}\n`;
+
+          keyboard.push([
+            { text: `👤 تفاصيل`, callback_data: `action:team:view:${m.id}` },
+            { text: `📋 مهامه`, callback_data: `action:team:tasks:${m.id}` },
+            { text: m.active ? `⏸️ تعطيل` : `▶️ تفعيل`, callback_data: `action:team:toggle:${m.id}` },
+            { text: `🗑️`, callback_data: `action:team:delete:${m.id}` }
+          ]);
+        });
+      }
+
+      text += `────────────────────\n⚡ <i>استخدم الأزرار لإدارة حسابات الفريق ومهامهم:</i>`;
+
+      keyboard.push([
+        { text: '➕ إضافة عضو جديد', callback_data: 'action:team:add' },
+        { text: '🔄 تحديث', callback_data: 'menu:team' }
+      ]);
+      keyboard.push([
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    case 'menu:team:detail': {
+      const { member = {}, assignedTasksCount = 0 } = context;
+      return {
+        chat_id: chatId,
+        text: `👤 <b>ملف عضو الفريق: ${member.name}</b>\n` +
+              `────────────────────\n` +
+              `💼 <b>الدور الوظيفي:</b> ${member.role || member.roles || 'فريق العمل'}\n` +
+              `🏢 <b>القسم:</b> ${member.department || 'العمليات'}\n` +
+              `✉️ <b>البريد:</b> ${member.email}\n` +
+              `📱 <b>الهاتف:</b> ${member.phone || 'غير مسجل'}\n` +
+              `📌 <b>حالة الحساب:</b> ${member.active ? '🟢 نشط ومفعل' : '🔴 معطل'}\n` +
+              `📋 <b>المهام الموكلة إليه حالياً:</b> ${assignedTasksCount} مهمة\n` +
+              `────────────────────`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '📋 عرض مهام العضو', callback_data: `action:team:tasks:${member.id}` },
+              { text: member.active ? '⏸️ تعطيل الحساب' : '▶️ تفعيل الحساب', callback_data: `action:team:toggle:${member.id}` }
+            ],
+            [
+              { text: '⬅️ رجوع لقائمة الفريق', callback_data: 'menu:team' }
+            ]
+          ]
+        }
+      };
+    }
+
+    case 'menu:settings': {
+      const {
+        instapayIpa = 'pragency@instapay',
+        instapayName = 'PR Agency Egypt Official',
+        applePayMerchantId = 'merchant.com.pragency.portal',
+        telegramChatId = '5715939844',
+        notifyCountries = 'EG,SA,AE'
+      } = context;
+
+      return {
+        chat_id: chatId,
+        text: `⚙️ <b>إعدادات منظومة الوكالة وبوابات الدفع | Agency Settings</b>\n` +
+              `────────────────────\n` +
+              `💳 <b>إنستاباي IPA:</b> <code>${instapayIpa}</code>\n` +
+              `🏢 <b>اسم حساب إنستاباي:</b> ${instapayName}\n` +
+              `🍏 <b>Apple Pay Merchant ID:</b> <code>${applePayMerchantId}</code>\n` +
+              `🤖 <b>Telegram Chat ID المعتمد:</b> <code>${telegramChatId}</code>\n` +
+              `🌍 <b>دول الإشعارات المستهدفة:</b> ${notifyCountries}\n` +
+              `────────────────────\n` +
+              `⚡ <i>اختر البند المراد تعديله أو اختبر إشعارات النظام:</i>`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '✏️ تعديل إنستاباي IPA', callback_data: 'action:settings:edit:instapay_ipa' }
+            ],
+            [
+              { text: '✏️ تعديل اسم إنستاباي', callback_data: 'action:settings:edit:instapay_name' }
+            ],
+            [
+              { text: '✏️ تعديل Apple Pay ID', callback_data: 'action:settings:edit:apple_pay_merchant_id' }
+            ],
+            [
+              { text: '🔔 اختبار الإشعارات الفورية', callback_data: 'action:settings:test_notification' }
+            ],
+            [
+              { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+            ]
+          ]
+        }
+      };
+    }
+
+    // ── PHASE 6: AI TOOLS & AUTOMATION MENUS ──
+    case 'menu:ai': {
+      return {
+        chat_id: chatId,
+        text: `🤖 <b>مركز أدوات الذكاء الاصطناعي التوليدي | AI Tools Studio</b>\n────────────────────\nاختر أداة الذكاء الاصطناعي لبدء توليد المحتوى، الاستراتيجيات، أو العروض التقديمية فورياً:`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '✍️ كتابة بوست سوشيال ميديا', callback_data: 'action:ai:post' }
+            ],
+            [
+              { text: '📊 توليد استراتيجية تسويق كاملة', callback_data: 'action:ai:strategy' }
+            ],
+            [
+              { text: '📑 توليد عرض تقديمي (Pitch Deck)', callback_data: 'action:ai:pitch' }
+            ],
+            [
+              { text: '🔍 بحث وتنقيب عن شركة (Prospecting)', callback_data: 'action:ai:prospect' }
+            ],
+            [
+              { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+            ]
+          ]
+        }
+      };
+    }
+
+    case 'menu:automation': {
+      const { workflows = [] } = context;
+      let text = `⚙️ <b>محرك الأتمتة وسير العمل | Workflows & Automations</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      if (!workflows || workflows.length === 0) {
+        text += `<i>لا توجد مسارات أتمتة مسجلة حالياً.</i>\n`;
+      } else {
+        workflows.slice(0, 6).forEach((wf, idx) => {
+          const statusIcon = wf.is_active ? '🟢 نشط' : '🔴 معطل';
+          text += `\n<b>${idx + 1}. ${wf.name}</b> (${statusIcon})\n` +
+                  `   • المحفز: ⚡ ${wf.trigger_event || 'مجدول'}\n` +
+                  `   • الإجراء: 🎯 ${wf.action_type || 'تنبيه'}\n`;
+
+          keyboard.push([
+            { text: wf.is_active ? `🔴 تعطيل` : `🟢 تفعيل`, callback_data: `action:workflow:toggle:${wf.id}` },
+            { text: `▶️ تشغيل يدوي`, callback_data: `action:workflow:run:${wf.id}` }
+          ]);
+        });
+      }
+
+      text += `────────────────────\n⚡ <i>يمكنك التحكم في تشغيل وإيقاف أي أتمتة بضغطة زر</i>`;
+
+      keyboard.push([
+        { text: '🔄 تحديث', callback_data: 'menu:automation' },
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    // ── PHASE 7: REPORTS MENUS ──
+    case 'menu:reports': {
+      return {
+        chat_id: chatId,
+        text: `📈 <b>مركز التقارير التنفيذية والتحليلات | Executive Reports</b>\n────────────────────\nاختر التقرير المراد توليده لحظياً من بيانات الوكالة أو تصديرها كملف:`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '💰 تقرير الإيرادات والتحصيل', callback_data: 'action:report:revenue' }
+            ],
+            [
+              { text: '📊 تقرير أداء الفريق والمشاريع', callback_data: 'action:report:performance' }
+            ],
+            [
+              { text: '📈 تقرير الليدز والتحويلات', callback_data: 'action:report:leads' }
+            ],
+            [
+              { text: '🤖 تقرير وكلاء الذكاء الاصطناعي', callback_data: 'action:report:agents' }
+            ],
+            [
+              { text: '📥 تصدير ملف البيانات (CSV)', callback_data: 'action:report:csv' }
+            ],
+            [
+              { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+            ]
+          ]
+        }
       };
     }
   }
