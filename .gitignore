@@ -12,5 +12,7 @@ dns_preload.cjs
 .gemini/
 .agents/
 features/
+test-results/
+.lighthouseci/
 
 

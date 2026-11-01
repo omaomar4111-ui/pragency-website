@@ -1,0 +1,38 @@
+{
+  "name": "2d-marketing-website",
+  "version": "1.0.0",
+  "description": "موقع تسويق ونمو كامل مبني بـ **HTML5 / CSS3 / Vanilla JavaScript** بدون أي Build Tools أو Node Dependencies معقدة، جاهز للنشر المباشر والسريع على **GitHub Pages** مع دعم الدومين المخصص.",
+  "main": "sw.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omaomar4111-ui/pragency-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omaomar4111-ui/pragency-website/issues"
+  },
+  "homepage": "https://github.com/omaomar4111-ui/pragency-website#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/camera": "^8.2.6",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.64.1",
+    "vitest": "^5.0.5"
+  }
+}
