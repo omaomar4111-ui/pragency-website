@@ -629,7 +629,8 @@ export function buildMenu(chatId, menuId, context = {}) {
 
           keyboard.push([
             { text: wf.is_active ? `🔴 تعطيل` : `🟢 تفعيل`, callback_data: `action:workflow:toggle:${wf.id}` },
-            { text: `▶️ تشغيل يدوي`, callback_data: `action:workflow:run:${wf.id}` }
+            { text: `▶️ تشغيل يدوي`, callback_data: `action:workflow:run:${wf.id}` },
+            { text: `📜 السجلات`, callback_data: `action:workflow:logs:${wf.id}` }
           ]);
         });
       }
@@ -646,6 +647,34 @@ export function buildMenu(chatId, menuId, context = {}) {
         text,
         parse_mode: 'HTML',
         reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    case 'menu:workflow:logs': {
+      const { workflow = {}, logs = [] } = context;
+      let text = `📜 <b>سجلات تشغيل مسار الأتمتة: ${workflow.name || 'سير العمل'}</b>\n────────────────────\n`;
+      if (!logs || logs.length === 0) {
+        text += `<i>لا توجد سجلات تشغيل مسجلة لهذا المسار بعد.</i>\n`;
+      } else {
+        logs.forEach((log, idx) => {
+          const statusIcon = log.status === 'success' ? '✅ ناجح' : '⚠️ خطأ';
+          text += `\n<b>#${idx + 1} | ${statusIcon}</b>\n` +
+                  `   • المحفز: ⚡ ${log.trigger_event || 'يدوي'}\n` +
+                  `   • التوقيت: 🕒 ${log.executed_at || 'الآن'}\n`;
+        });
+      }
+      text += `────────────────────`;
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '▶️ تشغيل المسار الآن', callback_data: `action:workflow:run:${workflow.id}` }],
+            [{ text: '⬅️ رجوع للأتمتة', callback_data: 'menu:automation' }]
+          ]
+        }
       };
     }
 

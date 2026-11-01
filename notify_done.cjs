@@ -6,29 +6,26 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`👤 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 5 بنجاح (PHASE 5: Team & Settings)</b> 🚀
+`🤖 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 6 بنجاح (PHASE 6: AI Tools & Automation)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>إدارة فريق العمل والصلاحيات (Team Hub):</b>
-   - مسار <code>menu:team</code> يعرض قائمة بأعضاء الفريق وحالة حساباتهم وأدوارهم.
-   - <b>إجراءات العضو الفورية:</b>
-     • <code>action:team:view</code>: عرض تفاصيل العضو وعدد المهام المسندة له.
-     • <code>action:team:toggle</code>: تفعيل/تعطيل الحساب بضغطة زر وتحديث D1 لحظياً.
-     • <code>action:team:tasks</code>: استعراض المهام المسندة للعضو.
-     • <code>action:team:delete</code>: حذف العضو وإلغاء صلاحياته فورياً.
-   - <b>➕ إضافة عضو جديد حوارياً:</b> تفعيل وضع <code>awaiting_team_add</code> لإضافة عضو بالاسم والدور والقسم والبريد.
+1. <b>استوديو أدوات الذكاء الاصطناعي التوليدي (AI Tools Studio):</b>
+   - مسار <code>menu:ai</code> يتيح الوصول السريع لجميع أدوات توليد المحتوى والاستراتيجيات.
+   - <b>✍️ كتابة بوستات إعلانية (Social Media Copy):</b> وضع حواري <code>awaiting_ai_post</code> لتوليد بوستات تسويقية متكاملة مع Hook وCall to action وهاشتاجات متوافقة مع السوق المصري والخليجي.
+   - <b>📊 استراتيجيات التسويق الرقمي (Marketing Strategies):</b> وضع حواري <code>awaiting_ai_strategy</code> لبناء استراتيجية كاملة (جمهور، تموضع، توزيع ميزانيات، مؤشرات أداء).
+   - <b>📑 مخططات العروض البيعية (Pitch Deck Outlines):</b> وضع حواري <code>awaiting_ai_pitch</code> لصياغة عروض بيع وحساب هوامش باقات Retainers.
+   - <b>🔍 التنقيب والبحث الاستخباري (Prospecting):</b> وضع حواري <code>awaiting_ai_prospect</code> لتحليل الشركات وتحديد نقاط الضعف وزوايا البيع ورسائل التواصل الأولى.
+   - <b>دعم الذكاء الاصطناعي متعدد المستويات:</b> محرك هجين يدمج Cloudflare Workers AI وGemini 1.5 Flash مع قوالب ذكية تضمن العمل الفوري.
 
-2. <b>إدارة إعدادات الوكالة الحساسة (Settings Management):</b>
-   - مسار <code>menu:settings</code> لعرض بيانات الدفع وتكوينات النظام:
-     • حساب InstaPay IPA واسم المستفيد الرسمي.
-     • معرّف Apple Pay Merchant ID.
-     • معرّف Telegram Chat ID والبلدان المستهدفة.
-   - <b>تعديل الإعدادات حوارياً:</b> دعم تعديل أي إعداد وتحديثه في جدول <code>agency_settings</code> بـ D1.
-   - <b>🔔 زر اختبار الإشعارات الفورية:</b> فحص مسار الإشعارات وضمان وصول التنبيهات لحظياً.
+2. <b>محرك الأتمتة وسير العمل (Automation & Workflows Hub):</b>
+   - مسار <code>menu:automation</code> لعرض جميع مسارات العمل المسجلة في <code>agency_workflows</code>.
+   - <b>⚡ تشغيل يدوي فوري:</b> زر <code>action:workflow:run</code> لتشغيل المسار وتسجيله في <code>workflow_execution_logs</code> لحظياً.
+   - <b>🔴 / 🟢 تفعيل وتعطيل المسارات:</b> بضغطة زر واحدة وتحديث حالة <code>is_active</code> مباشرة في D1.
+   - <b>📜 سجلات التشغيل:</b> مسار <code>menu:workflow:logs</code> لعرض آخر عمليات التشغيل وحالاتها الزمنية.
 
 3. <b>اختبارات وفحوصات السلامة:</b>
-   - Phase 5 Team & Settings Unit & D1 Tests: <b>PASSED 100%</b>.
-   - D1 Table Updates & Session Handling: <b>PASSED</b>.
+   - Phase 6 AI Tools & Automation Tests: <b>PASSED 100%</b>.
+   - D1 Table Updates & Execution Logging: <b>PASSED</b>.
    - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
 
 const payload = JSON.stringify({

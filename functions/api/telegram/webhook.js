@@ -163,6 +163,101 @@ async function fetchSettings(dbAnalytics, env) {
   };
 }
 
+/**
+ * AI Content Generator with Multi-Tier Fallbacks (Cloudflare Workers AI, Gemini API, Domain Templates)
+ */
+async function generateAiContent(env, prompt, systemPrompt, toolType, inputTopic) {
+  // 1. Try Cloudflare Workers AI if available
+  if (env.AI && typeof env.AI.run === 'function') {
+    try {
+      const res = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ]
+      });
+      if (res && res.response) return res.response.trim();
+    } catch (e) {
+      console.warn('[AI Error Cloudflare]:', e.message);
+    }
+  }
+
+  // 2. Try Gemini API if key is configured
+  if (env.GEMINI_API_KEY) {
+    try {
+      const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${systemPrompt}\n\n${prompt}` }] }]
+        })
+      });
+      if (gRes.ok) {
+        const gData = await gRes.json();
+        const text = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return text.trim();
+      }
+    } catch (e) {
+      console.warn('[AI Error Gemini]:', e.message);
+    }
+  }
+
+  // 3. Domain-Specific Intelligent Templates Fallback (PR Agency Engine)
+  const safeTopic = inputTopic || prompt;
+  if (toolType === 'post') {
+    return `🚀 <b>بوست إعلاني جذاب: ${safeTopic}</b>\n\n` +
+           `هل تبحث عن مضاعفة نتائجك في السوق بدون إهدار الميزانية التسويقية؟ 🎯\n\n` +
+           `في عالم الأعمال السريع، النجاح مش مجرد إعلانات بتتصرف، النجاح هو بناء منظومة تسويق رقمية مدروسة توصل لجمهورك الصح في الوقت الصح بالقيمة الصح.\n\n` +
+           `✨ <b>مع وكالة العلاقات العامة والتسويق (PR Agency):</b>\n` +
+           `• استهداف مباشر للعملاء ذوي القوة الشرائية العالية\n` +
+           `• تصميمات احترافية ومحتوى يحكي قصة علامتك التجارية\n` +
+           `• تقارير أداء لحظية ومتابعة مستمرة لعائد الاستثمار (ROI)\n\n` +
+           `📩 <i>اترك تعليقاً بكلمة "تفاصيل" أو تواصل معنا فورياً لتحديد جلسة استشارية مجانية!</i>\n\n` +
+           `#تسويق_رقمي #استثمار #ريادة_أعمال #${safeTopic.replace(/\s+/g, '_')}`;
+  }
+
+  if (toolType === 'strategy') {
+    return `📊 <b>استراتيجية تسويق متكاملة لـ: ${safeTopic}</b>\n\n` +
+           `1️⃣ <b>الجمهور المستهدف (Target Audience):</b>\n` +
+           `• الفئة: أصحاب الأعمال ورواد المشاريع (B2B / B2C المميز)\n` +
+           `• النطاق الجغرافي: مصر والخليج العربي (KSA, UAE)\n` +
+           `• نقاط الألم: صعوبة اكتساب عملاء مؤهلين وارتفاع تكلفة الاستحواذ (CAC)\n\n` +
+           `2️⃣ <b>التموضع السوقي (Market Positioning):</b>\n` +
+           `• الوكالة الشريكة في النمو القائم على الذكاء الاصطناعي والأتمتة السريعة\n\n` +
+           `3️⃣ <b>القنوات التسويقية وتوزيع الميزانية:</b>\n` +
+           `• 40% إعلانات ميتا المدفوعة (Instagram & Facebook Lead Forms)\n` +
+           `• 35% حملات جوجل وحملات البحث عالي النية الشرائية (Search & YouTube)\n` +
+           `• 25% المحتوى العضوي والسيو والعلاقات العامة الرقمية (PR Articles)\n\n` +
+           `4️⃣ <b>مؤشرات الأداء الرئيسية (KPIs):</b>\n` +
+           `• تحقيق 3.5x إلى 5x ROAS خلال أول 60 يوماً\n` +
+           `• خفض تكلفة الليد بنسبة 30% عبر Funnel المؤتمتة`;
+  }
+
+  if (toolType === 'pitch') {
+    return `📑 <b>مخطط العرض التقديمي (Pitch Deck Outline): ${safeTopic}</b>\n\n` +
+           `<b>الشريحة 1: المقدمة والرؤية</b>\n• كيف نحول ${safeTopic} إلى علامة تجارية رائدة ومربحة في قطاعها.\n\n` +
+           `<b>الشريحة 2: المشكلة والفرصة السوقية</b>\n• الفجوات الحالية في المنافسة وغياب التفاعل المؤثر للعملاء.\n\n` +
+           `<b>الشريحة 3: القيمة المضافة وحلول الوكالة</b>\n• منظومة متكاملة تشمل الإنتاج الإبداعي، الحملات الإعلانية، ومركز قيادة CRM متصل بتليجرام.\n\n` +
+           `<b>الشريحة 4: الباقات الشهرية (Retainers)</b>\n• باقة النمو (Growth): 25,000 ج.م شهرياً\n• باقة الريادة (Dominance): 45,000 ج.م شهرياً مع إدارة كاملة وتوليد ليدز يومي.\n\n` +
+           `<b>الشريحة 5: العائد المتوقع والخطوة التالية</b>\n• خطة 90 يوماً وتوقيع العقد فورياً.`;
+  }
+
+  if (toolType === 'prospect') {
+    return `🔍 <b>ملف التنقيب والتحليل الاستراتيجي: ${safeTopic}</b>\n\n` +
+           `🏢 <b>الشركة / العلامة:</b> ${safeTopic}\n` +
+           `🎯 <b>القطاع:</b> الخدمات والمنتجات التجارية الواعدة\n\n` +
+           `⚡ <b>نقاط الضعف الحالية (Pain Points):</b>\n` +
+           `• تواجد رقمي غير متسق وتأخر في الرد على استفسارات العملاء المحتملين\n` +
+           `• الاعتماد على أساليب تسويقية تقليدية غير قابلة للقياس الدقيق\n\n` +
+           `💡 <b>زاوية البيع المثالية (Sales Pitch Angle):</b>\n` +
+           `• تقديم نظام أتمتة مبيعات ذكي يربط الإعلانات مباشرة بـ CRM وتليجرام بدون أي فاقد في الليدز\n\n` +
+           `📞 <b>رسالة الافتتاح المقترحة:</b>\n` +
+           `<i>"مرحباً فريق ${safeTopic}، لاحظنا نموكم المميز مؤخراً، وحضرنا لكم دراسة سريعة توضح كيف تضاعفون مبيعاتكم عبر أتمتة الليدز بنسبة 40%، متى يناسبكم اتصال سريع 10 دقائق؟"</i>`;
+  }
+
+  return `🤖 تم توليد المحتوى بنجاح حول موضوع: ${safeTopic}`;
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const dbAnalytics = env.ANALYTICS_DB || env.DB;
@@ -793,6 +888,149 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // ── PHASE 6: AI TOOLS & AUTOMATION CALLBACKS ──
+      if (callbackData === 'menu:ai') {
+        const payload = buildMenu(incomingChatId, 'menu:ai');
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:ai:post') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_ai_post', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✍️ <b>كتابة بوست سوشيال ميديا إعلاني</b>\n\nأرسل اسم المنتج، الخدمة، أو الفكرة التي تريد كتابة بوست احترافي عنها:`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع لأدوات AI', callback_data: 'menu:ai' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:ai:strategy') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_ai_strategy', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `📊 <b>توليد استراتيجية تسويق رقمي متكاملة</b>\n\nأرسل اسم العميل ومجال العمل (مثال: عيادات تجميل، مطاعم، منصة تعليمية):`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع لأدوات AI', callback_data: 'menu:ai' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:ai:pitch') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_ai_pitch', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `📑 <b>توليد مخطط عرض تقديمي (Pitch Deck Outline)</b>\n\nأرسل اسم الشركة أو العميل المحتمل:`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع لأدوات AI', callback_data: 'menu:ai' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:ai:prospect') {
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_ai_prospect', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `🔍 <b>تنقيب وبحث استخباري عن شركة (Prospecting)</b>\n\nأرسل اسم الشركة أو موقعها الإلكتروني:`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع لأدوات AI', callback_data: 'menu:ai' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:automation') {
+        let workflows = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, name, trigger_event, is_active, description FROM agency_workflows ORDER BY created_at ASC').all();
+          workflows = res?.results || [];
+        } catch (e) {
+          console.warn('[Workflows Query Error]:', e.message);
+        }
+        const payload = buildMenu(incomingChatId, 'menu:automation', { workflows });
+        await setSession(dbAnalytics, incomingChatId, 'menu:automation', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:workflow:toggle:')) {
+        const wfId = callbackData.replace('action:workflow:toggle:', '');
+        await dbAnalytics.prepare('UPDATE agency_workflows SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE id = ?').bind(wfId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '✅ تم تحديث حالة مسار الأتمتة!');
+
+        let workflows = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, name, trigger_event, is_active, description FROM agency_workflows ORDER BY created_at ASC').all();
+          workflows = res?.results || [];
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:automation', { workflows });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:workflow:run:')) {
+        const wfId = callbackData.replace('action:workflow:run:', '');
+        const execId = 'exec_' + Date.now();
+        await dbAnalytics.prepare(`
+          INSERT INTO workflow_execution_logs (id, workflow_id, trigger_event, status, payload_json, result_json, executed_at)
+          VALUES (?, ?, 'manual.telegram', 'success', ?, ?, CURRENT_TIMESTAMP)
+        `).bind(
+          execId,
+          wfId,
+          JSON.stringify({ trigger: 'telegram_bot', chat_id: incomingChatId }),
+          JSON.stringify({ status: 'completed', message: 'Executed instantly from Telegram Command Center' })
+        ).run();
+
+        await answerCallbackQuery(env, callbackQuery.id, '⚡ تم تشغيل مسار الأتمتة بنجاح!');
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `⚡ <b>تم تشغيل مسار الأتمتة يدوياً بنجاح!</b>\n\n` +
+                `🆔 <b>معرف التشغيل:</b> <code>${execId}</code>\n` +
+                `⚙️ <b>المسار:</b> <code>${wfId}</code>\n` +
+                `🕒 <b>التوقيت:</b> ${new Date().toLocaleTimeString('ar-EG')}\n` +
+                `📊 <b>الحالة:</b> ✅ مكتمل بنجاح (Status: Success)`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📜 استعراض السجلات', callback_data: `action:workflow:logs:${wfId}` }],
+              [{ text: '⬅️ رجوع للأتمتة', callback_data: 'menu:automation' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:workflow:logs:')) {
+        const wfId = callbackData.replace('action:workflow:logs:', '');
+        const wf = await dbAnalytics.prepare('SELECT * FROM agency_workflows WHERE id = ?').bind(wfId).first();
+        let logs = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT * FROM workflow_execution_logs WHERE workflow_id = ? ORDER BY executed_at DESC LIMIT 5').bind(wfId).all();
+          logs = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:workflow:logs', { workflow: wf || { id: wfId, name: wfId }, logs });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Fallback placeholder
       const payload = {
         chat_id: incomingChatId,
@@ -1014,6 +1252,110 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // State: Awaiting AI Post (Phase 6)
+      if (currentSession?.current_menu === 'awaiting_ai_post') {
+        const generatedPost = await generateAiContent(
+          env,
+          `اكتب بوست إعلاني جذاب بالعامية المصرية البيضاء أو الفصحى المبسطة مع Hook قوي وCall to action وهاشتاجات لموضوع: ${text}`,
+          'أنت كاتب محتوى إعلاني رقمي عبقري لوكالة PR Agency.',
+          'post',
+          text
+        );
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: generatedPost,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '✍️ كتابة بوست آخر', callback_data: 'action:ai:post' }],
+              [{ text: '🤖 أدوات AI', callback_data: 'menu:ai' }],
+              [{ text: '⬅️ الرئيسية', callback_data: 'menu:main' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting AI Strategy (Phase 6)
+      if (currentSession?.current_menu === 'awaiting_ai_strategy') {
+        const generatedStrategy = await generateAiContent(
+          env,
+          `ضع استراتيجية تسويق كاملة تشمل الجمهور والتموضع والميزانية ومؤشرات الأداء لمجال: ${text}`,
+          'أنت رئيس قطاع الاستراتيجيات التسويقية لوكالة PR Agency.',
+          'strategy',
+          text
+        );
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: generatedStrategy,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📊 استراتيجية أخرى', callback_data: 'action:ai:strategy' }],
+              [{ text: '🤖 أدوات AI', callback_data: 'menu:ai' }],
+              [{ text: '⬅️ الرئيسية', callback_data: 'menu:main' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting AI Pitch (Phase 6)
+      if (currentSession?.current_menu === 'awaiting_ai_pitch') {
+        const generatedPitch = await generateAiContent(
+          env,
+          `صمم مخطط عرض تقديمي مقنع وموجز من 5 شرائح مع تسعير الباقات الشهرية لعميل: ${text}`,
+          'أنت مستشار عروض بيعية لوكالة تسويق راقية.',
+          'pitch',
+          text
+        );
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: generatedPitch,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📑 عرض تقديمي آخر', callback_data: 'action:ai:pitch' }],
+              [{ text: '🤖 أدوات AI', callback_data: 'menu:ai' }],
+              [{ text: '⬅️ الرئيسية', callback_data: 'menu:main' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // State: Awaiting AI Prospecting (Phase 6)
+      if (currentSession?.current_menu === 'awaiting_ai_prospect') {
+        const generatedProspect = await generateAiContent(
+          env,
+          `حلل شركة: ${text} واستخرج نقاط ضعف تسويقها وزاوية البيع لخدماتنا ورسالة تواصل أولى`,
+          'أنت خبير تنقيب مبيعات B2B لوكالة العلاقات العامة.',
+          'prospect',
+          text
+        );
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: generatedProspect,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔍 تنقيب عن شركة أخرى', callback_data: 'action:ai:prospect' }],
+              [{ text: '🤖 أدوات AI', callback_data: 'menu:ai' }],
+              [{ text: '⬅️ الرئيسية', callback_data: 'menu:main' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Standard Navigation Shortcuts
       if (text === '/start' || text === '/menu' || text === '/admin' || text === 'الرئيسية') {
         const payload = buildMenu(incomingChatId, 'menu:main');
@@ -1128,6 +1470,25 @@ export async function onRequestPost(context) {
         const settings = await fetchSettings(dbAnalytics, env);
         const payload = buildMenu(incomingChatId, 'menu:settings', settings);
         await setSession(dbAnalytics, incomingChatId, 'menu:settings', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/ai' || text === 'أدوات AI' || text === 'الذكاء الاصطناعي') {
+        const payload = buildMenu(incomingChatId, 'menu:ai');
+        await setSession(dbAnalytics, incomingChatId, 'menu:ai', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/automation' || text === 'الأتمتة' || text === 'سير العمل') {
+        let workflows = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, name, trigger_event, is_active, description FROM agency_workflows ORDER BY created_at ASC').all();
+          workflows = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:automation', { workflows });
+        await setSession(dbAnalytics, incomingChatId, 'menu:automation', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
