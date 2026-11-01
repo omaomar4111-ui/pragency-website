@@ -6,29 +6,30 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`✅ <b>تم إنجاز وتفعيل وكيل المبيعات الذكي (Autonomous Sales AI Agent) بنجاح!</b> 🚀
+`🏛️ <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 1 بنجاح (PHASE 1: Framework & Main Menu)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>محرك الوكيل الذكي (Backend):</b>
-   - مسار <code>POST /api/internal/agents/sales-agent</code> مدمج مع قواعد <code>skills/prospecting</code> و <code>skills/cold-email</code>.
-   - تحليل قطاع العميل ونقاط الألم وصياغة رسالة افتتاحية مقنعة واحترافية.
-   - حفظ المسودات في جدول D1: <code>agent_pending_actions</code> بوضع <code>pending_approval</code>.
+1. <b>إدارة حالة الجلسات (D1 Session State Management):</b>
+   - إنشاء جدول <code>telegram_sessions</code> في كلا قاعدتي D1.
+   - التحقق من تخزين وقراءة وتحديث الجلسات (chat_id, current_menu, context_data, updated_at).
 
-2. <b>واجهة المراجعة والاعتماد (Human-in-the-Loop UI):</b>
-   - إضافة قسم <b>🤖 مركز الوكلاء (Agents)</b> في لوحة الإدارة <code>admin-agency.html</code>.
-   - استعراض المسودات مع إمكانية التعديل المباشر داخل Textarea قبل الإرسال.
-   - زري <b>"✅ إرسال (Approve & Send)"</b> و <b>"❌ تجاهل (Reject)"</b> مع تحديث الحالة لـ <code>sent</code>.
+2. <b>مُنشئ القوائم التفاعلية (Telegram Menu Builder):</b>
+   - إنشاء <code>functions/lib/telegram-menu.js</code> يدعم 6 صفوف كاملة من الأزرار الشفافة التفاعلية (Inline Keyboard).
+   - تصميم واجهة "نظرة عامة" التنفيذية (Overview Menu) لربط مؤشرات الأداء الحية.
 
-3. <b>ربط ويب هوك فيسبوك (Meta Lead Ads):</b>
-   - تحديث <code>functions/api/webhooks/facebook-leads.js</code> لتشغيل الوكيل آلياً عبر <code>context.waitUntil()</code> فور وصول أي ليد.
+3. <b>موجه الويب هوك وتدقيق الأمان (Callback & Message Router):</b>
+   - إنشاء <code>functions/api/telegram/webhook.js</code>.
+   - معالجة أحداث <code>callback_query</code> و <code>message</code> مع إيقاف مؤشر التحميل فوراً (answerCallbackQuery).
+   - حماية أمنية صارمة: رفض أي محادثة لا تطابق <code>TELEGRAM_CHAT_ID</code> المعتمد.
 
-4. <b>إشعارات تليجرام الفورية:</b>
-   - إرسال إشعار فوري للإدارة عند تجهيز أي مسودة جديدة للموافقة عليها.
+4. <b>بيانات النظرة العامة اللحظية (Live D1 Executive Pulse):</b>
+   - قراءة إجمالي العملاء، المهام النشطة، الفواتير المحصلة، والليدز الجديدة أسبوعياً.
+   - زري التحديث 🔄 والرجوع للقائمة الرئيسية ⬅️.
 
-5. <b>نشر النظام:</b>
-   - فحص بنية الأمان: <b>PASSED</b>.
-   - اختبارات Vitest و Playwright: <b>PASSED</b>.
-   - النشر الحي على Cloudflare Pages جاهز ومفعل.`;
+5. <b>اختبارات وفحوصات السلامة:</b>
+   - Unit Tests: <b>PASSED 100%</b>.
+   - Remote D1 Session Verification: <b>PASSED</b>.
+   - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,

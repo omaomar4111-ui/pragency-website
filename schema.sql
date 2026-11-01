@@ -1,4 +1,4 @@
-﻿-- PR Agency — D1 Schema
+-- PR Agency — D1 Schema
 -- Run in: Cloudflare Dashboard > D1 > pragency-db > Console
 
 CREATE TABLE IF NOT EXISTS site_content (
@@ -62,3 +62,10 @@ INSERT OR IGNORE INTO site_layout (section_id, label, order_index, is_visible) V
   ('about', 'About Us', 4, 1),
   ('team', 'Our Team', 5, 1),
   ('contact', 'Contact Form', 6, 1);
+
+CREATE TABLE IF NOT EXISTS telegram_sessions (
+  chat_id TEXT PRIMARY KEY,
+  current_menu TEXT,
+  context_data TEXT,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
