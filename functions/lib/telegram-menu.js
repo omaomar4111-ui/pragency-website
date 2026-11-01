@@ -204,5 +204,150 @@ export function buildMenu(chatId, menuId, context = {}) {
         }
       };
     }
+
+    // ── PHASE 3: CLIENTS & LEADS MENUS ──
+    case 'menu:clients': {
+      const { clients = [] } = context;
+      let text = `👥 <b>قائمة عملاء الوكالة (Portal Clients)</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      if (!clients || clients.length === 0) {
+        text += `<i>لا يوجد عملاء مسجلين حالياً.</i>\n`;
+      } else {
+        clients.slice(0, 6).forEach((client, idx) => {
+          text += `\n<b>${idx + 1}. ${client.company_name}</b>\n` +
+                  `   • المسؤول: 👤 ${client.contact_name || 'غير محدد'}\n` +
+                  `   • البريد: ✉️ ${client.email}\n` +
+                  `   • الاشتراك الشهري: 💰 ${Number(client.retainer_amount || 0).toLocaleString('en-US')} ج.م\n`;
+
+          keyboard.push([
+            { text: `📄 تفاصيل`, callback_data: `action:client:view:${client.id}` },
+            { text: `🔗 رابط البوابة`, url: `https://pragency.pages.dev/portal-dashboard-2026` },
+            { text: `🗑️ حذف`, callback_data: `action:client:delete:${client.id}` }
+          ]);
+        });
+      }
+
+      text += `────────────────────\n⚡ <i>إجمالي العملاء: ${clients.length} عميل</i>`;
+
+      keyboard.push([
+        { text: '🔄 تحديث', callback_data: 'menu:clients' },
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    case 'menu:client:detail': {
+      const {
+        client = {},
+        activeDeliverables = 0,
+        unpaidInvoices = 0
+      } = context;
+
+      return {
+        chat_id: chatId,
+        text: `📄 <b>ملف العميل: ${client.company_name}</b>\n` +
+              `────────────────────\n` +
+              `👤 <b>المسؤول:</b> ${client.contact_name || 'غير محدد'}\n` +
+              `✉️ <b>البريد:</b> ${client.email}\n` +
+              `📱 <b>الهاتف / واتساب:</b> ${client.phone || client.whatsapp_number || 'غير متوفر'}\n` +
+              `💰 <b>قيمة العقد الشهري (Retainer):</b> ${Number(client.retainer_amount || 0).toLocaleString('en-US')} ج.م\n` +
+              `📅 <b>يوم إصدار الفاتورة:</b> يوم ${client.billing_day || 1} من كل شهر\n` +
+              `📂 <b>التسليمات / المشاريع النشطة:</b> ${activeDeliverables} تسليمة\n` +
+              `🧾 <b>الفواتير غير المسددة:</b> ${unpaidInvoices} فاتورة\n` +
+              `────────────────────`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔗 فتح بوابة العميل', url: `https://pragency.pages.dev/portal-dashboard-2026` },
+              { text: '🗑️ حذف العميل', callback_data: `action:client:delete:${client.id}` }
+            ],
+            [
+              { text: '⬅️ رجوع لقائمة العملاء', callback_data: 'menu:clients' }
+            ]
+          ]
+        }
+      };
+    }
+
+    case 'menu:leads': {
+      const { leads = [] } = context;
+      let text = `💼 <b>قائمة الصفقات والليدز (Sales Pipeline)</b>\n────────────────────\n`;
+      const keyboard = [];
+
+      const stageLabels = {
+        new: '🆕 جديد',
+        contacted: '📞 تم التواصل',
+        proposal: '📑 عرض سعر',
+        won: '🏆 تعاقد بنجاح',
+        lost: '❌ خسارة'
+      };
+
+      if (!leads || leads.length === 0) {
+        text += `<i>لا توجد ليدز أو صفقات جديدة حالياً.</i>\n`;
+      } else {
+        leads.slice(0, 6).forEach((lead, idx) => {
+          const stageBadge = stageLabels[lead.pipeline_stage] || lead.pipeline_stage || '🆕 جديد';
+          text += `\n<b>${idx + 1}. ${lead.name}</b> (${lead.project_name || 'مشروع جديد'})\n` +
+                  `   • المرحلة: ${stageBadge}\n` +
+                  `   • الميزانية: 💰 ${lead.budget_tier || 'غير محدد'}\n` +
+                  `   • الهاتف: 📱 <code>${lead.phone}</code>\n`;
+
+          keyboard.push([
+            { text: `🔄 تغيير المرحلة`, callback_data: `action:lead:stage:${lead.id}` },
+            { text: `💬 إرسال رسالة`, callback_data: `action:lead:msg:${lead.id}` },
+            { text: `🗑️`, callback_data: `action:lead:delete:${lead.id}` }
+          ]);
+        });
+      }
+
+      text += `────────────────────\n⚡ <i>استخدم الأزرار لإدارة مراحل الصفقات والمتابعات الفورية:</i>`;
+
+      keyboard.push([
+        { text: '🔄 تحديث الصفقات', callback_data: 'menu:leads' },
+        { text: '⬅️ رجوع للقائمة الرئيسية', callback_data: 'menu:main' }
+      ]);
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard }
+      };
+    }
+
+    case 'menu:lead:stages': {
+      const { lead = {} } = context;
+      return {
+        chat_id: chatId,
+        text: `🔄 <b>تغيير مرحلة الصفقة:</b>\n\n👤 <b>العميل:</b> ${lead.name}\n🏢 <b>المشروع:</b> ${lead.project_name || 'صفقة جديدة'}\n\nاختر المرحلة الجديدة لنقل الصفقة إليها:`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🆕 جديد (New)', callback_data: `action:lead:setstage:${lead.id}:new` },
+              { text: '📞 تم التواصل (Contacted)', callback_data: `action:lead:setstage:${lead.id}:contacted` }
+            ],
+            [
+              { text: '📑 عرض سعر (Proposal)', callback_data: `action:lead:setstage:${lead.id}:proposal` },
+              { text: '🏆 تعاقد بنجاح (Won)', callback_data: `action:lead:setstage:${lead.id}:won` }
+            ],
+            [
+              { text: '❌ تم الاستبعاد / خسارة (Lost)', callback_data: `action:lead:setstage:${lead.id}:lost` }
+            ],
+            [
+              { text: '⬅️ إلغاء والرجوع لليدز', callback_data: 'menu:leads' }
+            ]
+          ]
+        }
+      };
+    }
   }
 }

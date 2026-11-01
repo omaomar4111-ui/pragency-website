@@ -260,13 +260,12 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // ── Task Action: Complete (Done) ──
+      // Task Action: Complete (Done)
       if (callbackData.startsWith('action:task:done:')) {
         const taskId = callbackData.replace('action:task:done:', '');
         await dbMain.prepare("UPDATE tasks SET status = 'done', done_at = CURRENT_TIMESTAMP WHERE id = ?").bind(taskId).run();
         await answerCallbackQuery(env, callbackQuery.id, '✅ تم إتمام المهمة بنجاح!');
         
-        // Refresh list
         const tasks = await fetchTasks(dbMain, 'today');
         const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
           title: 'مهام اليوم المجدولة (Today Tasks)',
@@ -277,7 +276,7 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // ── Task Action: Timer ──
+      // Task Action: Timer
       if (callbackData.startsWith('action:task:timer:')) {
         const taskId = callbackData.replace('action:task:timer:', '');
         const timeId = 'time_' + Date.now();
@@ -293,7 +292,7 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // ── Task Action: Edit ──
+      // Task Action: Edit
       if (callbackData.startsWith('action:task:edit:')) {
         const taskId = callbackData.replace('action:task:edit:', '');
         await setSession(dbAnalytics, incomingChatId, 'awaiting_task_edit', { task_id: taskId });
@@ -310,7 +309,7 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // ── Task Action: Delete ──
+      // Task Action: Delete
       if (callbackData.startsWith('action:task:delete:')) {
         const taskId = callbackData.replace('action:task:delete:', '');
         await dbMain.prepare("DELETE FROM tasks WHERE id = ?").bind(taskId).run();
@@ -320,13 +319,134 @@ export async function onRequestPost(context) {
         
         await answerCallbackQuery(env, callbackQuery.id, '🗑️ تم حذف المهمة نهائياً.');
 
-        // Refresh list
         const tasks = await fetchTasks(dbMain, 'today');
         const payload = buildMenu(incomingChatId, 'menu:tasks:list', {
           title: 'مهام اليوم المجدولة (Today Tasks)',
           tasks,
           listType: 'today'
         });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // ── PHASE 3: CLIENTS & LEADS CALLBACKS ──
+      if (callbackData === 'menu:clients') {
+        let clients = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, company_name, contact_name, email, phone, retainer_amount FROM portal_clients ORDER BY created_at DESC LIMIT 8').all();
+          clients = res?.results || [];
+        } catch (e) {
+          console.warn('[Clients Callback] Error:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:clients', { clients });
+        await setSession(dbAnalytics, incomingChatId, 'menu:clients', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:client:view:')) {
+        const clientId = callbackData.replace('action:client:view:', '');
+        const client = await dbAnalytics.prepare('SELECT * FROM portal_clients WHERE id = ?').bind(clientId).first();
+        
+        let activeDeliverables = 0;
+        let unpaidInvoices = 0;
+        try {
+          const dRow = await dbAnalytics.prepare('SELECT COUNT(*) as cnt FROM portal_deliverables WHERE client_id = ?').bind(clientId).first();
+          activeDeliverables = dRow?.cnt || 0;
+        } catch (e) {}
+
+        try {
+          const iRow = await dbAnalytics.prepare("SELECT COUNT(*) as cnt FROM client_invoices WHERE client_id = ? AND status != 'paid'").bind(clientId).first();
+          unpaidInvoices = iRow?.cnt || 0;
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:client:detail', {
+          client: client || { company_name: 'عميل غير مسجل' },
+          activeDeliverables,
+          unpaidInvoices
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:client:delete:')) {
+        const clientId = callbackData.replace('action:client:delete:', '');
+        await dbAnalytics.prepare('DELETE FROM portal_clients WHERE id = ?').bind(clientId).run();
+        await answerCallbackQuery(env, callbackQuery.id, '🗑️ تم حذف حساب العميل بنجاح.');
+
+        const res = await dbAnalytics.prepare('SELECT id, company_name, contact_name, email, phone, retainer_amount FROM portal_clients ORDER BY created_at DESC LIMIT 8').all();
+        const payload = buildMenu(incomingChatId, 'menu:clients', { clients: res?.results || [] });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'menu:leads') {
+        let leads = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 8').all();
+          leads = res?.results || [];
+        } catch (e) {
+          console.warn('[Leads Callback] Error:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:leads', { leads });
+        await setSession(dbAnalytics, incomingChatId, 'menu:leads', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:lead:stage:')) {
+        const leadId = callbackData.replace('action:lead:stage:', '');
+        const lead = await dbAnalytics.prepare('SELECT * FROM sales_leads WHERE id = ?').bind(leadId).first();
+        const payload = buildMenu(incomingChatId, 'menu:lead:stages', { lead: lead || { id: leadId, name: 'صفقة' } });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:lead:setstage:')) {
+        const parts = callbackData.split(':');
+        const leadId = parts[3];
+        const newStage = parts[4];
+        await dbAnalytics.prepare('UPDATE sales_leads SET pipeline_stage = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(newStage, leadId).run();
+        await answerCallbackQuery(env, callbackQuery.id, `✅ تم نقل الصفقة إلى مرحلة [${newStage}] بنجاح!`);
+
+        const res = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 8').all();
+        const payload = buildMenu(incomingChatId, 'menu:leads', { leads: res?.results || [] });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:lead:msg:')) {
+        const leadId = callbackData.replace('action:lead:msg:', '');
+        const lead = await dbAnalytics.prepare('SELECT name FROM sales_leads WHERE id = ?').bind(leadId).first();
+        const leadName = lead?.name || 'العميل';
+
+        await setSession(dbAnalytics, incomingChatId, 'awaiting_lead_msg', { lead_id: leadId, lead_name: leadName });
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `💬 <b>اكتب نص المتابعة/الرسالة للعميل (${leadName}):</b>\n\n<i>سيتم تسجيل الرسالة في سجل المتابعات الفورية للصفقة ومزامنتها.</i>`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '❌ إلغاء والرجوع للصفقات', callback_data: 'menu:leads' }]
+            ]
+          }
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:lead:delete:')) {
+        const leadId = callbackData.replace('action:lead:delete:', '');
+        await dbAnalytics.prepare('DELETE FROM sales_leads WHERE id = ?').bind(leadId).run();
+        try {
+          await dbAnalytics.prepare('DELETE FROM lead_followups WHERE lead_id = ?').bind(leadId).run();
+        } catch (e) {}
+
+        await answerCallbackQuery(env, callbackQuery.id, '🗑️ تم حذف الصفقة نهائياً.');
+
+        const res = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 8').all();
+        const payload = buildMenu(incomingChatId, 'menu:leads', { leads: res?.results || [] });
         await editTelegramMessage(env, { ...payload, message_id: messageId });
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
@@ -402,6 +522,39 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // State: Awaiting Lead Message (Phase 3)
+      if (currentSession?.current_menu === 'awaiting_lead_msg' && currentSession?.context?.lead_id) {
+        const leadId = currentSession.context.lead_id;
+        const leadName = currentSession.context.lead_name || 'العميل';
+
+        try {
+          const followupId = 'flw_' + Date.now();
+          await dbAnalytics.prepare(`
+            INSERT INTO lead_followups (id, lead_id, note, follow_type, created_at)
+            VALUES (?, ?, ?, 'whatsapp', CURRENT_TIMESTAMP)
+          `).bind(followupId, leadId, text).run();
+        } catch (e) {
+          await dbAnalytics.prepare(`
+            UPDATE sales_leads 
+            SET challenge_notes = COALESCE(challenge_notes || '\n', '') || ?,
+                last_followup_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+          `).bind(text, leadId).run();
+        }
+
+        await setSession(dbAnalytics, incomingChatId, 'menu:leads', {});
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: `✅ <b>تم تسجيل رسالة المتابعة بنجاح في سجل الصفقة (${leadName}):</b>\n\n"<i>${text}</i>"`,
+          parse_mode: 'HTML'
+        });
+
+        const res = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 8').all();
+        const leadsPayload = buildMenu(incomingChatId, 'menu:leads', { leads: res?.results || [] });
+        await sendTelegramMessage(env, leadsPayload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Standard Navigation Shortcuts
       if (text === '/start' || text === '/menu' || text === '/admin' || text === 'الرئيسية') {
         const payload = buildMenu(incomingChatId, 'menu:main');
@@ -421,6 +574,30 @@ export async function onRequestPost(context) {
       if (text === '/tasks' || text === 'المهام') {
         const payload = buildMenu(incomingChatId, 'menu:tasks');
         await setSession(dbAnalytics, incomingChatId, 'menu:tasks', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/clients' || text === 'العملاء') {
+        let clients = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT id, company_name, contact_name, email, phone, retainer_amount FROM portal_clients ORDER BY created_at DESC LIMIT 8').all();
+          clients = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:clients', { clients });
+        await setSession(dbAnalytics, incomingChatId, 'menu:clients', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/leads' || text === 'الليدز' || text === 'الصفقات') {
+        let leads = [];
+        try {
+          const res = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 8').all();
+          leads = res?.results || [];
+        } catch (e) {}
+        const payload = buildMenu(incomingChatId, 'menu:leads', { leads });
+        await setSession(dbAnalytics, incomingChatId, 'menu:leads', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
