@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
   <title>PR Agency Admin</title>
   <meta name="robots" content="noindex, nofollow, noarchive"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -43,6 +43,9 @@
     
     <!-- LEFT: Logo & Core Tabs -->
     <div style="display:flex;align-items:center;gap:20px;flex-shrink:0;">
+      <button type="button" class="admin-mobile-menu-btn" id="adminMobileMenuBtn" onclick="toggleAdminDrawer()" aria-label="فتح القائمة">
+        <span></span><span></span><span></span>
+      </button>
       <a href="/admin-agency" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
         <span style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.5px;">PR <span style="color:var(--accent);">Agency</span></span>
       </a>
@@ -115,10 +118,10 @@
     </div>
 
     <!-- RIGHT: User Profile & Operations Dropdown -->
-    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+    <div class="top-navbar-right" style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
       
       <!-- More Tools Menu Dropdown -->
-      <div style="position:relative;">
+      <div class="top-navbar-more-dropdown" style="position:relative;">
         <button type="button" class="btn btn-secondary btn-sm" onclick="toggleMoreMenu(event)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg><span>المزيد</span>
           <span style="font-size:10px;">▼</span>
@@ -163,6 +166,85 @@
     </div>
 
   </header>
+
+  <!-- 📱 MOBILE NAVIGATION DRAWER & BACKDROP -->
+  <div id="adminDrawerBackdrop" class="admin-drawer-backdrop" onclick="closeAdminDrawer()" aria-hidden="true"></div>
+  <aside id="adminMobileDrawer" class="admin-mobile-drawer" role="dialog" aria-modal="true" aria-label="القائمة الجانبية">
+    <div class="admin-drawer-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.5px;">PR <span style="color:var(--accent);">Agency</span></span>
+        <span style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;">ADMIN OS</span>
+      </div>
+      <button type="button" class="admin-drawer-close" onclick="closeAdminDrawer()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <!-- Mobile Drawer Links -->
+    <div class="admin-drawer-nav">
+      <div class="admin-drawer-group-title">مساحة العمل اليومية</div>
+      <button type="button" class="drawer-btn active" onclick="switchTab('daily-tasks', this); closeAdminDrawer();" data-tab="daily-tasks">
+        <span>🗓️ المهام اليومية</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('profitability', this); closeAdminDrawer();" data-tab="profitability">
+        <span>📈 تحليل الربحية</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('team', this); closeAdminDrawer();" data-tab="team">
+        <span>👥 فريق العمل والأدوار</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('creative', this); closeAdminDrawer();" data-tab="creative">
+        <span>🎨 مسار العمل الإبداعي</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('invoices', this); closeAdminDrawer();" data-tab="invoices">
+        <span>🧾 الفواتير والاشتراكات</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('workflows', this); closeAdminDrawer();" data-tab="workflows">
+        <span>⚡ محرك الأتمتة</span>
+      </button>
+
+      <div class="admin-drawer-group-title">الذكاء الاصطناعي والإدارة</div>
+      <button type="button" class="drawer-btn" onclick="switchTab('agents', this); closeAdminDrawer();" data-tab="agents" style="color:#10b981;">
+        <span>🤖 مركز الوكلاء (Agents)</span>
+        <span id="agentsDrawerBadge" style="display:none;background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-right:auto;">0</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('skills', this); closeAdminDrawer();" data-tab="skills" style="color:#c084fc;">
+        <span>🧠 محرك المهارات (77)</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('clients', this); closeAdminDrawer();" data-tab="clients">
+        <span>🏢 حسابات العملاء</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('strategies', this); closeAdminDrawer();" data-tab="strategies">
+        <span>📋 الاستراتيجيات الحية</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('ads', this); closeAdminDrawer();" data-tab="ads">
+        <span>📢 إعلانات Meta و Google</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('payment-settings', this); closeAdminDrawer();" data-tab="payment-settings">
+        <span>💳 إعدادات الدفع وإنستاباي</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('audit', this); closeAdminDrawer();" data-tab="audit">
+        <span>📊 سجل المراقبة (Audit)</span>
+      </button>
+      <button type="button" class="drawer-btn" onclick="switchTab('permissions', this); closeAdminDrawer();" data-tab="permissions">
+        <span>🔐 الصلاحيات RBAC</span>
+      </button>
+
+      <div class="admin-drawer-group-title">روابط الأنظمة المستقلة</div>
+      <a href="/sales-crm-2026.html" class="drawer-btn" style="color:#38bdf8;">
+        <span>💼 Sales CRM ↗</span>
+      </a>
+      <a href="/website-factory.html" class="drawer-btn" style="color:#a78bfa;">
+        <span>🏭 مصنع المواقع ↗</span>
+      </a>
+      <a href="/audit.html" class="drawer-btn" style="color:#34d399;">
+        <span>🛡️ فحص الأمان ↗</span>
+      </a>
+    </div>
+
+    <div class="admin-drawer-footer">
+      <button type="button" class="btn btn-secondary" style="width:100%;color:#ef4444;justify-content:center;" onclick="handleAdminLogout()">
+        🚪 تسجيل الخروج
+      </button>
+    </div>
+  </aside>
 
   <!-- Main Area -->
   <main class="main-area">

@@ -689,31 +689,137 @@
       color: var(--accent);
     }
 
-    @media (max-width: 900px) {
+    /* ── Mobile Sidebar Backdrop ── */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .sidebar-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+      }
       .sidebar {
-        position: fixed;
-        top: 60px;
-        bottom: 0;
-        inset-inline-start: -260px;
-        z-index: 1000;
-        transition: inset-inline-start 0.3s var(--ease-quad);
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        inset-inline-start: -280px !important;
+        width: 280px !important;
+        z-index: 10000 !important;
+        transition: inset-inline-start 0.3s var(--ease-quad) !important;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
+        padding-top: 24px !important;
       }
       .sidebar.open {
-        inset-inline-start: 0;
+        inset-inline-start: 0 !important;
       }
       .mobile-menu-btn {
-        display: flex;
+        display: flex !important;
       }
       .mobile-dock {
-        display: flex;
+        display: flex !important;
+      }
+      .topnav {
+        padding: 0 12px !important;
+        height: 56px !important;
+      }
+      .sync-indicator,
+      .topnav [style*="width:280px"],
+      .topnav a[href="/admin-agency"] {
+        display: none !important;
+      }
+      .topnav-brand {
+        font-size: 15px !important;
       }
       .main {
-        padding: 16px;
-        padding-bottom: 80px;
+        padding: 12px 10px 88px !important;
+        overflow-x: hidden !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Stack KPI Cards */
+      .kpi-strip {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      /* Kanban Board Horizontal Snap on Mobile */
+      .kanban {
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 16px !important;
+      }
+      .kanban-col {
+        width: 84vw !important;
+        min-width: 84vw !important;
+        scroll-snap-align: center !important;
+      }
+
+      /* Stack Tables into Vertical Cards */
+      .deals-table,
+      .deals-table thead,
+      .deals-table tbody,
+      .deals-table th,
+      .deals-table td,
+      .deals-table tr,
+      table, table thead, table tbody, table tr, table td, table th {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .deals-table thead, table thead {
+        display: none !important;
+      }
+      .deals-table tbody tr, table tbody tr {
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-subtle) !important;
+        border-radius: var(--radius-md) !important;
+        margin-bottom: 12px !important;
+        padding: 14px !important;
+      }
+      .deals-table td, table td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        border-bottom: 1px solid var(--border-subtle) !important;
+        font-size: 13px !important;
+      }
+      .deals-table td:last-child, table td:last-child {
+        border-bottom: none !important;
+        padding-top: 10px !important;
+        justify-content: flex-end !important;
+      }
+
+      /* Modals Full Width with padding */
+      .modal {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        padding: 16px !important;
+        border-radius: var(--radius-md) !important;
       }
       .form-grid-2 {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
       }
     }
   </style>
@@ -757,26 +863,27 @@
 
   <div class="layout">
     <!-- Sidebar -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-section" data-i18n="navSecWorkspace">WORKSPACE</div>
-      <button class="sidebar-btn active" onclick="showPage('dashboard', this)">
+      <button class="sidebar-btn active" onclick="showPage('dashboard', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navDashboard">Dashboard</span>
       </button>
-      <button class="sidebar-btn" onclick="showPage('kanban', this)">
+      <button class="sidebar-btn" onclick="showPage('kanban', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navPipeline">Pipeline (Kanban)</span>
       </button>
-      <button class="sidebar-btn" onclick="showPage('leads', this)">
+      <button class="sidebar-btn" onclick="showPage('leads', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navLeads">Leads & Deals</span>
       </button>
 
       <div class="sidebar-section" data-i18n="navSecOperations">OPERATIONS</div>
-      <button class="sidebar-btn" onclick="showPage('voice', this)">
+      <button class="sidebar-btn" onclick="showPage('voice', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navActivity">Activity & Notes</span>
       </button>
-      <button class="sidebar-btn" onclick="showPage('overdue', this)">
+      <button class="sidebar-btn" onclick="showPage('overdue', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navOverdue">Overdue Tasks</span>
       </button>
-      <button class="sidebar-btn" onclick="showPage('reports', this)">
+      <button class="sidebar-btn" onclick="showPage('reports', this); if(window.innerWidth<=768) toggleSidebar(false);">
         <span data-i18n="navReports">Analytics & Reports</span>
       </button>
     </aside>
@@ -1345,9 +1452,14 @@
 
     function toggleSidebar(forceState) {
       const sb = document.getElementById('sidebar');
+      const bd = document.getElementById('sidebarBackdrop');
       if (!sb) return;
       const isOpen = forceState !== undefined ? forceState : !sb.classList.contains('open');
       sb.classList.toggle('open', isOpen);
+      if (bd) bd.classList.toggle('open', isOpen);
+      if (window.innerWidth <= 768) {
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      }
     }
 
     // ── MODAL MANAGEMENT ───────────────────────────────────────────────

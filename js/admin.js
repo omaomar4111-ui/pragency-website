@@ -130,6 +130,30 @@
     // Call session check immediately on DOM content loaded
     document.addEventListener('DOMContentLoaded', checkAdminSession);
 
+    
+    // ── MOBILE NAVIGATION DRAWER ────────────────────────────────────────
+    window.toggleAdminDrawer = function() {
+      const drawer = document.getElementById('adminMobileDrawer');
+      const backdrop = document.getElementById('adminDrawerBackdrop');
+      if (!drawer) return;
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        window.closeAdminDrawer();
+      } else {
+        drawer.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    window.closeAdminDrawer = function() {
+      const drawer = document.getElementById('adminMobileDrawer');
+      const backdrop = document.getElementById('adminDrawerBackdrop');
+      if (drawer) drawer.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
     window.currentActiveTab = 'daily-tasks';
     window.switchTab = function(tabId, btnElement) {
       window.currentActiveTab = tabId;
@@ -151,6 +175,9 @@
       
       const activeBtn = btnElement || document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
       if (activeBtn) activeBtn.classList.add('active');
+      document.querySelectorAll('.drawer-btn').forEach(el => el.classList.remove('active'));
+      const activeDrawerBtn = document.querySelector(`.drawer-btn[data-tab="${tabId}"]`);
+      if (activeDrawerBtn) activeDrawerBtn.classList.add('active');
       
       const titles = {
         'daily-tasks': 'المهام اليومية',
@@ -2787,6 +2814,15 @@ async function loadAgentActions(statusFilter) {
         navBadge.style.display = 'inline-block';
       } else {
         navBadge.style.display = 'none';
+      }
+    }
+    const drawerBadge = document.getElementById('agentsDrawerBadge');
+    if (drawerBadge) {
+      if (pendingCount > 0) {
+        drawerBadge.innerText = pendingCount;
+        drawerBadge.style.display = 'inline-block';
+      } else {
+        drawerBadge.style.display = 'none';
       }
     }
 
