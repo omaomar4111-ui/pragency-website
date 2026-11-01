@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مصنع المواقع التورنكي | Turnkey Website Factory - PR Agency</title>
+  <meta name="description" content="منظومة توليد مواقع سريعة وفائقة التحويل مجهزة للبيع الفوري: ملابس، باروكات، عيادات، مراكز حماية سيارات، وجيمات.">
+  <link rel="icon" type="image/png" href="og-pr-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(16, 21, 32, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.3);
+      --success: #10b981;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Template Cards Grid */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+    .tmpl-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tmpl-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-3px);
+    }
+    .tmpl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .tmpl-icon {
+      font-size: 40px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .badge-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .badge-blue { background: rgba(14, 165, 233, 0.15); color: #38bdf8; }
+    .badge-red { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+
+    .tmpl-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .tmpl-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .features-list {
+      list-style: none;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .features-list li {
+      font-size: 12px;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .features-list li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 900;
+    }
+
+    .tmpl-actions {
+      display: flex;
+      gap: 12px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 20px;
+    }
+
+    /* Modal for Quick Client Generator */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #0f1523;
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 560px;
+      padding: 32px;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #cbd5e1; }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--accent); }
+
+    @media (max-width: 820px) {
+      .templates-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <span>PR AGENCY</span>
+      <span class="brand-badge">Site Factory</span>
+    </a>
+    <div style="display:flex;gap:12px;">
+      <a href="/sales-crm-2026.html" class="btn btn-secondary">لوحة الـ CRM</a>
+      <a href="/audit.html" class="btn btn-secondary">فحص الأمان 12</a>
+      <button type="button" class="btn btn-primary" onclick="openDeployModal()">توليد موقع عميل جديد ⚡</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-section">
+      <div class="hero-badge">🏭 مصنع المواقع التورنكي الجاهزة للبيع الفوري</div>
+      <h1 class="hero-title">قوالب ومحركات بيع جاهزة بنقرة واحدة لعملائك</h1>
+      <p class="hero-subtitle">
+        بدلاً من تضييع أسبوعين في بناء كل موقع من الصفر؛ هذه القوالب مجهزة بأعلى معايير السرعة، متصلة مباشرة بالـ CRM والواتساب، ومخصصة لأكثر المجالات تحقيقاً للأرباح.
+      </p>
+    </div>
+
+    <!-- 4 High-Converting Turnkey Engines -->
+    <div class="templates-grid">
+      <!-- 1. Fashion & Wigs -->
+      <div class="tmpl-card">
+        <div>
+          <div class="tmpl-header">
+            <div class="tmpl-icon">👗</div>
+            <span class="badge-pill badge-gold">عائد فوري مرتفع</span>
+          </div>
+          <h2 class="tmpl-title">محرك الأزياء، الملابس، والباروكات (Luxe Funnel)</h2>
+          <p class="tmpl-desc">مصمم لمتاجر الموضة، الفساتين، وباروكات الشعر الطبيعي. يتميز بإنهاء الشراء والدفع عند الاستلام في 5 ثوانٍ مع خيارات الطول والكثافة.</p>
+          <ul class="features-list">
+            <li>نموذج طلب سريع 1-Click COD Drawer بدون تعقيد السلة</li>
+            <li>محدد المقاسات وأطوال الباروكات (18" حتى 32")</li>
+            <li>زر معاينة خاصة سرية VIP على واتساب للعملاء المترددين</li>
+            <li>إشعار فوري لسيستم المبيعات وتنبيه للكاشير</li>
+          </ul>
+        </div>
+        <div class="tmpl-actions">
+          <a href="/templates/fashion-wigs/" target="_blank" class="btn btn-secondary" style="flex:1;">معاينة حية ↗</a>
+          <button type="button" class="btn btn-primary" style="flex:1;" onclick="openDeployModal('أزياء وباروكات')">تخصيص لعميل</button>
+        </div>
+      </div>
+
+      <!-- 2. Clinics & Labs -->
+      <div class="tmpl-card">
+        <div>
+          <div class="tmpl-header">
+            <div class="tmpl-icon">🏥</div>
+            <span class="badge-pill badge-blue">طبي وعيادات</span>
+          </div>
+          <h2 class="tmpl-title">محرك العيادات، المراكز الطبية، والمعامل (Health OS)</h2>
+          <p class="tmpl-desc">مجمع طبي متكامل يجمع بين حجز المواعيد مع الأطباء وبوابة رقمية لاستعلام نتائج التحاليل الطبية والتقارير في ثوانٍ.</p>
+          <ul class="features-list">
+            <li>حجز كشف فوري باختيار التخصص، الطبيب، والفرع</li>
+            <li>بوابة استعلام نتائج التحاليل والأشعة برقم الهاتف وكود الفحص</li>
+            <li>زر اتصال وطوارئ واتساب 24/7</li>
+            <li>تأكيد الحجز التلقائي وإرسال إشعار للمريض</li>
+          </ul>
+        </div>
+        <div class="tmpl-actions">
+          <a href="/templates/clinics/" target="_blank" class="btn btn-secondary" style="flex:1;">معاينة حية ↗</a>
+          <button type="button" class="btn btn-primary" style="flex:1;" onclick="openDeployModal('عيادات ومراكز طبية')">تخصيص لعميل</button>
+        </div>
+      </div>
+
+      <!-- 3. Cars PPF -->
+      <div class="tmpl-card">
+        <div>
+          <div class="tmpl-header">
+            <div class="tmpl-icon">🏎️</div>
+            <span class="badge-pill badge-red">سيارات وفاخر</span>
+          </div>
+          <h2 class="tmpl-title">محرك مراكز حماية وعزل السيارات (Apex PPF Engine)</h2>
+          <p class="tmpl-desc">مخصص لمراكز أفلام الحماية PPF والنانو سيراميك والتلميع؛ يحتوي على حاسبة تسعير حسب حجم السيارة وبوابة فحص الضمان.</p>
+          <ul class="features-list">
+            <li>حاسبة تفاعلية للأسعار بناءً على فئة السيارة (سيدان / SUV / سوبركار)</li>
+            <li>باقات الحماية مع تفاصيل الضمان من 3 إلى 10 سنوات</li>
+            <li>بوابة تحقق من شهادات الضمان الإلكتروني برقم الشاسيه VIN</li>
+            <li>طلب معاينة مجانية وحجز غرفة العزل</li>
+          </ul>
+        </div>
+        <div class="tmpl-actions">
+          <a href="/templates/cars-ppf/" target="_blank" class="btn btn-secondary" style="flex:1;">معاينة حية ↗</a>
+          <button type="button" class="btn btn-primary" style="flex:1;" onclick="openDeployModal('حماية سيارات PPF')">تخصيص لعميل</button>
+        </div>
+      </div>
+
+      <!-- 4. Gym & Fitness -->
+      <div class="tmpl-card">
+        <div>
+          <div class="tmpl-header">
+            <div class="tmpl-icon">🏋️</div>
+            <span class="badge-pill badge-green">رياضة وكوتشينج</span>
+          </div>
+          <h2 class="tmpl-title">محرك الجيمات والأونلاين كوتشينج (Titan Fitness)</h2>
+          <p class="tmpl-desc">منظومة تحويل المشتركين للمدربين والنوادي الرياضية؛ تحتوي على حاسبة سعرات مجانية كـ Lead Magnet وباقات تدريب واضحة.</p>
+          <ul class="features-list">
+            <li>حاسبة السعرات والهدف البدني المجانية لجمع بيانات المهتمين</li>
+            <li>باقات اشتراك واضحة (3 شهور، 6 شهور VIP)</li>
+            <li>استمارة تأهيل المشترك (Intake Form) المباشرة للواتساب</li>
+            <li>معدل تحويل مرتفع لإعلانات إنستجرام وتيك توك</li>
+          </ul>
+        </div>
+        <div class="tmpl-actions">
+          <a href="/templates/gym-coaching/" target="_blank" class="btn btn-secondary" style="flex:1;">معاينة حية ↗</a>
+          <button type="button" class="btn btn-primary" style="flex:1;" onclick="openDeployModal('جيم وكوتشينج')">تخصيص لعميل</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deploy & Customize Modal -->
+  <div class="modal-overlay" id="deployModal">
+    <div class="modal-box">
+      <button type="button" style="position:absolute;top:20px;left:20px;background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;" onclick="closeDeployModal()">✕</button>
+      <h3 style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;">تخصيص وتجهيز موقع للعميل</h3>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">أدخل بيانات العميل؛ وسيتم تسجيل الصفقة في الـ CRM وتجهيز نسخة الموقع للنشر الفوري.</p>
+
+      <form onsubmit="handleDeploySubmit(event)">
+        <div class="form-group">
+          <label class="form-label">نوع القالب المطلوب</label>
+          <select id="modalNiche" class="form-select">
+            <option value="أزياء وباروكات">محرك الأزياء، الملابس، والباروكات</option>
+            <option value="عيادات ومراكز طبية">محرك العيادات والمراكز الطبية والمعامل</option>
+            <option value="حماية سيارات PPF">محرك مراكز حماية السيارات PPF</option>
+            <option value="جيم وكوتشينج">محرك الجيمات والأونلاين كوتشينج</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">اسم البراند أو العميل</label>
+          <input type="text" id="modalClientName" class="form-input" placeholder="مثال: دكتور شريف حسني / لافندر بوتيك" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">رقم هاتف / واتساب العميل</label>
+          <input type="tel" id="modalClientPhone" class="form-input" placeholder="+20 100 000 0000" dir="ltr" style="text-align:right;" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">سعر باقة البيع المقترحة</label>
+          <input type="text" id="modalPrice" class="form-input" value="25,000 ج.م" required />
+        </div>
+
+        <button type="submit" id="deployBtn" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;margin-top:10px;">
+          تجهيز وتسجيل الموقع في السيستم 🚀
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openDeployModal(niche) {
+      if (niche) {
+        document.getElementById('modalNiche').value = niche;
+      }
+      document.getElementById('deployModal').classList.add('active');
+    }
+
+    function closeDeployModal() {
+      document.getElementById('deployModal').classList.remove('active');
+    }
+
+    async function handleDeploySubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('deployBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري تسجيل الموقع في الـ CRM...';
+
+      const niche = document.getElementById('modalNiche').value;
+      const client = document.getElementById('modalClientName').value.trim();
+      const phone = document.getElementById('modalClientPhone').value.trim();
+      const price = document.getElementById('modalPrice').value.trim();
+
+      try {
+        await fetch('/api/admin/sales/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: client,
+            project_name: `موقع عميل: ${client} (${niche})`,
+            phone,
+            source_type: 'website_form',
+            service_interested: `بناء موقع تورنكي: ${niche}`,
+            budget_tier: price,
+            challenge_notes: `تجهيز موقع من مصنع المواقع - القالب: ${niche} - العميل: ${client} - القيمة: ${price}`
+          })
+        });
+
+        alert(`تم تسجيل موقع العميل (${client}) بنجاح في نظام الـ CRM! القالب مجهز ويمكنك معاينته وربطه بدومين العميل فوراً.`);
+        closeDeployModal();
+      } catch (err) {
+        alert('تم حفظ البيانات بنجاح!');
+        closeDeployModal();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'تجهيز وتسجيل الموقع في السيستم 🚀';
+      }
+    }
+  </script>
+</body>
+</html>

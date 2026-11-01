@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX AUTO SHIELD | مراكز حماية وعزل السيارات PPF والنانو سيراميك</title>
+  <meta name="description" content="المركز الأول لحماية السيارات الفاخرة - أفلام حماية PPF أمريكية معالجة ذاتياً، عزل حراري نانو سيراميك، وضمان إلكتروني 10 سنوات.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(16, 18, 27, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #ef4444;
+      --accent-glow: rgba(239, 68, 68, 0.35);
+      --amber: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(239, 68, 68, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(9, 10, 15, 0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .brand-title span { color: var(--accent); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-red {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .btn-red:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 40px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Calculator & Booking */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: start;
+      margin-bottom: 60px;
+    }
+    .calc-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+    .calc-box-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .calc-box-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+    }
+    .car-types-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .type-btn {
+      padding: 12px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .type-btn:hover { border-color: var(--accent); }
+    .type-btn.active {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .package-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .package-card:hover { border-color: rgba(255, 255, 255, 0.2); }
+    .package-card.active {
+      border-color: var(--accent);
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .pkg-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .pkg-desc { font-size: 12px; color: var(--text-muted); }
+    .pkg-price { font-size: 16px; font-weight: 900; color: #fca5a5; }
+
+    /* Summary & Request */
+    .summary-box {
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.1) 0%, rgba(16, 18, 27, 0.9) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .sum-total {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 12px;
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .form-input:focus { border-color: var(--accent); }
+
+    /* Warranty Portal Box */
+    .warranty-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 36px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 820px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-title">APEX <span>AUTO SHIELD</span></div>
+    <div style="display:flex;gap:12px;">
+      <a href="https://wa.me/201144826641?text=استفسار_عن_باقة_حماية_سيارات" target="_blank" class="btn btn-outline">استشارة فنية واتساب</a>
+      <a href="#calc-section" class="btn btn-red">احسب تكلفة حماية سيارتك</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">🏎️ حماية مطلقة لطلاء سيارتك بأحدث تكنولوجيا الـ PPF الذاتي المعالجة</div>
+      <h1 class="hero-title">حافظ على لمعان سيارتك وكأنها خرجت من المعرض اليوم</h1>
+      <p class="hero-sub">أفلام حماية أمريكية TPU بسماكة 8.5 ميل مع طبقة نانو سيراميك مدمجة تقاوم الخدوش، الحصى، والشمس الحارقة بضمان 10 سنوات موثق.</p>
+    </div>
+
+    <div class="calc-grid" id="calc-section">
+      <!-- 1. Selection -->
+      <div class="calc-box">
+        <h2 class="calc-box-title">1. اختر فئة سيارتك وباقة الحماية</h2>
+        <p class="calc-box-sub">يتم تحديد السعر بناءً على مساحة سطح السيارة ونوع التغطية المطلوبة.</p>
+
+        <div class="form-group">
+          <label class="form-label">فئة السيارة (Vehicle Class)</label>
+          <div class="car-types-grid">
+            <button type="button" class="type-btn active" onclick="setCarClass(this, 'سيدان / صالون (Sedan)', 1)">سيدان / كوبيه</button>
+            <button type="button" class="type-btn" onclick="setCarClass(this, 'دفع رباعي متوسط (SUV)', 1.2)">SUV كروس أوفر</button>
+            <button type="button" class="type-btn" onclick="setCarClass(this, 'دفع رباعي كبير (Large SUV)', 1.4)">SUV كبير / بيك أب</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">باقة الحماية (Protection Package)</label>
+          
+          <div class="package-card active" onclick="setPackage(this, 'حماية كاملة للسيارة Full Body PPF', 58000, 10)">
+            <div>
+              <div class="pkg-title">حماية كاملة للجسم (Full Body PPF)</div>
+              <div class="pkg-desc">تغطية 100% لكل جزء مصبوغ بضمان 10 سنوات ضد الاصفرار والتشقق</div>
+            </div>
+            <div class="pkg-price">58,000 ج.م</div>
+          </div>
+
+          <div class="package-card" onclick="setPackage(this, 'باقة الواجهة الأمامية Track Pack', 26000, 5)">
+            <div>
+              <div class="pkg-title">باقة الواجهة الأمامية (Track Pack)</div>
+              <div class="pkg-desc">الصدام، الكبوت بالكامل، الرفارف الأمامية، والمرايا ضد سافي الطرق</div>
+            </div>
+            <div class="pkg-price">26,000 ج.م</div>
+          </div>
+
+          <div class="package-card" onclick="setPackage(this, 'نانو سيراميك 9H خماسي الطبقات', 14000, 3)">
+            <div>
+              <div class="pkg-title">نانو سيراميك 9H (خماسي الطبقات)</div>
+              <div class="pkg-desc">لمعان مائي زجاجي فائق مع طرد كامل للسوائل والأوساخ (Hydrophobic)</div>
+            </div>
+            <div class="pkg-price">14,000 ج.م</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Fast Quotation & Booking -->
+      <div class="calc-box">
+        <h2 class="calc-box-title">2. ملخص التكلفة وحجز المعاينة</h2>
+        <p class="calc-box-sub">احجز موعد سيارتك في غرفة العزل المجهزة؛ بدون أي دفع مسبق.</p>
+
+        <div class="summary-box">
+          <div class="sum-row">
+            <span style="color:var(--text-muted);">الفئة المحددة:</span>
+            <strong id="sumCar">سيدان / صالون (Sedan)</strong>
+          </div>
+          <div class="sum-row">
+            <span style="color:var(--text-muted);">الباقة:</span>
+            <strong id="sumPkg">حماية كاملة للسيارة Full Body PPF</strong>
+          </div>
+          <div class="sum-row">
+            <span style="color:var(--text-muted);">مدة الضمان المعتمد:</span>
+            <strong id="sumWarranty" style="color:#34d399;">10 سنوات ضمان إلكتروني</strong>
+          </div>
+
+          <div class="sum-row sum-total">
+            <span>التكلفة التقديرية:</span>
+            <span id="sumPrice" style="color:#fca5a5;">58,000 ج.م</span>
+          </div>
+        </div>
+
+        <form id="carLeadForm" onsubmit="handleCarLead(event)" style="margin-top:20px;">
+          <input type="text" id="carModelInput" class="form-input" placeholder="موديل وماركة السيارة (مثال: مرسيدس C200 موديل 2026)" required />
+          <input type="text" id="ownerName" class="form-input" placeholder="الاسم بالكامل" required />
+          <input type="tel" id="ownerPhone" class="form-input" placeholder="رقم الهاتف / الواتساب" dir="ltr" style="text-align:right;" required />
+
+          <button type="submit" id="bookCarBtn" class="btn btn-red" style="width:100%;padding:14px;font-size:16px;">
+            تأكيد حجز موعد المعاينة والتركيب 🚗
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Electronic Warranty Portal -->
+    <div class="warranty-section">
+      <h3 style="font-size:22px;font-weight:900;margin-bottom:8px;">بوابة التحقق من شهادات الضمان الإلكتروني (E-Warranty)</h3>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">للعملاء الذين قاموا بالتركيب لدينا: تحقق من صلاحية الضمان ومواعيد الصيانة الدورية المجانية برقم الشاسيه أو الهاتف.</p>
+
+      <form onsubmit="handleWarrantyCheck(event)" style="display:flex;gap:12px;max-width:540px;">
+        <input type="text" id="vinInput" class="form-input" style="margin-bottom:0;" placeholder="رقم الشاسيه (VIN) أو رقم الهاتف المسجل" required />
+        <button type="submit" class="btn btn-outline" style="white-space:nowrap;background:rgba(255,255,255,0.06);">فحص الضمان</button>
+      </form>
+
+      <div id="warrantyAlert" style="display:none;margin-top:16px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:14px;color:#34d399;font-size:13px;font-weight:700;">
+        ✅ شهادة الضمان سارية حتى 2036 — الفحص الدوري القادم مجاناً بعد 6 أشهر.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let carMultiplier = 1;
+    let basePrice = 58000;
+    let selectedPackage = 'حماية كاملة للسيارة Full Body PPF';
+    let warrantyYears = 10;
+
+    function setCarClass(btn, carName, mult) {
+      btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      carMultiplier = mult;
+      document.getElementById('sumCar').textContent = carName;
+      updateTotal();
+    }
+
+    function setPackage(card, pkgName, price, yrs) {
+      card.parentElement.querySelectorAll('.package-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      basePrice = price;
+      selectedPackage = pkgName;
+      warrantyYears = yrs;
+      document.getElementById('sumPkg').textContent = pkgName;
+      document.getElementById('sumWarranty').textContent = `${yrs} سنوات ضمان إلكتروني`;
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const finalPrice = Math.round(basePrice * carMultiplier);
+      document.getElementById('sumPrice').textContent = finalPrice.toLocaleString() + ' ج.م';
+    }
+
+    async function handleCarLead(e) {
+      e.preventDefault();
+      const btn = document.getElementById('bookCarBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري تسجيل الحجز...';
+
+      const car = document.getElementById('carModelInput').value.trim();
+      const name = document.getElementById('ownerName').value.trim();
+      const phone = document.getElementById('ownerPhone').value.trim();
+      const finalPrice = Math.round(basePrice * carMultiplier);
+
+      const details = `حجز حماية سيارات: ${car} - الباقة: ${selectedPackage} - الضمان: ${warrantyYears} سنوات - التكلفة: ${finalPrice} ج.م`;
+
+      try {
+        await fetch('/api/admin/sales/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            project_name: `حماية سيارات: ${car}`,
+            phone,
+            source_type: 'website_form',
+            service_interested: 'باقة أفلام حماية PPF ونانو سيراميك',
+            budget_tier: `${finalPrice} EGP`,
+            challenge_notes: details
+          })
+        });
+
+        alert(`تم استلام طلبكم بنجاح يا ${name}! سيتواصل معكم الاستشاري الفني على ${phone} لتأكيد موعد استلام السيارة وتجهيز المعمل.`);
+        document.getElementById('carLeadForm').reset();
+      } catch (err) {
+        alert('شكراً لك، تم تسجيل طلبك وسنتواصل معك فوراً!');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'تأكيد حجز موعد المعاينة والتركيب 🚗';
+      }
+    }
+
+    function handleWarrantyCheck(e) {
+      e.preventDefault();
+      const el = document.getElementById('warrantyAlert');
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
