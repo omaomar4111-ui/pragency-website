@@ -150,6 +150,29 @@ export async function onRequestPost(context) {
       parseFloat(estimated_hours) || 0
     ).run();
 
+    // Trigger Autonomous Creative Agent in background via context.waitUntil
+    const taskPayload = {
+      id: taskId,
+      project_id,
+      title: title.trim(),
+      description: description.trim(),
+      assigned_to
+    };
+
+    if (context.waitUntil) {
+      context.waitUntil((async () => {
+        try {
+          const { runCreativeAgent } = await import('../../internal/agents/creative-agent.js');
+          await runCreativeAgent(env, taskPayload);
+        } catch (agentErr) {
+          console.warn('[Creative Agent waitUntil Error]:', agentErr.message);
+        }
+      })());
+    } else {
+      // Direct call fallback
+      import('../../internal/agents/creative-agent.js').then(m => m.runCreativeAgent(env, taskPayload)).catch(e => console.warn(e.message));
+    }
+
     return jsonResponse({
       success: true,
       message: 'Task created successfully',

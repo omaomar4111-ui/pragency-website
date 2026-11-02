@@ -6,36 +6,39 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`📱 <b>تحديث المنظومة | إنجاز المرحلة B بنجاح (PHASE B: Full Mobile Responsive Design)</b> 🚀
+`🤖 <b>تحديث المنظومة | إنجاز المرحلة C بالكامل بنجاح (PHASE C: Full AI Agents Integration)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>شريط التنقل السفلي الذكي (Mobile Bottom Dock):</b>
-   - إضافة شريط تنقل سفلي ثابت (iOS / Android Native Dock) في Admin OS، Sales CRM، وClient Portal بـ 5 أيقونات أساسية:
-     • <code>[🏠 المهام]</code> <code>[📊 التقارير]</code> <code>[👥 العملاء]</code> <code>[💼 CRM]</code> <code>[⚙️ المزيد]</code>.
-   - درج جانبي سلس (Slide-in Drawer) للوصول لكافة الأدوات الثانوية مع خلفية معتمة ناعمة.
+1. <b>مركز الوكلاء الذكي الشامل (Agents Hub - 3 Sub-sections):</b>
+   - تبويب مركز الوكلاء في Admin OS يحتوي الآن على 3 أقسام مستقلة مع عدادات حية:
+     • <code>[💼 وكيل المبيعات (Sales Agent)]</code>: صياغة مسودات استقطاب الليدز (واتساب وإيميل).
+     • <code>[🎨 الوكيل الإبداعي (Creative Agent)]</code>: توليد ومراجعة البريفات الإعلانية للمهام.
+     • <code>[⚠️ وكيل نجاح العملاء (Client Success Agent)]</code>: رصد مخاطر تسرب العملاء والـ Churn.
 
-2. <b>تحويل الجداول إلى بطاقات عمودية (Stacked Cards):</b>
-   - تحويل جداول المهام، الفواتير، الليدز، والعملاء بالكامل إلى بطاقات تفاعلية مع حقول <code>data-label</code>.
+2. <b>الوكيل الإبداعي المستقل (Creative Agent):</b>
+   - محرك <code>functions/api/internal/agents/creative-agent.js</code> يعمل تلقائياً في الخلفية عبر <code>context.waitUntil()</code> فور إنشاء أي مهمة جديدة.
+   - يولد بريف إعلاني متكامل (3s Hook, Visual Direction, Story Flow, Sales Copy, CTA).
+   - يحفظ المسودة في <code>agent_pending_actions</code> ويرسل إشعار تليجرام تفاعلي.
+   - عند الاعتماد من لوحة التحكم أو تليجرام، يتم تحديث حقل <code>tasks.ai_brief</code> مباشرة في D1.
 
-3. <b>شبكات المؤشرات وبورد كانبان (KPIs & Kanban):</b>
-   - بطاقات الـ KPI تتحول لعمودين على التابلت وعمود واحد على الموبايل.
-   - بورد كانبان يدعم السحب الأفقي مع التمركز التلقائي (Snap-Scrolling).
+3. <b>وكيل نجاح العملاء ومكافحة التسرب (Client Success Agent):</b>
+   - محرك <code>functions/api/internal/agents/client-success-agent.js</code> يفحص الفواتير المتأخرة لأكثر من 7 أيام والعملاء الخاملين بدون مهام لأكثر من 14 يوماً.
+   - يصيغ خطة تدخل فورية (Retention Playbook) ويرسل تنبيهات مع أزرار اتصال وتذكير سداد.
 
-4. <b>النوافذ المنبثقة وحقول الإدخال (Modals & Forms):</b>
-   - نوافذ ملء الشاشة على الموبايل (Full-screen Modals: 100vw × 100vh) لمنع التشتت.
-   - ضبط حجم خط الحقول إلى 16px لمنع التكبير التلقائي على iOS Safari.
-   - مراعاة الـ Safe Area Notch عبر <code>env(safe-area-inset-bottom)</code>.
+4. <b>التكامل التفاعلي مع تليجرام (Telegram Command Center):</b>
+   - دعم كامل لـ Callbacks الإجراءات الذكية في <code>webhook.js</code>:
+     • <code>[✅ اعتماد البريف للمهمة]</code>: يحدث <code>tasks.ai_brief</code> في D1 فوراً.
+     • <code>[✏️ تعديل]</code> / <code>[❌ رفض]</code>.
+     • <code>[📞 تسجيل اتصال بالعميل]</code> / <code>[📧 إرسال تذكير سداد]</code>.
 
-5. <b>بوابة العميل (Client Portal):</b>
-   - تجربة Mobile-First كاملة مع تقويم محتوى قابل للتمرير الأفقي وأقسام استراتيجية مريحة.
+5. <b>قواعد البيانات (D1 Schemas):</b>
+   - تحديث جدول <code>tasks</code> بإضافة عمود <code>ai_brief TEXT</code>.
+   - تحديث جدول <code>agent_pending_actions</code> بإضافة <code>related_id TEXT</code> و<code>processed_at DATETIME</code>.
 
-6. <b>معايير اللمس الفائقة (Apple Touch Target):</b>
-   - جميع الأزرار بحد أدنى 44px مع استجابة بصرية عند الضغط <code>scale(0.98)</code>.
-
-7. <b>نتائج الاختبارات والتحقق:</b>
-   - Playwright Mobile Suite (375px, 390px, 428px): <b>PASSED (9/9 Tests 100%)</b>.
-   - Zero Horizontal Scrolling: <b>مؤكد بالكامل (0px overflow)</b>.
-   - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
+6. <b>نتائج الاختبارات والامتثال المعماري:</b>
+   - اختبارات الوكلاء (Phase C Suite): <b>PASSED 100%</b>.
+   - الفحص المعماري الصارم (check-architecture.cjs): <b>0 violations (PASSED)</b>.
+   - اختبارات الموبايل (Playwright 375px, 390px, 428px): <b>PASSED (9/9)</b>.`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,

@@ -1575,6 +1575,11 @@ let searchDebounceTimer = null;
               ${task.title}
             </div>
             <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+              ${task.ai_brief ? `
+                <span title="يحتوي على بريف إبداعي ذكي" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(139,92,246,0.15);color:#c084fc;border:1px solid rgba(139,92,246,0.3);cursor:pointer;" onclick="openTaskBriefModal('${task.id}')">
+                  🎨 بريف ذكي
+                </span>
+              ` : ''}
               <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.05);color:${pColor};border:1px solid ${pColor}44;">
                 ${pLabel}
               </span>
@@ -2783,17 +2788,23 @@ window.applyCreativeToTask = applyCreativeToTask;
 window.suggestContentPillars = suggestContentPillars;
 
 
-// ── AUTONOMOUS SALES AI AGENT HUB (HUMAN-IN-THE-LOOP) ─────────────────
+// ── AUTONOMOUS AI AGENTS HUB (SALES, CREATIVE, CLIENT SUCCESS) ─────────────────
 let currentAgentFilter = 'pending_approval';
+let currentAgentType = 'all';
 
-async function loadAgentActions(statusFilter) {
+async function loadAgentActions(statusFilter, typeFilter) {
   if (statusFilter) currentAgentFilter = statusFilter;
+  if (typeFilter) currentAgentType = typeFilter;
   const container = document.getElementById('agentActionsContainer');
   if (!container) return;
 
   try {
-    const query = currentAgentFilter === 'all' ? '' : '?status=' + encodeURIComponent(currentAgentFilter);
-    const res = await fetch('/api/admin/agent-actions' + query);
+    const params = new URLSearchParams();
+    if (currentAgentFilter !== 'all') params.set('status', currentAgentFilter);
+    if (currentAgentType !== 'all') params.set('agent_type', currentAgentType);
+
+    const qs = params.toString() ? '?' + params.toString() : '';
+    const res = await fetch('/api/admin/agent-actions' + qs);
     const data = await res.json();
 
     if (!data.success) {
@@ -2808,6 +2819,23 @@ async function loadAgentActions(statusFilter) {
     if (document.getElementById('agentMetricSent')) document.getElementById('agentMetricSent').innerText = stats.sent || 0;
     if (document.getElementById('agentMetricRejected')) document.getElementById('agentMetricRejected').innerText = stats.rejected || 0;
     if (document.getElementById('agentMetricTotal')) document.getElementById('agentMetricTotal').innerText = stats.total || 0;
+
+    // Sub-section badges
+    const bSales = document.getElementById('agentSectionBadgeSales');
+    if (bSales) {
+      bSales.innerText = stats.pending_sales || 0;
+      bSales.style.display = (stats.pending_sales > 0) ? 'inline-block' : 'none';
+    }
+    const bCreative = document.getElementById('agentSectionBadgeCreative');
+    if (bCreative) {
+      bCreative.innerText = stats.pending_creative || 0;
+      bCreative.style.display = (stats.pending_creative > 0) ? 'inline-block' : 'none';
+    }
+    const bSuccess = document.getElementById('agentSectionBadgeSuccess');
+    if (bSuccess) {
+      bSuccess.innerText = stats.pending_client_success || 0;
+      bSuccess.style.display = (stats.pending_client_success > 0) ? 'inline-block' : 'none';
+    }
 
     // Update Navigation Badges
     const navBadge = document.getElementById('agentsNavBadge');
@@ -2836,10 +2864,18 @@ async function loadAgentActions(statusFilter) {
   }
 }
 
+function filterAgentType(type, btn) {
+  document.querySelectorAll('.agent-type-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  currentAgentType = type;
+  loadAgentActions();
+}
+
 function filterAgentActions(status, btn) {
   document.querySelectorAll('.agent-filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  loadAgentActions(status);
+  currentAgentFilter = status;
+  loadAgentActions();
 }
 
 function renderAgentActions(actions) {
@@ -2851,7 +2887,7 @@ function renderAgentActions(actions) {
       <div style="text-align:center;padding:48px 20px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:12px;">
         <div style="font-size:36px;margin-bottom:10px;">✨</div>
         <div style="font-size:16px;font-weight:700;color:#fff;">لا توجد إجراءات معلقة في هذا القسم حالياً</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">عند ورود ليد جديد من فيسبوك أو إضافته في الـ CRM، سيقوم وكيل المبيعات بصياغة المسودة وعرضها هنا للموافقة.</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">يعمل الوكلاء الذاتيون (مبيعات، إبداعي، نجاح العملاء) في الخلفية فور ورود ليدز أو مهام جديدة.</div>
       </div>
     `;
     return;
@@ -2859,29 +2895,161 @@ function renderAgentActions(actions) {
 
   container.innerHTML = actions.map(act => {
     const isPending = act.status === 'pending_approval';
-    const isSent = act.status === 'sent';
+    const isSent = act.status === 'sent' || act.status === 'approved';
     const isRejected = act.status === 'rejected';
 
     let statusBadge = '<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">⏳ بانتظار الاعتماد (Pending)</span>';
     if (isSent) {
-      statusBadge = '<span style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">✅ تم الإرسال (Sent)</span>';
+      statusBadge = '<span style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">✅ معتمد (Approved)</span>';
     } else if (isRejected) {
       statusBadge = '<span style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;">❌ تم التجاهل (Rejected)</span>';
     }
 
+    const safeDraft = (act.draft_content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const timeFormatted = new Date(act.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+    // 1. Creative Agent
+    if (act.agent_type === 'creative' || act.action_type === 'creative_brief') {
+      return `
+        <div class="card" id="agent_card_${act.id}" style="background:#13121d;border:1px solid ${isPending ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.08)'};border-radius:12px;padding:20px;transition:border-color 0.2s;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="font-size:17px;font-weight:800;color:#fff;">🎯 ${act.lead_name || 'بريف مهمة إبداعية'}</span>
+                <span style="background:rgba(139,92,246,0.15);color:#c084fc;border:1px solid rgba(139,92,246,0.3);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">🎨 الوكيل الإبداعي (Creative Agent)</span>
+                ${statusBadge}
+              </div>
+              <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-muted);margin-top:6px;flex-wrap:wrap;">
+                <span>📁 المهمة: <code>${act.related_id || act.lead_id || 'عام'}</code></span>
+                <span>🕒 ${timeFormatted}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">
+              📝 البريف الإبداعي المقترح (Hook, Visuals, Copywriting, CTA) - قابل للتعديل:
+            </label>
+            <textarea 
+              id="draft_${act.id}" 
+              ${!isPending ? 'disabled' : ''} 
+              rows="8" 
+              style="width:100%;background:#0a0a0f;color:#f4f4f5;border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:12px 14px;font-family:inherit;font-size:13px;line-height:1.7;resize:vertical;${!isPending ? 'opacity:0.75;cursor:not-allowed;' : ''}"
+            >${safeDraft}</textarea>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:12px;color:var(--text-muted);">
+              ${isPending ? '🎨 اعتماد هذا البريف سيقوم بحفظه تلقائياً في بيانات المهمة بقاعدة البيانات.' : '✨ تم اعتماد البريف وحفظه في سجل المهمة.'}
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              ${isPending ? `
+                <button 
+                  class="btn btn-primary" 
+                  style="background:#8b5cf6;border-color:#8b5cf6;display:flex;align-items:center;gap:6px;font-weight:700;" 
+                  onclick="approveAgentAction('${act.id}', this)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>🎨 اعتماد البريف للمهمة (Approve)</span>
+                </button>
+                <button 
+                  class="btn btn-secondary" 
+                  style="color:#ef4444;border-color:rgba(239,68,68,0.3);display:flex;align-items:center;gap:6px;" 
+                  onclick="rejectAgentAction('${act.id}', this)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>❌ رفض (Reject)</span>
+                </button>
+              ` : `
+                <button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;" onclick="loadAgentActions()">🔄 تحديث</button>
+              `}
+              ${act.related_id ? `
+                <button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;color:#c084fc;border-color:rgba(139,92,246,0.3);" onclick="switchTab('tasks');">📋 الانتقال للمهام</button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. Client Success Agent
+    if (act.agent_type === 'client_success' || act.action_type === 'churn_risk') {
+      return `
+        <div class="card" id="agent_card_${act.id}" style="background:#1b1212;border:1px solid ${isPending ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.08)'};border-radius:12px;padding:20px;transition:border-color 0.2s;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="font-size:17px;font-weight:800;color:#fff;">🏢 ${act.lead_company || act.lead_name || 'تنبيه عميل'}</span>
+                <span style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">⚠️ وكيل نجاح العملاء (Churn Alert)</span>
+                ${statusBadge}
+              </div>
+              <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-muted);margin-top:6px;flex-wrap:wrap;">
+                ${act.lead_phone ? `<span>📱 <span dir="ltr">${act.lead_phone}</span></span>` : ''}
+                ${act.lead_email ? `<span>📧 ${act.lead_email}</span>` : ''}
+                <span>🕒 ${timeFormatted}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:6px;">
+              🚨 تفاصيل المخاطرة وخطة الاحتفاظ المقترحة (Retention Playbook):
+            </label>
+            <div style="background:#0e0a0a;border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;color:#fca5a5;white-space:pre-line;">
+              ${(act.draft_content || '').replace(/<[^>]+>/g, '')}
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:12px;color:var(--text-muted);">
+              ${isPending ? '⚡ تواصل سريع مع العميل لحل مشكلة الدفع/المتابعة وتفادي فقدان الحساب.' : '✨ تم تسجيل تسوية ومتابعة التنبيه.'}
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              ${isPending ? `
+                <button 
+                  class="btn btn-primary" 
+                  style="background:#10b981;border-color:#10b981;display:flex;align-items:center;gap:6px;font-weight:700;" 
+                  onclick="approveAgentAction('${act.id}', this)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>✅ تسوية واعتماد (Resolve)</span>
+                </button>
+                ${act.lead_phone ? `
+                  <a href="tel:${act.lead_phone}" class="btn btn-secondary" style="color:#38bdf8;border-color:rgba(56,189,248,0.4);display:flex;align-items:center;gap:6px;text-decoration:none;">
+                    <span>📞 اتصال هاتفي</span>
+                  </a>
+                ` : ''}
+                <button 
+                  class="btn btn-secondary" 
+                  style="color:#ef4444;border-color:rgba(239,68,68,0.3);display:flex;align-items:center;gap:6px;" 
+                  onclick="rejectAgentAction('${act.id}', this)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>❌ تجاهل التنبيه</span>
+                </button>
+              ` : `
+                <button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;" onclick="loadAgentActions()">🔄 تحديث</button>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. Sales Agent
     const channelBadge = act.action_type === 'cold_email'
       ? '<span style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);padding:2px 8px;border-radius:10px;font-size:11px;">✉️ بريد إلكتروني (Cold Email)</span>'
       : '<span style="background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);padding:2px 8px;border-radius:10px;font-size:11px;">💬 واتساب (WhatsApp Outreach)</span>';
-
-    const safeDraft = (act.draft_content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const timeFormatted = new Date(act.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
 
     return `
       <div class="card" id="agent_card_${act.id}" style="background:#141418;border:1px solid ${isPending ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.08)'};border-radius:12px;padding:20px;transition:border-color 0.2s;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
           <div>
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <span style="font-size:17px;font-weight:800;color:#fff;">${act.lead_name || 'عميل محتمل'}</span>
+              <span style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">💼 وكيل المبيعات</span>
               ${channelBadge}
               ${statusBadge}
             </div>
@@ -2911,7 +3079,7 @@ function renderAgentActions(actions) {
             ${isPending ? '⚡ المراجعة البشرية مطلوبة لضمان أعلى جودة تواصل.' : (isSent ? '✨ تم إرسال الرسالة إلى العميل.' : '🚫 تم تجاهل هذا الإجراء.')}
           </div>
 
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             ${isPending ? `
               <button 
                 class="btn btn-primary" 
@@ -2943,13 +3111,8 @@ async function approveAgentAction(id, btn) {
   const textarea = document.getElementById('draft_' + id);
   const draftContent = textarea ? textarea.value.trim() : '';
 
-  if (!draftContent) {
-    alert('لا يمكن إرسال رسالة فارغة.');
-    return;
-  }
-
   const prevText = btn.innerHTML;
-  btn.innerHTML = '<span>جاري الإرسال... ⏳</span>';
+  btn.innerHTML = '<span>جاري المعالجة... ⏳</span>';
   btn.disabled = true;
 
   try {
@@ -2961,8 +3124,9 @@ async function approveAgentAction(id, btn) {
     const data = await res.json();
 
     if (data.success) {
-      alert('✅ تم اعتماد وإرسال الرسالة للعميل بنجاح!');
+      alert(data.message || '✅ تم اعتماد الإجراء بنجاح!');
       loadAgentActions();
+      if (typeof loadTasksWorkspace === 'function') loadTasksWorkspace();
     } else {
       alert('خطأ أثناء الاعتماد: ' + (data.error || 'فشلت العملية'));
       btn.innerHTML = prevText;
@@ -2977,7 +3141,7 @@ async function approveAgentAction(id, btn) {
 }
 
 async function rejectAgentAction(id, btn) {
-  if (!confirm('هل أنت متأكد من رغبتك في تجاهل ورفض هذه المسودة؟')) return;
+  if (!confirm('هل أنت متأكد من رغبتك في تجاهل ورفض هذا الإجراء؟')) return;
 
   const prevText = btn.innerHTML;
   btn.innerHTML = '<span>جاري الرفض...</span>';
@@ -2992,7 +3156,7 @@ async function rejectAgentAction(id, btn) {
     const data = await res.json();
 
     if (data.success) {
-      alert('تم تجاهل المسودة.');
+      alert('تم رفض وتجاهل الإجراء.');
       loadAgentActions();
     } else {
       alert('خطأ أثناء الرفض: ' + (data.error || 'فشلت العملية'));
@@ -3037,6 +3201,7 @@ async function simulateTestLeadAgent() {
 
     if (data.success) {
       alert('🚀 تم تشغيل وكيل المبيعات بنجاح وصياغة المسودة وإرسال إشعار تليجرام!');
+      filterAgentType('sales');
       filterAgentActions('pending_approval');
     } else {
       alert('خطأ: ' + (data.error || 'فشل تشغيل الوكيل'));
@@ -3046,10 +3211,73 @@ async function simulateTestLeadAgent() {
   }
 }
 
+async function simulateTestCreativeBrief() {
+  const taskTitle = prompt('عنوان المهمة لتوليد بريف إبداعي:', 'تصوير وإنتاج فيديو ريلز إعلاني للعيادة (Reels)');
+  if (!taskTitle) return;
+
+  try {
+    const res = await fetch('/api/internal/agents/creative-agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: 'task_' + Date.now().toString(36),
+        title: taskTitle,
+        description: 'فيديو ريلز ترويجي يركز على المشكلة والحل مع تصوير سنيمائي',
+        project_id: 'proj_marketing'
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('🎨 تم توليد البريف الإبداعي الذكي وإرسال إشعار تفاعلي على تليجرام!');
+      filterAgentType('creative');
+      filterAgentActions('pending_approval');
+    } else {
+      alert('خطأ: ' + (data.error || 'فشل توليد البريف'));
+    }
+  } catch (e) {
+    alert('فشل تشغيل الوكيل الإبداعي: ' + e.message);
+  }
+}
+
+async function triggerClientSuccessAudit() {
+  try {
+    const res = await fetch('/api/internal/agents/client-success-agent', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert(`⚠️ تم إجراء فحص نجاح العملاء ومكافحة Churn!\nتم فحص ${data.scannedClients || 0} عملاء وتوليد ${data.newAlertsCreated || 0} تنبيهات.`);
+      filterAgentType('client_success');
+      filterAgentActions('pending_approval');
+    } else {
+      alert('خطأ: ' + (data.error || 'فشل الفحص'));
+    }
+  } catch (e) {
+    alert('فشل تشغيل وكيل نجاح العملاء: ' + e.message);
+  }
+}
+
+function openTaskBriefModal(taskId) {
+  fetch('/api/admin/tasks')
+    .then(r => r.json())
+    .then(data => {
+      const allTasks = data?.data?.tasks || [];
+      const task = allTasks.find(t => t.id === taskId);
+      if (task && task.ai_brief) {
+        alert(`🎨 البريف الإبداعي المعتمد للمهمة (${task.title}):\n\n` + task.ai_brief.replace(/<[^>]+>/g, ''));
+      } else {
+        alert('لم يتم العثور على بريف معتمد لهذه المهمة.');
+      }
+    })
+    .catch(() => alert('تعذر جلب تفاصيل المهمة.'));
+}
+
 // Window exposures
 window.loadAgentActions = loadAgentActions;
 window.filterAgentActions = filterAgentActions;
+window.filterAgentType = filterAgentType;
 window.renderAgentActions = renderAgentActions;
 window.approveAgentAction = approveAgentAction;
 window.rejectAgentAction = rejectAgentAction;
 window.simulateTestLeadAgent = simulateTestLeadAgent;
+window.simulateTestCreativeBrief = simulateTestCreativeBrief;
+window.triggerClientSuccessAudit = triggerClientSuccessAudit;
+window.openTaskBriefModal = openTaskBriefModal;

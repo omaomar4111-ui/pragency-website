@@ -1134,16 +1134,22 @@
               <span style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">Human-in-the-Loop Active</span>
             </div>
             <p style="font-size:13px;color:var(--text-muted);margin:6px 0 0 0;">
-              وكيل المبيعات الذكي يعمل تلقائياً في الخلفية فور إنشاء أي ليد جديد عبر فيسبوك أو الـ CRM. يحلل مجال العميل ونقاط الألم ويصيغ مسودة رسالة تواصل احترافية ومباشرة. راجع المسودة واعتمدها بنقرة واحدة.
+              منظومة الوكلاء المستقلين للوكالة: وكيل المبيعات (صياغة رسائل الليدز)، الوكيل الإبداعي (توليد بريفات المهام الإعلانية)، ووكيل نجاح العملاء (رصد الفواتير المتأخرة ومخاطر التسرب Churn). راجع واعتمد بنقرة واحدة.
             </p>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <button class="btn btn-secondary" onclick="loadAgentActions()" style="display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
               <span>تحديث</span>
             </button>
             <button class="btn btn-primary" onclick="simulateTestLeadAgent()" style="display:flex;align-items:center;gap:6px;background:#10b981;border-color:#10b981;">
-              <span>⚡ ليد تجريبي لاختبار الوكيل</span>
+              <span>⚡ ليد مبيعات تجريبي</span>
+            </button>
+            <button class="btn btn-secondary" onclick="simulateTestCreativeBrief()" style="display:flex;align-items:center;gap:6px;color:#c084fc;border-color:rgba(192,132,252,0.4);">
+              <span>🎨 توليد بريف تجريبي</span>
+            </button>
+            <button class="btn btn-secondary" onclick="triggerClientSuccessAudit()" style="display:flex;align-items:center;gap:6px;color:#ef4444;border-color:rgba(239,68,68,0.4);">
+              <span>⚠️ فحص مخاطر Churn</span>
             </button>
           </div>
         </div>
@@ -1155,7 +1161,7 @@
             <div id="agentMetricPending" style="font-size:24px;font-weight:900;color:#f59e0b;margin-top:4px;">0</div>
           </div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:12px;color:var(--text-muted);">تم الإرسال (Approved & Sent)</div>
+            <div style="font-size:12px;color:var(--text-muted);">تم الإرسال والاعتماد (Approved)</div>
             <div id="agentMetricSent" style="font-size:24px;font-weight:900;color:#10b981;margin-top:4px;">0</div>
           </div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 16px;">
@@ -1163,18 +1169,37 @@
             <div id="agentMetricRejected" style="font-size:24px;font-weight:900;color:#ef4444;margin-top:4px;">0</div>
           </div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:12px;color:var(--text-muted);">إجمالي الإجراءات الذكية</div>
+            <div style="font-size:12px;color:var(--text-muted);">إجمالي الإجراءات المسجلة</div>
             <div id="agentMetricTotal" style="font-size:24px;font-weight:900;color:#38bdf8;margin-top:4px;">0</div>
           </div>
         </div>
       </div>
 
-      <!-- Filter Controls -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <!-- Agent Sub-Section Selector Tabs -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:12px;">
+        <button class="btn btn-secondary agent-type-btn active" data-type="all" onclick="filterAgentType('all', this)" style="display:flex;align-items:center;gap:6px;">
+          <span>🤖 كافة الوكلاء (All)</span>
+        </button>
+        <button class="btn btn-secondary agent-type-btn" data-type="sales" onclick="filterAgentType('sales', this)" style="display:flex;align-items:center;gap:6px;">
+          <span>💼 وكيل المبيعات (Sales)</span>
+          <span id="agentSectionBadgeSales" style="display:none;background:#f59e0b;color:#000;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:800;">0</span>
+        </button>
+        <button class="btn btn-secondary agent-type-btn" data-type="creative" onclick="filterAgentType('creative', this)" style="display:flex;align-items:center;gap:6px;">
+          <span>🎨 الوكيل الإبداعي (Creative)</span>
+          <span id="agentSectionBadgeCreative" style="display:none;background:#8b5cf6;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:800;">0</span>
+        </button>
+        <button class="btn btn-secondary agent-type-btn" data-type="client_success" onclick="filterAgentType('client_success', this)" style="display:flex;align-items:center;gap:6px;">
+          <span>⚠️ نجاح العملاء والـ Churn</span>
+          <span id="agentSectionBadgeSuccess" style="display:none;background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:800;">0</span>
+        </button>
+      </div>
+
+      <!-- Filter Controls (Status) -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
         <button class="btn btn-secondary agent-filter-btn active" data-filter="pending_approval" onclick="filterAgentActions('pending_approval', this)">⏳ بانتظار المراجعة والاعتماد</button>
-        <button class="btn btn-secondary agent-filter-btn" data-filter="sent" onclick="filterAgentActions('sent', this)">✅ المسودات المرسلة</button>
-        <button class="btn btn-secondary agent-filter-btn" data-filter="rejected" onclick="filterAgentActions('rejected', this)">❌ المسودات المرفوضة</button>
-        <button class="btn btn-secondary agent-filter-btn" data-filter="all" onclick="filterAgentActions('all', this)">📋 كافة الإجراءات</button>
+        <button class="btn btn-secondary agent-filter-btn" data-filter="sent" onclick="filterAgentActions('sent', this)">✅ الإجراءات المعتمدة</button>
+        <button class="btn btn-secondary agent-filter-btn" data-filter="rejected" onclick="filterAgentActions('rejected', this)">❌ الإجراءات المرفوضة</button>
+        <button class="btn btn-secondary agent-filter-btn" data-filter="all" onclick="filterAgentActions('all', this)">📋 كافة الحالات</button>
       </div>
 
       <!-- Action Items Container -->

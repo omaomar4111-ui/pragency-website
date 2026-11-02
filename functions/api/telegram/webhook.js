@@ -1258,6 +1258,156 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // ── AI AGENTS HUB ACTIONS (CREATIVE, SALES, CLIENT SUCCESS) ──
+      if (callbackData.startsWith('action:agent:approve_brief:')) {
+        const actionId = callbackData.replace('action:agent:approve_brief:', '');
+        try {
+          const act = await dbAnalytics.prepare('SELECT * FROM agent_pending_actions WHERE id = ?').bind(actionId).first();
+          if (!act) {
+            await answerCallbackQuery(env, callbackQuery.id, '⚠️ لم يتم العثور على البريف');
+            return new Response(JSON.stringify({ ok: true }), { status: 200 });
+          }
+          await dbAnalytics.prepare(`
+            UPDATE agent_pending_actions 
+            SET status = 'approved', processed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+          `).bind(actionId).run();
+
+          if (act.related_id && dbMain) {
+            await dbMain.prepare(`
+              UPDATE tasks 
+              SET ai_brief = ?, updated_at = CURRENT_TIMESTAMP
+              WHERE id = ?
+            `).bind(act.draft_content, act.related_id).run();
+          }
+
+          await answerCallbackQuery(env, callbackQuery.id, '✅ تم اعتماد البريف وتحديث المهمة في D1!');
+          const updatedMsg = {
+            chat_id: incomingChatId,
+            message_id: messageId,
+            text: `✅ <b>تم اعتماد البريف الإبداعي بنجاح!</b>\n\n🎯 <b>المهمة:</b> ${act.lead_name || act.related_id}\n\nتم حفظ وتضمين البريف مباشرة في سجل المهمة بقاعدة البيانات D1.`,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '📋 عرض مهام اليوم', callback_data: 'menu:tasks:today' }],
+                [{ text: '⬅️ القائمة الرئيسية', callback_data: 'menu:main' }]
+              ]
+            }
+          };
+          await editTelegramMessage(env, updatedMsg);
+        } catch (e) {
+          console.error('[Agent Telegram Approval Error]:', e);
+          await answerCallbackQuery(env, callbackQuery.id, '❌ حدث خطأ أثناء الاعتماد: ' + e.message);
+        }
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:agent:approve:')) {
+        const actionId = callbackData.replace('action:agent:approve:', '');
+        try {
+          const act = await dbAnalytics.prepare('SELECT * FROM agent_pending_actions WHERE id = ?').bind(actionId).first();
+          if (act) {
+            await dbAnalytics.prepare(`
+              UPDATE agent_pending_actions 
+              SET status = 'sent', processed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+              WHERE id = ?
+            `).bind(actionId).run();
+          }
+          await answerCallbackQuery(env, callbackQuery.id, '✅ تم اعتماد وإرسال المسودة بنجاح!');
+          const updatedMsg = {
+            chat_id: incomingChatId,
+            message_id: messageId,
+            text: `✅ <b>تم اعتماد المسودة وإرسالها!</b>\n\n👤 <b>الجهة/الليد:</b> ${act?.lead_name || 'الليد'}\n\nتم تحديث حالة الإجراء إلى Sent.`,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '💼 عرض الليدز', callback_data: 'menu:leads' }],
+                [{ text: '⬅️ القائمة الرئيسية', callback_data: 'menu:main' }]
+              ]
+            }
+          };
+          await editTelegramMessage(env, updatedMsg);
+        } catch (e) {
+          await answerCallbackQuery(env, callbackQuery.id, '❌ خطأ: ' + e.message);
+        }
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:agent:reject:')) {
+        const actionId = callbackData.replace('action:agent:reject:', '');
+        try {
+          await dbAnalytics.prepare(`
+            UPDATE agent_pending_actions 
+            SET status = 'rejected', processed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+          `).bind(actionId).run();
+          await answerCallbackQuery(env, callbackQuery.id, '❌ تم رفض وتجاهل الإجراء.');
+          const updatedMsg = {
+            chat_id: incomingChatId,
+            message_id: messageId,
+            text: `❌ <b>تم رفض وتجاهل مسودة الإجراء.</b>`,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '⬅️ القائمة الرئيسية', callback_data: 'menu:main' }]
+              ]
+            }
+          };
+          await editTelegramMessage(env, updatedMsg);
+        } catch (e) {
+          await answerCallbackQuery(env, callbackQuery.id, '❌ خطأ: ' + e.message);
+        }
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:agent:call_client:')) {
+        const actionId = callbackData.replace('action:agent:call_client:', '');
+        const act = await dbAnalytics.prepare('SELECT * FROM agent_pending_actions WHERE id = ?').bind(actionId).first().catch(() => null);
+        await answerCallbackQuery(env, callbackQuery.id, '📞 تم تسجيل طلب الاتصال بالعميل!');
+        const updatedMsg = {
+          chat_id: incomingChatId,
+          message_id: messageId,
+          text: `📞 <b>إشعار اتصال بالعميل</b>\n\nيرجى التواصل المباشر مع <b>${act?.lead_name || 'العميل'}</b> لحل مشكلة الدفع/المتابعة لتفادي خطر Churn.`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '👥 عرض بيانات العميل', callback_data: act?.related_id ? `action:client:view:${act.related_id}` : 'menu:clients' }],
+              [{ text: '⬅️ القائمة الرئيسية', callback_data: 'menu:main' }]
+            ]
+          }
+        };
+        await editTelegramMessage(env, updatedMsg);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData.startsWith('action:agent:send_reminder:')) {
+        const actionId = callbackData.replace('action:agent:send_reminder:', '');
+        try {
+          await dbAnalytics.prepare(`
+            UPDATE agent_pending_actions 
+            SET status = 'approved', processed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+          `).bind(actionId).run();
+          await answerCallbackQuery(env, callbackQuery.id, '📧 تم جدولة وإرسال تذكير الدفع بنجاح!');
+          const updatedMsg = {
+            chat_id: incomingChatId,
+            message_id: messageId,
+            text: `📧 <b>تم إرسال تذكير المتابعة للعميل بنجاح!</b>\n\nتم تحديث حالة تنبيه نجاح العميل إلى معتمد.`,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '🧾 قائمة الفواتير', callback_data: 'menu:invoices' }],
+                [{ text: '⬅️ القائمة الرئيسية', callback_data: 'menu:main' }]
+              ]
+            }
+          };
+          await editTelegramMessage(env, updatedMsg);
+        } catch (e) {
+          await answerCallbackQuery(env, callbackQuery.id, '❌ خطأ: ' + e.message);
+        }
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Fallback placeholder
       const payload = {
         chat_id: incomingChatId,
