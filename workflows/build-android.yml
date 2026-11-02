@@ -1,0 +1,58 @@
+name: Build Android APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Setup Signing Keystore
+        run: |
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "Decoding ANDROID_KEYSTORE_BASE64 from GitHub Secrets..."
+            echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
+          else
+            echo "Generating release keystore on the fly for automated build..."
+            keytool -genkey -v -keystore android/app/release.keystore \
+              -alias pragency -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass pragency2026 -keypass pragency2026 \
+              -dname "CN=PR Agency, OU=Dev, O=PRAgency, L=Cairo, S=Cairo, C=EG"
+          fi
+
+      - name: Build Signed APK with Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$(pwd)/app/release.keystore \
+            -Pandroid.injected.signing.store.password=pragency2026 \
+            -Pandroid.injected.signing.key.alias=pragency \
+            -Pandroid.injected.signing.key.password=pragency2026
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PR-Agency-APK
+          path: android/app/build/outputs/apk/release/app-release.apk

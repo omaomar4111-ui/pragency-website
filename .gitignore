@@ -1,4 +1,9 @@
-# wrangler files
+# Android Keystores
+*.keystore
+*.keystore.b64
+release.keystore
+release.keystore.b64
+
 .wrangler
 .dev.vars*
 !.dev.vars.example

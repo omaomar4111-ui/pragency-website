@@ -189,12 +189,12 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://www.google-analytics.com"/>
 <link rel="preconnect" href="https://connect.facebook.net"/>
 <link rel="preload" href="css/main.css?v=122" as="style"/>
-<link rel="preload" href="assets/images/hero-statue.webp?v=117" as="image" type="image/webp" fetchpriority="high"/>
+<link rel="preload" as="image" href="/assets/images/hero-statue.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
 <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/></noscript>
 <link rel="stylesheet" href="css/main.css?v=122"/>
-<link rel="stylesheet" href="css/pages.css?v=122"/>
+<link rel="stylesheet" href="css/pages.css?v=122" media="print" onload="this.media='all'"/>
 
 
 <!-- Favicons -->
@@ -249,9 +249,32 @@ window.dataLayer = window.dataLayer || [];
   });
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1" alt="PR Agency"/></noscript>
-<link rel="stylesheet" href="css/multi-step-form.css?v=98"/>
-<link rel="stylesheet" href="/css/chatbot.css?v=98"/>
-  <link rel="stylesheet" href="/css/phase2-components.css?v=108"/>
+<link rel="stylesheet" href="css/multi-step-form.css?v=98" media="print" onload="this.media='all'"/>
+<link rel="stylesheet" href="/css/chatbot.css?v=98" media="print" onload="this.media='all'"/>
+  <link rel="stylesheet" href="/css/phase2-components.css?v=108" media="print" onload="this.media='all'"/>
+  <style id="critical-css">
+    :root {
+      --c-black:#0A0612;--c-s1:#110A1E;--c-s2:#17102A;--c-purple:#6D28D9;--c-purple-h:#7C3AED;
+      --c-w100:#fff;--c-w80:rgba(255,255,255,0.8);--c-w60:rgba(255,255,255,0.6);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{background:#0A0612;color:#fff;font-family:'Cairo',sans-serif;scroll-behavior:smooth}
+    body{margin:0;padding:0;background:#0A0612;color:#fff;overflow-x:hidden}
+    #hdr{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(10,6,18,0.85);backdrop-filter:blur(10px)}
+    .hdr-logo{width:60px;height:60px;display:block}
+    #hero{min-height:90vh;display:flex;align-items:center;position:relative;padding:100px 24px 40px;background:#0A0612}
+    .hero-vr-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;width:100%;gap:40px}
+    .hero-vr-title{font-size:clamp(32px,6vw,64px);font-weight:900;line-height:1.2;margin:0 0 16px}
+    .hero-vr-title-accent{color:#A78BFA}
+    .hero-vr-sub{font-size:clamp(15px,2vw,18px);color:rgba(255,255,255,0.7);margin:0 0 24px;line-height:1.6}
+    .hero-vr-cta{display:inline-flex;align-items:center;gap:10px;background:#7C3AED;color:#fff;padding:14px 28px;border-radius:30px;font-weight:700;text-decoration:none}
+    .hero-vr-logo-wrap{position:relative;flex-shrink:0}
+    .hero-statue-layer img{max-width:100%;height:auto;display:block}
+    @media(max-width:768px){
+      .hero-vr-inner{flex-direction:column-reverse;text-align:center}
+      .hero-vr-cta{margin:0 auto}
+    }
+  </style>
 </head>
 
 <body>
@@ -304,7 +327,7 @@ window.dataLayer = window.dataLayer || [];
   <a href="./" aria-label="PR Agency — الرئيسية" class="hdr-logo-link">
     <picture>
       <source srcset="assets/logos/pr-agency.webp" type="image/webp">
-      <img src="assets/logos/pr-agency.png" alt="PR Agency — وكالة تسويق متكاملة في القاهرة" class="hdr-logo" width="60" height="60" />
+      <img src="assets/logos/pr-agency.webp" alt="PR Agency — وكالة تسويق متكاملة في القاهرة" class="hdr-logo" width="60" height="60" />
     </picture>
   </a>
   
@@ -406,7 +429,7 @@ window.dataLayer = window.dataLayer || [];
         <picture>
           <source srcset="assets/images/hero-statue.webp?v=117" type="image/webp">
           <img 
-            src="assets/images/hero-statue.png?v=116" 
+            src="assets/images/hero-statue.webp" 
             alt="PR Agency Sculpture"
             loading="eager"
             fetchpriority="high"
@@ -422,7 +445,7 @@ window.dataLayer = window.dataLayer || [];
           <picture>
             <source srcset="assets/logos/pr-agency.webp?v=116" type="image/webp">
             <img 
-              src="assets/logos/pr-agency.png?v=116" 
+              src="assets/logos/pr-agency.webp" 
               alt="PR Agency — وكالة تسويق متكاملة في القاهرة" 
               loading="eager"
             fetchpriority="high"
@@ -670,7 +693,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-01-account-manager.webp" type="image/webp">
-            <img src="assets/team/role-01-account-manager.png" alt="Account Manager" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-01-account-manager.webp" alt="Account Manager" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -686,7 +709,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-02-content-creator.webp" type="image/webp">
-            <img src="assets/team/role-02-content-creator.png" alt="Content Creator" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-02-content-creator.webp" alt="Content Creator" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -702,7 +725,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-03-content-strategist.webp" type="image/webp">
-            <img src="assets/team/role-03-content-strategist.png" alt="Content Strategist" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-03-content-strategist.webp" alt="Content Strategist" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -718,7 +741,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-04-media-buyer.webp" type="image/webp">
-            <img src="assets/team/role-04-media-buyer.png" alt="Media Buyer" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-04-media-buyer.webp" alt="Media Buyer" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -734,7 +757,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-05-photographer.webp" type="image/webp">
-            <img src="assets/team/role-05-photographer.png" alt="Photographer" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-05-photographer.webp" alt="Photographer" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -750,7 +773,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-06-video-editor.webp" type="image/webp">
-            <img src="assets/team/role-06-video-editor.png" alt="Video Editor" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-06-video-editor.webp" alt="Video Editor" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -766,7 +789,7 @@ window.dataLayer = window.dataLayer || [];
         <div class="role-image">
           <picture>
             <source srcset="assets/team/role-07-graphic-designer.webp" type="image/webp">
-            <img src="assets/team/role-07-graphic-designer.png" alt="Graphic Designer" loading="lazy" width="300" height="300" />
+            <img src="assets/team/role-07-graphic-designer.webp" alt="Graphic Designer" loading="lazy" width="300" height="300" />
           </picture>
         </div>
       </div>
@@ -1068,109 +1091,109 @@ window.dataLayer = window.dataLayer || [];
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-01-bliltna.webp" type="image/webp">
-          <img src="assets/logos/clients/client-01-bliltna.png" alt="شعار بليلتنا - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-01-bliltna.webp" alt="شعار بليلتنا - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-02-home-ix.webp" type="image/webp">
-          <img src="assets/logos/clients/client-02-home-ix.png" alt="شعار Home IX - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-02-home-ix.webp" alt="شعار Home IX - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-03-kangaroo.webp" type="image/webp">
-          <img src="assets/logos/clients/client-03-kangaroo.png" alt="شعار كانجارو - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-03-kangaroo.webp" alt="شعار كانجارو - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-04-dar.webp" type="image/webp">
-          <img src="assets/logos/clients/client-04-dar.png" alt="شعار دار العقارية - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-04-dar.webp" alt="شعار دار العقارية - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-05-nh-clinics.webp" type="image/webp">
-          <img src="assets/logos/clients/client-05-nh-clinics.png" alt="شعار NH Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-05-nh-clinics.webp" alt="شعار NH Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-06-unit-x.webp" type="image/webp">
-          <img src="assets/logos/clients/client-06-unit-x.png" alt="شعار Unit X - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-06-unit-x.webp" alt="شعار Unit X - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-07-mountain-view.webp" type="image/webp">
-          <img src="assets/logos/clients/client-07-mountain-view.png" alt="شعار Mountain View - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-07-mountain-view.webp" alt="شعار Mountain View - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-08-merath.webp" type="image/webp">
-          <img src="assets/logos/clients/client-08-merath.png" alt="شعار ميراث - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-08-merath.webp" alt="شعار ميراث - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-09-memaar.webp" type="image/webp">
-          <img src="assets/logos/clients/client-09-memaar.png" alt="شعار معمار - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-09-memaar.webp" alt="شعار معمار - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-10-sak.webp" type="image/webp">
-          <img src="assets/logos/clients/client-10-sak.png" alt="شعار SAK - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-10-sak.webp" alt="شعار SAK - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-11-address.webp" type="image/webp">
-          <img src="assets/logos/clients/client-11-address.png" alt="شعار The Address - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-11-address.webp" alt="شعار The Address - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-12-evergreen.webp" type="image/webp">
-          <img src="assets/logos/clients/client-12-evergreen.png" alt="شعار Evergreen - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-12-evergreen.webp" alt="شعار Evergreen - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-13-jg.webp" type="image/webp">
-          <img src="assets/logos/clients/client-13-jg.png" alt="شعار JG - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-13-jg.webp" alt="شعار JG - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-14-island-gym.webp" type="image/webp">
-          <img src="assets/logos/clients/client-14-island-gym.png" alt="شعار Island Gym - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-14-island-gym.webp" alt="شعار Island Gym - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-15-iskin.webp" type="image/webp">
-          <img src="assets/logos/clients/client-15-iskin.png" alt="شعار iSkin Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-15-iskin.webp" alt="شعار iSkin Clinics - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-16-paws.webp" type="image/webp">
-          <img src="assets/logos/clients/client-16-paws.png" alt="شعار Paws - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-16-paws.webp" alt="شعار Paws - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-18-ovo.webp" type="image/webp">
-          <img src="assets/logos/clients/client-18-ovo.png" alt="شعار OVO - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-18-ovo.webp" alt="شعار OVO - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
       <div class="client-logo-item">
         <picture>
           <source srcset="assets/logos/clients/client-19-swan.webp" type="image/webp">
-          <img src="assets/logos/clients/client-19-swan.png" alt="شعار Swan - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
+          <img src="assets/logos/clients/client-19-swan.webp" alt="شعار Swan - عميل وكالة PR Agency" class="client-grid-img" loading="lazy" width="160" height="80" />
         </picture>
       </div>
     </div>
@@ -1189,7 +1212,7 @@ window.dataLayer = window.dataLayer || [];
       <div class="site-footer-brand">
         <picture>
           <source srcset="assets/logos/pr-agency.webp" type="image/webp">
-          <img src="assets/logos/pr-agency.png" 
+          <img src="assets/logos/pr-agency.webp" 
                alt="PR Agency — وكالة تسويق متكاملة في القاهرة" 
                class="site-footer-logo" 
                loading="lazy"

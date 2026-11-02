@@ -2,10 +2,29 @@
 // Facebook Lead Ads Real-Time Webhook with Round-Robin Sales Rep Auto-Assignment
 import { logSystemAction } from '../../lib/audit.js';
 
-function jsonResponse(data, status = 200) {
+// ── In-Memory Rate Limiter for Inbound Webhooks (Max 20 requests / 10s per IP) ──
+const webhookRateLimiter = new Map();
+function checkWebhookRateLimit(ip) {
+  const now = Date.now();
+  const windowMs = 10000;
+  const maxReqs = 20;
+  const rec = webhookRateLimiter.get(ip) || { count: 0, resetAt: now + windowMs };
+  if (now > rec.resetAt) {
+    rec.count = 0;
+    rec.resetAt = now + windowMs;
+  }
+  rec.count++;
+  webhookRateLimiter.set(ip, rec);
+  if (rec.count > maxReqs) {
+    return { limited: true, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
+  }
+  return { limited: false };
+}
+
+function jsonResponse(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...extraHeaders }
   });
 }
 
@@ -34,6 +53,16 @@ export async function onRequestGet(context) {
 // ── 2. POST: Ingest Facebook Lead, Round-Robin Assign, & Trigger Workflows ───
 export async function onRequestPost(context) {
   const { request, env } = context;
+  const clientIp = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
+  const rate = checkWebhookRateLimit(clientIp);
+  if (rate.limited) {
+    return jsonResponse(
+      { success: false, error: 'Rate limit exceeded: Too Many Requests on Webhook Endpoint' },
+      429,
+      { 'Retry-After': String(rate.retryAfter || 5) }
+    );
+  }
+
   const db = env.ANALYTICS_DB || env.DB;
 
   if (!db) return jsonResponse({ success: false, error: 'Database unavailable' }, 500);
