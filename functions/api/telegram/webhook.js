@@ -6,6 +6,7 @@ import {
   sendTelegramMessage, 
   editTelegramMessage, 
   answerCallbackQuery, 
+  sendTelegramDocument,
   getSession, 
   setSession 
 } from '../../lib/telegram.js';
@@ -1031,6 +1032,232 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
+      // ── PHASE 7: REPORTS CALLBACKS ──
+      if (callbackData === 'menu:reports') {
+        const payload = buildMenu(incomingChatId, 'menu:reports');
+        await setSession(dbAnalytics, incomingChatId, 'menu:reports', {});
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:revenue') {
+        let allTimeCollected = 0;
+        let outstanding = 0;
+        let thisMonthCollected = 0;
+        let lastMonthCollected = 0;
+        let collectionRate = 100;
+        let avgInvoice = 0;
+
+        try {
+          const allTimeRow = await dbAnalytics.prepare("SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as cnt FROM client_invoices WHERE status = 'paid'").first() || {};
+          const outstandingRow = await dbAnalytics.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status != 'paid'").first() || {};
+          const thisMonthRow = await dbAnalytics.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid' AND strftime('%Y-%m', paid_at) = strftime('%Y-%m', 'now')").first() || {};
+          const lastMonthRow = await dbAnalytics.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM client_invoices WHERE status = 'paid' AND strftime('%Y-%m', paid_at) = strftime('%Y-%m', 'now', '-1 month')").first() || {};
+
+          allTimeCollected = allTimeRow.total || 0;
+          outstanding = outstandingRow.total || 0;
+          thisMonthCollected = thisMonthRow.total || 0;
+          lastMonthCollected = lastMonthRow.total || 0;
+          const totalBilled = allTimeCollected + outstanding;
+          collectionRate = totalBilled > 0 ? Math.round((allTimeCollected / totalBilled) * 100) : 100;
+          avgInvoice = (allTimeRow.cnt > 0) ? Math.round(allTimeCollected / allTimeRow.cnt) : 0;
+        } catch (e) {
+          console.warn('[Revenue Report Error]:', e.message);
+        }
+
+        const payload = buildMenu(incomingChatId, 'menu:report:revenue', {
+          thisMonthCollected,
+          lastMonthCollected,
+          allTimeCollected,
+          outstanding,
+          collectionRate,
+          avgInvoice
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:performance') {
+        let topClients = [];
+        let topTeam = [];
+        let completionRate = 0;
+
+        try {
+          const cRes = await dbAnalytics.prepare(`
+            SELECT COALESCE(c.company_name, i.client_id) as client_name, SUM(i.amount) as total_rev
+            FROM client_invoices i
+            LEFT JOIN portal_clients c ON i.client_id = c.id
+            WHERE i.status = 'paid'
+            GROUP BY i.client_id
+            ORDER BY total_rev DESC LIMIT 5
+          `).all();
+          topClients = cRes?.results || [];
+        } catch (e) {}
+
+        try {
+          const tRes = await dbMain.prepare(`
+            SELECT assigned_to, COUNT(*) as done_count
+            FROM tasks
+            WHERE status = 'done' AND assigned_to IS NOT NULL AND assigned_to != ''
+            GROUP BY assigned_to
+            ORDER BY done_count DESC LIMIT 5
+          `).all();
+          topTeam = tRes?.results || [];
+
+          const totalRow = await dbMain.prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) as done_cnt FROM tasks").first() || {};
+          if (totalRow.total > 0) {
+            completionRate = Math.round(((totalRow.done_cnt || 0) / totalRow.total) * 100);
+          }
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:report:performance', {
+          topClients,
+          topTeam,
+          completionRate
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:leads') {
+        let totalLeads = 0;
+        let wonLeads = 0;
+        let lostLeads = 0;
+        let conversionRate = 0;
+        const stageBreakdown = {};
+        const sourceBreakdown = {};
+
+        try {
+          const totalRow = await dbAnalytics.prepare('SELECT COUNT(*) as total FROM sales_leads').first() || {};
+          totalLeads = totalRow.total || 0;
+
+          const stages = await dbAnalytics.prepare('SELECT pipeline_stage, COUNT(*) as cnt FROM sales_leads GROUP BY pipeline_stage').all();
+          (stages?.results || []).forEach(r => {
+            stageBreakdown[r.pipeline_stage] = r.cnt;
+            if (r.pipeline_stage === 'won') wonLeads = r.cnt;
+            if (r.pipeline_stage === 'lost') lostLeads = r.cnt;
+          });
+
+          if (totalLeads > 0) {
+            conversionRate = Math.round((wonLeads / totalLeads) * 100);
+          }
+
+          const sources = await dbAnalytics.prepare('SELECT COALESCE(lead_source, "غير محدد") as src, COUNT(*) as cnt FROM sales_leads GROUP BY lead_source').all();
+          (sources?.results || []).forEach(r => {
+            sourceBreakdown[r.src] = r.cnt;
+          });
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:report:leads', {
+          totalLeads,
+          wonLeads,
+          lostLeads,
+          conversionRate,
+          stageBreakdown,
+          sourceBreakdown
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:agents') {
+        let totalActions = 0;
+        let approved = 0;
+        let rejected = 0;
+        let pending = 0;
+        let accuracyRate = 100;
+        const agentBreakdown = {};
+
+        try {
+          const counts = await dbAnalytics.prepare('SELECT status, COUNT(*) as cnt FROM agent_pending_actions GROUP BY status').all();
+          (counts?.results || []).forEach(r => {
+            if (r.status === 'approved') approved = r.cnt;
+            else if (r.status === 'rejected') rejected = r.cnt;
+            else if (r.status === 'pending_approval') pending = r.cnt;
+            totalActions += r.cnt;
+          });
+
+          const resolved = approved + rejected;
+          if (resolved > 0) {
+            accuracyRate = Math.round((approved / resolved) * 100);
+          }
+
+          const types = await dbAnalytics.prepare('SELECT agent_type, COUNT(*) as cnt FROM agent_pending_actions GROUP BY agent_type').all();
+          (types?.results || []).forEach(r => {
+            agentBreakdown[r.agent_type] = r.cnt;
+          });
+        } catch (e) {}
+
+        const payload = buildMenu(incomingChatId, 'menu:report:agents', {
+          totalActions,
+          approved,
+          rejected,
+          pending,
+          accuracyRate,
+          agentBreakdown
+        });
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:csv') {
+        const payload = buildMenu(incomingChatId, 'menu:report:csv_select');
+        await editTelegramMessage(env, { ...payload, message_id: messageId });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:export:leads') {
+        await answerCallbackQuery(env, callbackQuery.id, '⏳ جاري تصدير بيانات الليدز...');
+        let csv = 'ID,Lead Name,Company,Email,Phone,Stage,Estimated Value,Source,Created At\n';
+        try {
+          const rows = await dbAnalytics.prepare('SELECT * FROM sales_leads ORDER BY created_at DESC LIMIT 500').all();
+          (rows?.results || []).forEach(r => {
+            csv += `"${r.id}","${(r.lead_name || '').replace(/"/g, '""')}","${(r.company_name || '').replace(/"/g, '""')}","${r.email || ''}","${r.phone || ''}","${r.pipeline_stage || ''}","${r.estimated_value || 0}","${r.lead_source || ''}","${r.created_at || ''}"\n`;
+          });
+        } catch (e) {}
+        await sendTelegramDocument(env, incomingChatId, `leads_export_${Date.now()}.csv`, csv, '💼 ملف تصدير الصفقات والعملاء المحتملين (Leads)');
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:export:invoices') {
+        await answerCallbackQuery(env, callbackQuery.id, '⏳ جاري تصدير بيانات الفواتير...');
+        let csv = 'ID,Invoice Number,Client ID,Amount,Currency,Status,Due Date,Paid At,Created At\n';
+        try {
+          const rows = await dbAnalytics.prepare('SELECT * FROM client_invoices ORDER BY created_at DESC LIMIT 500').all();
+          (rows?.results || []).forEach(r => {
+            csv += `"${r.id}","${r.invoice_number || ''}","${r.client_id || ''}","${r.amount || 0}","${r.currency || 'EGP'}","${r.status || ''}","${r.due_date || ''}","${r.paid_at || ''}","${r.created_at || ''}"\n`;
+          });
+        } catch (e) {}
+        await sendTelegramDocument(env, incomingChatId, `invoices_export_${Date.now()}.csv`, csv, '🧾 ملف تصدير الفواتير والتحصيلات (Invoices)');
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:export:clients') {
+        await answerCallbackQuery(env, callbackQuery.id, '⏳ جاري تصدير بيانات العملاء...');
+        let csv = 'ID,Company Name,Contact Name,Email,Phone,Retainer (EGP),Status,Created At\n';
+        try {
+          const rows = await dbAnalytics.prepare('SELECT * FROM portal_clients ORDER BY created_at DESC LIMIT 500').all();
+          (rows?.results || []).forEach(r => {
+            csv += `"${r.id}","${(r.company_name || '').replace(/"/g, '""')}","${(r.contact_name || '').replace(/"/g, '""')}","${r.email || ''}","${r.phone || ''}","${r.retainer_amount || 0}","${r.status || 'active'}","${r.created_at || ''}"\n`;
+          });
+        } catch (e) {}
+        await sendTelegramDocument(env, incomingChatId, `clients_export_${Date.now()}.csv`, csv, '👥 ملف تصدير قاعدة بيانات العملاء (Clients)');
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (callbackData === 'action:report:export:tasks') {
+        await answerCallbackQuery(env, callbackQuery.id, '⏳ جاري تصدير بيانات المهام...');
+        let csv = 'ID,Title,Status,Priority,Planned Date,Assigned To\n';
+        try {
+          const rows = await dbMain.prepare('SELECT id, title, status, priority, planned_date, assigned_to FROM tasks ORDER BY created_at DESC LIMIT 500').all();
+          (rows?.results || []).forEach(r => {
+            csv += `"${r.id}","${(r.title || '').replace(/"/g, '""')}","${r.status || ''}","${r.priority || ''}","${r.planned_date || ''}","${r.assigned_to || ''}"\n`;
+          });
+        } catch (e) {}
+        await sendTelegramDocument(env, incomingChatId, `tasks_export_${Date.now()}.csv`, csv, '📋 ملف تصدير مهام وسير العمل (Tasks)');
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
       // Fallback placeholder
       const payload = {
         chat_id: incomingChatId,
@@ -1489,6 +1716,13 @@ export async function onRequestPost(context) {
         } catch (e) {}
         const payload = buildMenu(incomingChatId, 'menu:automation', { workflows });
         await setSession(dbAnalytics, incomingChatId, 'menu:automation', {});
+        await sendTelegramMessage(env, payload);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      if (text === '/reports' || text === 'التقارير' || text === 'تقارير') {
+        const payload = buildMenu(incomingChatId, 'menu:reports');
+        await setSession(dbAnalytics, incomingChatId, 'menu:reports', {});
         await sendTelegramMessage(env, payload);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }

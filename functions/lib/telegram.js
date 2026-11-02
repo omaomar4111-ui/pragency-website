@@ -85,6 +85,40 @@ export async function answerCallbackQuery(env, callbackQueryId, text = '', showA
 }
 
 /**
+ * Sends a Document (e.g. CSV / File) to Telegram
+ */
+export async function sendTelegramDocument(env, chatId, filename, content, caption = '') {
+  const token = env.TELEGRAM_BOT_TOKEN;
+  if (!token || !chatId) return false;
+
+  try {
+    const formData = new FormData();
+    formData.append('chat_id', String(chatId));
+    const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+    formData.append('document', blob, filename);
+    if (caption) formData.append('caption', caption);
+
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (data.ok) return true;
+  } catch (err) {
+    console.warn('[Telegram Hub] sendDocument error:', err.message);
+  }
+
+  // Fallback to sending as text message
+  const snippet = content.slice(0, 3000);
+  await sendTelegramMessage(env, {
+    chat_id: chatId,
+    text: `📥 <b>ملف: ${filename}</b>\n\n<pre>${snippet}</pre>\n\n<i>${caption}</i>`,
+    parse_mode: 'HTML'
+  });
+  return true;
+}
+
+/**
  * Retrieve session state for a given chatId from D1
  */
 export async function getSession(db, chatId) {

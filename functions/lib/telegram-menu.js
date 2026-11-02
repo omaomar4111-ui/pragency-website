@@ -708,5 +708,168 @@ export function buildMenu(chatId, menuId, context = {}) {
         }
       };
     }
+
+    case 'menu:report:revenue': {
+      const {
+        thisMonthCollected = 0,
+        lastMonthCollected = 0,
+        allTimeCollected = 0,
+        outstanding = 0,
+        collectionRate = 100,
+        avgInvoice = 0
+      } = context;
+
+      return {
+        chat_id: chatId,
+        text: `💰 <b>التقرير المالي التنفيذي والإيرادات | Revenue Report</b>\n` +
+              `────────────────────\n` +
+              `💵 <b>تحصيل هذا الشهر:</b> <code>${thisMonthCollected.toLocaleString('en-US')} ج.م</code>\n` +
+              `🗓️ <b>تحصيل الشهر الماضي:</b> <code>${lastMonthCollected.toLocaleString('en-US')} ج.م</code>\n` +
+              `🏆 <b>إجمالي الإيرادات التاريخية:</b> <code>${allTimeCollected.toLocaleString('en-US')} ج.م</code>\n` +
+              `⏳ <b>مستحقات معلقة (غير مدفوعة):</b> <code>${outstanding.toLocaleString('en-US')} ج.م</code>\n` +
+              `📈 <b>نسبة التحصيل الإجمالية:</b> <code>${collectionRate}%</code>\n` +
+              `🏷️ <b>متوسط قيمة الفاتورة:</b> <code>${avgInvoice.toLocaleString('en-US')} ج.م</code>\n` +
+              `────────────────────`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔄 تحديث التقرير', callback_data: 'action:report:revenue' }],
+            [{ text: '📥 تصدير ملف الفواتير (CSV)', callback_data: 'action:report:export:invoices' }],
+            [{ text: '⬅️ رجوع للتقارير', callback_data: 'menu:reports' }]
+          ]
+        }
+      };
+    }
+
+    case 'menu:report:performance': {
+      const { topClients = [], topTeam = [], completionRate = 0 } = context;
+      let text = `📊 <b>تقرير أداء العملاء وفريق العمل | Performance Report</b>\n────────────────────\n`;
+      text += `🏆 <b>أعلى 5 عملاء إيراداً (Top Clients):</b>\n`;
+      if (!topClients || topClients.length === 0) {
+        text += `   • <i>لا توجد بيانات متاحة حالياً</i>\n`;
+      } else {
+        topClients.forEach((c, i) => {
+          text += `   ${i + 1}. <b>${c.client_name}</b>: <code>${Number(c.total_rev || 0).toLocaleString('en-US')} ج.م</code>\n`;
+        });
+      }
+
+      text += `\n👤 <b>أعلى أعضاء الفريق إنجازاً للمهام:</b>\n`;
+      if (!topTeam || topTeam.length === 0) {
+        text += `   • <i>لا توجد مهام مكتملة مسجلة</i>\n`;
+      } else {
+        topTeam.forEach((t, i) => {
+          text += `   ${i + 1}. <b>${t.assigned_to}</b>: <code>${t.done_count} مهمة منجزة</code>\n`;
+        });
+      }
+
+      text += `\n🎯 <b>معدل إنجاز المهام الكلي:</b> <code>${completionRate}%</code>\n`;
+      text += `────────────────────`;
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔄 تحديث التقرير', callback_data: 'action:report:performance' }],
+            [{ text: '⬅️ رجوع للتقارير', callback_data: 'menu:reports' }]
+          ]
+        }
+      };
+    }
+
+    case 'menu:report:leads': {
+      const {
+        totalLeads = 0,
+        wonLeads = 0,
+        lostLeads = 0,
+        conversionRate = 0,
+        stageBreakdown = {},
+        sourceBreakdown = {}
+      } = context;
+
+      let text = `📈 <b>تقرير مسار المبيعات والتحويلات | Leads & Conversion</b>\n────────────────────\n`;
+      text += `💼 <b>إجمالي الصفقات والليدز:</b> <code>${totalLeads}</code>\n`;
+      text += `🏆 <b>الصفقات الناجحة (Won):</b> <code>${wonLeads}</code>\n`;
+      text += `❌ <b>الصفقات الضائعة (Lost):</b> <code>${lostLeads}</code>\n`;
+      text += `🎯 <b>معدل التحويل النهائي:</b> <code>${conversionRate}%</code>\n\n`;
+
+      text += `📌 <b>توزيع المراحل في مسار المبيعات:</b>\n`;
+      Object.entries(stageBreakdown).forEach(([stg, count]) => {
+        text += `   • ${stg}: <code>${count}</code>\n`;
+      });
+
+      text += `\n🌐 <b>أهم مصادر الليدز (Sources):</b>\n`;
+      Object.entries(sourceBreakdown).forEach(([src, count]) => {
+        text += `   • ${src || 'مباشر'}: <code>${count}</code>\n`;
+      });
+      text += `────────────────────`;
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔄 تحديث التقرير', callback_data: 'action:report:leads' }],
+            [{ text: '📥 تصدير الليدز (CSV)', callback_data: 'action:report:export:leads' }],
+            [{ text: '⬅️ رجوع للتقارير', callback_data: 'menu:reports' }]
+          ]
+        }
+      };
+    }
+
+    case 'menu:report:agents': {
+      const {
+        totalActions = 0,
+        approved = 0,
+        rejected = 0,
+        pending = 0,
+        accuracyRate = 100,
+        agentBreakdown = {}
+      } = context;
+
+      let text = `🤖 <b>تقرير وكلاء الذكاء الاصطناعي | Autonomous Agents</b>\n────────────────────\n`;
+      text += `⚙️ <b>إجمالي الإجراءات المقترحة:</b> <code>${totalActions}</code>\n`;
+      text += `✅ <b>إجراءات معتمدة ومرسلة:</b> <code>${approved}</code>\n`;
+      text += `❌ <b>إجراءات مرفوضة:</b> <code>${rejected}</code>\n`;
+      text += `⏳ <b>إجراءات قيد الانتظار:</b> <code>${pending}</code>\n`;
+      text += `🎯 <b>نسبة قبول مقترحات AI (الدقة):</b> <code>${accuracyRate}%</code>\n\n`;
+
+      text += `🤖 <b>النشاط بحسب نوع الوكيل الذكي:</b>\n`;
+      Object.entries(agentBreakdown).forEach(([agent, count]) => {
+        text += `   • ${agent}: <code>${count} إجراء</code>\n`;
+      });
+      text += `────────────────────`;
+
+      return {
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔄 تحديث التقرير', callback_data: 'action:report:agents' }],
+            [{ text: '⬅️ رجوع للتقارير', callback_data: 'menu:reports' }]
+          ]
+        }
+      };
+    }
+
+    case 'menu:report:csv_select': {
+      return {
+        chat_id: chatId,
+        text: `📥 <b>مركز تصدير البيانات الشامل | Data Export Hub (CSV)</b>\n────────────────────\nاختر قاعدة البيانات التي تريد تصديرها فورياً كملف إكسيل/CSV متوافق مع اللغة العربية:`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '💼 تصدير الليدز (Leads CSV)', callback_data: 'action:report:export:leads' }],
+            [{ text: '🧾 تصدير الفواتير (Invoices CSV)', callback_data: 'action:report:export:invoices' }],
+            [{ text: '👥 تصدير العملاء (Clients CSV)', callback_data: 'action:report:export:clients' }],
+            [{ text: '📋 تصدير المهام (Tasks CSV)', callback_data: 'action:report:export:tasks' }],
+            [{ text: '⬅️ رجوع للتقارير', callback_data: 'menu:reports' }]
+          ]
+        }
+      };
+    }
   }
 }
