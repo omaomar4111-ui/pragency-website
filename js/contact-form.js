@@ -108,7 +108,10 @@
 
         var result = await response.json();
 
-        if (response.ok && result.success) {
+        if (result && result.offline) {
+          setStatus('success', '💾 أنت غير متصل بالإنترنت. تم حفظ طلبك محلياً وسيتم إرساله تلقائياً فور عودة الاتصال!');
+          form.reset();
+        } else if (response.ok && result.success) {
           setStatus('success', '✅ تم استلام رسالتك بنجاح! جاري تحويلك...');
 
           // Fire analytics conversion events
@@ -142,7 +145,13 @@
         }
       } catch (err) {
         console.error('Submit error:', err);
-        setStatus('error', '❌ فشل الاتصال بالخادم، حاول مرة أخرى');
+        if (window.NativeSync && typeof window.NativeSync.queueMutation === 'function') {
+          await window.NativeSync.queueMutation('/api/contact', 'POST', payload);
+          setStatus('success', '💾 أنت غير متصل بالإنترنت. تم حفظ طلبك محلياً وسيتم إرساله تلقائياً فور عودة الاتصال!');
+          form.reset();
+        } else {
+          setStatus('error', '❌ فشل الاتصال بالخادم، حاول مرة أخرى');
+        }
       } finally {
         setLoading(false);
       }

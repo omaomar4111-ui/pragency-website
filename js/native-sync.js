@@ -15,6 +15,7 @@
   // Offline banner element
   let bannerEl = null;
   let lastBackPressTime = 0;
+  let isConnected = typeof navigator !== 'undefined' ? navigator.onLine : true;
 
   function initUI() {
     if (document.getElementById('native-offline-banner')) return;
@@ -45,6 +46,9 @@
       </div>
     `;
     document.body.appendChild(bannerEl);
+    if (!isConnected) {
+      bannerEl.style.display = 'block';
+    }
   }
 
   function showToast(message, duration = 3000) {
@@ -76,6 +80,7 @@
   }
 
   function updateNetworkStatus(connected) {
+    isConnected = connected;
     initUI();
     if (bannerEl) {
       bannerEl.style.display = connected ? 'none' : 'block';
@@ -150,10 +155,11 @@
 
     const remaining = [];
     let syncedCount = 0;
+    const rawFetch = (typeof window !== 'undefined' && window.__rawFetch) || (typeof window !== 'undefined' && window.fetch) || fetch;
 
     for (const item of queue) {
       try {
-        const res = await fetch(item.endpoint, {
+        const res = await rawFetch(item.endpoint, {
           method: item.method,
           headers: {
             'Content-Type': 'application/json',
@@ -178,7 +184,66 @@
     await saveStoredQueue(remaining);
     if (syncedCount > 0) {
       showToast(`☁️ تم مزامنة ${syncedCount} عملية سحابية بنجاح!`);
+      try {
+        window.dispatchEvent(new CustomEvent('offline-sync-completed', { detail: { count: syncedCount } }));
+      } catch (e) {}
     }
+  }
+
+  // Transparent Offline Fetch Interceptor for Mutations
+  if (typeof window !== 'undefined' && window.fetch) {
+    const originalFetch = window.fetch;
+    window.__rawFetch = originalFetch;
+    window.fetch = async function (input, init) {
+      const url = typeof input === 'string' ? input : (input ? input.url : '');
+      const method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+      const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
+      const isApi = typeof url === 'string' && (url.includes('/api/') || url.startsWith('/api'));
+
+      if (isMutation && isApi && (!isConnected || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+        try {
+          let body = null;
+          if (init && init.body) {
+            try {
+              body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
+            } catch (e) {
+              body = init.body;
+            }
+          }
+          const headers = (init && init.headers) || {};
+          await queueMutation(url, method, body, headers);
+          return new Response(JSON.stringify({ success: true, offline: true, message: 'Saved offline locally' }), {
+            status: 202,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        } catch (err) {
+          console.warn('[NativeSync] Offline queueing error:', err);
+        }
+      }
+
+      try {
+        const response = await originalFetch.apply(this, arguments);
+        return response;
+      } catch (networkErr) {
+        if (isMutation && isApi) {
+          let body = null;
+          if (init && init.body) {
+            try {
+              body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
+            } catch (e) {
+              body = init.body;
+            }
+          }
+          const headers = (init && init.headers) || {};
+          await queueMutation(url, method, body, headers);
+          return new Response(JSON.stringify({ success: true, offline: true, message: 'Saved offline locally' }), {
+            status: 202,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+        throw networkErr;
+      }
+    };
   }
 
   // Android Hardware Back Button Handling
