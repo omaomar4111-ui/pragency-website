@@ -421,6 +421,40 @@
       border-color: #8b5cf6;
     }
 
+    /* ── Mobile Dock for Client Portal ── */
+    .portal-mobile-dock {
+      display: none;
+    }
+
+    /* Strategy Accordion Sections */
+    .strategy-accordion {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--portal-border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .strategy-accordion-header {
+      padding: 16px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--portal-accent);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      background: rgba(139, 92, 246, 0.05);
+    }
+    .strategy-accordion-content {
+      padding: 16px 20px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #d4d4d8;
+      white-space: pre-wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     /* ==========================================================================
        📱 CLIENT PORTAL MOBILE RESPONSIVENESS SYSTEM (Max-Width: 768px)
        ========================================================================== */
@@ -429,6 +463,64 @@
         overflow-x: hidden !important;
         max-width: 100vw !important;
         width: 100% !important;
+      }
+
+      body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+      }
+
+      .portal-mobile-dock {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        background: rgba(16, 12, 28, 0.95) !important;
+        backdrop-filter: blur(16px) !important;
+        border-top: 1px solid var(--portal-border) !important;
+        z-index: 1000 !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        box-sizing: content-box !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
+      }
+      .portal-dock-btn {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        background: none !important;
+        border: none !important;
+        color: #a1a1aa !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        padding: 6px 0 !important;
+        min-height: 44px !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
+        transition: all 0.15s ease !important;
+        -webkit-tap-highlight-color: transparent !important;
+      }
+      .portal-dock-btn svg {
+        stroke: currentColor !important;
+        transition: transform 0.15s ease !important;
+      }
+      .portal-dock-btn.active {
+        color: var(--portal-accent) !important;
+      }
+      .portal-dock-btn.active svg {
+        stroke: var(--portal-accent) !important;
+        transform: scale(1.1) !important;
+      }
+      .portal-dock-btn:active,
+      button:active,
+      .btn:active,
+      .toggle-btn:active {
+        transform: scale(0.98) !important;
       }
 
       .portal-nav {
@@ -484,6 +576,7 @@
         white-space: nowrap !important;
         font-size: 12px !important;
         padding: 6px 12px !important;
+        min-height: 44px !important;
       }
 
       #calendar-subfilters {
@@ -498,14 +591,22 @@
         white-space: nowrap !important;
       }
 
-      /* Deliverables Grid to 1 Column */
+      /* Deliverables Grid to Horizontal Swipable on Mobile */
       .deliverables-grid {
-        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
         gap: 16px !important;
+        padding-bottom: 14px !important;
       }
       .del-card {
-        width: 100% !important;
+        flex: 0 0 88vw !important;
+        max-width: 88vw !important;
+        scroll-snap-align: center !important;
         border-radius: 16px !important;
+        box-sizing: border-box !important;
       }
 
       /* Tables into Stacked Cards */
@@ -539,12 +640,33 @@
         justify-content: flex-end !important;
       }
 
-      /* Modal Mobile Full Width */
+      /* Full-Screen Modals */
       .modal-card {
-        width: 95vw !important;
-        max-width: 95vw !important;
-        padding: 16px !important;
-        border-radius: 16px !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 20px 16px calc(24px + env(safe-area-inset-bottom)) !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 16px font-size for inputs */
+      input, select, textarea, .modal-textarea {
+        font-size: 16px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 44px min-height buttons */
+      button, .btn, .toggle-btn, .btn-logout, .del-action-btn {
+        min-height: 44px !important;
+        box-sizing: border-box !important;
       }
     }
   </style>
@@ -1564,6 +1686,30 @@
       </div>
     </div>
   </div>
+
+  <!-- Fixed Bottom Navigation Bar for Mobile (Client Portal) -->
+  <nav class="portal-mobile-dock" aria-label="شريط تنقل البوابة">
+    <button type="button" class="portal-dock-btn active" onclick="switchPortalTab('calendar')" data-dock="calendar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <span>المحتوى</span>
+    </button>
+    <button type="button" class="portal-dock-btn" onclick="switchPortalTab('analytics')" data-dock="analytics">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <span>التحليلات</span>
+    </button>
+    <button type="button" class="portal-dock-btn" onclick="switchPortalTab('strategy')" data-dock="strategy">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <span>الاستراتيجية</span>
+    </button>
+    <button type="button" class="portal-dock-btn" onclick="switchPortalTab('invoices')" data-dock="invoices">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+      <span>الفواتير</span>
+    </button>
+    <button type="button" class="portal-dock-btn" onclick="switchPortalTab('settings')" data-dock="settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <span>الإعدادات</span>
+    </button>
+  </nav>
 
   <script src="/assets/js/phase4-engine.js?v=104"></script>
   <script src="/js/native-sync.js"></script>

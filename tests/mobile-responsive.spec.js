@@ -4,7 +4,8 @@ import path from 'path';
 
 const viewports = [
   { name: 'iPhone SE (375px)', width: 375, height: 667 },
-  { name: 'iPhone 14 (390px)', width: 390, height: 844 }
+  { name: 'iPhone 14 (390px)', width: 390, height: 844 },
+  { name: 'iPhone 14 Pro Max (428px)', width: 428, height: 926 }
 ];
 
 test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () => {
@@ -61,7 +62,11 @@ test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () 
       const desktopTabs = page.locator('#topNavTabs');
       await expect(desktopTabs).toBeHidden();
 
-      // 3. Test Drawer Open & Close
+      // 3. Verify Fixed Bottom Navigation Dock is visible
+      const mobileDock = page.locator('#adminMobileDock');
+      await expect(mobileDock).toBeVisible();
+
+      // 4. Test Drawer Open & Close
       await hamburger.click();
       const drawer = page.locator('#adminMobileDrawer');
       await expect(drawer).toHaveClass(/open/);
@@ -75,7 +80,7 @@ test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () 
       await drawerClose.click();
       await expect(drawer).not.toHaveClass(/open/);
 
-      // 4. Critical check: Zero Horizontal Scrolling
+      // 5. Critical check: Zero Horizontal Scrolling
       const overflowResult = await page.evaluate(() => {
         const docWidth = document.documentElement.scrollWidth;
         const winWidth = window.innerWidth;
@@ -115,7 +120,11 @@ test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () 
       const menuBtn = page.locator('.mobile-menu-btn');
       await expect(menuBtn).toBeVisible();
 
-      // 2. Test Sidebar toggle
+      // 2. Verify Mobile Bottom Dock is visible
+      const mobileDock = page.locator('.mobile-dock');
+      await expect(mobileDock).toBeVisible();
+
+      // 3. Test Sidebar toggle
       await menuBtn.click();
       const sidebar = page.locator('#sidebar');
       await expect(sidebar).toHaveClass(/open/);
@@ -125,7 +134,7 @@ test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () 
       await backdrop.evaluate(el => el.click());
       await expect(sidebar).not.toHaveClass(/open/);
 
-      // 3. Critical check: Zero Horizontal Scrolling
+      // 4. Critical check: Zero Horizontal Scrolling
       const overflowResult = await page.evaluate(() => {
         const docWidth = document.documentElement.scrollWidth;
         const winWidth = window.innerWidth;
@@ -158,14 +167,25 @@ test.describe('📱 Mobile Responsiveness & Zero Horizontal Overflow Suite', () 
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ success: true, deliverables: [], client: { company_name: 'شركة تجريبية' } })
+          body: JSON.stringify({
+            success: true,
+            authenticated: true,
+            client: { companyName: 'شركة تجريبية', logoUrl: '' },
+            deliverables: [],
+            items: [],
+            stats: { total: 0, pending: 0, approved: 0 }
+          })
         });
       });
 
       await page.goto('/portal-dashboard-2026');
       await page.waitForLoadState('domcontentloaded');
 
-      // Critical check: Zero Horizontal Scrolling
+      // 1. Verify Mobile Bottom Dock is visible
+      const portalDock = page.locator('.portal-mobile-dock');
+      await expect(portalDock).toBeVisible();
+
+      // 2. Critical check: Zero Horizontal Scrolling
       const overflowResult = await page.evaluate(() => {
         const docWidth = document.documentElement.scrollWidth;
         const winWidth = window.innerWidth;

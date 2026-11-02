@@ -708,11 +708,22 @@
       pointer-events: auto;
     }
 
+    /* Tablet Breakpoint (769px to 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .kpi-strip {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+      }
+    }
+
     @media (max-width: 768px) {
       html, body {
         overflow-x: hidden !important;
         max-width: 100vw !important;
         width: 100% !important;
+      }
+      body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
       }
       .sidebar {
         position: fixed !important;
@@ -733,6 +744,20 @@
       }
       .mobile-dock {
         display: flex !important;
+        height: 60px !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        box-sizing: content-box !important;
+        z-index: 1000 !important;
+      }
+      .dock-btn {
+        min-height: 44px !important;
+        text-decoration: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+      }
+      .dock-btn:active,
+      button:active,
+      .btn:active {
+        transform: scale(0.98) !important;
       }
       .topnav {
         padding: 0 12px !important;
@@ -753,7 +778,7 @@
         box-sizing: border-box !important;
       }
 
-      /* Stack KPI Cards */
+      /* Stack KPI Cards to 1 Column */
       .kpi-strip {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
@@ -811,13 +836,43 @@
         justify-content: flex-end !important;
       }
 
-      /* Modals Full Width with padding */
-      .modal {
-        width: 95vw !important;
-        max-width: 95vw !important;
-        padding: 16px !important;
-        border-radius: var(--radius-md) !important;
+      /* Full-Screen Modals on Mobile */
+      .modal-overlay {
+        padding: 0 !important;
       }
+      .modal {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        overflow-y: auto !important;
+        padding: 20px 16px calc(24px + env(safe-area-inset-bottom)) !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 16px font size on inputs to avoid iOS Safari zoom */
+      input, select, textarea, .form-control {
+        font-size: 16px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 44px min-height touch targets */
+      button, .btn, .dock-btn, .sidebar-link {
+        min-height: 44px !important;
+        box-sizing: border-box !important;
+      }
+      button:active, .btn:active, .dock-btn:active {
+        transform: scale(0.98) !important;
+      }
+
       .form-grid-2 {
         grid-template-columns: 1fr !important;
       }
@@ -1104,18 +1159,26 @@
   </div>
 
   <!-- Mobile Bottom Navigation Dock -->
-  <nav class="mobile-dock">
-    <button type="button" class="dock-btn active" onclick="showPage('dashboard')">
-      <span data-i18n="dockDashboard">Dashboard</span>
+  <nav class="mobile-dock" aria-label="شريط التنقل السفلي">
+    <a href="/admin-agency" class="dock-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>المهام</span>
+    </a>
+    <button type="button" class="dock-btn" onclick="showPage('reports')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <span>التقارير</span>
     </button>
-    <button type="button" class="dock-btn" onclick="showPage('kanban')">
-      <span data-i18n="dockPipeline">Pipeline</span>
+    <a href="/admin-agency" class="dock-btn" onclick="localStorage.setItem('admin_target_tab', 'clients');">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>العملاء</span>
+    </a>
+    <button type="button" class="dock-btn active" onclick="showPage('leads')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+      <span>CRM</span>
     </button>
-    <button type="button" class="dock-btn" onclick="showPage('leads')">
-      <span data-i18n="dockDeals">Deals</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="showPage('voice')">
-      <span data-i18n="dockActivity">Activity</span>
+    <button type="button" class="dock-btn" onclick="toggleSidebar()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+      <span>المزيد</span>
     </button>
   </nav>
 

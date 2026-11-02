@@ -178,6 +178,9 @@
       document.querySelectorAll('.drawer-btn').forEach(el => el.classList.remove('active'));
       const activeDrawerBtn = document.querySelector(`.drawer-btn[data-tab="${tabId}"]`);
       if (activeDrawerBtn) activeDrawerBtn.classList.add('active');
+      document.querySelectorAll('.admin-dock-btn').forEach(el => el.classList.remove('active'));
+      const activeDockBtn = document.querySelector(`.admin-dock-btn[data-dock="${tabId}"]`);
+      if (activeDockBtn) activeDockBtn.classList.add('active');
       
       const titles = {
         'daily-tasks': 'المهام اليومية',

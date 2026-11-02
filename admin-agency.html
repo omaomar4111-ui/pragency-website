@@ -1614,6 +1614,30 @@
 
   
 
+  <!-- Fixed Bottom Navigation Bar for Mobile (iOS / Android Style) -->
+  <nav class="admin-mobile-dock" id="adminMobileDock" aria-label="شريط التنقل السفلي">
+    <button type="button" class="admin-dock-btn active" onclick="switchTab('daily-tasks', this);" data-dock="daily-tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>المهام</span>
+    </button>
+    <button type="button" class="admin-dock-btn" onclick="switchTab('profitability', this);" data-dock="profitability">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <span>التقارير</span>
+    </button>
+    <button type="button" class="admin-dock-btn" onclick="switchTab('clients', this);" data-dock="clients">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>العملاء</span>
+    </button>
+    <a href="/sales-crm-2026.html" class="admin-dock-btn" data-dock="crm">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+      <span>CRM</span>
+    </a>
+    <button type="button" class="admin-dock-btn" onclick="toggleAdminDrawer()" data-dock="more">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+      <span>المزيد</span>
+    </button>
+  </nav>
+
   <script src="/js/admin.js?v=2026" defer></script>
   <script src="/js/native-sync.js"></script>
 </body>

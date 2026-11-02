@@ -6,36 +6,35 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`📈 <b>مركز القيادة المركزي لتليجرام | إنجاز المرحلة 7 بنجاح (PHASE 7: Reports & Analytics)</b> 🚀
+`📱 <b>تحديث المنظومة | إنجاز المرحلة B بنجاح (PHASE B: Full Mobile Responsive Design)</b> 🚀
 
 <b>ما تم إنجازه واختباره بالكامل:</b>
-1. <b>مركز التقارير التنفيذية والتحليلات اللحظية (Executive Reports):</b>
-   - <b>💰 تقرير الإيرادات والتحصيل (Revenue Report):</b>
-     • حساب إجمالي الإيرادات التاريخية، التحصيلات الشهرية، المستحقات المعلقة، ومعدل التحصيل ونسبة السداد.
-   - <b>📊 تقرير أداء الفريق والمشاريع (Performance Report):</b>
-     • تصنيف أعلى 5 عملاء إيراداً وأعلى 5 أعضاء فريق إنجازاً للمهام مع معدل الإنجاز الكلي للمهام.
-   - <b>📈 تقرير مسار المبيعات والتحويلات (Leads & Conversion):</b>
-     • تحليل إجمالي الليدز، معدل التحويل (Won Rate)، والتوزيع الدقيق بحسب مراحل الـ Pipeline ومصادر الجلب (Sources).
-   - <b>🤖 تقرير وكلاء الذكاء الاصطناعي (Autonomous Agents):</b>
-     • إحصاء إجراءات الوكلاء المقترحة والمعتمدة والمرفوضة ونسبة دقة وقبول قرارات الـ AI.
+1. <b>شريط التنقل السفلي الذكي (Mobile Bottom Dock):</b>
+   - إضافة شريط تنقل سفلي ثابت (iOS / Android Native Dock) في Admin OS، Sales CRM، وClient Portal بـ 5 أيقونات أساسية:
+     • <code>[🏠 المهام]</code> <code>[📊 التقارير]</code> <code>[👥 العملاء]</code> <code>[💼 CRM]</code> <code>[⚙️ المزيد]</code>.
+   - درج جانبي سلس (Slide-in Drawer) للوصول لكافة الأدوات الثانوية مع خلفية معتمة ناعمة.
 
-2. <b>مركز التصدير الشامل للبيانات (CSV / Excel Data Export):</b>
-   - مسار <code>menu:report:csv_select</code> لتصدير أي قاعدة بيانات بضغطة زر.
-   - توليد ملفات CSV متوافقة مع Excel مع ترميز UTF-8 BOM الداعم للغة العربية:
-     • <code>action:report:export:leads</code>: تصدير الليدز وصفقات الـ CRM.
-     • <code>action:report:export:invoices</code>: تصدير الفواتير وحالات السداد.
-     • <code>action:report:export:clients</code>: تصدير سجلات العملاء وعقود Retainers.
-     • <code>action:report:export:tasks</code>: تصدير المهام وسجلات الإسناد.
-   - إرسال الملفات كمستندات رسمية عبر Telegram API (مع دعم المعاينة السريعة).
+2. <b>تحويل الجداول إلى بطاقات عمودية (Stacked Cards):</b>
+   - تحويل جداول المهام، الفواتير، الليدز، والعملاء بالكامل إلى بطاقات تفاعلية مع حقول <code>data-label</code>.
 
-3. <b>اكتمال منظومة Telegram Command Center بالكامل (7/7 Phases Complete):</b>
-   - Phase 1: Framework & Main Menu ✅
-   - Phase 2: Tasks Management ✅
-   - Phase 3: Clients & Leads ✅
-   - Phase 4: Invoices & Projects ✅
-   - Phase 5: Team & Settings ✅
-   - Phase 6: AI Tools & Automation ✅
-   - Phase 7: Reports & CSV Export ✅
+3. <b>شبكات المؤشرات وبورد كانبان (KPIs & Kanban):</b>
+   - بطاقات الـ KPI تتحول لعمودين على التابلت وعمود واحد على الموبايل.
+   - بورد كانبان يدعم السحب الأفقي مع التمركز التلقائي (Snap-Scrolling).
+
+4. <b>النوافذ المنبثقة وحقول الإدخال (Modals & Forms):</b>
+   - نوافذ ملء الشاشة على الموبايل (Full-screen Modals: 100vw × 100vh) لمنع التشتت.
+   - ضبط حجم خط الحقول إلى 16px لمنع التكبير التلقائي على iOS Safari.
+   - مراعاة الـ Safe Area Notch عبر <code>env(safe-area-inset-bottom)</code>.
+
+5. <b>بوابة العميل (Client Portal):</b>
+   - تجربة Mobile-First كاملة مع تقويم محتوى قابل للتمرير الأفقي وأقسام استراتيجية مريحة.
+
+6. <b>معايير اللمس الفائقة (Apple Touch Target):</b>
+   - جميع الأزرار بحد أدنى 44px مع استجابة بصرية عند الضغط <code>scale(0.98)</code>.
+
+7. <b>نتائج الاختبارات والتحقق:</b>
+   - Playwright Mobile Suite (375px, 390px, 428px): <b>PASSED (9/9 Tests 100%)</b>.
+   - Zero Horizontal Scrolling: <b>مؤكد بالكامل (0px overflow)</b>.
    - Architecture Boundary Check: <b>PASSED (0 violations)</b>.`;
 
 const payload = JSON.stringify({
