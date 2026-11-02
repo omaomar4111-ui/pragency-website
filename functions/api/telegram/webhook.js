@@ -2,6 +2,7 @@
 // PR Agency OS - Central Telegram Command Center Webhook Router
 
 import { buildMenu } from '../../lib/telegram-menu.js';
+import { handleAiChat } from './ai-chat.js';
 import { 
   sendTelegramMessage, 
   editTelegramMessage, 
@@ -1877,7 +1878,20 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
-      // Fallback default message: return main menu
+      // Natural language conversational AI Assistant or /ai query
+      if (!text.startsWith('/') || text.startsWith('/ai') || text.startsWith('/ask')) {
+        const queryText = text.replace(/^\/(?:ai|ask)\s*/i, '').trim();
+        const aiResult = await handleAiChat(env, incomingChatId, queryText || text);
+        await sendTelegramMessage(env, {
+          chat_id: incomingChatId,
+          text: aiResult.text,
+          parse_mode: 'HTML',
+          reply_markup: aiResult.reply_markup
+        });
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      }
+
+      // Fallback default message for unknown slash command: return main menu
       const payload = buildMenu(incomingChatId, 'menu:main');
       await setSession(dbAnalytics, incomingChatId, 'menu:main', {});
       await sendTelegramMessage(env, payload);

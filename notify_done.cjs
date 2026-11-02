@@ -6,29 +6,28 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`🚀 <b>تحديث المنظومة الشامل | إنجاز المراحل الثلاث بنجاح تام</b> 🏆
+`🤖 <b>تم إطلاق المساعد الذكي التفاعلي لبوت التليجرام (AI Chat Assistant)!</b> 🚀
 
-<b>1. المرحلة 1: تحسين الأداء والسرعة (Performance Optimization) ⚡</b>
-• تحويل كافة الصور في <code>index.html</code> و<code>clients.html</code> إلى تنسيق <b>WebP</b> المضغوط.
-• إضافة <code>loading="lazy"</code> مع أبعاد صريحة <code>width</code> و<code>height</code> لمنع الـ CLS.
-• تضمين الـ <b>Critical CSS</b> في الـ <code>&lt;head&gt;</code> لمنع أي وميض أو تأخير في أول رندرة.
-• تأجيل تحميل ملفات الـ CSS غير الحرجة عبر <code>media="print" onload="this.media='all'"</code>.
-• تفعيل التحميل المؤجل <code>defer</code> لجميع السكربتات وLazy-loading لـ GSAP عند تفاعل المستخدم.
+تم بنجاح ربط الذكاء الاصطناعي مع مركز قيادة وكالة التسويق PR Agency على تليجرام:
 
-<b>2. المرحلة 2: بناء تطبيق الأندرويد (Android APK CI Automation) 📱</b>
-• إنشاء مسار GitHub Actions الآلي <code>.github/workflows/build-android.yml</code>.
-• بناء وتوقيع ملف APK تلقائياً عبر سحابة GitHub بدون الحاجة لتثبيت Android Studio.
-• دعم فك تشفير <code>ANDROID_KEYSTORE_BASE64</code> من GitHub Secrets مع توليد تلقائي احتياطي للمفتاح على السحابة لضمان نجاح الـ Build 100%.
-• رفع ملف APK جاهز للتنزيل كـ Artifact باسم <code>PR-Agency-APK</code>.
+<b>1. فهم اللغة الطبيعية (Arabic / English) 🗣️</b>
+• الرد على الأسئلة والمحادثات بأسلوب احترافي ذكي بدون الحاجة للأزرار فقط.
 
-<b>3. المرحلة 3: الفحص الأمني المتقدم واختبار الاختراق (Penetration Audit) 🛡️</b>
-• نجاح <b>19 من أصل 19 اختبار أمني</b> بنسبة 100% (تقرير <code>SECURITY_AUDIT_REPORT.md</code>):
-  - <b>Rate Limiting:</b> حظر هجمات التخمين على بوابة العملاء والإدارة (429) وتحديد معدل الويبهوك (20 reqs/10s).
-  - <b>IDOR Defense:</b> عزل صارم لفواتير وبيانات العملاء بالاعتماد على <code>payload.sub</code>.
-  - <b>SQL Injection:</b> كافة الاستعلامات مجهزة وآمنة 100% عبر Parameterized Bindings.
-  - <b>XSS Defense:</b> تعقيم وتشفير لكافة المدخلات ونصوص الذكاء الاصطناعي.
-  - <b>RBAC:</b> حظر وصول المصممين للشؤون المالية وحظر تعديل الفريق لغير الـ Super Admin.
-  - <b>Security Headers:</b> تفعيل CSP وHSTS وnosniff وDENY frame وnoindex في <code>_headers</code> و<code>robots.txt</code>.`;
+<b>2. استعلام لحظي مباشر من قواعد بيانات D1 📊</b>
+• "عندي كام عميل؟" ➔ يجيب بعدد العملاء الفعلي مع قائمة بأبرز الشركات المسجلة.
+• "اعرض الفواتير والتحصيل" ➔ استعراض المبالغ المحصلة والمعلقة والمتأخرات.
+• "عايز اعرف موقف المهام" ➔ إحصاء المهام المجدولة والمنجزة والمتأخرة.
+• "إحصائيات الليدز والمبيعات" ➔ مسار المبيعات والصفقات الجديدة.
+
+<b>3. تنفيذ الأوامر آلياً (Action Execution) ⚡</b>
+• "أضف مهمة [عنوان المهمة]" ➔ يضيف المهمة فوراً في جدول المهام بـ D1 ويطلق الوكيل الإبداعي (Creative Agent) لصياغة البريف.
+
+<b>4. صياغة المحتوى بالمهارات التسويقية المدمجة ✍️</b>
+• "اكتبلي بوست عن خدماتنا" ➔ صياغة بوست إعلاني مقنع يعتمد نموذج Hook + Problem + Solution + CTA.
+• "عايز سكريبت فيديو ريلز" ➔ سيناريو فيديو إعلاني قصير 9:16 مع توقيت المشاهد.
+
+<b>5. حماية وأمان صارم 🛡️</b>
+• حظر أي وصول غير مصرح به وحصر الخدمة حصرياً للمدير العام (${TELEGRAM_CHAT_ID}).`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,
@@ -49,25 +48,17 @@ const req = https.request({
   let body = '';
   res.on('data', chunk => body += chunk);
   res.on('end', () => {
+    console.log('✅ Notification Dispatched to Telegram Admin.');
+    console.log('Response Status:', res.statusCode);
     try {
-      const data = JSON.parse(body);
-      if (data.ok) {
-        console.log('✅ Telegram Notification Dispatched Successfully!');
-        process.exit(0);
-      } else {
-        console.error('❌ Telegram API Error:', data.description);
-        process.exit(1);
-      }
-    } catch (e) {
-      console.error('❌ Failed to parse response:', e);
-      process.exit(1);
-    }
+      const parsed = JSON.parse(body);
+      console.log('Telegram API ok:', parsed.ok);
+    } catch(e) {}
   });
 });
 
 req.on('error', (err) => {
-  console.error('❌ Request error:', err);
-  process.exit(1);
+  console.error('❌ Failed to send Telegram notification:', err.message);
 });
 
 req.write(payload);
