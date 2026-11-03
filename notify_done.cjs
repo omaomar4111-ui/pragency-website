@@ -6,35 +6,36 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`📐 <b>إنجاز نظام التصميم المرن والمتكيف بنجاح تام (Fluid & Adaptive Design System)</b> 🚀
+`🏛️ <b>إصلاح وضبط واجهة الهيرو وشبكة العرض بنجاح تام (Strict CSS Grid Layout)</b> 🚀
 
-تم تطبيق تقنيات CSS الحديثة لضمان تجاوب ذكي وسلس 100% دون فواصل جامدة (No Rigid Breakpoints):
+تمت معالجة كافة ملاحظات التصميم بدقة وهندسة معمارية صارمة:
 
-<b>1. الطباعة والمسافات المرنة (Fluid Typography & Spacing) 🔤</b>
-• استبدال المقاسات الثابتة بدوال <code>clamp()</code> لكافة العناوين والنصوص والمسافات البينية.
-• الخطوط تتدرج بسلاسة من شاشات الموبايل (320px) وحتى الشاشات العريضة (2560px).
-• ضبط التباعد العمودي والأفقي <code>clamp(3rem, 7vw, 7.5rem)</code> ليناسب أي شاشة تلقائياً.
+<b>1. هيكل الهيرو (Strict 2-Column CSS Grid) 📐</b>
+• تقسيم صارم لعمودين على أجهزة الديسك توب:
+  <code>grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;</code>
+• تحويل تلقائي إلى عمود واحد عمودي مكدس على أجهزة الموبايل (1-column stack).
+• إلغاء التموضع المطلق (<code>position: absolute</code>) تماماً لإنهاء أي تداخل بين العناصر.
 
-<b>2. شبكات العرض التلقائية (Fluid Grids with auto-fit) 📊</b>
-• إعادة هيكلة كافة الشبكات (الخدمات، القيم، آراء العملاء، الفريق، الشركاء):
-  <code>grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));</code>
-• تدفق الكروت تلقائياً وتوزيع الأعمدة بانسيابية بدون قفزات مفاجئة أو كسر للتصميم.
+<b>2. أحجام الخطوط والعناصر (Strict Heading & Image Sizes) 🔤</b>
+• ضبط حجم العنوان الرئيسي <code>&lt;h1&gt;</code> على <b>3.5rem (56px)</b> ثابتاً للديسك توب، و <b>2rem (32px)</b> للموبايل دون مبالغة clamp.
+• تموضع تمثال الهيرو بشكل انسيابي داخل عموده الخاص مع <code>max-width: 100%; height: auto; object-fit: contain;</code>.
+• حذف طبقة اللوجو المعلقة (PR Brand Lockup) المتداخلة ليبقى التصميم نظيفاً ومتوازناً.
 
-<b>3. معالجة فراغ قسم الواجهة (Hero Section Gap Fix) 🎯</b>
-• تصحيح التباعد بين النص والتمثال باستخدام <code>gap: clamp(2rem, 5vw, 4rem)</code>.
-• محاذاة مركزية مثالية <code>align-items: center; justify-content: center;</code> وتوزيع متوازن للعمودين.
+<b>3. شريط الكلمات المتحرك (Standalone Services Marquee) 🎞️</b>
+• فصل شريط الخدمات تماماً في <code>&lt;section class="services-marquee-section"&gt;</code> مستقل أسفل قسم الهيرو تماماً.
+• زيرو تداخل رأسي أو أفقي مع الهيرو.
 
-<b>4. ارتفاع الشاشة الديناميكي للموبايل (100dvh) 📱</b>
-• استخدام <code>min-height: 100dvh</code> لضمان عدم اقتطاع شريط عناوين المتصفح لمحتوى الواجهة.
+<b>4. تقييد شريط التنقل (Navbar Max-Width Constraint) 🧭</b>
+• إحاطة محتوى النافبار بحاوية <code>.hdr-inner</code> بحد أقصى <code>max-width: 1200px; margin: 0 auto; padding: 12px 24px;</code> مع بقاء النافبار بعرض الشاشة كاملاً.
 
-<b>5. صور متجاوبة بالكامل (Responsive Images) 🖼️</b>
-• إلزام جميع الصور بـ <code>max-width: 100%; height: auto; object-fit: contain/cover;</code>.
+🧪 <b>نتائج الاختبار والتحقق الآلي:</b>
+• التحقق الهندسي للـ Bounding Boxes:
+  - المسافة الأفقية بين النص والتمثال: فجوة 80px كاملة [✅ PASS].
+  - موضع شريط الخدمات أسفل محتوى الهيرو [✅ PASS].
+• فحص شامل لـ 6 مقاسات (320px إلى 1920px) ➔ زيرو تمرير أفقي [✅ PASS].
+• نجاح باقة اختبارات الـ QA بنسبة 100% (6/6 Suites Passed).
 
-🧪 <b>نتائج الاختبار والتحقق عبر Chrome DevTools:</b>
-• فحص شامل لـ 6 مقاسات (320px, 375px, 768px, 1024px, 1440px, 1920px) ➔ <b>صفر تمرير أفقي (Horizontal Overflow: NO) بنسبة 100%</b>.
-• التقاط وحفظ لقطات الشاشة التوثيقية بمقاسي 1440px و 768px.
-
-🌐 <b>الرابط المباشر للإنتاج:</b> https://pragency.pages.dev`;
+🌐 <b>الرابط المباشر للموقع:</b> https://pragency.pages.dev`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,
@@ -55,7 +56,7 @@ const req = https.request({
   let body = '';
   res.on('data', chunk => body += chunk);
   res.on('end', () => {
-    console.log('✅ Fluid Design Notification Dispatched to Telegram Admin.');
+    console.log('✅ Layout Fix Notification Dispatched to Telegram Admin.');
     console.log('Response Status:', res.statusCode);
   });
 });

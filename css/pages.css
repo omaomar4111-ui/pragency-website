@@ -1,7 +1,8 @@
 /* ══════════════════════════════════════════════════════════════
-   HERO — FLUID & ADAPTIVE DESIGN SYSTEM
+   HERO — STRICT 2-COLUMN GRID (NON-OVERLAPPING)
 ══════════════════════════════════════════════════════════════ */
 .hero-vr,
+.hero-section,
 #hero {
   position: relative;
   background: 
@@ -12,16 +13,14 @@
       transparent 70%
     ),
     linear-gradient(180deg, #0A0612 0%, #150A24 50%, #0A0612 100%);
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: clamp(80px, 12dvh, 130px) var(--section-x) clamp(30px, 5dvh, 60px);
+  min-height: 85vh;
+  padding: 120px 24px 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
-/* خلفية خفيفة */
 .hero-vr::before {
   content: '';
   position: absolute;
@@ -33,42 +32,42 @@
   z-index: 0;
 }
 
-/* ═══ Fluid Hero Inner Grid (Auto-Fit) ═══ */
+/* ═══ Strict 2-Column Desktop Grid ═══ */
+.hero-container,
 .hero-vr-inner {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: min(1320px, 100%);
+  max-width: 1200px;
   margin: 0 auto;
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)) !important;
-  gap: clamp(2rem, 5vw, 4rem) !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 40px !important;
   align-items: center !important;
-  justify-content: center !important;
-  padding: 0 0 clamp(1.5rem, 3vh, 3rem);
 }
 
-/* ═══ العمود الأيمن: النص ═══ */
+/* ═══ العمود 1: النص ═══ */
+.hero-text-col,
 .hero-vr-text {
   position: relative;
   z-index: 5;
   width: 100%;
-  max-width: 620px;
-  margin: 0 auto;
+  max-width: 580px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: right;
 }
 
+.hero-title,
 .hero-vr-title {
   font-family: var(--font);
-  font-size: clamp(2rem, 4.2vw + 0.8rem, 4.2rem);
+  font-size: 3.5rem !important; /* Strict 3.5rem on desktop (~56px) */
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: #fff;
-  margin: 0 0 clamp(1rem, 2vh, 1.5rem) 0;
+  margin: 0 0 20px 0;
 }
 
 .hero-vr-title-accent {
@@ -78,32 +77,33 @@
 
 .hero-vr-title-small {
   display: block;
-  font-size: clamp(1.25rem, 2.2vw + 0.5rem, 2.2rem);
+  font-size: 1.85rem;
   font-weight: 700;
   color: var(--c-w80);
-  margin-top: clamp(0.25rem, 0.8vh, 0.6rem);
+  margin-top: 8px;
 }
 
+.hero-sub,
 .hero-vr-sub {
   font-family: var(--font);
-  font-size: clamp(1rem, 0.8vw + 0.75rem, 1.25rem);
+  font-size: 1.15rem;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.75);
   font-weight: 400;
-  margin: 0 0 clamp(1.5rem, 3vh, 2.2rem) 0;
-  max-width: 540px;
+  margin: 0 0 32px 0;
+  max-width: 520px;
 }
 
 .hero-vr-cta {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  gap: clamp(0.5rem, 1vw, 0.75rem);
-  padding: clamp(0.8rem, 1.5vw, 1rem) clamp(1.6rem, 2.5vw, 2.2rem);
+  gap: 10px;
+  padding: 14px 32px;
   background: var(--c-purple-h);
   color: #fff;
   font-family: var(--font);
-  font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.1rem);
+  font-size: 1.05rem;
   font-weight: 800;
   text-decoration: none;
   border: none;
@@ -126,37 +126,34 @@
   transform: translateX(-4px);
 }
 
-/* ═══ العمود الأيسر: الصورة واللوجو المتجاوب ═══ */
+/* ═══ العمود 2: الصورة / التمثال ═══ */
+.hero-media-col,
 .hero-vr-logo-wrap {
   position: relative;
   width: 100%;
-  max-width: min(540px, 100%);
+  max-width: 500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  isolation: isolate;
-  direction: ltr;
 }
 
-.hero-statue-layer,
-.hero-statue-layer img,
-.hero-statue-layer picture {
-  background: transparent !important;
-}
-
+.hero-statue-wrap,
 .hero-statue-layer {
   position: relative;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.hero-statue-img,
 .hero-statue-layer img {
   width: 100%;
-  height: auto;
   max-width: 100%;
+  height: auto;
   display: block;
   object-fit: contain;
   aspect-ratio: 1000/1091;
@@ -164,131 +161,108 @@
   filter: brightness(1.05) contrast(1.05) drop-shadow(0 0 35px rgba(124, 58, 237, 0.35));
 }
 
-.hero-brand-lockup {
-  position: absolute;
-  top: 5%;
-  left: -2%;
-  z-index: 5;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: clamp(10px, 1.8vw, 20px);
-  margin: 0;
-}
-
-.hero-logo-layer {
-  width: clamp(130px, 18vw, 210px);
-  max-width: 210px;
-  flex-shrink: 0;
-}
-
-.hero-logo-layer img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  display: block;
-  aspect-ratio: 1/1;
-  filter: 
-    drop-shadow(0 0 20px rgba(168, 85, 247, 0.4))
-    drop-shadow(0 0 40px rgba(139, 92, 246, 0.2));
-}
-
-.hero-tagline-layer {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: 'Cairo', sans-serif;
-  font-size: clamp(10px, 0.9vw, 13px);
-  font-weight: 600;
-  letter-spacing: clamp(2px, 0.3vw, 4px);
-  line-height: 1.4;
-  text-transform: uppercase;
-  padding-left: clamp(10px, 1.2vw, 16px);
-  border-left: 2px solid rgba(168, 85, 247, 0.5);
-  white-space: nowrap;
-}
-
-/* التجاوب السلس على الشاشات الصغيرة */
+/* ═══ Strict Mobile Layout ═══ */
 @media (max-width: 768px) {
+  #hero,
+  .hero-vr,
+  .hero-section {
+    padding: 100px 16px 40px !important;
+    min-height: auto !important;
+  }
+
+  .hero-container,
   .hero-vr-inner {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
     text-align: center;
-    gap: 2rem !important;
   }
+
+  .hero-text-col,
   .hero-vr-text {
-    align-items: center;
-    text-align: center;
+    max-width: 100% !important;
+    align-items: center !important;
+    text-align: center !important;
   }
-  .hero-vr-cta {
-    align-self: center;
+
+  .hero-title,
+  .hero-vr-title {
+    font-size: 2rem !important; /* Strict 2rem on mobile */
+    line-height: 1.25 !important;
   }
+
+  .hero-vr-title-small {
+    font-size: 1.25rem !important;
+  }
+
+  .hero-sub,
   .hero-vr-sub {
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 1rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
+
+  .hero-vr-cta {
+    align-self: center !important;
+    padding: 12px 28px !important;
+  }
+
+  .hero-media-col,
   .hero-vr-logo-wrap {
-    max-width: 380px;
-  }
-  .hero-brand-lockup {
-    position: static;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .hero-tagline-layer {
-    border-left: none;
-    padding-left: 0;
-    text-align: center;
+    max-width: 320px !important;
   }
 }
+
 /* ══════════════════════════════════════════════════════════════
-   HERO SERVICES MARQUEE (Full Width 100vw)
+   SEPARATE MARQUEE SECTION (BELOW HERO)
 ══════════════════════════════════════════════════════════════ */
+.services-marquee-section,
 .hero-vr-services {
   position: relative;
   z-index: 2;
-  width: 100vw;
-  margin-right: calc(-50vw + 50%);
-  margin-left: calc(-50vw + 50%);
-  padding: clamp(20px, 3vw, 32px) 0;
-  background: rgba(10, 0, 0, 0.5);
-  border-top: 1px solid rgba(124, 58, 237, 0.15);
-  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+  width: 100%;
+  padding: 22px 0;
+  background: rgba(10, 6, 18, 0.95);
+  border-top: 1px solid rgba(124, 58, 237, 0.2);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
   overflow: hidden;
   direction: ltr;
 }
 
+.services-marquee-section::before,
+.services-marquee-section::after,
 .hero-vr-services::before,
 .hero-vr-services::after {
   content: '';
   position: absolute;
   top: 0; bottom: 0;
-  width: clamp(60px, 12vw, 180px);
+  width: 120px;
   z-index: 2;
   pointer-events: none;
 }
+.services-marquee-section::before,
 .hero-vr-services::before {
   right: 0;
-  background: linear-gradient(270deg, rgba(10,0,0,0.95), transparent 100%);
+  background: linear-gradient(270deg, #0A0612, transparent 100%);
 }
+.services-marquee-section::after,
 .hero-vr-services::after {
   left: 0;
-  background: linear-gradient(90deg, rgba(10,0,0,0.95), transparent 100%);
+  background: linear-gradient(90deg, #0A0612, transparent 100%);
 }
 
 .hero-vr-services-track {
   display: inline-flex;
-  gap: clamp(28px, 4vw, 56px);
+  gap: 40px;
   align-items: center;
   white-space: nowrap;
-  animation: servicesScroll 40s linear infinite;
+  animation: servicesScroll 35s linear infinite;
   will-change: transform;
 }
 
 .hero-vr-services-track > span {
   font-family: var(--font);
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 800;
   color: #fff;
   letter-spacing: -0.01em;
   white-space: nowrap;
@@ -296,7 +270,7 @@
 
 .hero-vr-services-track > .dot {
   color: var(--c-purple-h);
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: 20px;
 }
 
 @keyframes servicesScroll {
