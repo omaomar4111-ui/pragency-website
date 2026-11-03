@@ -61,30 +61,30 @@
   --c-warning: #fbbf24;
   --c-error: #f87171;
   
-  /* Typography (احتفظ بالقيم الحالية) */
-  --t-xs:   clamp(11px, 1.4vw, 12px);
-  --t-sm:   clamp(13px, 1.6vw, 14px);
-  --t-base: clamp(14px, 2vw, 16px);
-  --t-md:   clamp(15px, 2.2vw, 17px);
-  --t-lg:   clamp(18px, 2.5vw, 20px);
-  --t-xl:   clamp(22px, 3.5vw, 30px);
-  --t-2xl:  clamp(26px, 4vw, 38px);
-  --t-3xl:  clamp(30px, 5vw, 48px);
-  --t-4xl:  clamp(36px, 6vw, 60px);
-  --t-hero: clamp(28px, 8vw, 72px);
+  /* Fluid Typography System */
+  --t-xs:   clamp(0.7rem, 0.25vw + 0.65rem, 0.82rem);
+  --t-sm:   clamp(0.82rem, 0.35vw + 0.75rem, 0.95rem);
+  --t-base: clamp(0.95rem, 0.4vw + 0.85rem, 1.12rem);
+  --t-md:   clamp(1.05rem, 0.6vw + 0.92rem, 1.25rem);
+  --t-lg:   clamp(1.2rem, 1.1vw + 0.95rem, 1.55rem);
+  --t-xl:   clamp(1.4rem, 1.8vw + 1rem, 2.1rem);
+  --t-2xl:  clamp(1.75rem, 2.8vw + 1.1rem, 2.85rem);
+  --t-3xl:  clamp(2.1rem, 3.8vw + 1.25rem, 3.6rem);
+  --t-4xl:  clamp(2.4rem, 4.8vw + 1.4rem, 4.4rem);
+  --t-hero: clamp(2.2rem, 5.5vw + 1rem, 5.2rem);
   
-  /* Spacing */
-  --sp-1:  4px;
-  --sp-2:  8px;
-  --sp-3:  12px;
-  --sp-4:  16px;
-  --sp-5:  20px;
-  --sp-6:  24px;
-  --sp-8:  32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-  --sp-16: 64px;
-  --sp-20: 80px;
+  /* Fluid Spacing System */
+  --sp-1:  clamp(0.2rem, 0.4vw, 0.3rem);
+  --sp-2:  clamp(0.4rem, 0.7vw, 0.55rem);
+  --sp-3:  clamp(0.6rem, 1vw, 0.8rem);
+  --sp-4:  clamp(0.8rem, 1.4vw, 1.15rem);
+  --sp-5:  clamp(1.05rem, 1.8vw, 1.45rem);
+  --sp-6:  clamp(1.25rem, 2.2vw, 1.75rem);
+  --sp-8:  clamp(1.65rem, 3vw, 2.4rem);
+  --sp-10: clamp(2rem, 3.8vw, 3.1rem);
+  --sp-12: clamp(2.4rem, 4.5vw, 3.8rem);
+  --sp-16: clamp(3rem, 6vw, 5rem);
+  --sp-20: clamp(3.8rem, 8vw, 6.5rem);
   
   /* Border Radius */
   --r-sm:   6px;
@@ -122,15 +122,18 @@ html{direction:rtl;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:var(--font);font-size:var(--t-base);font-weight:400;line-height:1.7;
   color:var(--c-w80);background:var(--c-black);overflow-x:hidden}
 body.loading{overflow:hidden}
-img,svg,video{max-width:100%;display:block}
+img,svg,video{max-width:100%;height:auto;display:block}
+img{object-fit:cover}
+.hdr-logo,.site-footer-logo,.hero-statue-layer img,.hero-logo-layer img,.client-logo,.client-card img{object-fit:contain}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 
-h1,h2,h3,h4{font-family:var(--font);line-height:1.15;color:var(--c-w100)}
-h1{font-size:var(--t-4xl);font-weight:900}
-h2{font-size:var(--t-2xl);font-weight:900}
-h3{font-size:var(--t-xl);font-weight:800}
+h1,h2,h3,h4{font-family:var(--font);line-height:1.18;color:var(--c-w100)}
+h1{font-size:clamp(2.2rem, 4.8vw + 1rem, 4.2rem);font-weight:900;margin-bottom:clamp(1rem, 2vw, 1.8rem)}
+h2{font-size:clamp(1.6rem, 3vw + 0.8rem, 2.85rem);font-weight:900;margin-bottom:clamp(0.75rem, 1.5vw, 1.5rem)}
+h3{font-size:clamp(1.25rem, 2vw + 0.6rem, 2rem);font-weight:800;margin-bottom:clamp(0.5rem, 1vw, 1rem)}
+h4{font-size:clamp(1.1rem, 1.2vw + 0.8rem, 1.45rem);font-weight:700}
 .text-gradient{background:linear-gradient(135deg,#fff 15%,#ddd6fe 55%,#fff 90%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .text-purple{color:var(--c-purple-h)}
@@ -427,9 +430,9 @@ h3{font-size:var(--t-xl);font-weight:800}
 
 .site-footer-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 1.2fr;
-  gap: clamp(32px, 5vw, 80px);
-  margin-bottom: clamp(32px, 5vh, 56px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-bottom: clamp(2rem, 4vh, 3.5rem);
 }
 
 /* ═══ العمود 1: البراند ═══ */

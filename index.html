@@ -252,35 +252,39 @@ window.dataLayer = window.dataLayer || [];
 <link rel="stylesheet" href="css/multi-step-form.css?v=98" media="print" onload="this.media='all'"/>
 <link rel="stylesheet" href="/css/chatbot.css?v=98" media="print" onload="this.media='all'"/>
   <link rel="stylesheet" href="/css/phase2-components.css?v=108" media="print" onload="this.media='all'"/>
-    <style id="critical-css">
+        <style id="critical-css">
     :root {
       --c-black:#0A0612;--c-s1:#110A1E;--c-s2:#17102A;--c-purple:#6D28D9;--c-purple-h:#7C3AED;
       --c-w100:#fff;--c-w80:rgba(255,255,255,0.8);--c-w60:rgba(255,255,255,0.6);
+      --section-x: clamp(1rem, 4vw, 4.5rem);
     }
     *,*::before,*::after{box-sizing:border-box}
     html{background:#0A0612;color:#fff;font-family:'Cairo',sans-serif;scroll-behavior:smooth}
     body{margin:0;padding:0;background:#0A0612;color:#fff;overflow-x:hidden}
     #hdr{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(10,6,18,0.85);backdrop-filter:blur(10px)}
-    .hdr-logo{width:60px;height:60px;display:block}
-    #hero{min-height:90vh;display:flex;align-items:center;position:relative;padding:100px 24px 40px;background:#0A0612}
-    .hero-vr-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;width:100%;gap:40px}
-    .hero-vr-title{font-size:clamp(32px,6vw,64px);font-weight:900;line-height:1.2;margin:0 0 16px}
-    .hero-vr-title-accent{color:#A78BFA}
-    .hero-vr-sub{font-size:clamp(15px,2vw,18px);color:rgba(255,255,255,0.7);margin:0 0 24px;line-height:1.6}
-    .hero-vr-cta{display:inline-flex;align-items:center;gap:10px;background:#7C3AED;color:#fff;padding:14px 28px;border-radius:30px;font-weight:700;text-decoration:none}
-    .hero-vr-logo-wrap{position:relative;flex-shrink:0;width:100%;max-width:550px;min-height:450px;display:flex;align-items:center;justify-content:center}
-    .hero-statue-layer{position:relative;width:100%;max-width:450px}
-    .hero-statue-layer img{max-width:100%;height:auto;display:block;aspect-ratio:1000/1091}
-    .hero-brand-lockup{position:absolute;top:8%;left:-4%;z-index:5;display:flex;flex-direction:row;align-items:center;gap:18px}
-    .hero-logo-layer{width:200px;max-width:200px;flex-shrink:0}
-    .hero-logo-layer img{width:100%;height:auto;display:block;aspect-ratio:1/1}
-    .hero-tagline-layer{display:flex;flex-direction:column;gap:4px;color:rgba(255,255,255,0.9);font-size:11px;letter-spacing:2px;border-left:2px solid rgba(168,85,247,0.5);padding-left:14px;white-space:nowrap}
+    .hdr-logo{width:60px;height:60px;display:block;object-fit:contain}
+    #hero{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;padding:clamp(80px,12dvh,130px) var(--section-x) clamp(30px,5dvh,60px);background:#0A0612}
+    .hero-vr-inner{width:100%;max-width:min(1320px,100%);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:clamp(2rem,5vw,4rem);align-items:center;justify-content:center}
+    .hero-vr-text{width:100%;max-width:620px;margin:0 auto;display:flex;flex-direction:column;justify-content:center;text-align:right}
+    .hero-vr-title{font-size:clamp(2rem,4.2vw + 0.8rem,4.2rem);font-weight:900;line-height:1.15;margin:0 0 clamp(1rem,2vh,1.5rem)}
+    .hero-vr-title-accent{color:#A78BFA;display:inline-block}
+    .hero-vr-title-small{display:block;font-size:clamp(1.25rem,2.2vw + 0.5rem,2.2rem);font-weight:700;color:rgba(255,255,255,0.8);margin-top:clamp(0.25rem,0.8vh,0.6rem)}
+    .hero-vr-sub{font-size:clamp(1rem,0.8vw + 0.75rem,1.25rem);color:rgba(255,255,255,0.75);margin:0 0 clamp(1.5rem,3vh,2.2rem);line-height:1.7;max-width:540px}
+    .hero-vr-cta{display:inline-flex;align-items:center;align-self:flex-start;gap:clamp(0.5rem,1vw,0.75rem);background:#7C3AED;color:#fff;padding:clamp(0.8rem,1.5vw,1rem) clamp(1.6rem,2.5vw,2.2rem);border-radius:30px;font-weight:800;text-decoration:none}
+    .hero-vr-logo-wrap{position:relative;width:100%;max-width:min(540px,100%);margin:0 auto;display:flex;align-items:center;justify-content:center;isolation:isolate;direction:ltr}
+    .hero-statue-layer{position:relative;width:100%;max-width:480px;margin:0 auto;z-index:1}
+    .hero-statue-layer img{width:100%;height:auto;max-width:100%;display:block;aspect-ratio:1000/1091;object-fit:contain}
+    .hero-brand-lockup{position:absolute;top:5%;left:-2%;z-index:5;display:flex;flex-direction:row;align-items:center;gap:clamp(10px,1.8vw,20px);margin:0}
+    .hero-logo-layer{width:clamp(130px,18vw,210px);max-width:210px;flex-shrink:0}
+    .hero-logo-layer img{width:100%;height:auto;display:block;aspect-ratio:1/1;object-fit:contain}
+    .hero-tagline-layer{display:flex;flex-direction:column;gap:4px;color:rgba(255,255,255,0.9);font-size:clamp(10px,0.9vw,13px);font-weight:600;letter-spacing:clamp(2px,0.3vw,4px);border-left:2px solid rgba(168,85,247,0.5);padding-left:clamp(10px,1.2vw,16px);white-space:nowrap}
     @media(max-width:768px){
-      .hero-vr-inner{flex-direction:column-reverse;text-align:center}
-      .hero-vr-cta{margin:0 auto}
-      .hero-vr-logo-wrap{min-height:300px;max-width:360px}
-      .hero-brand-lockup{position:static;flex-direction:column;gap:10px;margin-bottom:16px}
-      .hero-logo-layer{width:140px;max-width:140px}
+      .hero-vr-inner{text-align:center;gap:2rem}
+      .hero-vr-text{align-items:center;text-align:center}
+      .hero-vr-cta{align-self:center}
+      .hero-vr-sub{margin-left:auto;margin-right:auto}
+      .hero-vr-logo-wrap{max-width:380px}
+      .hero-brand-lockup{position:static;flex-direction:column;gap:8px;margin-bottom:12px}
       .hero-tagline-layer{border-left:none;padding-left:0;text-align:center}
     }
   </style>
