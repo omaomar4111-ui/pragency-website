@@ -1,8 +1,31 @@
 import { verifyAdminToken } from './login.js';
+import { authenticateCfAccessUser } from '../../lib/cf-access.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
+
+  // 0. Check Cloudflare Access Zero Trust Assertion (Email OTP)
+  const cfUser = await authenticateCfAccessUser(request, env, db);
+  if (cfUser) {
+    return new Response(JSON.stringify({
+      authenticated: true,
+      authMethod: 'cf_access_otp',
+      user: {
+        id: cfUser.id,
+        name: cfUser.name,
+        email: cfUser.email,
+        role: cfUser.role,
+        isSuperAdmin: !!cfUser.isSuperAdmin
+      }
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      }
+    });
+  }
 
   const authHeader = request.headers.get('Authorization') || '';
   const cookieHeader = request.headers.get('Cookie') || '';

@@ -1,4 +1,5 @@
 import { verifyAdminToken } from '../api/admin/login.js';
+import { authenticateCfAccessUser } from '../lib/cf-access.js';
 
 function checkBasicAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
@@ -17,24 +18,33 @@ function checkBasicAuth(request, env) {
 
 export async function onRequest(context) {
   const { request, env, next } = context;
-
-  // 1. Check Bearer Token (JWT) or Cookie
-  const authHeader = request.headers.get('Authorization') || '';
-  const cookieHeader = request.headers.get('Cookie') || '';
-  let token = null;
-
-  if (authHeader.startsWith('Bearer ')) {
-    token = authHeader.slice(7).trim();
-  } else {
-    const match = cookieHeader.match(/pr_admin_token=([^;]+)/);
-    if (match) token = match[1];
-  }
+  const db = env.ANALYTICS_DB || env.DB;
 
   let isAuthenticated = false;
 
-  if (token) {
-    const payload = await verifyAdminToken(token, env);
-    if (payload) isAuthenticated = true;
+  // 0. Check Cloudflare Access Assertion (Zero Trust Email OTP)
+  const cfUser = await authenticateCfAccessUser(request, env, db);
+  if (cfUser) {
+    isAuthenticated = true;
+  }
+
+  // 1. Check Bearer Token (JWT) or Cookie
+  if (!isAuthenticated) {
+    const authHeader = request.headers.get('Authorization') || '';
+    const cookieHeader = request.headers.get('Cookie') || '';
+    let token = null;
+
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.slice(7).trim();
+    } else {
+      const match = cookieHeader.match(/pr_admin_token=([^;]+)/);
+      if (match) token = match[1];
+    }
+
+    if (token) {
+      const payload = await verifyAdminToken(token, env);
+      if (payload) isAuthenticated = true;
+    }
   }
 
   // 2. Fallback to Basic Auth (if provided)
@@ -42,8 +52,7 @@ export async function onRequest(context) {
     isAuthenticated = true;
   }
 
-  // If not authenticated, let the frontend page load so it can render the custom JWT Login Modal
-      // // (Notice: we do not send WWW-Authenticate: Basic to avoid the ugly browser prompt)
+  // If not authenticated, let the frontend page load so it can render the login modal
   const response = await next();
 
   const headers = new Headers(response.headers);

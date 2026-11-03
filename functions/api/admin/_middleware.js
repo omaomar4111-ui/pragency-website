@@ -2,6 +2,7 @@
 import { verifyPassword } from '../portal/auth.js';
 import { logSystemAction } from '../../lib/audit.js';
 import { verifyAdminToken } from './login.js';
+import { authenticateCfAccessUser } from '../../lib/cf-access.js';
 
 function hashSimpleSha(password) {
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(password)).then(buf => {
@@ -49,6 +50,12 @@ async function authenticateAdminOrTeam(request, env, db) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
   const authHeader = request.headers.get('Authorization') || '';
   const cookieHeader = request.headers.get('Cookie') || '';
+
+  // 0. Cloudflare Access Zero Trust Assertion (Email OTP)
+  const cfUser = await authenticateCfAccessUser(request, env, db);
+  if (cfUser) {
+    return cfUser;
+  }
 
   // 1. Check Bearer Token (JWT from Modern Login Screen) or Cookie
   let token = null;

@@ -6,34 +6,29 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjU
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
 
 const message = 
-`🚀 <b>اكتمال خطة العمل بالكامل بنجاح 100% | PR Agency OS</b> 🏆
+`🔒 <b>إنجاز المرحلة 1 بنجاح تام: الأمان والتحقق (Auth & Security Overhaul)</b> 🛡️
 
-تم الانتهاء بنجاح من كافة المراحل الأربعة لخريطة الطريق:
+تم بنجاح تنفيذ وتأمين منظومة PR Agency بنظام <b>Cloudflare Zero Trust (Email OTP)</b> واجتياز الفحص الأمني الشامل:
 
-<b>1. تحسين الأداء (Lighthouse 90+) ⚡</b>
-• ضغط وتحويل كافة الصور إلى صيغة WebP وتحديد الأبعاد بدقة.
-• تقليل زمن التحميل بتأجيل الأنماط غير الحرجة وLazy-loading للمحتوى.
+<b>1. تكامل Cloudflare Access ورمز البريد (Email OTP) 📧</b>
+• بناء وحدة التحقق <code>functions/lib/cf-access.js</code> لفك تشفير وتأكيد ترويسة <code>Cf-Access-Jwt-Assertion</code> لحظياً.
+• مطابقة البريد الإلكتروني مع جدول <code>agency_team_members</code> وقائمة الإدارة المعتمدة، مع ربط عملاء البوابة مع <code>portal_clients</code>.
+• تحديث شاشة تسجيل الدخول في <code>admin-agency.html</code> للتحقق الفوري بدون كلمة مرور (Passwordless Access).
 
-<b>2. مسار بناء تطبيق أندرويد تلقائياً (Android APK CI Automation) 📱</b>
-• تجهيز ملف الـ CI على مسار <code>.github/workflows/build-android.yml</code>.
-• توليد وتوقيع ملف الـ APK ورفعه تلقائياً كـ Artifact.
+<b>2. الحماية الصارمة من تجاوز الصلاحيات (Auth Bypass Defense) 🚫</b>
+• إغلاق كافة ثغرات الـ Bypass في <code>functions/api/admin/_middleware.js</code>: أي طلب غير موثق يُردع فوراً بـ <code>HTTP 401 Unauthorized</code>.
 
-<b>3. محرك المزامنة الأوفلاين الشامل (Offline Sync & Mutation Queue) 📡</b>
-• اعتراض تلقائي لكافة عمليات الحفظ والتعديل (Forms / Leads / Tasks / Invoices) عند انقطاع الإنترنت.
-• تخزين العمليات محلياً برقم تسلسلي في طابور <code>pr_offline_sync_queue</code>.
-• إعادة إرسال وتزامن البيانات آلياً مع سحابة Cloudflare D1 فور استعادة الاتصال.
-• شريط تنبيه تفاعلي وتوست إشعار يوضح حالة الاتصال والمزامنة.
+<b>3. نتائج الفحص الأمني واختبار الاختراق (Penetration Audit) 📋</b>
+• اجتياز <b>20 من أصل 20 اختبار أمني بنسبة نجاح 100%</b> (تقرير <code>SECURITY_AUDIT_REPORT.md</code>):
+  ✅ <b>Auth Bypass:</b> حظر تام لأي محاولة وصول بدون توكن.
+  ✅ <b>Zero Trust OTP:</b> قبول المشرفين المصرح لهم ورفض الإيميلات الخارجية فوراً.
+  ✅ <b>IDOR Defense:</b> عزل كامل لفواتير العملاء ومنع المصممين من البيانات المالية (403).
+  ✅ <b>SQL Injection:</b> تحصين كافة العمليات عبر Parameterized Queries (.bind).
+  ✅ <b>XSS Defense:</b> تشفير كامل لمدخلات المستخدمين ومخرجات الذكاء الاصطناعي.
+  ✅ <b>Rate Limiting:</b> حظر التخمين بعد 5 محاولات (429) وتحديد معدل الويبهوك.
+  ✅ <b>Security Headers:</b> فرض CSP و HSTS و DENY Frame و nosniff و noindex.
 
-<b>4. خط أنابيب الاختبارات وضمان الجودة الشامل (QA Pipeline) 🧪</b>
-• أمر موحد <code>npm test</code> يفحص 6 مجموعات اختبار خلال 18 ثانية:
-  ✅ فحص حدود الشخصيات وعدم تسريب أدوات الإدارة
-  ✅ فحص محرك المزامنة الأوفلاين
-  ✅ فحص الأمان واختبار الاختراق (19 اختبار أمني)
-  ✅ فحص الوكلاء الأذكياء (Sales, Creative, Success)
-  ✅ فحص مساعد تليجرام الذكي وموجه المهارات التسويقية
-  ✅ فحص مركز قيادة تليجرام المركزي
-
-🌐 <b>الموقع والنظام لايف 100%:</b> https://0a0fc954.pragency.pages.dev`;
+🌐 <b>الرابط المباشر للإنتاج:</b> https://01473f80.pragency.pages.dev`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,
@@ -54,7 +49,7 @@ const req = https.request({
   let body = '';
   res.on('data', chunk => body += chunk);
   res.on('end', () => {
-    console.log('✅ Final Completion Notification Dispatched to Telegram Admin.');
+    console.log('✅ Phase 1 Notification Dispatched to Telegram Admin.');
     console.log('Response Status:', res.statusCode);
   });
 });

@@ -41,7 +41,28 @@
     async function checkAdminSession() {
       const token = localStorage.getItem('admin_jwt');
       const overlay = document.getElementById('admin-login-overlay');
-      console.log('[checkAdminSession] Checking token in localStorage:', token ? (token.slice(0, 15) + '...') : 'NONE');
+
+      // 1. Probe server for active Cloudflare Access Zero Trust OTP session or valid cookie
+      try {
+        const headers = {};
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch('/api/admin/me', { headers });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            if (overlay) overlay.style.display = 'none';
+            const badge = document.getElementById('adminUserBadge');
+            if (badge) {
+              const methodIcon = data.authMethod === 'cf_access_otp' ? '🛡️' : '👑';
+              badge.textContent = `${methodIcon} ${data.user.name} (${data.user.role || 'Admin'})`;
+            }
+            if (typeof refreshCurrentTab === 'function') refreshCurrentTab();
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('[checkAdminSession] Server session probe notice:', e.message);
+      }
       
       if (!token) {
         if (overlay) overlay.style.display = 'flex';

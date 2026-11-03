@@ -1,5 +1,6 @@
 // Central Security Gatekeeper & Role-Based Access Control (RBAC) for Portal APIs
 import { verifyToken } from './auth.js';
+import { parseCfAccessJwt } from '../../lib/cf-access.js';
 
 function checkAdminAuth(request, env) {
   const PASS = env.ADMIN_PASSWORD || 'pr2026';
@@ -29,7 +30,7 @@ export async function onRequest(context) {
       headers: {
         'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cf-Access-Jwt-Assertion',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Max-Age': '86400'
       }
@@ -48,7 +49,6 @@ export async function onRequest(context) {
       return new Response(JSON.stringify({ success: false, error: 'Unauthorized: Admin role required' }), {
         status: 401,
         headers: {
-      // 'WWW-Authenticate': 'Basic realm="PR Agency Admin"',
           'Content-Type': 'application/json',
           'X-Robots-Tag': 'noindex, nofollow, noarchive'
         }
@@ -62,7 +62,52 @@ export async function onRequest(context) {
   }
 
   // 4. Client endpoints (/api/portal/deliverable, /api/portal/calendar, /api/portal/review)
-  // Verify JWT session and attach client identity
+  // Check Cloudflare Access Assertion (Zero Trust Email OTP)
+  const cfAssertion = request.headers.get('Cf-Access-Jwt-Assertion');
+  const cfEmailHeader = request.headers.get('Cf-Access-Authenticated-User-Email');
+
+  if (cfAssertion || cfEmailHeader) {
+    let email = '';
+    if (cfAssertion) {
+      const cfPayload = parseCfAccessJwt(cfAssertion);
+      if (cfPayload) email = (cfPayload.email || '').trim().toLowerCase();
+    }
+    if (!email && cfEmailHeader) email = cfEmailHeader.trim().toLowerCase();
+
+    if (email) {
+      const db = env.ANALYTICS_DB || env.DB;
+      if (db) {
+        try {
+          const clientRow = await db.prepare(
+            'SELECT id, company_name, contact_name, email FROM portal_clients WHERE LOWER(email) = ?'
+          ).bind(email).first();
+
+          if (clientRow) {
+            context.data = context.data || {};
+            context.data.clientAuth = {
+              sub: clientRow.id,
+              client_id: clientRow.id,
+              company_name: clientRow.company_name,
+              contact_name: clientRow.contact_name,
+              email: clientRow.email,
+              authMethod: 'cf_access_otp'
+            };
+            const res = await next();
+            const h = new Headers(res.headers);
+            h.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+            h.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+            h.set('X-Frame-Options', 'DENY');
+            h.set('X-Content-Type-Options', 'nosniff');
+            return new Response(res.body, { status: res.status, headers: h });
+          }
+        } catch (e) {
+          console.warn('[Portal CF Access] Error querying client by email:', e.message);
+        }
+      }
+    }
+  }
+
+  // Fallback to JWT session verification
   const cookieHeader = request.headers.get('Cookie') || '';
   const authHeader = request.headers.get('Authorization') || '';
   let token = null;
