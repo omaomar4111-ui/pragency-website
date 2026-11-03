@@ -96,7 +96,7 @@
     Network.addListener('networkStatusChange', (status) => {
       updateNetworkStatus(status.connected);
       if (status.connected) {
-        showToast('🟢 تم استعادة الاتصال. جاري مزامنة التغييرات السحابية...');
+        showToast('🟢 النت رجع! بنرفع التغييرات اللي سجلتها محلياً دلوقتي...');
       }
     });
   } else {

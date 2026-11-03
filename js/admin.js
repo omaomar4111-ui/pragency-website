@@ -110,7 +110,7 @@
 
       errEl.style.display = 'none';
       btn.disabled = true;
-      btn.textContent = '⏳ جاري التحقق...';
+      btn.textContent = '⏳ بنتأكد من بياناتك...';
 
       try {
         const res = await originalFetch('/api/admin/login', {
@@ -633,7 +633,7 @@
     async function handlePaymentSettingsSubmit(e) {
       e.preventDefault();
       const statusEl = document.getElementById('paymentSettingsSaveStatus');
-      statusEl.textContent = 'جاري الحفظ... ⏳';
+      statusEl.textContent = 'بنحفظ التعديلات... ⏳';
       statusEl.style.color = '#c4b5fd';
 
       const instapay_ipa = document.getElementById('set-instapay-ipa').value.trim();
@@ -1909,7 +1909,7 @@ let searchDebounceTimer = null;
 
     async function saveAllRbacMatrix() {
       const btn = document.getElementById('saveRbacBtn');
-      if (btn) { btn.textContent = '⏳ جاري الحفظ...'; btn.disabled = true; }
+      if (btn) { btn.textContent = '⏳ بنحفظ التعديلات...'; btn.disabled = true; }
 
       let successCount = 0;
       for (let idx = 0; idx < dynamicRbacRoles.length; idx++) {
@@ -2170,7 +2170,7 @@ async function loadAdAccounts() {
       const btn = document.getElementById('btn-sync-ads');
       if (btn) {
         btn.disabled = true;
-        btn.textContent = 'جاري المزامنة مع Meta و Google... ⏳';
+        btn.textContent = 'بنربط الحملات مع فيسبوك وجوجل... ⏳';
       }
 
       try {

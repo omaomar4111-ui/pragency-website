@@ -50,7 +50,7 @@
       submitBtn.disabled = isLoading;
       submitBtn.style.opacity = isLoading ? '0.6' : '1';
       if (isLoading) {
-        submitBtn.innerHTML = '<span>جاري الإرسال...</span>';
+        submitBtn.innerHTML = '<span>بنرسل بياناتك، ثواني...</span>';
       } else {
         submitBtn.innerHTML = originalBtnText;
       }
@@ -97,7 +97,7 @@
       }
 
       setLoading(true);
-      setStatus('loading', '⏳ جاري الإرسال...');
+      setStatus('loading', '⏳ بنرسل بياناتك، ثواني...');
 
       try {
         var response = await fetch('/api/contact', {
@@ -140,7 +140,7 @@
         } else {
           var errorMsg = result.errors
             ? result.errors.join(' | ')
-            : (result.error || 'حدث خطأ غير متوقع');
+            : (result.error || 'معلش، حصلت مشكلة بسيطة. جرب تاني.');
           setStatus('error', '❌ ' + errorMsg);
         }
       } catch (err) {
@@ -150,7 +150,7 @@
           setStatus('success', '💾 أنت غير متصل بالإنترنت. تم حفظ طلبك محلياً وسيتم إرساله تلقائياً فور عودة الاتصال!');
           form.reset();
         } else {
-          setStatus('error', '❌ فشل الاتصال بالخادم، حاول مرة أخرى');
+          setStatus('error', '❌ معلش، النت قطع أو السيرفر مش مستجيب. جرب تاني بعد ثواني.');
         }
       } finally {
         setLoading(false);

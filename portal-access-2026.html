@@ -238,7 +238,7 @@
       e.preventDefault();
       errorBox.style.display = 'none';
       submitBtn.disabled = true;
-      submitBtn.querySelector('span').textContent = 'جاري التحقق...';
+      submitBtn.querySelector('span').textContent = 'بنتأكد من بياناتك...';
 
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-pass').value;
@@ -261,7 +261,7 @@
           submitBtn.querySelector('span').textContent = 'تسجيل الدخول';
         }
       } catch (err) {
-        errorBox.textContent = 'حدث خطأ في الاتصال بالخادم، يرجى المحاولة لاحقاً';
+        errorBox.textContent = 'معلش، حصلت مشكلة في الاتصال بالنت. جرب تاني بعد شوية.';
         errorBox.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.querySelector('span').textContent = 'تسجيل الدخول';
