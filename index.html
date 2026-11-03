@@ -188,13 +188,13 @@ window.dataLayer = window.dataLayer || [];
 <link rel="preconnect" href="https://www.googletagmanager.com"/>
 <link rel="preconnect" href="https://www.google-analytics.com"/>
 <link rel="preconnect" href="https://connect.facebook.net"/>
-<link rel="preload" href="css/main.css?v=122" as="style"/>
-<link rel="preload" as="image" href="/assets/images/hero-statue.webp" type="image/webp" fetchpriority="high">
+<link rel="preload" href="css/main.min.css?v=124" as="style"/>
+<link rel="preload" as="image" href="assets/images/hero-statue-400w.webp" imagesrcset="assets/images/hero-statue-400w.webp 400w, assets/images/hero-statue-700w.webp 700w, assets/images/hero-statue.webp 1000w" imagesizes="(max-width: 600px) 360px, (max-width: 1024px) 700px, 1000px" fetchpriority="high">
 <link rel="preload" href="assets/logos/pr-agency.webp" as="image" type="image/webp"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
 <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/></noscript>
-<link rel="stylesheet" href="css/main.css?v=122"/>
-<link rel="stylesheet" href="css/pages.css?v=122" media="print" onload="this.media='all'"/>
+<link rel="stylesheet" href="css/main.min.css?v=124"/>
+<link rel="stylesheet" href="css/pages.min.css?v=124" media="print" onload="this.media='all'"/>
 
 
 <!-- Favicons -->
@@ -248,11 +248,11 @@ window.dataLayer = window.dataLayer || [];
     window.addEventListener(ev, initAnalytics, { once: true, passive: true });
   });
 </script>
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1" alt="PR Agency"/></noscript>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1510619060791532&ev=PageView&noscript=1" alt="" loading="lazy" /></noscript>
 <link rel="stylesheet" href="css/multi-step-form.css?v=98" media="print" onload="this.media='all'"/>
 <link rel="stylesheet" href="/css/chatbot.css?v=98" media="print" onload="this.media='all'"/>
   <link rel="stylesheet" href="/css/phase2-components.css?v=108" media="print" onload="this.media='all'"/>
-  <style id="critical-css">
+    <style id="critical-css">
     :root {
       --c-black:#0A0612;--c-s1:#110A1E;--c-s2:#17102A;--c-purple:#6D28D9;--c-purple-h:#7C3AED;
       --c-w100:#fff;--c-w80:rgba(255,255,255,0.8);--c-w60:rgba(255,255,255,0.6);
@@ -268,11 +268,20 @@ window.dataLayer = window.dataLayer || [];
     .hero-vr-title-accent{color:#A78BFA}
     .hero-vr-sub{font-size:clamp(15px,2vw,18px);color:rgba(255,255,255,0.7);margin:0 0 24px;line-height:1.6}
     .hero-vr-cta{display:inline-flex;align-items:center;gap:10px;background:#7C3AED;color:#fff;padding:14px 28px;border-radius:30px;font-weight:700;text-decoration:none}
-    .hero-vr-logo-wrap{position:relative;flex-shrink:0}
-    .hero-statue-layer img{max-width:100%;height:auto;display:block}
+    .hero-vr-logo-wrap{position:relative;flex-shrink:0;width:100%;max-width:550px;min-height:450px;display:flex;align-items:center;justify-content:center}
+    .hero-statue-layer{position:relative;width:100%;max-width:450px}
+    .hero-statue-layer img{max-width:100%;height:auto;display:block;aspect-ratio:1000/1091}
+    .hero-brand-lockup{position:absolute;top:8%;left:-4%;z-index:5;display:flex;flex-direction:row;align-items:center;gap:18px}
+    .hero-logo-layer{width:200px;max-width:200px;flex-shrink:0}
+    .hero-logo-layer img{width:100%;height:auto;display:block;aspect-ratio:1/1}
+    .hero-tagline-layer{display:flex;flex-direction:column;gap:4px;color:rgba(255,255,255,0.9);font-size:11px;letter-spacing:2px;border-left:2px solid rgba(168,85,247,0.5);padding-left:14px;white-space:nowrap}
     @media(max-width:768px){
       .hero-vr-inner{flex-direction:column-reverse;text-align:center}
       .hero-vr-cta{margin:0 auto}
+      .hero-vr-logo-wrap{min-height:300px;max-width:360px}
+      .hero-brand-lockup{position:static;flex-direction:column;gap:10px;margin-bottom:16px}
+      .hero-logo-layer{width:140px;max-width:140px}
+      .hero-tagline-layer{border-left:none;padding-left:0;text-align:center}
     }
   </style>
 </head>
@@ -327,7 +336,7 @@ window.dataLayer = window.dataLayer || [];
   <a href="./" aria-label="PR Agency — الرئيسية" class="hdr-logo-link">
     <picture>
       <source srcset="assets/logos/pr-agency.webp" type="image/webp">
-      <img src="assets/logos/pr-agency.webp" alt="PR Agency — وكالة تسويق متكاملة في القاهرة" class="hdr-logo" width="60" height="60" />
+      <img src="assets/logos/pr-agency.webp" alt="PR Agency — وكالة تسويق متكاملة في القاهرة" class="hdr-logo" width="60" height="60" loading="eager" />
     </picture>
   </a>
   
@@ -427,7 +436,7 @@ window.dataLayer = window.dataLayer || [];
       <!-- التمثال في منتصف اليمين متوازن -->
       <div class="hero-statue-layer" aria-hidden="true">
         <picture>
-          <source srcset="assets/images/hero-statue.webp?v=117" type="image/webp">
+          <source type="image/webp" srcset="assets/images/hero-statue-400w.webp 400w, assets/images/hero-statue-700w.webp 700w, assets/images/hero-statue.webp 1000w" sizes="(max-width: 600px) 360px, (max-width: 1024px) 700px, 1000px">
           <img 
             src="assets/images/hero-statue.webp" 
             alt="PR Agency Sculpture"
@@ -443,7 +452,7 @@ window.dataLayer = window.dataLayer || [];
       <div class="hero-brand-lockup">
         <div class="hero-logo-layer">
           <picture>
-            <source srcset="assets/logos/pr-agency.webp?v=116" type="image/webp">
+            <source srcset="assets/logos/pr-agency.webp" type="image/webp">
             <img 
               src="assets/logos/pr-agency.webp" 
               alt="PR Agency — وكالة تسويق متكاملة في القاهرة" 

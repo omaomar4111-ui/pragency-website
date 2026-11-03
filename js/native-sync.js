@@ -280,5 +280,11 @@
     showToast
   };
 
-  document.addEventListener('DOMContentLoaded', initUI);
+  if (typeof window !== 'undefined') {
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(initUI, { timeout: 3000 });
+    } else {
+      window.addEventListener('load', function() { setTimeout(initUI, 1000); });
+    }
+  }
 })();

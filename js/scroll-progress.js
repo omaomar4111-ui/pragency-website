@@ -29,8 +29,6 @@
         ticking = true;
       }
     }, { passive: true });
-
-    updateProgress();
   }
 
   if (document.readyState === 'loading') {
