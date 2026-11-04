@@ -1,41 +1,73 @@
 // notify_done.cjs
 // Dispatches Telegram completion message to the User / Admin
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8857951958:AAGLCjUIW_KwZZ-Tl07LfKEvhw5XsC-bp7s';
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5715939844';
+// Helper to load local environment files without committing secrets
+function loadEnvFile(fileName) {
+  try {
+    const filePath = path.resolve(__dirname, fileName);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      content.split(/\r?\n/).forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx !== -1) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            let val = trimmed.slice(eqIdx + 1).trim();
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+              val = val.slice(1, -1);
+            }
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    // Silently continue
+  }
+}
+
+// Attempt to load .env and .dev.vars if present locally
+loadEnvFile('.env');
+loadEnvFile('.dev.vars');
+
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+if (!TELEGRAM_BOT_TOKEN) {
+  throw new Error('SECURITY FATAL: TELEGRAM_BOT_TOKEN is not set in environment variables or .env file. Hardcoded secrets are prohibited.');
+}
+
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+if (!TELEGRAM_CHAT_ID) {
+  throw new Error('SECURITY FATAL: TELEGRAM_CHAT_ID is not set in environment variables or .env file.');
+}
 
 const message = 
-`🏛️ <b>إصلاح وضبط واجهة الهيرو وشبكة العرض بنجاح تام (Strict CSS Grid Layout)</b> 🚀
+`🔒 <b>إنجاز المرحلة الثانية: تطهير وتأمين الأسرار البرمجية بنجاح (Secrets Sanitization & Hardening)</b> 🛡️
 
-تمت معالجة كافة ملاحظات التصميم بدقة وهندسة معمارية صارمة:
+تم تطبيق معايير الأمان المتقدمة لمكافحة تسريب المفاتيح (Zero-Exposure Policy):
 
-<b>1. هيكل الهيرو (Strict 2-Column CSS Grid) 📐</b>
-• تقسيم صارم لعمودين على أجهزة الديسك توب:
-  <code>grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;</code>
-• تحويل تلقائي إلى عمود واحد عمودي مكدس على أجهزة الموبايل (1-column stack).
-• إلغاء التموضع المطلق (<code>position: absolute</code>) تماماً لإنهاء أي تداخل بين العناصر.
+<b>1. إزالة الأسرار الصلبة (Zero Hardcoded Credentials) 🛑</b>
+• تم تفريغ وحذف التوكنات الصلبة (Fallback Tokens) من كافة ملفات المشروع.
+• إلزام كود <code>notify_done.cjs</code> بالاعتماد الحصري على <code>process.env.TELEGRAM_BOT_TOKEN</code>.
+• رمي استثناء أمني قاتل (Security Fatal Exception) في حال غياب التوكن لمنع أي تسريب مستقبلي.
 
-<b>2. أحجام الخطوط والعناصر (Strict Heading & Image Sizes) 🔤</b>
-• ضبط حجم العنوان الرئيسي <code>&lt;h1&gt;</code> على <b>3.5rem (56px)</b> ثابتاً للديسك توب، و <b>2rem (32px)</b> للموبايل دون مبالغة clamp.
-• تموضع تمثال الهيرو بشكل انسيابي داخل عموده الخاص مع <code>max-width: 100%; height: auto; object-fit: contain;</code>.
-• حذف طبقة اللوجو المعلقة (PR Brand Lockup) المتداخلة ليبقى التصميم نظيفاً ومتوازناً.
+<b>2. تطهير إعدادات ورانجلر (wrangler.toml Sanitization) 🧹</b>
+• حذف المفاتيح الحساسة (<code>TELEGRAM_BOT_TOKEN</code>, <code>JWT_SECRET</code>, <code>PORTAL_SECRET</code>) من ملف <code>wrangler.toml</code>.
+• حصر إعدادات <code>[vars]</code> على المتغيرات العامة غير الحساسة فقط.
 
-<b>3. شريط الكلمات المتحرك (Standalone Services Marquee) 🎞️</b>
-• فصل شريط الخدمات تماماً في <code>&lt;section class="services-marquee-section"&gt;</code> مستقل أسفل قسم الهيرو تماماً.
-• زيرو تداخل رأسي أو أفقي مع الهيرو.
+<b>3. التحصين بملفات البيئة والتجاهل (Environment Isolation & .gitignore) 📁</b>
+• التحقق من حظر <code>.env*</code> و <code>.dev.vars*</code> و <code>release.keystore*</code> من الدخول إلى Git.
+• إنشاء قالب <code>.dev.vars.example</code> كمرجع للتطوير المحلي الآمن.
 
-<b>4. تقييد شريط التنقل (Navbar Max-Width Constraint) 🧭</b>
-• إحاطة محتوى النافبار بحاوية <code>.hdr-inner</code> بحد أقصى <code>max-width: 1200px; margin: 0 auto; padding: 12px 24px;</code> مع بقاء النافبار بعرض الشاشة كاملاً.
+<b>4. جاهزية المرحلة الثالثة (Ready for DAST Phase 3) 🚀</b>
+• الانتقال إلى فحص الثغرات الآلي ومسح OWASP ZAP & Nuclei.
 
-🧪 <b>نتائج الاختبار والتحقق الآلي:</b>
-• التحقق الهندسي للـ Bounding Boxes:
-  - المسافة الأفقية بين النص والتمثال: فجوة 80px كاملة [✅ PASS].
-  - موضع شريط الخدمات أسفل محتوى الهيرو [✅ PASS].
-• فحص شامل لـ 6 مقاسات (320px إلى 1920px) ➔ زيرو تمرير أفقي [✅ PASS].
-• نجاح باقة اختبارات الـ QA بنسبة 100% (6/6 Suites Passed).
-
-🌐 <b>الرابط المباشر للموقع:</b> https://pragency.pages.dev`;
+🌐 <b>الرابط المباشر للإنتاج:</b> https://pragency.pages.dev`;
 
 const payload = JSON.stringify({
   chat_id: TELEGRAM_CHAT_ID,
@@ -56,7 +88,7 @@ const req = https.request({
   let body = '';
   res.on('data', chunk => body += chunk);
   res.on('end', () => {
-    console.log('✅ Layout Fix Notification Dispatched to Telegram Admin.');
+    console.log('✅ Secrets Sanitization Notification Dispatched to Telegram Admin.');
     console.log('Response Status:', res.statusCode);
   });
 });

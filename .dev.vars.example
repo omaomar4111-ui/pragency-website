@@ -1,0 +1,9 @@
+# Local development secrets template
+# Copy this file to .dev.vars and fill in your actual credentials.
+# NEVER commit .dev.vars or actual secrets to version control.
+
+TELEGRAM_BOT_TOKEN="your_telegram_bot_token_from_botfather"
+TELEGRAM_CHAT_ID="5715939844"
+JWT_SECRET="your_long_random_jwt_signing_secret_here"
+PORTAL_SECRET="your_long_random_portal_secret_here"
+NOTIFY_COUNTRIES="EG,SA,AE"
