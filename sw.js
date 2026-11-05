@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v78';
+const CACHE_VERSION = 'v125';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -6,12 +6,12 @@ const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [
   '/',
   '/offline.html',
-  '/css/main.css?v=78',
-  '/css/pages.css?v=78',
-  '/css/chatbot.css?v=78',
-  '/js/main.js?v=78',
-  '/js/i18n.js?v=78',
-  '/js/chatbot.js?v=78',
+  '/css/main.css?v=125',
+  '/css/pages.css?v=125',
+  '/css/chatbot.css?v=125',
+  '/js/main.js?v=125',
+  '/js/i18n.js?v=125',
+  '/js/chatbot.js?v=125',
   '/assets/logos/pr-agency.webp',
   '/assets/logos/pr-agency.png',
   '/icons/icon-192.png',

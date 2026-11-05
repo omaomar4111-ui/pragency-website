@@ -15,14 +15,20 @@ const PUBLIC_PAGES = [
   'team.html',
   'contact.html',
   'case-studies.html',
-  'portfolio.html'
+  'portfolio.html',
+  'loyalty.html',
+  'thank-you.html',
+  'privacy.html',
+  'terms.html',
+  '404.html'
 ];
 
 const FORBIDDEN_PATTERNS = [
   { pattern: /website-factory\.html/i, name: 'Link to website-factory.html' },
   { pattern: /audit\.html/i, name: 'Link to audit.html' },
-  { pattern: /مصنع المواقع/i, name: 'Label "مصنع المواقع"' },
-  { pattern: /فحص الأمان 12/i, name: 'Label "فحص الأمان 12"' },
+  { pattern: /مصنع\s*المواقع/i, name: 'Label "مصنع المواقع"' },
+  { pattern: /فحص\s*الأمان/i, name: 'Label "فحص الأمان"' },
+  { pattern: /فحص\s*الـ\s*12\s*أمان/i, name: 'Label "فحص الـ 12 أمان"' },
   { pattern: /admin-agency\.html/i, name: 'Direct link to admin-agency.html' }
 ];
 
