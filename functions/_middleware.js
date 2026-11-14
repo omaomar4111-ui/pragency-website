@@ -209,6 +209,12 @@ export async function onRequest(context) {
     return context.next(); 
   }
 
+  
+  // Bypass API routes directly to their function handlers
+  if (path.startsWith('/api/')) {
+    return context.next();
+  }
+
   console.log('MIDDLEWARE_HIT:', pathname);
 
   // 0. Block deprecated public client portal URLs
