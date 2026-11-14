@@ -150,29 +150,37 @@
     const phoneMatch = text.match(/(01[0125]\d{8}|(?:\+|00)?201[0125]\d{8}|\+?\d{8,15})/);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 18000);
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           message: text,
           sessionId: sessionId,
           visitorId: getVisitorId()
         })
       });
+      clearTimeout(timeoutId);
 
       const data = await res.json();
       typing.style.display = 'none';
 
       // ── Instant Redirect for Clients / Portal Login ──
       if (data.action === 'redirect' && data.url) {
-        renderMessage('assistant', data.reply || 'جاري تحويلك لبوابة العملاء مباشرة...');
+        renderMessage('assistant', data.reply || 'جاري تحويلك لبوابة العملاء...');
         setTimeout(() => {
           window.location.href = data.url;
         }, 500);
         return;
       }
 
-      const reply = data.reply || (document.documentElement.lang === 'en' ? "Thank you for reaching out! A strategist will connect with you." : "شكراً لتواصلك! سيتواصل معك أحد خبرائنا.");
+      // Format markdown bold & line breaks
+      let reply = data.reply || (document.documentElement.lang === 'en' ? "Thank you for reaching out! A strategist will connect with you." : "أهلاً بك! يسعدنا تواصلك مع فريقنا.");
+      reply = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>');
+
       renderMessage('assistant', reply);
       history.push({ role: 'assistant', content: reply });
       saveHistory(history);
