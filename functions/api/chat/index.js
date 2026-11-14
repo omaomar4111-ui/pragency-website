@@ -135,8 +135,14 @@ ${dialectGuidance}
 ${learnedWisdom}
 `;
 
-    // ── 4. Call Google Gemini Multi-Model ──
-    const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+    // ── 4. Call Google Gemini Multi-Model (Prioritize Gemini 4 Argon) ──
+    const candidateModels = [
+      'gemini-4-argon',        // Gemini 4 Argon (البرمجة والتحليل والتفكير المنطقي العميق)
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-flash-latest'
+    ];
     const geminiContents = conversationHistory.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
