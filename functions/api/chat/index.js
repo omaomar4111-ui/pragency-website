@@ -6,7 +6,7 @@
    • B2B Diagnostic & Consultative Selling (SPIN / Challenger / MEDDIC)
 ═══════════════════════════════════════════════════════════════════════════ */
 
-import { scoreAndAlertLead } from './portal/ai-sales-qualifier.js';
+import { scoreAndAlertLead } from '../portal/ai-sales-qualifier.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
