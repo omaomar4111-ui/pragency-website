@@ -154,10 +154,10 @@ ${learnedWisdom}
 
     let aiReply = null;
     let modelUsed = null;
-    let debugError = null;
+    const modelAttempts = [];
 
     if (!geminiKey) {
-      debugError = 'GEMINI_API_KEY is missing in env';
+      modelAttempts.push('GEMINI_API_KEY is missing in env');
     } else {
       for (const model of candidateModels) {
         try {
@@ -189,10 +189,10 @@ ${learnedWisdom}
             }
           } else {
             const errTxt = await geminiRes.text();
-            debugError = `${model} failed (${geminiRes.status}): ${errTxt.slice(0, 150)}`;
+            modelAttempts.push(`${model}: HTTP ${geminiRes.status} -> ${errTxt.slice(0, 100)}`);
           }
         } catch (e) {
-          debugError = `${model} exception: ${e.message}`;
+          modelAttempts.push(`${model}: Error -> ${e.message}`);
         }
       }
     }
@@ -246,7 +246,7 @@ ${learnedWisdom}
       sessionId,
       agentRole: 'Senior Sales & Growth Consultant',
       aiModel: modelUsed,
-      debugError: debugError || undefined
+      modelAttempts: modelAttempts.length ? modelAttempts : undefined
     }), {
       status: 200,
       headers: {
