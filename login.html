@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
+  <title>تسجيل الدخول الموحد | PR Agency</title>
+  <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#8b5cf6"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d17;
+      --surface: #121024;
+      --card: #18142e;
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.35);
+      --border: rgba(168, 85, 247, 0.25);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1c1438 0%, var(--bg) 70%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .background-blobs {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+    .blob-1 { width: 350px; height: 350px; background: #8b5cf6; top: 10%; right: 15%; }
+    .blob-2 { width: 300px; height: 300px; background: #d946ef; bottom: 10%; left: 15%; }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(22, 18, 38, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow);
+      padding: 36px 30px;
+      z-index: 10;
+      position: relative;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .brand-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+      margin-bottom: 14px;
+    }
+    .login-header h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .login-header p {
+      margin: 0;
+      font-size: 13px;
+      color: #a1a1aa;
+    }
+
+    .role-badges-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .role-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #d4d4d8;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #c084fc;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(10, 8, 20, 0.7);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.25s ease;
+      direction: ltr;
+      text-align: right;
+    }
+    .form-input:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.35);
+      background: rgba(10, 8, 20, 0.95);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 8px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .error-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: none;
+      text-align: center;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #71717a;
+    }
+    .login-footer a {
+      color: #c084fc;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="login-container" id="login-card">
+    <div class="login-header">
+      <img src="/assets/logos/pr-agency.png" alt="PR Agency" class="brand-logo" />
+      <h1>بوابة تسجيل الدخول الموحدة</h1>
+      <p>دخول العملاء، الإدارة، وأعضاء فريق الإنتاج</p>
+    </div>
+
+    <div class="role-badges-row">
+      <span class="role-badge">🏢 العملاء</span>
+      <span class="role-badge">🎬 فريق العمل</span>
+      <span class="role-badge">🛡️ الإدارة</span>
+    </div>
+
+    <div id="error-box" class="error-banner"></div>
+
+    <form id="unified-login-form" onsubmit="handleUnifiedLogin(event)">
+      <div class="form-group">
+        <label for="user-email">البريد الإلكتروني</label>
+        <input type="email" id="user-email" class="form-input" placeholder="name@example.com" required autocomplete="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="user-pass">كلمة المرور / الرمز السري</label>
+        <input type="password" id="user-pass" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+
+      <button type="submit" id="btn-login-submit" class="btn-submit">
+        <span>تسجيل الدخول 🚀</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a href="/">← العودة للموقع الرئيسي</a>
+      <span style="margin: 0 8px;">•</span>
+      <button onclick="triggerPWAInstall()" style="background:none; border:none; color:#c084fc; cursor:pointer; font-family:inherit; font-weight:700;">📲 تثبيت التطبيق</button>
+    </div>
+  </div>
+
+  <script src="/js/pwa-install.js"></script>
+  <script>
+    // GSAP Entrance
+    if (window.gsap) {
+      gsap.from('#login-card', { duration: 0.8, y: 30, opacity: 0, ease: 'power3.out' });
+    }
+
+    // Auto-redirect if already logged in
+    (function checkExistingAuth() {
+      const user = JSON.parse(localStorage.getItem('pr_auth_user') || 'null');
+      if (user && user.role) {
+        if (user.role === 'admin') window.location.href = '/admin-dashboard.html';
+        else if (user.role === 'team_member') window.location.href = '/team-dashboard.html';
+        else if (user.role === 'client') window.location.href = '/portal-dashboard-2026.html';
+      }
+    })();
+
+    async function handleUnifiedLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('user-email').value.trim();
+      const password = document.getElementById('user-pass').value.trim();
+      const btn = document.getElementById('btn-login-submit');
+      const errBox = document.getElementById('error-box');
+
+      errBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span>جاري التحقق... ⏳</span>';
+
+      try {
+        const res = await fetch('/api/auth/unified-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Store user info and token in localStorage & sessionStorage
+          localStorage.setItem('pr_auth_user', JSON.stringify(data.user));
+          sessionStorage.setItem('pr_auth_token', data.token || '');
+          localStorage.setItem('pr_portal_token', data.token || '');
+
+          btn.innerHTML = '<span>تم الدخول بنجاح! ✅</span>';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+
+          setTimeout(() => {
+            window.location.href = data.redirectTo || '/portal-dashboard-2026.html';
+          }, 350);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<span>تسجيل الدخول 🚀</span>';
+          errBox.textContent = data.error || 'فشل تسجيل الدخول، يرجى مراجعة البيانات.';
+          errBox.style.display = 'block';
+          if (window.gsap) gsap.from(errBox, { duration: 0.3, y: -8, ease: 'power2.out' });
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>تسجيل الدخول 🚀</span>';
+        errBox.textContent = 'تعذر الاتصال بالخادم، يرجى المحاولة ثانية.';
+        errBox.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

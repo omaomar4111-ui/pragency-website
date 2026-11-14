@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
+  <title>لوحة القيادة والإدارة العليا | PR Agency</title>
+  <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#8b5cf6"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg: #090812;
+      --surface: #100d1e;
+      --card: #171329;
+      --accent: #8b5cf6;
+      --border: rgba(168, 85, 247, 0.25);
+    }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: #fff;
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+    }
+    .admin-nav {
+      background: rgba(16, 13, 30, 0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .admin-brand img {
+      width: 40px; height: 40px; border-radius: 10px;
+    }
+    .admin-brand h2 {
+      margin: 0; font-size: 17px; font-weight: 800;
+    }
+    .admin-user-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .admin-badge {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #c084fc;
+    }
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      background: #ef4444; color: #fff;
+    }
+
+    .admin-content {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-box h4 {
+      margin: 0 0 8px; font-size: 12px; color: #a1a1aa;
+    }
+    .stat-box h2 {
+      margin: 0 0 6px; font-size: 28px; font-weight: 800; color: #fff;
+    }
+    .stat-badge {
+      font-size: 11px; font-weight: 700; color: #34d399;
+    }
+
+    .admin-grid-sections {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .admin-grid-sections { grid-template-columns: 1fr; }
+    }
+    .admin-card-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .admin-card-section h3 {
+      margin: 0 0 16px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;
+    }
+    .action-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .admin-nav-tile {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .admin-nav-tile:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: #a855f7;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Guard: Enforce Admin Role -->
+  <script>
+    (function enforceAdmin() {
+      const user = JSON.parse(localStorage.getItem('pr_auth_user') || 'null');
+      if (!user || user.role !== 'admin') {
+        alert('غير مصرح لك بالدخول، يرجى تسجيل الدخول كمدير للنظام.');
+        window.location.href = '/login.html';
+      }
+    })();
+  </script>
+
+  <nav class="admin-nav">
+    <div class="admin-brand">
+      <img src="/assets/logos/pr-agency.png" alt="PR Agency" />
+      <div>
+        <h2>PR Agency — القيادة العليا للوكالة</h2>
+      </div>
+    </div>
+    <div class="admin-user-controls">
+      <span class="admin-badge">👑 الإدارة العليا (Admin)</span>
+      <button class="btn-logout" onclick="performLogout()">تسجيل الخروج 🚪</button>
+    </div>
+  </nav>
+
+  <main class="admin-content" id="admin-main">
+    <div class="stats-row">
+      <div class="stat-box">
+        <h4>إجمالي العقود النشطة</h4>
+        <h2>14 عميل</h2>
+        <span class="stat-badge">🟢 عقود Retainers نشطة</span>
+      </div>
+      <div class="stat-box">
+        <h4>إنتاجات الشهر السينمائية</h4>
+        <h2>48 ريلز</h2>
+        <span class="stat-badge">🎬 قيد التنفيذ والاعتماد</span>
+      </div>
+      <div class="stat-box">
+        <h4>كفاءة الذكاء الاصطناعي</h4>
+        <h2>99.8%</h2>
+        <span class="stat-badge">⚡ Gemini 4 Argon + Higgsfield</span>
+      </div>
+    </div>
+
+    <div class="admin-grid-sections">
+      <div class="admin-card-section">
+        <h3><span>⚡</span> وصول سريع لأقسام الإدارة</h3>
+        <div class="action-links-grid">
+          <a href="/admin-agency.html" class="admin-nav-tile">
+            <span style="font-size:24px;">🏢</span>
+            <div>
+              <strong style="display:block; font-size:14px;">إدارة الوكالة القديمة</strong>
+              <small style="color:#a1a1aa; font-size:11px;">التحكم بالعملاء والفواتير</small>
+            </div>
+          </a>
+          <a href="/portal-dashboard-2026.html" class="admin-nav-tile">
+            <span style="font-size:24px;">🎬</span>
+            <div>
+              <strong style="display:block; font-size:14px;">بوابة العملاء واستوديو الإخراج</strong>
+              <small style="color:#a1a1aa; font-size:11px;">عرض التسليمات وتوليد البرومبتات</small>
+            </div>
+          </a>
+          <a href="/team-dashboard.html" class="admin-nav-tile">
+            <span style="font-size:24px;">👥</span>
+            <div>
+              <strong style="display:block; font-size:14px;">لوحة مهام الفريق</strong>
+              <small style="color:#a1a1aa; font-size:11px;">متابعة المونتيرين والمصممين</small>
+            </div>
+          </a>
+          <a href="/" class="admin-nav-tile">
+            <span style="font-size:24px;">🌐</span>
+            <div>
+              <strong style="display:block; font-size:14px;">الموقع الرئيسي الحي</strong>
+              <small style="color:#a1a1aa; font-size:11px;">زيارة واجهة الزوار والشات بوت</small>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="admin-card-section">
+        <h3><span>📲</span> تطبيق الإدارة (PWA)</h3>
+        <p style="font-size:12px; color:#a1a1aa; line-height:1.6; margin:0 0 16px;">
+          يمكنك تثبيت هذه اللوحة كتطبيق مستقل على اللابتوب أو الموبايل بدون الحاجة لفتح المتصفح في كل مرة.
+        </p>
+        <button onclick="triggerPWAInstall()" style="width:100%; padding:12px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); border:none; border-radius:12px; color:#fff; font-weight:800; cursor:pointer; font-family:inherit;">
+          تثبيت تطبيق الإدارة 📲
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/pwa-install.js"></script>
+  <script>
+    if (window.gsap) {
+      gsap.from('#admin-main', { duration: 0.7, opacity: 0, y: 20, ease: 'power2.out' });
+    }
+
+    function performLogout() {
+      localStorage.removeItem('pr_auth_user');
+      sessionStorage.removeItem('pr_auth_token');
+      localStorage.removeItem('pr_portal_token');
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>

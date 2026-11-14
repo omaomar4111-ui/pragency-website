@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
+  <title>لوحة مهام فريق العمل | PR Agency</title>
+  <link rel="icon" type="image/png" href="/assets/logos/pr-agency.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#8b5cf6"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg: #090814;
+      --surface: #100d20;
+      --card: #17132a;
+      --accent: #8b5cf6;
+      --border: rgba(168, 85, 247, 0.25);
+    }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: #fff;
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+    }
+    .team-nav {
+      background: rgba(16, 13, 32, 0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .team-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .team-brand img { width: 38px; height: 38px; border-radius: 10px; }
+    .team-brand h2 { margin: 0; font-size: 16px; font-weight: 800; }
+    .team-user-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .team-badge {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #93c5fd;
+    }
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { background: #ef4444; color: #fff; }
+
+    .team-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .task-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+    }
+    .task-card:hover {
+      border-color: rgba(168, 85, 247, 0.5);
+      transform: translateY(-2px);
+    }
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .task-tag {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .tag-video { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .tag-design { background: rgba(139, 92, 246, 0.2); color: #c084fc; }
+    .tag-urgent { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+    .task-title {
+      font-size: 15px; font-weight: 800; margin: 0 0 8px; color: #fff;
+    }
+    .task-desc {
+      font-size: 12px; color: #a1a1aa; line-height: 1.6; margin: 0 0 16px;
+    }
+    .task-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 12px;
+    }
+    .btn-complete {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Guard: Enforce Team Member or Admin Role -->
+  <script>
+    (function enforceTeam() {
+      const user = JSON.parse(localStorage.getItem('pr_auth_user') || 'null');
+      if (!user || (user.role !== 'team_member' && user.role !== 'admin')) {
+        alert('غير مصرح لك بالدخول، يرجى تسجيل الدخول كعضو في فريق العمل.');
+        window.location.href = '/login.html';
+      }
+    })();
+  </script>
+
+  <nav class="team-nav">
+    <div class="team-brand">
+      <img src="/assets/logos/pr-agency.png" alt="PR Agency" />
+      <div>
+        <h2>PR Agency — لوحة مهام الفريق الإبداعي</h2>
+      </div>
+    </div>
+    <div class="team-user-meta">
+      <span class="team-badge" id="team-user-label">🎬 عضو الفريق</span>
+      <button class="btn-logout" onclick="performLogout()">تسجيل الخروج 🚪</button>
+    </div>
+  </nav>
+
+  <main class="team-main" id="team-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:10px;">
+      <div>
+        <h1 style="font-size:22px; font-weight:800; margin:0 0 4px;">المهام والتسليمات الموكلة لك</h1>
+        <p style="font-size:12px; color:#a1a1aa; margin:0;">قائمة الفيديوهات والتصاميم المطلوبة من عملاء الوكالة مع التعديلات المحدثة</p>
+      </div>
+      <button onclick="triggerPWAInstall()" style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); color:#c084fc; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer;">
+        📲 تثبيت تطبيق الفريق
+      </button>
+    </div>
+
+    <div class="tasks-grid">
+      <!-- Task 1 -->
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-tag tag-video">🎬 مونتاج ريلز</span>
+          <span class="task-tag tag-urgent">⏳ تسليم اليوم</span>
+        </div>
+        <h3 class="task-title">ريلز سينمائي 9:16 لشركة الأفق (ساعة فاخرة)</h3>
+        <p class="task-desc">
+          تطبيق حركة Orbit 360 مع إضاءة Cyberpunk Neon ومطابقة معايير Higgsfield Six-Slot. العميل معتمد الكرياتيف بانتظار تصدير الـ Master بدقة 4K.
+        </p>
+        <div class="task-actions">
+          <span style="font-size:11px; color:#71717a;">العميل: الأفق للاستثمار</span>
+          <button class="btn-complete" onclick="markTaskDone(this)">✅ تم التسليم</button>
+        </div>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-tag tag-design">🎨 بوست وهوية</span>
+          <span class="task-tag" style="background:rgba(16,185,129,0.2); color:#6ee7b7;">جديد</span>
+        </div>
+        <h3 class="task-title">طقم بوستات عطر نيش ملكي (مربع 1:1)</h3>
+        <p class="task-desc">
+          تجهيز 3 صور إعلانية بمقاس 1080x1080 مع كابشن تسويقي معتمد بأسلوب العرض الفخم لمتجر العطور في الرياض.
+        </p>
+        <div class="task-actions">
+          <span style="font-size:11px; color:#71717a;">العميل: براند رويال</span>
+          <button class="btn-complete" onclick="markTaskDone(this)">✅ تم التسليم</button>
+        </div>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-tag tag-video">🎬 تعديل فيديو</span>
+          <span class="task-tag" style="background:rgba(217,70,239,0.2); color:#f5d0fe;">تعديل V2</span>
+        </div>
+        <h3 class="task-title">تعديل الإيقاع الصوتي في الثانية 00:14</h3>
+        <p class="task-desc">
+          وفق تقرير AI Revision Analyzer: العميل طلب تقليل سرعة الموسيقى في بداية الفيديو ورفع صوت التعليق الصوتي الصادر من إيليفن لابس.
+        </p>
+        <div class="task-actions">
+          <span style="font-size:11px; color:#71717a;">العميل: عقارات العاصمة</span>
+          <button class="btn-complete" onclick="markTaskDone(this)">✅ تم التسليم</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/pwa-install.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem('pr_auth_user') || '{}');
+    if (user.name) {
+      document.getElementById('team-user-label').textContent = '👤 ' + user.name + (user.department ? ` (${user.department})` : '');
+    }
+
+    if (window.gsap) {
+      gsap.from('#team-content', { duration: 0.7, opacity: 0, y: 20, ease: 'power2.out' });
+    }
+
+    function markTaskDone(btn) {
+      btn.disabled = true;
+      btn.style.background = '#374151';
+      btn.textContent = '🎉 مكتمل';
+      alert('تم تحديث حالة المهمة وإشعار إدارة الوكالة بنجاح.');
+    }
+
+    function performLogout() {
+      localStorage.removeItem('pr_auth_user');
+      sessionStorage.removeItem('pr_auth_token');
+      localStorage.removeItem('pr_portal_token');
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>
