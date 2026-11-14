@@ -153,6 +153,13 @@
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 20000);
 
+      // Detect visitor's language, timezone, and country clues
+      const userLang = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : (navigator.language || 'ar');
+      let userTz = '';
+      try {
+        userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      } catch (e) {}
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -160,7 +167,11 @@
         body: JSON.stringify({
           message: text,
           sessionId: sessionId,
-          visitorId: getVisitorId()
+          visitorId: getVisitorId(),
+          clientMeta: {
+            lang: userLang,
+            timeZone: userTz
+          }
         })
       });
       clearTimeout(timeoutId);
