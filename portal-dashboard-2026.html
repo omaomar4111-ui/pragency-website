@@ -1190,6 +1190,9 @@
                 <button class="btn-action btn-preview" onclick="openReviewModal('${item.id}')">
                   <span>💬 ثريد التعديلات (${threadCount})</span>
                 </button>
+                <button class="btn-action" id="dl-btn-${item.id}" onclick="handleDownloadRequest('${item.id}', '${(item.title || \'\').replace(/\'/g, \'\\\\'\')}', '${item.media_url}', '${item.type}')" style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c084fc;">
+                  <span>📥 طلب تحميل الملف الأصلي</span>
+                </button>
                 ${item.status !== 'approved' ? `
                   <button class="btn-action btn-approve" onclick="quickApprove('${item.id}')">
                     <span>✅ اعتماد النسخة</span>
@@ -1713,5 +1716,217 @@
 
   <script src="/assets/js/phase4-engine.js?v=125"></script>
   <script src="/js/native-sync.js"></script>
+<script>
+    // ── Real-Time Presence Alert ──
+    async function sendPresenceHeartbeat(action = 'portal_view') {
+      try {
+        await fetch('/api/portal/presence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: action,
+            pageUrl: window.location.href,
+            timestamp: new Date().toISOString()
+          })
+        });
+      } catch (e) {}
+    }
+    // Trigger on load
+    window.addEventListener('load', () => sendPresenceHeartbeat('portal_login'));
+
+    // ── Download Gate & Approval Workflow ──
+    async function handleDownloadRequest(delId, title, mediaUrl, fileType) {
+      const btn = document.getElementById('dl-btn-' + delId);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ جاري إرسال طلب التحميل للإدارة...</span>';
+        btn.style.opacity = '0.7';
+      }
+
+      try {
+        const res = await fetch('/api/portal/download-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            deliverableId: delId,
+            deliverableTitle: title,
+            fileUrl: mediaUrl,
+            fileType: fileType,
+            fileSize: 'Original High-Res'
+          })
+        });
+        const d = await res.json();
+        if (d.success) {
+          alert('✅ تم إرسال طلب تصريح التحميل للإدارة بنجاح! سيصلك إشعار فور اعتماد الطلب.');
+          if (btn) {
+            btn.innerHTML = '<span>⏳ بانتظار موافقة الإدارة (معلق)</span>';
+            btn.style.borderColor = '#f59e0b';
+            btn.style.color = '#f59e0b';
+          }
+          // Poll every 10s to see if approved
+          pollDownloadStatus(d.requestId, delId, mediaUrl);
+        } else {
+          alert('حدث خطأ: ' + (d.error || 'يرجى المحاولة لاحقاً'));
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>📥 طلب تحميل الملف الأصلي</span>';
+            btn.style.opacity = '1';
+          }
+        }
+      } catch (err) {
+        alert('تعذر الاتصال بالخادم.');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📥 طلب تحميل الملف الأصلي</span>';
+          btn.style.opacity = '1';
+        }
+      }
+    }
+
+    function pollDownloadStatus(requestId, delId, fileUrl) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/portal/download-request?id=' + requestId);
+          const d = await res.json();
+          if (d.success && d.status === 'approved') {
+            clearInterval(interval);
+            const btn = document.getElementById('dl-btn-' + delId);
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = '<span>🎉 تحميل الملف الأصلي الآن (معتمد)</span>';
+              btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+              btn.style.borderColor = '#10b981';
+              btn.style.color = '#fff';
+              btn.onclick = () => window.open(d.downloadUrl || fileUrl, '_blank');
+            }
+          } else if (d.success && d.status === 'rejected') {
+            clearInterval(interval);
+            const btn = document.getElementById('dl-btn-' + delId);
+            if (btn) {
+              btn.innerHTML = '<span>❌ تم رفض طلب التحميل</span>';
+              btn.style.borderColor = '#ef4444';
+              btn.style.color = '#ef4444';
+            }
+          }
+        } catch (e) {}
+      }, 8000);
+    }
+</script>
+
+  <!-- Floating AI Account Manager Widget -->
+  <div id="ai-manager-widget" style="position:fixed; bottom:24px; left:24px; z-index:9999; font-family:'Cairo',sans-serif;">
+    <!-- Toggle Button -->
+    <button id="ai-widget-toggle" onclick="toggleAiManager()" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#fff; border:none; border-radius:50px; padding:12px 20px; font-weight:700; font-size:14px; box-shadow:0 8px 25px rgba(124,58,237,0.5); cursor:pointer; display:flex; align-items:center; gap:10px; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+      <span style="font-size:18px;">✨</span>
+      <span>مدير حساباتك الذكي (AI)</span>
+      <span id="ai-unread-dot" style="width:8px; height:8px; background:#10b981; border-radius:50%; box-shadow:0 0 8px #10b981;"></span>
+    </button>
+
+    <!-- Chat Modal Window -->
+    <div id="ai-widget-modal" style="display:none; position:absolute; bottom:60px; left:0; width:360px; max-width:calc(100vw - 32px); height:480px; background:#120e24; border:1px solid rgba(168,85,247,0.3); border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.7); backdrop-filter:blur(16px); flex-direction:column; overflow:hidden;">
+      <!-- Header -->
+      <div style="background:rgba(22,18,36,0.9); padding:14px 18px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:34px; height:34px; background:linear-gradient(135deg, #8b5cf6, #3b82f6); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px;">💼</div>
+          <div>
+            <div style="font-size:13px; font-weight:800; color:#fff;">مدير حساباتك (PR AI)</div>
+            <div style="font-size:10px; color:#10b981; display:flex; align-items:center; gap:4px;">
+              <span style="display:inline-block; width:6px; height:6px; background:#10b981; border-radius:50%;"></span>
+              متصل الآن 24/7 (Gemini)
+            </div>
+          </div>
+        </div>
+        <button onclick="toggleAiManager()" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:18px; cursor:pointer;">✕</button>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="ai-chat-messages" style="flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; font-size:13px;">
+        <div style="align-self:flex-start; background:rgba(255,255,255,0.06); border:1px solid rgba(168,85,247,0.2); padding:10px 14px; border-radius:14px 14px 14px 2px; color:#e4e4e7; line-height:1.5;">
+          أهلاً بحضرتك يا فندم في بوابتك! 👋 أنا مدير حساباتك الذكي في PR Agency، موجود للإجابة على استفساراتك، متابعة تعديلاتك، أو طلب تحميل الملفات الأصلية. إزاي أقدر أساعدك النهاردة؟
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <form id="ai-chat-form" onsubmit="handleSendAiMessage(event)" style="padding:12px; background:rgba(18,14,36,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; gap:8px;">
+        <input type="text" id="ai-chat-input" placeholder="اكتب استفسارك هنا..." required style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 14px; color:#fff; font-size:13px; font-family:'Cairo'; outline:none;" />
+        <button type="submit" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#fff; border:none; border-radius:12px; padding:0 14px; font-weight:700; cursor:pointer; font-size:14px;">إرسال</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let aiChatHistory = [];
+    function toggleAiManager() {
+      const modal = document.getElementById('ai-widget-modal');
+      const isHidden = modal.style.display === 'none';
+      modal.style.display = isHidden ? 'flex' : 'none';
+      if (isHidden) {
+        document.getElementById('ai-chat-input').focus();
+      }
+    }
+
+    async function handleSendAiMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('ai-chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      const stream = document.getElementById('ai-chat-messages');
+
+      // Append user msg
+      stream.innerHTML += `
+        <div style="align-self:flex-end; background:linear-gradient(135deg, #7c3aed, #6366f1); color:#fff; padding:10px 14px; border-radius:14px 14px 2px 14px; line-height:1.5;">
+          ${escapeHtml(text)}
+        </div>
+      `;
+      stream.scrollTop = stream.scrollHeight;
+
+      // Append typing loader
+      const loaderId = 'ai-loader-' + Date.now();
+      stream.innerHTML += `
+        <div id="${loaderId}" style="align-self:flex-start; background:rgba(255,255,255,0.06); padding:10px 14px; border-radius:14px 14px 14px 2px; color:#a1a1aa; font-style:italic;">
+          مدير الحسابات يكتب الآن... ✍️
+        </div>
+      `;
+      stream.scrollTop = stream.scrollHeight;
+
+      try {
+        const res = await fetch('/api/portal/ai-manager', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            clientName: (document.getElementById('nav-client-name') || {}).textContent || 'العميل',
+            conversationHistory: aiChatHistory
+          })
+        });
+        const d = await res.json();
+        const loader = document.getElementById(loaderId);
+        if (loader) loader.remove();
+
+        const reply = d.reply || 'تم استلام استفسارك وسنرد عليك فوراً.';
+        aiChatHistory.push({ sender: 'client', text: text });
+        aiChatHistory.push({ sender: 'agent', text: reply });
+
+        stream.innerHTML += `
+          <div style="align-self:flex-start; background:rgba(255,255,255,0.06); border:1px solid rgba(168,85,247,0.2); padding:10px 14px; border-radius:14px 14px 14px 2px; color:#e4e4e7; line-height:1.5;">
+            ${reply.replace(/\n/g, '<br/>')}
+          </div>
+        `;
+        stream.scrollTop = stream.scrollHeight;
+
+      } catch (err) {
+        const loader = document.getElementById(loaderId);
+        if (loader) loader.remove();
+        stream.innerHTML += `
+          <div style="align-self:flex-start; background:rgba(239,68,68,0.1); border:1px solid #ef4444; padding:10px 14px; border-radius:14px; color:#fca5a5;">
+            تعذر الاتصال بالخادم حالياً. يرجى مراسلتنا مباشرة.
+          </div>
+        `;
+      }
+    }
+  </script>
+
 </body>
 </html>
