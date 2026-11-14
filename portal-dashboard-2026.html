@@ -669,9 +669,326 @@
         box-sizing: border-box !important;
       }
     }
-  </style>
+  
+    /* ═══════════════════════════════════════════════════════════════
+       HIGGSFIELD CINEMATIC STUDIO & DIRECTOR CONTROLS
+       ═══════════════════════════════════════════════════════════════ */
+    .director-studio-card {
+      background: linear-gradient(135deg, rgba(22, 18, 36, 0.95), rgba(16, 12, 28, 0.95));
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .director-studio-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .director-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .director-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .director-badge-chip {
+      background: linear-gradient(135deg, #8b5cf6, #d946ef);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 12px rgba(217, 70, 239, 0.4);
+    }
+    .director-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .director-control-group {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(168, 85, 247, 0.18);
+      border-radius: 14px;
+      padding: 14px;
+      transition: all 0.25s ease;
+    }
+    .director-control-group:hover {
+      border-color: rgba(168, 85, 247, 0.45);
+      background: rgba(139, 92, 246, 0.06);
+    }
+    .director-group-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #c084fc;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .director-pill-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .director-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #d4d4d8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .director-pill:hover {
+      background: rgba(139, 92, 246, 0.25);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .director-pill.active {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      border-color: #a855f7;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    }
+    .director-prompt-input {
+      width: 100%;
+      background: rgba(10, 8, 18, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .director-prompt-input:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+    }
+    .director-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-director-generate {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-director-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+    }
+    .btn-director-generate:active {
+      transform: translateY(0);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CINEMATIC MEDIA CAROUSEL & HORIZONTAL STUDIO SLIDER
+       ═══════════════════════════════════════════════════════════════ */
+    .carousel-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .carousel-aspect-switches {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .aspect-switch-btn {
+      background: transparent;
+      border: none;
+      color: #a1a1aa;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .aspect-switch-btn.active, .aspect-switch-btn:hover {
+      background: rgba(139, 92, 246, 0.3);
+      color: #fff;
+    }
+    .cinematic-carousel-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    .cinematic-carousel-track {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding: 10px 4px 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .cinematic-carousel-track::-webkit-scrollbar {
+      height: 6px;
+    }
+    .cinematic-carousel-track::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+    }
+    .cinematic-carousel-track::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.4);
+      border-radius: 3px;
+    }
+    .cinematic-item-card {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      background: var(--portal-card);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .cinematic-item-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(168, 85, 247, 0.55);
+      box-shadow: 0 12px 30px rgba(139, 92, 246, 0.25);
+    }
+    .cinematic-media-viewport {
+      width: 100%;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    /* Dynamic Aspect Ratios */
+    .aspect-reels .cinematic-media-viewport {
+      height: 380px; /* 9:16 portrait feel */
+    }
+    .aspect-cinema .cinematic-media-viewport {
+      height: 180px; /* 16:9 landscape */
+    }
+    .aspect-square .cinematic-media-viewport {
+      height: 280px; /* 1:1 square */
+    }
+    .cinematic-media-viewport video,
+    .cinematic-media-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cinematic-hud-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(7, 5, 13, 0.95) 0%, rgba(7, 5, 13, 0.6) 60%, transparent 100%);
+      padding: 14px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .cinematic-hud-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .cinematic-hud-tag {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      color: #e4e4e7;
+    }
+    .cinematic-hud-tag.tag-cam { color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
+    .cinematic-hud-tag.tag-lens { color: #a78bfa; border-color: rgba(167, 139, 250, 0.4); }
+    .cinematic-hud-tag.tag-light { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); }
+    
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(16, 12, 28, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+    .carousel-nav-btn:hover {
+      background: #8b5cf6;
+      border-color: #c084fc;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .carousel-nav-prev { right: -12px; }
+    .carousel-nav-next { left: -12px; }
+
+</style>
   <link rel="stylesheet" href="/css/phase4-components.css?v=125"/>
   <link rel="stylesheet" href="/css/enterprise-theme-2026.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 <body>
 
@@ -750,6 +1067,139 @@
       <button class="toggle-btn" id="filter-pending" onclick="filterItems('pending')">بانتظار الموافقة</button>
       <button class="toggle-btn" id="filter-approved" onclick="filterItems('approved')">المعتمدة</button>
       <button class="toggle-btn" id="filter-rejected" onclick="filterItems('rejected')">مطلوب تعديل</button>
+    </div>
+
+    
+    <!-- ═══════════════════════════════════════════════════════════════
+         HIGGSFIELD CINEMATIC DIRECTOR CONTROLS PANEL
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="director-studio-card" id="director-controls-panel">
+      <div class="director-header">
+        <div class="director-title-wrap">
+          <span style="font-size:24px;">🎬</span>
+          <div>
+            <h3 style="margin:0; font-size:18px; font-weight:800; color:#fff;">لوحة تحكم المخرج السينمائي (Director Controls)</h3>
+            <span style="font-size:12px; color:#a1a1aa;">توجيه حركة الكاميرا والعدسات والإضاءة وفق معايير Higgsfield (MCSLA + Seedance)</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="director-badge-chip">Seedance Six-Slot v3.0</span>
+          <button class="toggle-btn" onclick="toggleDirectorPanel()" id="btn-toggle-director" style="font-size:11px; padding:4px 10px;">إخفاء / إظهار</button>
+        </div>
+      </div>
+
+      <div id="director-panel-body">
+        <div class="director-grid">
+          <!-- 1. Camera Move -->
+          <div class="director-control-group">
+            <div class="director-group-label">
+              <span>🎥</span> حركة الكاميرا (Camera Moves)
+            </div>
+            <div class="director-pill-options" id="pills-camera">
+              <span class="director-pill active" data-val="Dolly In">Dolly In</span>
+              <span class="director-pill" data-val="Crane Up">Crane Up</span>
+              <span class="director-pill" data-val="Orbit 360">Orbit 360</span>
+              <span class="director-pill" data-val="Bullet Time">Bullet Time</span>
+              <span class="director-pill" data-val="FPV Drone">FPV Drone</span>
+              <span class="director-pill" data-val="Static Focal">Static</span>
+            </div>
+          </div>
+
+          <!-- 2. Lens & Angle -->
+          <div class="director-control-group">
+            <div class="director-group-label">
+              <span>🔍</span> العدسة والزاوية (Lens & Angle)
+            </div>
+            <div class="director-pill-options" id="pills-lens">
+              <span class="director-pill active" data-val="35mm Lens, Eye-Level">35mm Eye-Level</span>
+              <span class="director-pill" data-val="85mm Portrait, Shallow DOF">85mm Portrait</span>
+              <span class="director-pill" data-val="Macro Lens, Extreme Close-Up">Macro Lens</span>
+              <span class="director-pill" data-val="Low Angle Heroic">Low Angle Hero</span>
+              <span class="director-pill" data-val="High Angle Top-Down">High Angle</span>
+            </div>
+          </div>
+
+          <!-- 3. Lighting Presets -->
+          <div class="director-control-group">
+            <div class="director-group-label">
+              <span>💡</span> الإضاءة السينمائية (Lighting Presets)
+            </div>
+            <div class="director-pill-options" id="pills-lighting">
+              <span class="director-pill active" data-val="Volumetric Cinematic Lighting">Volumetric</span>
+              <span class="director-pill" data-val="Rim Light with Dark Backdrop">Rim Light</span>
+              <span class="director-pill" data-val="Softbox Commercial Glow">Softbox</span>
+              <span class="director-pill" data-val="Cyberpunk Neon Contrast">Cyberpunk Neon</span>
+              <span class="director-pill" data-val="Golden Hour Sunset Warmth">Golden Hour</span>
+            </div>
+          </div>
+
+          <!-- 4. Aspect Ratio & Target Model -->
+          <div class="director-control-group">
+            <div class="director-group-label">
+              <span>📐</span> أبعاد الكادر (Aspect Ratio)
+            </div>
+            <div class="director-pill-options" id="pills-aspect">
+              <span class="director-pill active" data-val="9:16">9:16 Reels</span>
+              <span class="director-pill" data-val="16:9">16:9 Cinema</span>
+              <span class="director-pill" data-val="1:1">1:1 Square</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt Textarea & Action -->
+        <div style="margin-top:14px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#d4d4d8; margin-bottom:6px;">
+            وصف الفكرة أو المنتج المراد تصويره (Subject & Narrative):
+          </label>
+          <textarea id="director-subject-input" class="director-prompt-input" rows="2" placeholder="مثال: لقطة سينمائية لساعة فاخرة سوداء مع تفاصيل العقارب والتروس المعدنية الدقيقة..."></textarea>
+        </div>
+
+        <div class="director-action-bar">
+          <div style="font-size:12px; color:#a1a1aa; display:flex; align-items:center; gap:6px;">
+            <span>⚡ المحرك:</span>
+            <strong style="color:#c084fc;">Gemini 4 Argon / Higgsfield MCSLA</strong>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-director-generate" id="btn-generate-cinematic" onclick="triggerCinematicGeneration()">
+              <span>🚀 توليد برومبت المخرج السينمائي</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Generated Prompt Result Card -->
+        <div id="director-result-box" style="display:none; margin-top:16px; background:rgba(0,0,0,0.5); border:1px solid rgba(139,92,246,0.3); border-radius:12px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:800; color:#34d399;">✅ البرومبت السينمائي الجاهز (Higgsfield Format):</span>
+            <button onclick="copyGeneratedPrompt()" style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); color:#c084fc; font-size:11px; font-weight:700; border-radius:6px; padding:3px 10px; cursor:pointer;">📋 نسخ البرومبت</button>
+          </div>
+          <p id="director-positive-prompt" style="font-family:monospace; font-size:12px; color:#e4e4e7; line-height:1.6; margin:0 0 10px;"></p>
+          <div id="director-slots-breakdown" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         CINEMATIC MEDIA CAROUSEL SECTION
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="carousel-section-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:20px;">🎞️</span>
+        <h3 style="margin:0; font-size:17px; font-weight:800; color:#fff;">استوديو العرض السينمائي (Cinematic Carousel)</h3>
+        <span class="director-badge-chip" style="font-size:10px;">Live Previews</span>
+      </div>
+      <div class="carousel-aspect-switches">
+        <button class="aspect-switch-btn active" onclick="setCarouselAspect('reels', this)">📱 9:16 ريلز</button>
+        <button class="aspect-switch-btn" onclick="setCarouselAspect('cinema', this)">🖥️ 16:9 سينما</button>
+        <button class="aspect-switch-btn" onclick="setCarouselAspect('square', this)">⬛ 1:1 مربع</button>
+      </div>
+    </div>
+
+    <div class="cinematic-carousel-wrap aspect-reels" id="cinematic-carousel-container">
+      <button class="carousel-nav-btn carousel-nav-prev" onclick="scrollCarousel(1)" aria-label="Previous">❯</button>
+      <div class="cinematic-carousel-track" id="cinematic-carousel-track">
+        <!-- Rendered dynamically -->
+      </div>
+      <button class="carousel-nav-btn carousel-nav-next" onclick="scrollCarousel(-1)" aria-label="Next">❮</button>
     </div>
 
     <!-- 1. Deliverables Cards Grid -->
@@ -1099,6 +1549,7 @@
         }
 
         await loadCalendar();
+      initDirectorControls();
       } catch (e) {
         window.location.href = '/portal-access-2026';
       }
@@ -1121,6 +1572,196 @@
       }
     }
 
+    
+    // ═══════════════════════════════════════════════════════════════
+    // HIGGSFIELD DIRECTOR CONTROLS & CINEMATIC CAROUSEL JS
+    // ═══════════════════════════════════════════════════════════════
+    let selectedCamera = 'Dolly In';
+    let selectedLens = '35mm Lens, Eye-Level';
+    let selectedLighting = 'Volumetric Cinematic Lighting';
+    let selectedAspect = '9:16';
+    let lastGeneratedPrompt = '';
+
+    // Initialize pill selection and GSAP micro-interactions
+    function initDirectorControls() {
+      setupPillGroup('pills-camera', val => selectedCamera = val);
+      setupPillGroup('pills-lens', val => selectedLens = val);
+      setupPillGroup('pills-lighting', val => selectedLighting = val);
+      setupPillGroup('pills-aspect', val => selectedAspect = val);
+
+      // GSAP smooth entrance for Director card
+      if (window.gsap) {
+        gsap.from('#director-controls-panel', {
+          duration: 0.8,
+          y: 20,
+          opacity: 0,
+          ease: 'power3.out'
+        });
+      }
+    }
+
+    function setupPillGroup(containerId, onSelect) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.querySelectorAll('.director-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          container.querySelectorAll('.director-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          onSelect(pill.getAttribute('data-val'));
+
+          if (window.gsap) {
+            gsap.fromTo(pill, { scale: 0.94 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
+          }
+        });
+      });
+    }
+
+    function toggleDirectorPanel() {
+      const body = document.getElementById('director-panel-body');
+      const btn = document.getElementById('btn-toggle-director');
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        btn.textContent = 'إخفاء';
+        if (window.gsap) gsap.from(body, { opacity: 0, y: -10, duration: 0.3 });
+      } else {
+        body.style.display = 'none';
+        btn.textContent = 'إظهار';
+      }
+    }
+
+    async function triggerCinematicGeneration() {
+      const subjectInput = document.getElementById('director-subject-input');
+      const subject = subjectInput.value.trim() || 'Luxury commercial showcase';
+      const btn = document.getElementById('btn-generate-cinematic');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ جاري صياغة البرومبت السينمائي...</span>';
+
+      try {
+        const res = await fetch('/api/portal/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subject,
+            cameraMove: selectedCamera,
+            lensAngle: selectedLens,
+            lighting: selectedLighting,
+            aspectRatio: selectedAspect
+          })
+        });
+        const data = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀 توليد برومبت المخرج السينمائي</span>';
+
+        if (data.prompt) {
+          const resultBox = document.getElementById('director-result-box');
+          const posP = document.getElementById('director-positive-prompt');
+          const slotsDiv = document.getElementById('director-slots-breakdown');
+
+          lastGeneratedPrompt = data.prompt.positivePrompt;
+          posP.textContent = data.prompt.positivePrompt;
+
+          const slots = data.prompt.seedanceSixSlot || {};
+          slotsDiv.innerHTML = `
+            <span class="cinematic-hud-tag tag-cam">🎥 ${slots.cameraMovement || selectedCamera}</span>
+            <span class="cinematic-hud-tag tag-lens">🔍 ${selectedLens}</span>
+            <span class="cinematic-hud-tag tag-light">💡 ${slots.lighting || selectedLighting}</span>
+            <span class="cinematic-hud-tag" style="color:#d946ef; border-color:rgba(217,70,239,0.4);">📐 ${selectedAspect}</span>
+          `;
+
+          resultBox.style.display = 'block';
+          if (window.gsap) {
+            gsap.from(resultBox, { opacity: 0, y: 15, duration: 0.4, ease: 'power2.out' });
+          }
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀 توليد برومبت المخرج السينمائي</span>';
+        alert('حدث خطأ أثناء التوليد، يرجى المحاولة ثانية.');
+      }
+    }
+
+    function copyGeneratedPrompt() {
+      if (!lastGeneratedPrompt) return;
+      navigator.clipboard.writeText(lastGeneratedPrompt).then(() => {
+        alert('✅ تم نسخ البرومبت السينمائي بنجاح!');
+      });
+    }
+
+    // Cinematic Carousel Operations
+    function setCarouselAspect(aspectClass, btn) {
+      const container = document.getElementById('cinematic-carousel-container');
+      container.classList.remove('aspect-reels', 'aspect-cinema', 'aspect-square');
+      container.classList.add('aspect-' + aspectClass);
+
+      document.querySelectorAll('.aspect-switch-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (window.gsap) {
+        gsap.from('.cinematic-media-viewport', { scale: 0.98, duration: 0.3, ease: 'power2.out' });
+      }
+    }
+
+    function scrollCarousel(direction) {
+      const track = document.getElementById('cinematic-carousel-track');
+      if (track) {
+        track.scrollBy({ left: direction * 300, behavior: 'smooth' });
+      }
+    }
+
+    window.renderCinematicCarousel = renderCinematicCarousel;
+    window.setCarouselAspect = setCarouselAspect;
+    window.triggerCinematicGeneration = triggerCinematicGeneration;
+    function renderCinematicCarousel(items) {
+      const track = document.getElementById('cinematic-carousel-track');
+      if (!track) return;
+
+      if (!items || items.length === 0) {
+        track.innerHTML = `
+          <div style="padding:40px; color:#a1a1aa; text-align:center; width:100%;">
+            لا توجد وسائط سينمائية حالياً
+          </div>
+        `;
+        return;
+      }
+
+      // Camera & Lighting simulation presets for deliverables
+      const cameraMovePresets = ['Dolly In', 'Crane Over Head', 'Orbit 360', 'Bullet Time', 'Steadicam Run'];
+      const lensPresets = ['35mm Anamorphic', '85mm Prime f/1.4', 'Macro 100mm', '24mm Low Angle'];
+      const lightPresets = ['Volumetric Soft', 'Cyberpunk Neon', 'Golden Hour Glow', 'Rim Light Studio'];
+
+      track.innerHTML = items.map((item, idx) => {
+        const cam = cameraMovePresets[idx % cameraMovePresets.length];
+        const lens = lensPresets[idx % lensPresets.length];
+        const light = lightPresets[idx % lightPresets.length];
+
+        const media = item.type === 'video'
+          ? `<video src="${item.media_url}" poster="${item.thumbnail_url || ''}" controls preload="metadata"></video>`
+          : `<img src="${item.media_url}" alt="${item.title}" loading="lazy"/>`;
+
+        return `
+          <div class="cinematic-item-card">
+            <div class="cinematic-media-viewport">
+              ${media}
+              <div class="cinematic-hud-overlay">
+                <div style="font-size:12px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);">${item.title}</div>
+                <div class="cinematic-hud-tags">
+                  <span class="cinematic-hud-tag tag-cam">🎥 ${cam}</span>
+                  <span class="cinematic-hud-tag tag-lens">🔍 ${lens}</span>
+                  <span class="cinematic-hud-tag tag-light">💡 ${light}</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
+              <span style="font-size:11px; color:#a1a1aa;">${item.scheduled_date || 'جاهز للعرض'}</span>
+              <button onclick="handleDownloadRequest('${item.id}', '', '${item.media_url}', '${item.type}')" style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); color:#c084fc; font-size:11px; font-weight:700; border-radius:6px; padding:4px 10px; cursor:pointer;">
+                📥 تحميل Master
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderItems() {
       const container = document.getElementById('deliverables-container');
       const filtered = activeFilter === 'all' 
@@ -1138,6 +1779,7 @@
         return;
       }
 
+      renderCinematicCarousel(filtered);
       container.innerHTML = filtered.map(item => {
         const typeBadge = item.type === 'video' ? '🎬 فيديو ريلز' : item.type === 'pdf' ? '📑 ملف PDF' : '🎨 بوست وتصميم';
         const typeClass = item.type === 'video' ? 'badge-video' : item.type === 'pdf' ? 'badge-pdf' : 'badge-design';
@@ -1190,7 +1832,7 @@
                 <button class="btn-action btn-preview" onclick="openReviewModal('${item.id}')">
                   <span>💬 ثريد التعديلات (${threadCount})</span>
                 </button>
-                <button class="btn-action" id="dl-btn-${item.id}" onclick="handleDownloadRequest('${item.id}', '${(item.title || \'\').replace(/\'/g, \'\\\\'\')}', '${item.media_url}', '${item.type}')" style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c084fc;">
+                <button class="btn-action" id="dl-btn-${item.id}" onclick="handleDownloadRequest('${item.id}', '', '${item.media_url}', '${item.type}')" style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c084fc;">
                   <span>📥 طلب تحميل الملف الأصلي</span>
                 </button>
                 ${item.status !== 'approved' ? `
