@@ -67,6 +67,49 @@ export async function onRequestPost(context) {
 - إذا كتب بالإنجليزية أو أي لغة أجنبية أخرى: تحدث بنفس لغته فوراً (Native High-Ticket B2B English Consultant Tone).`;
     }
 
+    // ── Zero-Cost Smart Intent Router (Tier 1 vs Tier 2) ──
+    const cleanMsg = message.trim().toLowerCase();
+    const isBriefGreeting = /^(مرحبا|مرحباً|أهلا|اهلا|سلام|السلام عليكم|مساء الخير|صباح الخير|hi|hello|hey|hey there)$/i.test(cleanMsg);
+    const isPortalNav = /^(عميل|بوابة|دخول|بوابه|حسابي|لوحة العميل|أنا عميل|انا عميل|بوابة العملاء|login|portal|client|sign in)$/i.test(cleanMsg);
+
+    // If it's a simple greeting or direct portal navigation, respond immediately with zero API cost!
+    if (isPortalNav) {
+      return new Response(JSON.stringify({
+        reply: 'أهلاً بك يا فندم! يسعدنا تواجدك كشريك نجاح لـ PR Agency. تفضل بالدخول إلى بوابتك الخاصة بمشاريعك:\n\n[[ACTION:بوابة العملاء|/portal-access-2026.html]]',
+        sessionId,
+        agentRole: 'Senior Sales & Growth Consultant',
+        aiModel: 'tier1-instant-router'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
+    if (isBriefGreeting) {
+      let greetingText = '';
+      if (['SA', 'AE', 'KW', 'QA', 'BH', 'OM'].includes(countryCode) || /Riyadh|Dubai|Kuwait|Qatar|Doha|Muscat|Manama|Abu Dhabi/i.test(clientTimeZone)) {
+        greetingText = 'يا هلا والله ومسهلا فيك يا غالي! نورت PR Agency. وش نوع مشروعك أو متجرك، والهدف البيعي اللي ودك توصله الفترة الجاية؟';
+      } else if (['JO', 'LB', 'SY', 'PS'].includes(countryCode) || /Amman|Beirut|Damascus|Jerusalem/i.test(clientTimeZone)) {
+        greetingText = 'أهلاً وسهلاً بحضرتك، نورتنا في PR Agency! شو مجال شركتك أو مشروعك، وكيف منقدر نساعدك برفع مبيعاتك اليوم؟';
+      } else if (['IQ'].includes(countryCode) || /Baghdad/i.test(clientTimeZone)) {
+        greetingText = 'كل الهلا بيك عيني نورت PR Agency! شنو طبيعة مشروعك أو تجارتك، وشلون نحقق لك أعلى نمو بالمبيعات؟';
+      } else if (['MA', 'DZ', 'TN'].includes(countryCode) || /Casablanca|Algiers|Tunis/i.test(clientTimeZone)) {
+        greetingText = 'مرحباً بك يا فندم في PR Agency! شرف لينا نتواصلو معاك. شنو هو مجال مشروعك، وباش نقدروا نعاونوك تضاعف مبيعاتك وأرقامك؟';
+      } else {
+        greetingText = 'أهلاً بك يا فندم في PR Agency! يسعدني كشريك نمو واستشاري للوكالة مساعدة حضرتك في مضاعفة أرقام مبيعاتك وبناء حضور سينمائي لعلامتك التجارية. تحب نركز في خطتنا على إعلانات الفيديو وزيادة المبيعات، ولا بناء هوية وتسويق شامل لشركتك؟';
+      }
+
+      return new Response(JSON.stringify({
+        reply: greetingText,
+        sessionId,
+        agentRole: 'Senior Sales & Growth Consultant',
+        aiModel: 'tier1-instant-router'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
     // ── 1. Fetch Dynamic Learned Insights from DB (Self-Evolution Memory) ──
     let learnedWisdom = '';
     if (db) {
