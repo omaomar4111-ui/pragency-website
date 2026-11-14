@@ -151,7 +151,7 @@
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 18000);
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -166,7 +166,6 @@
       clearTimeout(timeoutId);
 
       const data = await res.json();
-      typing.style.display = 'none';
 
       // ── Instant Redirect for Clients / Portal Login ──
       if (data.action === 'redirect' && data.url) {
@@ -177,8 +176,12 @@
         return;
       }
 
-      // Format markdown bold & line breaks
+      // Format markdown bold & line breaks & action links [[ACTION:Label|URL]]
       let reply = data.reply || (document.documentElement.lang === 'en' ? "Thank you for reaching out! A strategist will connect with you." : "أهلاً بك! يسعدنا تواصلك مع فريقنا.");
+      
+      // Parse custom action buttons: [[ACTION:Text|URL]]
+      reply = reply.replace(/\[\[ACTION:(.*?)\|(.*?)\]\]/g, '<a href="$2" class="ai-chat-action-badge" style="display:inline-block;margin-top:6px;padding:6px 14px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border-radius:16px;text-decoration:none;font-weight:600;font-size:12px;box-shadow:0 2px 8px rgba(139,92,246,0.3);">$1 ↗</a>');
+
       reply = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>');
 
       renderMessage('assistant', reply);
@@ -191,11 +194,13 @@
       }
 
     } catch (err) {
-      typing.style.display = 'none';
       const errorMsg = document.documentElement.lang === 'en'
         ? "We're experiencing heavy demand. You can also reach us directly via WhatsApp at +201144826641."
         : "واجهنا ضغطاً بسيطاً في الاتصال، يمكنك أيضاً التواصل معنا مباشرة عبر واتساب: 01144826641.";
       renderMessage('assistant', errorMsg);
+    } finally {
+      typing.style.display = 'none';
+      msgsContainer.scrollTop = msgsContainer.scrollHeight;
     }
   }
 
