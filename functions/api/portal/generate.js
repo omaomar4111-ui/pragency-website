@@ -1,210 +1,118 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   PR AGENCY — Multi-LLM Smart Router & Higgsfield Prompt Engine
-   Architecture:
-   1. Primary: Google Gemini 4 Argon / 2.5 Flash (via GEMINI_API_KEY)
-   2. Secondary: FreeLLMAPI / Open-Source Free LLM Gateway (FREE_LLM_API_URL / OPENROUTER)
-   3. Tertiary: Public Free LLM Text Fallback
-   4. Local Edge Fallback: Pure Deterministic Higgsfield MCSLA + Seedance Algorithm
-   ═══════════════════════════════════════════════════════════════════════════ */
-
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = await request.json();
     const {
-      subject = 'Luxury product commercial showcase',
-      action = 'smooth elegant rotation highlighting metallic texture and reflections',
-      cameraMove = 'Dolly In',
-      lensAngle = '35mm Lens, Eye-Level',
+      subject = 'Luxury commercial showcase',
+      camera = body.cameraMove || 'Dolly In',
+      lens = body.lensAngle || '35mm Lens, Eye-Level',
       lighting = 'Volumetric Cinematic Lighting',
-      aspectRatio = '9:16',
-      style = 'Hyper-Realistic 8K, Arri Alexa Mini LF, high-end commercial aesthetic',
-      targetModel = 'Flux Pro / SDXL',
-      mode = 'single_shot' // 'single_shot' or 'storyboard'
+      ratio = body.aspectRatio || '9:16'
     } = body;
 
-    const geminiKey = env.GEMINI_API_KEY;
-    const freeLlmBase = env.FREE_LLM_API_BASE || env.FREELLMAPI_URL;
-    const freeLlmKey = env.FREE_LLM_API_KEY || 'freellmapi-client';
+    // 1. بناء الـ System Prompt السينمائي (Seedance Six-Slot)
+    const systemPrompt = `You are a senior cinematic director. Write a single, highly detailed cinematic prompt (50-80 words) based on the user inputs. Output ONLY the prompt text, no intro, no outro, no quotes.
+    Structure: [Subject & Action] + [Camera Move & Lens] + [Lighting & Atmospheric Locks].
+    Use high-end Hollywood terminology (e.g., Arri Alexa 65, Anamorphic lens, 8K resolution).`;
 
-    // Higgsfield Prompt Engineering System Prompt
-    const systemPrompt = `You are the Lead Cinematic AI Director and Prompt Engineer at PR Agency, operating under strict Higgsfield OS v3.0 (MCSLA + Seedance Six-Slot standard).
-Your task: Turn the user's creative inputs into a pristine, production-grade cinematic prompt for high-end AI video/image generators (Flux Pro, Kling, Runway Gen-3, Luma Dream Machine).
+    const userPrompt = `Subject: ${subject}\nCamera: ${camera}\nLens: ${lens}\nLighting: ${lighting}\nAspect Ratio: ${ratio}`;
 
-MANDATORY RULES:
-1. Target Length: 50 to 80 words exactly for the positive prompt. Sharp, dense, evocative.
-2. Structure:
-   - Sentence 1: [Subject + Action] (Primary narrative load)
-   - Sentence 2: [Camera Movement + Lens/Angle + Style] (Technical directorial execution)
-   - Sentence 3: [Lighting + Constraints + Locks] (Atmospheric look and physical consistency)
-3. Use unidirectional camera dynamics ending with specific focus ("ending on...").
-4. Never include negative words (blurry, bad) in the positive prompt.
-5. Return strictly a JSON object matching this schema:
-{
-  "positivePrompt": "50-80 words cinematic prompt in English",
-  "negativePrompt": "text, watermark, logo, blurry, low resolution, cartoonish, distorted, deformed, amateur, plastic look, overexposed, jittery motion",
-  "directorNotes": {
-    "camera": "${cameraMove} with ${lensAngle}",
-    "lighting": "${lighting}",
-    "aspectRatio": "${aspectRatio}",
-    "recommendedModel": "${targetModel}"
-  },
-  "seedanceSixSlot": {
-    "cameraMovement": "${cameraMove}",
-    "subject": "${subject}",
-    "action": "${action}",
-    "setting": "high-end luxury cinematic studio",
-    "style": "${style}",
-    "lighting": "${lighting}"
-  }
-}`;
+    let finalPrompt = "";
+    let activeEngine = "";
 
-    const userPrompt = `
-Generate a cinematic prompt for:
-- Subject: ${subject}
-- Action: ${action}
-- Camera Movement: ${cameraMove}
-- Lens & Angle: ${lensAngle}
-- Lighting Preset: ${lighting}
-- Style & Mood: ${style}
-- Aspect Ratio: ${aspectRatio}
-`;
-
-    let generatedOutput = null;
-    let providerUsed = 'Deterministic MCSLA Rule Engine';
-
-    // ── Tier 1: Try Gemini (Fast & Ultra High Intelligence) ──
-    if (geminiKey) {
-      const candidateModels = ['gemini-4-argon', 'gemini-2.5-flash', 'gemini-flash-latest'];
-      for (const model of candidateModels) {
-        try {
-          const ctrl = new AbortController();
-          const tid = setTimeout(() => ctrl.abort(), 6000);
-
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            signal: ctrl.signal,
-            body: JSON.stringify({
-              system_instruction: { parts: [{ text: systemPrompt }] },
-              contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-              generationConfig: {
-                temperature: 0.6,
-                maxOutputTokens: 600,
-                response_mime_type: 'application/json'
-              }
-            })
-          });
-          clearTimeout(tid);
-
-          if (res.ok) {
-            const data = await res.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-            if (text) {
-              try {
-                generatedOutput = JSON.parse(text);
-                providerUsed = `Gemini (${model})`;
-                break;
-              } catch (parseErr) {}
-            }
-          }
-        } catch (e) {}
-      }
-    }
-
-    // ── Tier 2: Try FreeLLMAPI / OpenAI-Compatible Smart Router ──
-    if (!generatedOutput && freeLlmBase) {
+    // ==========================================
+    // TIER 1: Gemini API (Primary)
+    // ==========================================
+    if (env.GEMINI_API_KEY) {
       try {
-        const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 6500);
-
-        const routerUrl = freeLlmBase.endsWith('/v1') 
-          ? `${freeLlmBase}/chat/completions` 
-          : `${freeLlmBase.replace(/\/+$/, '')}/v1/chat/completions`;
-
-        const res = await fetch(routerUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${freeLlmKey}`
-          },
-          signal: ctrl.signal,
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+        const geminiRes = await fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: 'auto:smart', // FreeLLMAPI auto smart routing
-            response_format: { type: 'json_object' },
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ],
-            temperature: 0.6,
-            max_tokens: 600
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ parts: [{ text: userPrompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 150 }
           })
         });
-        clearTimeout(tid);
 
-        if (res.ok) {
-          const data = await res.json();
-          const text = data.choices?.[0]?.message?.content?.trim();
-          if (text) {
-            try {
-              generatedOutput = JSON.parse(text);
-              providerUsed = `FreeLLMAPI Smart Router (${data.model || 'auto'})`;
-            } catch (err) {}
+        if (geminiRes.ok) {
+          const data = await geminiRes.json();
+          finalPrompt = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+          if (finalPrompt) {
+            activeEngine = "Gemini 1.5 Flash";
           }
         }
-      } catch (err) {}
+      } catch (e) {
+        console.warn("Gemini Tier 1 failed, falling back to Tier 2.", e);
+      }
     }
 
-    // ── Tier 3: High-Precision Zero-Cost Deterministic Fallback ──
-    if (!generatedOutput) {
-      const positivePrompt = `${subject} performing ${action} inside a sleek modern studio. Shot with dynamic ${cameraMove} using a ${lensAngle}, filmed on Arri Alexa 65 with anamorphic glass, capturing ${style}. Bathed in dramatic ${lighting} with subtle atmospheric haze, sharp specular highlights, pristine ray-traced reflections, ending in crystal-clear focal lock.`;
+    // ==========================================
+    // TIER 2: OpenRouter / FreeLLMAPI (OpenAI Compatible)
+    // ==========================================
+    if (!finalPrompt && env.FREE_LLM_API_KEY) {
+      try {
+        const apiBase = env.FREE_LLM_API_BASE || "https://openrouter.ai/api/v1";
+        const model = env.FREE_LLM_MODEL || "meta-llama/llama-3.3-70b-instruct:free";
 
-      generatedOutput = {
-        positivePrompt,
-        negativePrompt: "text, watermark, logo, blurry, low resolution, cartoonish, distorted, deformed, amateur, plastic look, overexposed, jittery motion",
-        directorNotes: {
-          camera: `${cameraMove} with ${lensAngle}`,
-          lighting: lighting,
-          aspectRatio: aspectRatio,
-          recommendedModel: targetModel
-        },
-        seedanceSixSlot: {
-          cameraMovement: cameraMove,
-          subject: subject,
-          action: action,
-          setting: "high-end luxury cinematic studio",
-          style: style,
-          lighting: lighting
+        const freeRes = await fetch(`${apiBase}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${env.FREE_LLM_API_KEY}`,
+            "HTTP-Referer": "https://pragency.pages.dev",
+            "X-Title": "PR Agency Cinematic Studio"
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt }
+            ],
+            temperature: 0.7,
+            max_tokens: 150
+          })
+        });
+
+        if (freeRes.ok) {
+          const data = await freeRes.json();
+          finalPrompt = data.choices?.[0]?.message?.content?.trim().replace(/^"|"$/g, '') || "";
+          if (finalPrompt) {
+            activeEngine = `FreeLLMAPI (${model})`;
+          }
         }
-      };
-      providerUsed = 'Higgsfield Algorithmic OS v3.0 (Zero-Cost Guard)';
+      } catch (e) {
+        console.warn("FreeLLMAPI Tier 2 failed, falling back to Tier 3.", e);
+      }
     }
 
+    // ==========================================
+    // TIER 3: Zero-Cost Local Fallback (Higgsfield MCSLA v3.0)
+    // ==========================================
+    if (!finalPrompt) {
+      finalPrompt = `${subject} performing action in a highly detailed environment. Shot with dynamic ${camera} using a ${lens}, capturing cinematic realism. Bathed in dramatic ${lighting} with subtle atmospheric haze, sharp specular highlights, and pristine ray-traced reflections. Filmed on Arri Alexa 65 with anamorphic glass, Hyper-Realistic 8K resolution, ending in crystal-clear focal lock.`;
+      activeEngine = "Local MCSLA v3.0 (Zero-Cost)";
+    }
+
+    // إرجاع النتيجة للواجهة
     return new Response(JSON.stringify({
       success: true,
-      prompt: generatedOutput,
-      meta: {
-        timestamp: new Date().toISOString(),
-        engine: 'Higgsfield MCSLA v3.0',
-        provider: providerUsed
-      }
+      engine: activeEngine,
+      prompt: finalPrompt,
+      ratio: ratio,
+      camera: camera,
+      lens: lens,
+      lighting: lighting
     }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'X-Higgsfield-Provider': providerUsed
-      }
+      headers: { "Content-Type": "application/json" }
     });
 
-  } catch (err) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: err.message || 'Internal director engine error'
-    }), {
+  } catch (error) {
+    return new Response(JSON.stringify({ success: false, error: error.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
   }
 }

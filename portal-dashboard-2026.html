@@ -1647,9 +1647,12 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             subject,
+            camera: selectedCamera,
             cameraMove: selectedCamera,
+            lens: selectedLens,
             lensAngle: selectedLens,
             lighting: selectedLighting,
+            ratio: selectedAspect,
             aspectRatio: selectedAspect
           })
         });
@@ -1657,30 +1660,42 @@
         btn.disabled = false;
         btn.innerHTML = '<span>🚀 توليد برومبت المخرج السينمائي</span>';
 
-        if (data.prompt) {
+        if (data.success && data.prompt) {
           const resultBox = document.getElementById('director-result-box');
           const posP = document.getElementById('director-positive-prompt');
           const slotsDiv = document.getElementById('director-slots-breakdown');
-          const engineBadge = document.getElementById('director-active-engine');
+          let engineBadge = document.getElementById('active-engine-badge');
 
-          if (engineBadge && data.meta && data.meta.provider) {
-            engineBadge.textContent = data.meta.provider;
+          const promptText = typeof data.prompt === 'string' ? data.prompt : (data.prompt.positivePrompt || '');
+          const activeEngine = data.engine || (data.meta && data.meta.provider) || 'Local MCSLA v3.0';
+
+          if (!engineBadge && resultBox) {
+            engineBadge = document.createElement('div');
+            engineBadge.id = 'active-engine-badge';
+            engineBadge.style.cssText = "display: inline-flex; align-items: center; gap: 6px; background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 8px;";
+            resultBox.insertBefore(engineBadge, resultBox.firstChild);
+          }
+          if (engineBadge) {
+            engineBadge.innerHTML = `⚡ المحرك النشط: ${activeEngine}`;
           }
 
-          lastGeneratedPrompt = data.prompt.positivePrompt;
-          posP.textContent = data.prompt.positivePrompt;
+          lastGeneratedPrompt = promptText;
+          if (posP) posP.textContent = promptText;
 
-          const slots = data.prompt.seedanceSixSlot || {};
-          slotsDiv.innerHTML = `
-            <span class="cinematic-hud-tag tag-cam">🎥 ${slots.cameraMovement || selectedCamera}</span>
-            <span class="cinematic-hud-tag tag-lens">🔍 ${selectedLens}</span>
-            <span class="cinematic-hud-tag tag-light">💡 ${slots.lighting || selectedLighting}</span>
-            <span class="cinematic-hud-tag" style="color:#d946ef; border-color:rgba(217,70,239,0.4);">📐 ${selectedAspect}</span>
-          `;
+          if (slotsDiv) {
+            slotsDiv.innerHTML = `
+              <span class="cinematic-hud-tag tag-cam">🎥 ${data.camera || selectedCamera}</span>
+              <span class="cinematic-hud-tag tag-lens">🔍 ${data.lens || selectedLens}</span>
+              <span class="cinematic-hud-tag tag-light">💡 ${data.lighting || selectedLighting}</span>
+              <span class="cinematic-hud-tag" style="color:#d946ef; border-color:rgba(217,70,239,0.4);">📐 ${data.ratio || selectedAspect}</span>
+            `;
+          }
 
-          resultBox.style.display = 'block';
-          if (window.gsap) {
-            gsap.from(resultBox, { opacity: 0, y: 15, duration: 0.4, ease: 'power2.out' });
+          if (resultBox) {
+            resultBox.style.display = 'block';
+            if (window.gsap) {
+              gsap.from(resultBox, { opacity: 0, y: 15, duration: 0.4, ease: 'power2.out' });
+            }
           }
         }
       } catch (err) {
