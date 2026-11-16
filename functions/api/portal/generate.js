@@ -1,10 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   PR AGENCY — Higgsfield Cinematic Prompt & Seedance Six-Slot Engine
-   • Generates strictly formatted cinematic prompts:
-     [Subject & Action] + [Cinematic Camera/Lens] + [Lighting/Style] + [Constraints]
-   • MCSLA + Seedance Six-Slot Rule compliance (50-80 words per prompt)
-   • Seamless fallback logic and Gemini 4 Argon / Gemini Flash support
-═══════════════════════════════════════════════════════════════════════════ */
+   PR AGENCY — Multi-LLM Smart Router & Higgsfield Prompt Engine
+   Architecture:
+   1. Primary: Google Gemini 4 Argon / 2.5 Flash (via GEMINI_API_KEY)
+   2. Secondary: FreeLLMAPI / Open-Source Free LLM Gateway (FREE_LLM_API_URL / OPENROUTER)
+   3. Tertiary: Public Free LLM Text Fallback
+   4. Local Edge Fallback: Pure Deterministic Higgsfield MCSLA + Seedance Algorithm
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -19,14 +20,16 @@ export async function onRequestPost(context) {
       lighting = 'Volumetric Cinematic Lighting',
       aspectRatio = '9:16',
       style = 'Hyper-Realistic 8K, Arri Alexa Mini LF, high-end commercial aesthetic',
-      targetModel = 'Flux Pro / SDXL'
+      targetModel = 'Flux Pro / SDXL',
+      mode = 'single_shot' // 'single_shot' or 'storyboard'
     } = body;
 
     const geminiKey = env.GEMINI_API_KEY;
+    const freeLlmBase = env.FREE_LLM_API_BASE || env.FREELLMAPI_URL;
+    const freeLlmKey = env.FREE_LLM_API_KEY || 'freellmapi-client';
 
     // Higgsfield Prompt Engineering System Prompt
     const systemPrompt = `You are the Lead Cinematic AI Director and Prompt Engineer at PR Agency, operating under strict Higgsfield OS v3.0 (MCSLA + Seedance Six-Slot standard).
-
 Your task: Turn the user's creative inputs into a pristine, production-grade cinematic prompt for high-end AI video/image generators (Flux Pro, Kling, Runway Gen-3, Luma Dream Machine).
 
 MANDATORY RULES:
@@ -69,7 +72,9 @@ Generate a cinematic prompt for:
 `;
 
     let generatedOutput = null;
+    let providerUsed = 'Deterministic MCSLA Rule Engine';
 
+    // ── Tier 1: Try Gemini (Fast & Ultra High Intelligence) ──
     if (geminiKey) {
       const candidateModels = ['gemini-4-argon', 'gemini-2.5-flash', 'gemini-flash-latest'];
       for (const model of candidateModels) {
@@ -99,6 +104,7 @@ Generate a cinematic prompt for:
             if (text) {
               try {
                 generatedOutput = JSON.parse(text);
+                providerUsed = `Gemini (${model})`;
                 break;
               } catch (parseErr) {}
             }
@@ -107,7 +113,50 @@ Generate a cinematic prompt for:
       }
     }
 
-    // High-Precision Zero-Cost Fallback Generator (Higgsfield Formula)
+    // ── Tier 2: Try FreeLLMAPI / OpenAI-Compatible Smart Router ──
+    if (!generatedOutput && freeLlmBase) {
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 6500);
+
+        const routerUrl = freeLlmBase.endsWith('/v1') 
+          ? `${freeLlmBase}/chat/completions` 
+          : `${freeLlmBase.replace(/\/+$/, '')}/v1/chat/completions`;
+
+        const res = await fetch(routerUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${freeLlmKey}`
+          },
+          signal: ctrl.signal,
+          body: JSON.stringify({
+            model: 'auto:smart', // FreeLLMAPI auto smart routing
+            response_format: { type: 'json_object' },
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            temperature: 0.6,
+            max_tokens: 600
+          })
+        });
+        clearTimeout(tid);
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.choices?.[0]?.message?.content?.trim();
+          if (text) {
+            try {
+              generatedOutput = JSON.parse(text);
+              providerUsed = `FreeLLMAPI Smart Router (${data.model || 'auto'})`;
+            } catch (err) {}
+          }
+        }
+      } catch (err) {}
+    }
+
+    // ── Tier 3: High-Precision Zero-Cost Deterministic Fallback ──
     if (!generatedOutput) {
       const positivePrompt = `${subject} performing ${action} inside a sleek modern studio. Shot with dynamic ${cameraMove} using a ${lensAngle}, filmed on Arri Alexa 65 with anamorphic glass, capturing ${style}. Bathed in dramatic ${lighting} with subtle atmospheric haze, sharp specular highlights, pristine ray-traced reflections, ending in crystal-clear focal lock.`;
 
@@ -129,6 +178,7 @@ Generate a cinematic prompt for:
           lighting: lighting
         }
       };
+      providerUsed = 'Higgsfield Algorithmic OS v3.0 (Zero-Cost Guard)';
     }
 
     return new Response(JSON.stringify({
@@ -136,34 +186,25 @@ Generate a cinematic prompt for:
       prompt: generatedOutput,
       meta: {
         timestamp: new Date().toISOString(),
-        engine: 'Higgsfield MCSLA v3.0'
+        engine: 'Higgsfield MCSLA v3.0',
+        provider: providerUsed
       }
     }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'X-Higgsfield-Provider': providerUsed
       }
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    return new Response(JSON.stringify({
+      success: false,
+      error: err.message || 'Internal director engine error'
+    }), {
       status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
 }
