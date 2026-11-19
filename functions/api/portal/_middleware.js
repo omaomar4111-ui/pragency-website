@@ -37,8 +37,8 @@ export async function onRequest(context) {
     });
   }
 
-  // 2. Allow public auth route (/api/portal/auth) and public AI tools like (/api/portal/generate)
-  if (pathname === '/api/portal/auth' || pathname === '/api/portal/settings/payment' || pathname === '/api/portal/generate') {
+  // 2. Allow public auth route (/api/portal/auth) and public AI tools like (/api/portal/generate, /api/portal/team-chat)
+  if (pathname === '/api/portal/auth' || pathname === '/api/portal/settings/payment' || pathname === '/api/portal/generate' || pathname === '/api/portal/team-chat') {
     const res = await next();
     return res;
   }
