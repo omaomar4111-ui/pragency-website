@@ -150,7 +150,7 @@
       const user = JSON.parse(localStorage.getItem('pr_auth_user') || 'null');
       if (!user || (user.role !== 'team_member' && user.role !== 'admin')) {
         alert('غير مصرح لك بالدخول، يرجى تسجيل الدخول كعضو في فريق العمل.');
-        window.location.href = '/login.html';
+        window.location.href = '/login';
       }
     })();
   </script>
@@ -252,7 +252,7 @@
       localStorage.removeItem('pr_auth_user');
       sessionStorage.removeItem('pr_auth_token');
       localStorage.removeItem('pr_portal_token');
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     }
   </script>
 </body>

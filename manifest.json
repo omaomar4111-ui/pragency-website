@@ -24,9 +24,9 @@
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "تسجيل الدخول", "url": "/login.html" },
-    { "name": "بوابة العملاء", "url": "/portal-dashboard-2026.html" },
-    { "name": "لوحة الإدارة", "url": "/admin-dashboard.html" },
-    { "name": "فريق العمل", "url": "/team-dashboard.html" }
+    { "name": "تسجيل الدخول", "url": "/login" },
+    { "name": "بوابة العملاء", "url": "/portal-dashboard-2026" },
+    { "name": "لوحة الإدارة", "url": "/admin-dashboard" },
+    { "name": "فريق العمل", "url": "/team-dashboard" }
   ]
 }

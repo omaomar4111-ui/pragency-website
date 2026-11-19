@@ -161,7 +161,7 @@
       const user = JSON.parse(localStorage.getItem('pr_auth_user') || 'null');
       if (!user || user.role !== 'admin') {
         alert('غير مصرح لك بالدخول، يرجى تسجيل الدخول كمدير للنظام.');
-        window.location.href = '/login.html';
+        window.location.href = '/login';
       }
     })();
   </script>
@@ -209,14 +209,14 @@
               <small style="color:#a1a1aa; font-size:11px;">التحكم بالعملاء والفواتير</small>
             </div>
           </a>
-          <a href="/portal-dashboard-2026.html" class="admin-nav-tile">
+          <a href="/portal-dashboard-2026" class="admin-nav-tile">
             <span style="font-size:24px;">🎬</span>
             <div>
               <strong style="display:block; font-size:14px;">بوابة العملاء واستوديو الإخراج</strong>
               <small style="color:#a1a1aa; font-size:11px;">عرض التسليمات وتوليد البرومبتات</small>
             </div>
           </a>
-          <a href="/team-dashboard.html" class="admin-nav-tile">
+          <a href="/team-dashboard" class="admin-nav-tile">
             <span style="font-size:24px;">👥</span>
             <div>
               <strong style="display:block; font-size:14px;">لوحة مهام الفريق</strong>
@@ -255,7 +255,7 @@
       localStorage.removeItem('pr_auth_user');
       sessionStorage.removeItem('pr_auth_token');
       localStorage.removeItem('pr_portal_token');
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     }
   </script>
 </body>

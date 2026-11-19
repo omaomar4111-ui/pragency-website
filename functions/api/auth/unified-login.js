@@ -40,7 +40,7 @@ export async function onRequestPost(context) {
           role: 'admin'
         },
         token,
-        redirectTo: '/admin-dashboard.html'
+        redirectTo: '/admin-dashboard'
       }), {
         status: 200,
         headers: {
@@ -70,7 +70,7 @@ export async function onRequestPost(context) {
               department: member.role || 'creative'
             },
             token,
-            redirectTo: '/team-dashboard.html'
+            redirectTo: '/team-dashboard'
           }), {
             status: 200,
             headers: {
@@ -102,7 +102,7 @@ export async function onRequestPost(context) {
               role: 'client'
             },
             token,
-            redirectTo: '/portal-dashboard-2026.html'
+            redirectTo: '/portal-dashboard-2026'
           }), {
             status: 200,
             headers: {
@@ -121,7 +121,7 @@ export async function onRequestPost(context) {
         success: true,
         user: { id: 'team_1', name: 'أحمد المونتير', role: 'team_member', email: cleanEmail, department: 'Video Editor' },
         token,
-        redirectTo: '/team-dashboard.html'
+        redirectTo: '/team-dashboard'
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
@@ -134,7 +134,7 @@ export async function onRequestPost(context) {
         success: true,
         user: { id: 'clt_1', name: 'شركة الأفق للاستثمار', role: 'client', email: cleanEmail },
         token,
-        redirectTo: '/portal-dashboard-2026.html'
+        redirectTo: '/portal-dashboard-2026'
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
