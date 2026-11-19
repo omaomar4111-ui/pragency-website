@@ -2716,9 +2716,10 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // VIRTUAL TEAM ROSTER CHAT (OpenMausBot Multi-Agent Logic)
+    // VIRTUAL TEAM ROSTER CHAT v2.0 (OpenMausBot Multi-Agent Memory & Action Cards)
     // ═══════════════════════════════════════════════════════════════
     let selectedConsultantKey = 'auto';
+    let teamChatHistory = []; // Local multi-turn conversation memory
 
     function selectConsultantBot(botKey, element) {
       selectedConsultantKey = botKey;
@@ -2754,6 +2755,30 @@
       sendTeamChatMessage();
     }
 
+    // Markdown simple parser for clean formatted bot responses
+    function formatMarkdownText(rawText) {
+      if (!rawText) return '';
+      return rawText
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-family:monospace; color:#c084fc;">$1</code>')
+        .replace(/\n\n/g, '<br/><br/>')
+        .replace(/\n- /g, '<br/>• ')
+        .replace(/\n(\d+)\. /g, '<br/>$1. ')
+        .replace(/\n/g, '<br/>');
+    }
+
+    // Stream typewriter effect for Hollywood-style responses
+    function typeWriterMessage(containerId, formattedHtml, onComplete) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = formattedHtml;
+      if (window.gsap) {
+        gsap.from(el, { opacity: 0, y: 10, duration: 0.3, ease: 'power2.out' });
+      }
+      if (typeof onComplete === 'function') onComplete();
+    }
+
     async function sendTeamChatMessage() {
       const input = document.getElementById('teamChatInput');
       const text = input.value.trim();
@@ -2768,6 +2793,7 @@
           ${text}
         </div>
       `;
+      teamChatHistory.push({ role: 'user', text: text });
       input.value = '';
       stream.scrollTop = stream.scrollHeight;
 
@@ -2775,7 +2801,7 @@
       const loaderId = 'loader-' + Date.now();
       stream.innerHTML += `
         <div id="${loaderId}" style="align-self: flex-start; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 14px; color: #a1a1aa; font-size: 12px; display: inline-flex; align-items: center; gap: 8px;">
-          <span>⏳ المستشار يكتب الرد...</span>
+          <span>⏳ جاري صياغة الاستشارة ومراجعة الأرقام...</span>
         </div>
       `;
       stream.scrollTop = stream.scrollHeight;
@@ -2787,7 +2813,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: text,
-            targetBot: selectedConsultantKey
+            targetBot: selectedConsultantKey,
+            history: teamChatHistory
           })
         });
         const data = await res.json();
@@ -2802,16 +2829,37 @@
             statusBadge.textContent = data.engine;
           }
 
+          teamChatHistory.push({ role: 'assistant', text: data.reply });
+          const msgBubbleId = 'msg-' + Date.now();
+
+          // Action Card HTML if provided
+          let actionCardHtml = '';
+          if (data.actionCard) {
+            const card = data.actionCard;
+            actionCardHtml = `
+              <div style="margin-top: 12px; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.35); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div>
+                  <h5 style="margin: 0 0 2px; font-size: 12px; font-weight: 800; color: #fff;">${card.title}</h5>
+                  <p style="margin: 0; font-size: 11px; color: #c4b5fd;">${card.desc}</p>
+                </div>
+                <button onclick="switchPortalTab('${card.targetTab}')" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+                  ${card.actionLabel}
+                </button>
+              </div>
+            `;
+          }
+
           stream.innerHTML += `
             <div style="align-self: flex-start; max-width: 85%; background: rgba(255,255,255,0.05); border: 1px solid rgba(168,85,247,0.3); border-radius: 14px 14px 14px 2px; padding: 14px 16px; color: #e4e4e7; font-size: 13px; line-height: 1.6; box-shadow: 0 6px 18px rgba(0,0,0,0.3);">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 4px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
                 <span style="font-weight: 800; color: #c084fc; display: flex; align-items: center; gap: 6px;">
                   <span>${bot.avatar || '🤖'}</span>
                   <span>${bot.nameAr || 'المستشار الذكي'}</span>
                 </span>
                 <span style="font-size: 10px; color: #a1a1aa;">${new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
-              <div style="white-space: pre-line;">${data.reply}</div>
+              <div id="${msgBubbleId}">${formatMarkdownText(data.reply)}</div>
+              ${actionCardHtml}
             </div>
           `;
           stream.scrollTop = stream.scrollHeight;

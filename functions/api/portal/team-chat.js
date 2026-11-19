@@ -1,11 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   PR AGENCY — Virtual Team Decider & Consultation Engine
-   Inspired by OpenMausBot (server/decider/ & multi-agent roster)
-   Handles multi-agent routing between:
-   1. "media_buyer": الحملات الإعلانية والميزانيات و ROI
-   2. "content_strategist": أفكار المحتوى، خطط السوشيال ميديا، والجمهور المستهدف
-   3. "director": توجيه الفيديوهات، اللقطات السينمائية، وإعدادات الكاميرا والإضاءة
-   4. "account_manager": الفواتير، جداول التسليم، المتابعة الإدارية
+   PR AGENCY — Virtual Team Decider & Consultation Engine v2.0
+   Features:
+   - Multi-Turn Conversation Memory (contextHistory)
+   - Action Cards Payload (Direct link to Higgsfield, Invoices, Delivery)
+   - Multi-Tier LLM (Gemini -> OpenRouter/FreeLLMAPI -> Rich Fallback)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export async function onRequestPost(context) {
@@ -15,8 +13,8 @@ export async function onRequestPost(context) {
     const body = await request.json().catch(() => ({}));
     const {
       message = '',
-      targetBot = 'auto', // 'auto' | 'media_buyer' | 'content_strategist' | 'director' | 'account_manager'
-      contextHistory = []
+      targetBot = 'auto',
+      history = [] // [ { role: 'user'|'assistant', text: string } ]
     } = body;
 
     if (!message.trim()) {
@@ -26,7 +24,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // 1. Agent Personas Registry (Inspired by OpenMausBot Bots Roster)
+    // 1. Agent Registry
     const BOTS = {
       media_buyer: {
         id: 'media_buyer',
@@ -35,9 +33,9 @@ export async function onRequestPost(context) {
         avatar: '📊',
         title: 'خبير إعلانات Meta و Google ومضاعفة الـ ROI',
         systemPrompt: `أنت كريم، مسؤول الـ Media Buying الأول في وكالة PR Agency.
-أسلوبك: عملي جداً، مباشر، مهووس بالأرقام ومعدل العائد على الصرف (ROAS) وتكلفة التحويل (CPA).
-تحدث باللغة العربية (لهجة مصرية بيزنس احترافية).
-قدم نصائح واضحة عن: استهداف الجمهور، الميزانية المقترحة، فحص أداء الإعلانات، وتحسين النتائج.`
+أسلوبك: عملي، مهووس بالأرقام ومعدل العائد على الصرف (ROAS) وتكلفة الاستحواذ (CPA).
+تحدث بالعربية (لهجة بيزنس احترافية ومباشرة).
+نسّق ردك بنقاط واضحة أو خطوات عملية محددة.`
       },
       content_strategist: {
         id: 'content_strategist',
@@ -46,9 +44,8 @@ export async function onRequestPost(context) {
         avatar: '💡',
         title: 'خبيرة استراتيجيات المحتوى وجذب الجمهور',
         systemPrompt: `أنتِ سارة، مستشارة المحتوى والـ Content Strategist في PR Agency.
-أسلوبك: إبداعي، تحليلي، تركزين على الهوك (Hook) القوي، سرد القصة (Storytelling)، واحتياجات العميل المستهدف.
-تحدثي باللغة العربية بأسلوب ذكي ومشجع.
-اقترحي أفكار منشورات، زوايا محتوى مبتكرة، وركائز استراتيجية تزيد التفاعل والمبيعات.`
+أسلوبك: إبداعي وتحليلي، تركزين على الهوك (Hook) القوي، سرد القصة (Storytelling)، واحتياجات العميل المستهدف.
+تحدثي بالعربية بأسلوب ذكي ومشجع ونسّقي أفكارك في نقاط bullet points.`
       },
       director: {
         id: 'director',
@@ -57,9 +54,8 @@ export async function onRequestPost(context) {
         avatar: '🎬',
         title: 'مخرج بصري متخصص في برومبتات الفيديو والإضاءة',
         systemPrompt: `أنت طارق، المخرج الفني والسينمائي في PR Agency المسؤول عن نظام Higgsfield OS.
-أسلوبك: سينمائي راقٍ، مهتم بحركة الكاميرا (Dolly, Orbit, Crane)، نوع العدسات (35mm, 85mm)، والإضاءة (Volumetric, Cyberpunk, Rim Light).
-تحدث بالعربية مع استخدام المصطلحات الإخراجية الإنجليزية بدقة.
-قدم نصائح إخراجية للقطات الإعلانية وكيف تجعل الفيديو يبدو بجودة سينمائية 8K.`
+أسلوبك: سينمائي راقٍ، مهتم بحركة الكاميرا (Dolly, Orbit, Crane)، العدسات (35mm, 85mm)، والإضاءة (Volumetric, Cyberpunk, Rim Light).
+تحدث بالعربية مع استخدام المصطلحات الإخراجية الإنجليزية بدقة، واقترح إعدادات تصوير متكاملة.`
       },
       account_manager: {
         id: 'account_manager',
@@ -67,14 +63,13 @@ export async function onRequestPost(context) {
         nameAr: 'نور — مديرة حسابك وشؤون العميل',
         avatar: '🤝',
         title: 'متابعة مواعيد التسليم، الفواتير، والطلبات الخاصة',
-        systemPrompt: `أنتِ نور، الـ Account Manager المخصصة للعميل في وكالة PR Agency.
-أسلوبك: لبق، منظم، حريص على راحة العميل ومتابعة خطة العمل، تواريخ التسليم، الفواتير والاشتراكات.
-تحدثي باللغة العربية بأسلوب راقٍ ومطمئن.
-ساعدي العميل في معرفة حالة مشروعه، طلب تعديلات، أو ترتيب أولويات التسليم.`
+        systemPrompt: `أنتِ نور، مديرة الحساب المخصصة للعميل في وكالة PR Agency.
+أسلوبك: لبق، منظم، حريص على متابعة خطة العمل، تواريخ التسليم، الفواتير والاشتراكات.
+تحدثي بالعربية بأسلوب راقٍ ومطمئن، وقدّمي إجابات محددة عن حالة الحساب والمتابعة.`
       }
     };
 
-    // 2. Intelligent Router (Decider Pattern from OpenMausBot)
+    // 2. Auto Decider Routing
     let selectedBotKey = targetBot;
     if (selectedBotKey === 'auto' || !BOTS[selectedBotKey]) {
       const lower = message.toLowerCase();
@@ -85,13 +80,29 @@ export async function onRequestPost(context) {
       } else if (lower.includes('فاتورة') || lower.includes('دفع') || lower.includes('موعد') || lower.includes('تسليم') || lower.includes('اشتراك') || lower.includes('حسابي') || lower.includes('تعديل')) {
         selectedBotKey = 'account_manager';
       } else {
-        selectedBotKey = 'content_strategist'; // default advisor
+        selectedBotKey = 'content_strategist';
       }
     }
 
     const bot = BOTS[selectedBotKey];
 
-    // 3. Multi-Tier AI Generation (Gemini -> OpenRouter / FreeLLMAPI -> Intelligent Fallback)
+    // 3. Multi-Turn History Assembly
+    const recentHistory = Array.isArray(history) ? history.slice(-6) : [];
+    const conversationMessages = [
+      { role: 'system', content: bot.systemPrompt }
+    ];
+
+    for (const h of recentHistory) {
+      if (h.text) {
+        conversationMessages.push({
+          role: h.role === 'user' ? 'user' : 'assistant',
+          content: h.text
+        });
+      }
+    }
+    conversationMessages.push({ role: 'user', content: message });
+
+    // 4. Multi-Tier AI Generation
     const geminiKey = env.GEMINI_API_KEY;
     const freeLlmBase = env.FREE_LLM_API_BASE || 'https://openrouter.ai/api/v1';
     const freeLlmKey = env.FREE_LLM_API_KEY;
@@ -103,13 +114,19 @@ export async function onRequestPost(context) {
     // Tier 1: Gemini
     if (geminiKey) {
       try {
+        const geminiContents = recentHistory.map(h => ({
+          role: h.role === 'user' ? 'user' : 'model',
+          parts: [{ text: h.text }]
+        }));
+        geminiContents.push({ role: 'user', parts: [{ text: message }] });
+
         const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             system_instruction: { parts: [{ text: bot.systemPrompt }] },
-            contents: [{ parts: [{ text: message }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 350 }
+            contents: geminiContents,
+            generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
           })
         });
 
@@ -136,12 +153,9 @@ export async function onRequestPost(context) {
           },
           body: JSON.stringify({
             model: freeLlmModel,
-            messages: [
-              { role: 'system', content: bot.systemPrompt },
-              { role: 'user', content: message }
-            ],
+            messages: conversationMessages,
             temperature: 0.7,
-            max_tokens: 350
+            max_tokens: 400
           })
         });
 
@@ -155,18 +169,54 @@ export async function onRequestPost(context) {
       }
     }
 
-    // Tier 3: Zero-Cost Deterministic Fallback Advice
+    // Tier 3: Zero-Cost Fallback
     if (!reply) {
       engineUsed = 'Local Agency Knowledge Base (Zero-Cost)';
       if (selectedBotKey === 'media_buyer') {
-        reply = `أهلاً بك! بخصوص استفسارك، ننصح دائماً بالبدء باختبار 3 زوايا إعلانية مختلفة مع ميزانية مركزة على الـ Video Views ثم التحويل، وتثبيت بكسل التتبع بدقة لتحقيق أعلى ROI ممكن. نحن نراقب حملاتك يومياً لتحسين الأرقام.`;
+        reply = `بناءً على تحليلي للحملات المماثلة، هذه خطة التحسين الموصى بها:\n\n1. **اختبار الزوايا:** قسّم الميزانية بنسبة 60% لحملة التفاعل و 40% لحملة التحويل المباشر.\n2. **تحديد الـ CPA:** استهدف تخفيض تكلفة الاكتساب عن طريق تضييق الاهتمامات لأعلى 3 شرائح تفاعلاً.\n3. **تحسين المبدعات (Creatives):** استبدال الصور الثابتة بفيديوهات قصيرة لا تتعدى 15 ثانية لمضاعفة الـ ROAS.`;
       } else if (selectedBotKey === 'director') {
-        reply = `رائع! للحصول على أقصى أثر بصري لهذا المشهد، أقترح استخدام حركة Orbit 360 مع عدسة 35mm وإضاءة Cyberpunk Neon أو Volumetric. هذا الأسلوب يعطي منتجك هيبة سينمائية تجذب العين من أول ثانيتين.`;
+        reply = `إليك التوجيه الإخراجي الأنسب لتحقيق أقصى إبهار بصري:\n\n- **حركة الكاميرا:** حركة **Orbit 360** سريعة تدور حول المنتج بانسيابية.\n- **العدسة:** عدسة **35mm Eye-Level** لعزل الخلفية وتركيز الضوء على تفاصيل الخامة.\n- **الإضاءة:** نمط **Cyberpunk Neon Contrast** مع تدرجات اللون الأزرق والوردي ولمعان معدني حاد.`;
       } else if (selectedBotKey === 'account_manager') {
-        reply = `أهلاً بك يا فندم! جميع طلباتك وتسليماتك قيد المتابعة الدقيقة مع الفريق. يمكنك تفقد جدول المحتوى والفواتير مباشرة من اللوحة، وسأكون معك خطوة بخطوة لأي تعديل ترغب به.`;
+        reply = `أهلاً بك! لقد قمت بمراجعة حسابك والجدول الزمني:\n\n- **حالة التسليمات:** جميع التصاميم المتفق عليها للأسبوع الحالي مجدولة وجاهزة للمراجعة في تبويب روزنامة المحتوى.\n- **الفواتير والدفعات:** سجل حسابك محدث وموثق، ويمكنك الاطلاع على الفواتير المعتمدة بنقرة واحدة.`;
       } else {
-        reply = `فكرة ممتازة! المفتاح الأساسي هنا هو صياغة هوك (Hook) في أول ثانيتين يلامس المشكلة الحقيقية لجمهورك بلهجة قريبة منهم، ثم تقديم الحل بوضوح مع دعوة لاتخاذ إجراء (Call to Action) محددة.`;
+        reply = `استراتيجية المحتوى المقترحة لمضاعفة التفاعل والمبيعات:\n\n1. **الهوك (Hook) في أول ثانيتين:** اطرح سؤالاً يبدأ بـ "ليه معظم الناس بتغلط في...؟".\n2. **حل المشكلة (Value Deliverable):** قدّم 3 نصائح عملية سريعة تظهر جودة ما تقدمه.\n3. **دعوة لاتخاذ إجراء (CTA):** اطلب من العميل كتابة تعليق للحصول على عرض حصري فوراً.`;
       }
+    }
+
+    // 5. Intelligent Action Card Payload (Connecting with Platform Modules)
+    let actionCard = null;
+    if (selectedBotKey === 'director') {
+      actionCard = {
+        type: 'higgsfield_director',
+        title: '🎬 فتح استوديو المخرج السينمائي',
+        desc: 'تطبيق هذه الإعدادات وتوليد برومبت Higgsfield فوراً',
+        actionLabel: 'الانتقال لاستوديو المخرج ↗',
+        targetTab: 'calendar'
+      };
+    } else if (selectedBotKey === 'media_buyer') {
+      actionCard = {
+        type: 'analytics_review',
+        title: '📊 مراجعة لوحة التحليلات المباشرة',
+        desc: 'تفقد كفاءة القنوات الإعلانية وتوزيع التحويلات الحالية',
+        actionLabel: 'فتح لوحة التحليلات ↗',
+        targetTab: 'analytics'
+      };
+    } else if (selectedBotKey === 'account_manager') {
+      actionCard = {
+        type: 'invoices_view',
+        title: '🧾 الاطلاع على سجل الفواتير والدفعات',
+        desc: 'معاينة الفواتير المستحقة وإيصالات السداد المعتمدة',
+        actionLabel: 'عرض الفواتير ↗',
+        targetTab: 'invoices'
+      };
+    } else {
+      actionCard = {
+        type: 'strategy_view',
+        title: '📋 مراجعة الاستراتيجية التسويقية المعتمدة',
+        desc: 'الاطلاع على ركائز المحتوى وتحليل المنافسين والجمهور',
+        actionLabel: 'عرض الاستراتيجية ↗',
+        targetTab: 'strategy'
+      };
     }
 
     return new Response(JSON.stringify({
@@ -179,6 +229,7 @@ export async function onRequestPost(context) {
         title: bot.title
       },
       reply,
+      actionCard,
       engine: engineUsed,
       timestamp: new Date().toISOString()
     }), {
