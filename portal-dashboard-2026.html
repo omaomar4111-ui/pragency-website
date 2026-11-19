@@ -1063,6 +1063,7 @@
         <button class="toggle-btn" id="tab-strategy-btn" onclick="switchPortalTab('strategy')">📋 الاستراتيجية الحية</button>
         <button class="toggle-btn" id="tab-invoices-btn" onclick="switchPortalTab('invoices')">🧾 الفواتير والاشتراكات</button>
         <button class="toggle-btn" id="tab-settings-btn" onclick="switchPortalTab('settings')">⚙️ إعدادات الإشعارات</button>
+        <button class="toggle-btn" id="tab-teamchat-btn" onclick="switchPortalTab('teamchat')" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(124, 58, 237, 0.35)); border-color: rgba(168, 85, 247, 0.5); color: #fff;">👥 استشارة فريق العمل (AI)</button>
       </div>
     </div>
 
@@ -1429,6 +1430,113 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- 5. OpenMausBot Style Virtual Team Roster & Consultation Chat -->
+    <div id="teamchat-container" style="display: none;">
+      <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; max-width: 1100px; margin: 0 auto; min-height: 580px;">
+        <!-- Left: Team Roster (Sidebar) -->
+        <div class="del-card" style="padding: 20px; background: var(--portal-surface); border: 1px solid var(--portal-border); border-radius: 16px; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px;">
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin: 0 0 2px;">فريق وكالتك (AI Roster)</h3>
+              <span style="font-size: 11px; color: #a1a1aa;">توجيه فوري بحسب تخصص كل مستشار</span>
+            </div>
+            <span style="background: rgba(16,185,129,0.15); color: #10b981; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">Online 🟢</span>
+          </div>
+
+          <!-- Roster Cards -->
+          <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;" id="rosterList">
+            <div class="roster-item active" onclick="selectConsultantBot('auto', this)" style="padding: 12px; border-radius: 12px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); cursor: pointer; transition: all 0.2s;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 22px;">⚡</span>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff;">الموجه التلقائي (Auto Decider)</h4>
+                  <p style="margin: 0; font-size: 11px; color: #c4b5fd;">يختار أوتوماتيكياً العضو المناسب لسؤالك</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="roster-item" onclick="selectConsultantBot('media_buyer', this)" style="padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.2s;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 22px;">📊</span>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff;">كريم — Media Buyer</h4>
+                  <p style="margin: 0; font-size: 11px; color: #a1a1aa;">حملات Meta & Google ومضاعفة ROI</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="roster-item" onclick="selectConsultantBot('content_strategist', this)" style="padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.2s;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 22px;">💡</span>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff;">سارة — Content Strategist</h4>
+                  <p style="margin: 0; font-size: 11px; color: #a1a1aa;">استراتيجية الهوك، المحتوى وسرد القصة</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="roster-item" onclick="selectConsultantBot('director', this)" style="padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.2s;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 22px;">🎬</span>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff;">طارق — Higgsfield Director</h4>
+                  <p style="margin: 0; font-size: 11px; color: #a1a1aa;">إخراج سينمائي، زوايا الكاميرا والإضاءة</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="roster-item" onclick="selectConsultantBot('account_manager', this)" style="padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.2s;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 22px;">🤝</span>
+                <div>
+                  <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff;">نور — Account Manager</h4>
+                  <p style="margin: 0; font-size: 11px; color: #a1a1aa;">متابعة خطط التسليم، الفواتير والتعديلات</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Active Chat Window -->
+        <div class="del-card" style="padding: 0; background: var(--portal-surface); border: 1px solid var(--portal-border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;">
+          <!-- Chat Header -->
+          <div style="padding: 16px 20px; background: rgba(22, 18, 36, 0.95); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="currentBotAvatar" style="font-size: 28px;">⚡</span>
+              <div>
+                <h3 id="currentBotName" style="margin: 0; font-size: 15px; font-weight: 800; color: #fff;">الموجه التلقائي (Auto Decider)</h3>
+                <span id="currentBotTitle" style="font-size: 11px; color: #a1a1aa;">يحلل رسالتك ويجيبك المتخصص الأنسب فوراً</span>
+              </div>
+            </div>
+            <span id="chatEngineStatus" style="font-size: 11px; font-family: monospace; background: rgba(139,92,246,0.15); color: #c084fc; padding: 4px 10px; border-radius: 8px;">Multi-Tier Engine</span>
+          </div>
+
+          <!-- Messages Stream -->
+          <div id="teamChatStream" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; max-height: 400px; min-height: 380px;">
+            <div style="align-self: flex-start; max-width: 85%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; border-radius: 14px 14px 14px 2px; color: #e4e4e7; line-height: 1.6; font-size: 13px;">
+              مرحباً بك في غرفة استشارات فريق PR Agency الذكية 🌟<br/>
+              تقدر تسأل أي سؤال عن: ميزانية الإعلانات، أفكار المحتوى، إخراج الفيديوهات السينمائية، أو مواعيد تسليماتك، وفريقنا المتخصص هيرد عليك فوراً بنصائح عملية!
+            </div>
+          </div>
+
+          <!-- Quick Suggestion Chips -->
+          <div style="padding: 8px 16px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.04);">
+            <button onclick="sendQuickChatMessage('إزاي أزود الـ ROI في حملتي الجاية؟')" style="white-space: nowrap; font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #d4d4d8; padding: 4px 10px; border-radius: 12px; cursor: pointer;">📈 إزاي أزود الـ ROI؟</button>
+            <button onclick="sendQuickChatMessage('عايز فكرة ريلز تشد الناس من أول ثانيتين لمنتجي')" style="white-space: nowrap; font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #d4d4d8; padding: 4px 10px; border-radius: 12px; cursor: pointer;">💡 فكرة ريلز قوية</button>
+            <button onclick="sendQuickChatMessage('إيه أفضل زاوية إضاءة وكاميرا لتصوير ساعة أو منتج فاخر؟')" style="white-space: nowrap; font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #d4d4d8; padding: 4px 10px; border-radius: 12px; cursor: pointer;">🎬 زاوية تصوير سينمائية</button>
+          </div>
+
+          <!-- Chat Input -->
+          <div style="padding: 14px 16px; background: rgba(22, 18, 36, 0.95); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="teamChatInput" onkeydown="if(event.key === 'Enter') sendTeamChatMessage()" placeholder="اكتب سؤالك لفريق العمل هنا..." style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--portal-border); border-radius: 12px; color: #fff; font-family: inherit; font-size: 13px;" />
+            <button id="teamChatSendBtn" onclick="sendTeamChatMessage()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+              <span>إرسال 🚀</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 </main>
@@ -1989,6 +2097,8 @@
       document.getElementById('tab-invoices-btn').classList.remove('active');
       const setBtn = document.getElementById('tab-settings-btn');
       if (setBtn) setBtn.classList.remove('active');
+      const chatBtn = document.getElementById('tab-teamchat-btn');
+      if (chatBtn) chatBtn.classList.remove('active');
 
       document.getElementById('deliverables-container').style.display = 'none';
       document.getElementById('calendar-subfilters').style.display = 'none';
@@ -1998,6 +2108,8 @@
       document.getElementById('invoices-container').style.display = 'none';
       const setContainer = document.getElementById('settings-container');
       if (setContainer) setContainer.style.display = 'none';
+      const chatContainer = document.getElementById('teamchat-container');
+      if (chatContainer) chatContainer.style.display = 'none';
 
       if (tab === 'analytics') {
         if (anaBtn) anaBtn.classList.add('active');
@@ -2022,6 +2134,10 @@
         if (setBtn) setBtn.classList.add('active');
         if (setContainer) setContainer.style.display = 'block';
         loadClientNotificationSettings();
+      } else if (tab === 'teamchat') {
+        if (chatBtn) chatBtn.classList.add('active');
+        if (chatContainer) chatContainer.style.display = 'block';
+        if (window.gsap) gsap.from(chatContainer, { opacity: 0, y: 15, duration: 0.4 });
       }
     }
 
@@ -2594,6 +2710,125 @@
         stream.innerHTML += `
           <div style="align-self:flex-start; background:rgba(239,68,68,0.1); border:1px solid #ef4444; padding:10px 14px; border-radius:14px; color:#fca5a5;">
             تعذر الاتصال بالخادم حالياً. يرجى مراسلتنا مباشرة.
+          </div>
+        `;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // VIRTUAL TEAM ROSTER CHAT (OpenMausBot Multi-Agent Logic)
+    // ═══════════════════════════════════════════════════════════════
+    let selectedConsultantKey = 'auto';
+
+    function selectConsultantBot(botKey, element) {
+      selectedConsultantKey = botKey;
+      document.querySelectorAll('#rosterList .roster-item').forEach(item => {
+        item.classList.remove('active');
+        item.style.background = 'rgba(255,255,255,0.03)';
+        item.style.borderColor = 'rgba(255,255,255,0.06)';
+      });
+
+      element.classList.add('active');
+      element.style.background = 'rgba(139,92,246,0.15)';
+      element.style.borderColor = 'rgba(139,92,246,0.4)';
+
+      const botConfig = {
+        auto: { name: 'الموجه التلقائي (Auto Decider)', avatar: '⚡', title: 'يحلل رسالتك ويجيبك المتخصص الأنسب فوراً' },
+        media_buyer: { name: 'كريم — Media Buyer', avatar: '📊', title: 'حملات Meta & Google ومضاعفة ROI' },
+        content_strategist: { name: 'سارة — Content Strategist', avatar: '💡', title: 'استراتيجية الهوك، المحتوى وسرد القصة' },
+        director: { name: 'طارق — Higgsfield Director', avatar: '🎬', title: 'إخراج سينمائي، زوايا الكاميرا والإضاءة' },
+        account_manager: { name: 'نور — Account Manager', avatar: '🤝', title: 'متابعة خطط التسليم، الفواتير والتعديلات' }
+      }[botKey] || { name: 'مستشار الوكالة', avatar: '🤖', title: 'فريق PR Agency' };
+
+      document.getElementById('currentBotAvatar').textContent = botConfig.avatar;
+      document.getElementById('currentBotName').textContent = botConfig.name;
+      document.getElementById('currentBotTitle').textContent = botConfig.title;
+
+      if (window.gsap) {
+        gsap.fromTo('#currentBotAvatar', { scale: 0.8 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+      }
+    }
+
+    function sendQuickChatMessage(promptText) {
+      document.getElementById('teamChatInput').value = promptText;
+      sendTeamChatMessage();
+    }
+
+    async function sendTeamChatMessage() {
+      const input = document.getElementById('teamChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const stream = document.getElementById('teamChatStream');
+      const sendBtn = document.getElementById('teamChatSendBtn');
+
+      // 1. Append User Message
+      stream.innerHTML += `
+        <div style="align-self: flex-end; max-width: 80%; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; padding: 12px 16px; border-radius: 14px 14px 2px 14px; font-size: 13px; line-height: 1.5; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">
+          ${text}
+        </div>
+      `;
+      input.value = '';
+      stream.scrollTop = stream.scrollHeight;
+
+      // 2. Typing Indicator
+      const loaderId = 'loader-' + Date.now();
+      stream.innerHTML += `
+        <div id="${loaderId}" style="align-self: flex-start; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 14px; color: #a1a1aa; font-size: 12px; display: inline-flex; align-items: center; gap: 8px;">
+          <span>⏳ المستشار يكتب الرد...</span>
+        </div>
+      `;
+      stream.scrollTop = stream.scrollHeight;
+      sendBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/portal/team-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            targetBot: selectedConsultantKey
+          })
+        });
+        const data = await res.json();
+        const loader = document.getElementById(loaderId);
+        if (loader) loader.remove();
+        sendBtn.disabled = false;
+
+        if (data.success) {
+          const bot = data.bot || {};
+          const statusBadge = document.getElementById('chatEngineStatus');
+          if (statusBadge && data.engine) {
+            statusBadge.textContent = data.engine;
+          }
+
+          stream.innerHTML += `
+            <div style="align-self: flex-start; max-width: 85%; background: rgba(255,255,255,0.05); border: 1px solid rgba(168,85,247,0.3); border-radius: 14px 14px 14px 2px; padding: 14px 16px; color: #e4e4e7; font-size: 13px; line-height: 1.6; box-shadow: 0 6px 18px rgba(0,0,0,0.3);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 4px;">
+                <span style="font-weight: 800; color: #c084fc; display: flex; align-items: center; gap: 6px;">
+                  <span>${bot.avatar || '🤖'}</span>
+                  <span>${bot.nameAr || 'المستشار الذكي'}</span>
+                </span>
+                <span style="font-size: 10px; color: #a1a1aa;">${new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+              <div style="white-space: pre-line;">${data.reply}</div>
+            </div>
+          `;
+          stream.scrollTop = stream.scrollHeight;
+        } else {
+          stream.innerHTML += `
+            <div style="align-self: flex-start; background: rgba(239,68,68,0.1); border: 1px solid #ef4444; padding: 10px 14px; border-radius: 14px; color: #fca5a5; font-size: 12px;">
+              عفواً، تعذر توليد الاستشارة حالياً. يرجى المحاولة مرة ثانية.
+            </div>
+          `;
+        }
+      } catch (err) {
+        const loader = document.getElementById(loaderId);
+        if (loader) loader.remove();
+        sendBtn.disabled = false;
+        stream.innerHTML += `
+          <div style="align-self: flex-start; background: rgba(239,68,68,0.1); border: 1px solid #ef4444; padding: 10px 14px; border-radius: 14px; color: #fca5a5; font-size: 12px;">
+            تعذر الاتصال بسيرفر الاستشارات. يرجى التحقق من اتصالك.
           </div>
         `;
       }
