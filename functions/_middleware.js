@@ -194,6 +194,10 @@ export async function onRequest(context) {
   if (
     path === '/' || 
     path === '/index.html' ||
+    path === '/login' ||
+    path === '/admin-dashboard' ||
+    path === '/team-dashboard' ||
+    path === '/portal-dashboard-2026' ||
     path.endsWith('.html') || 
     path.startsWith('/css/') || 
     path.startsWith('/js/') || 
