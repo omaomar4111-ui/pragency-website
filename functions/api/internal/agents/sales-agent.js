@@ -94,134 +94,194 @@ function generateColdOutreach(lead) {
   };
 }
 
-// ── Autonomous Sales Agent Handler ──
-export async function onRequestPost(context) {
-  const { request, env } = context;
+// ── Autonomous Sales Agent Core Engine & Handlers ──
+/**
+ * Core Execution Engine for Sales Agent
+ * Can process a single lead or scan for top high-intent uncontacted leads
+ */
+export async function runSalesAgent(env, options = {}) {
   const db = env.ANALYTICS_DB || env.DB;
-
-  if (!db) {
-    return jsonResponse({ success: false, error: 'Database unavailable' }, 500);
-  }
+  if (!db) return { success: false, error: 'Database unavailable' };
 
   await ensureTable(db);
 
+  let lead = options.lead || {};
+  const leadId = options.lead_id || lead.id;
+
+  if (lead && (lead.name || lead.phone || leadId)) {
+    return processSingleLead(env, db, lead, leadId);
+  }
+
   try {
-    const body = await request.json().catch(() => ({}));
-    let lead = body.lead || {};
-    const leadId = body.lead_id || lead.id;
+    let uncontactedLeads = [];
+    
+    try {
+      const foundSales = await db.prepare(
+        "SELECT sl.id, sl.name, sl.phone, sl.email, sl.company, sl.project_name, sl.notes, sl.pipeline_stage " +
+        "FROM sales_leads sl " +
+        "WHERE sl.id NOT IN (SELECT COALESCE(lead_id, '') FROM agent_pending_actions WHERE agent_type = 'sales_agent') " +
+        "ORDER BY sl.created_at DESC LIMIT 3"
+      ).all();
+      if (foundSales && foundSales.results && foundSales.results.length) {
+        uncontactedLeads = foundSales.results;
+      }
+    } catch(e) {}
 
-    // If lead object is missing or incomplete, fetch latest from sales_leads
-    if (leadId && (!lead.name || !lead.phone)) {
+    if (uncontactedLeads.length === 0) {
       try {
-        const found = await db.prepare('SELECT * FROM sales_leads WHERE id = ?').bind(leadId).first();
-        if (found) {
-          lead = { ...found, ...lead };
+        const foundContacts = await db.prepare(
+          "SELECT c.id, c.name, c.phone, c.business as company, c.message as notes, c.created_at " +
+          "FROM contacts c " +
+          "WHERE c.id NOT IN (SELECT COALESCE(lead_id, '') FROM agent_pending_actions WHERE agent_type = 'sales_agent') " +
+          "ORDER BY c.created_at DESC LIMIT 3"
+        ).all();
+        if (foundContacts && foundContacts.results && foundContacts.results.length) {
+          uncontactedLeads = foundContacts.results;
         }
-      } catch (err) {
-        console.warn('[Sales Agent Lead Query]:', err.message);
+      } catch(e) {}
+    }
+
+    const processed = [];
+    for (const item of uncontactedLeads) {
+      const res = await processSingleLead(env, db, item, item.id);
+      if (res && res.success) {
+        processed.push(res);
       }
     }
 
-    const leadName = lead.name || 'عميل محتمل';
-    const leadPhone = lead.phone || '';
-    const leadEmail = lead.email || '';
-    const leadCompany = lead.project_name || lead.company || '';
-
-    // Generate Outreach using Prospecting & Cold Email methodology
-    const synthesis = generateColdOutreach(lead);
-    let finalDraft = synthesis.draftWhatsApp;
-
-    // Optional: Enhance via Cloudflare Workers AI if bound and available
-    if (env.AI && typeof env.AI.run === 'function') {
-      try {
-        const aiPrompt = `أنت خبير مبيعات وتسويق تنفيذي في وكالة PR Agency بالقاهرة. اكتب رسالة واتساب افتتاحية شديدة الذكاء والاحترافية للعميل المحتمل "${leadName}" في مجال "${synthesis.industry}". 
-القواعد: 
-1. عامية مصرية راقية للأعمال (Modern Egyptian Business Tone).
-2. ليست رسالة تسويقية مزعجة؛ بل زميل محترف يشارك ملاحظة ذكية لحل مشكلة: "${synthesis.painSignal}".
-3. اختصر في 60-80 كلمة.
-4. سؤال ختامي سهل الإجابة بدون ضغط بيعي.`;
-
-        const aiRes = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-          messages: [
-            { role: 'system', content: 'أنت وكيل المبيعات الذكي لوكالة PR Agency المتخصصة في التسويق المتكامل والإنتاج الإعلاني.' },
-            { role: 'user', content: aiPrompt }
-          ],
-          max_tokens: 300,
-          temperature: 0.7
-        });
-
-        if (aiRes && aiRes.response && aiRes.response.trim().length > 30) {
-          finalDraft = aiRes.response.trim();
-        }
-      } catch (aiErr) {
-        console.warn('[Sales Agent Workers AI Fallback]:', aiErr.message);
-        // Seamlessly falls back to deterministic high-converting synthesis
-      }
-    }
-
-    // Save Action to agent_pending_actions
-    const actionId = 'act_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
-    const nowIso = new Date().toISOString();
-
-    await db.prepare(`
-      INSERT INTO agent_pending_actions (
-        id, agent_type, lead_id, lead_name, lead_company,
-        lead_phone, lead_email, action_type, draft_content,
-        status, created_at, updated_at
-      ) VALUES (?, 'sales_agent', ?, ?, ?, ?, ?, 'whatsapp_outreach', ?, 'pending_approval', ?, ?)
-    `).bind(
-      actionId,
-      leadId || null,
-      leadName,
-      leadCompany,
-      leadPhone,
-      leadEmail,
-      finalDraft,
-      nowIso,
-      nowIso
-    ).run();
-
-    // ── Task 4: Telegram Alert to Admin ──
-    const tgMsg = 
-      `🤖 <b>وكيل المبيعات الذكي جهز مسودة رسالة جديدة لـ ${leadName}</b>\n\n` +
-      `🏢 <b>النشاط / الشركة:</b> ${leadCompany || 'غير محدد'}\n` +
-      `📱 <b>الهاتف:</b> <code>${leadPhone}</code>\n` +
-      `🎯 <b>المجال المستهدف:</b> ${synthesis.industry}\n` +
-      `⚡ <b>نوع الإجراء:</b> رسالة تواصل أولي (WhatsApp Outreach)\n\n` +
-      `📝 <b>معاينة المسودة:</b>\n<i>"${finalDraft.slice(0, 160)}..."</i>\n\n` +
-      `👉 <b>ادخل للموافقة عليها أو تعديلها من لوحة الإدارة (مركز الوكلاء):</b>\n` +
-      `https://pragency.pages.dev/admin-agency.html#tab-agents`;
-
-    await sendTelegramNotification(env, tgMsg, { parse_mode: 'HTML' });
-
-    // Log System Audit Action
-    await logSystemAction(db, {
-      actor_id: 'sales_agent_ai',
-      actor_name: 'Autonomous Sales AI',
-      actor_role: 'ai_agent',
-      action: 'agent_draft_created',
-      target_type: 'agent_pending_actions',
-      targetId: actionId,
-      details: {
-        lead_id: leadId,
-        lead_name: leadName,
-        action_type: 'whatsapp_outreach',
-        industry: synthesis.industry
-      }
-    });
-
-    return jsonResponse({
+    return {
       success: true,
-      message: 'تم إعداد مسودة الرسالة بواسطة وكيل المبيعات وهي بانتظار الاعتماد',
-      action_id: actionId,
+      proactive_scanned: uncontactedLeads.length,
+      actions_created: processed.length,
+      processed
+    };
+  } catch(err) {
+    console.error('[Sales Agent Proactive Scan Error]:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function processSingleLead(env, db, lead, leadId) {
+  if (leadId && (!lead.name || !lead.phone)) {
+    try {
+      const found = await db.prepare('SELECT * FROM sales_leads WHERE id = ?').bind(leadId).first();
+      if (found) lead = { ...found, ...lead };
+    } catch (err) {}
+  }
+
+  const leadName = lead.name || 'عميل محتمل';
+  const leadPhone = lead.phone || '';
+  const leadEmail = lead.email || '';
+  const leadCompany = lead.project_name || lead.company || '';
+
+  const synthesis = generateColdOutreach(lead);
+  let finalDraft = synthesis.draftWhatsApp;
+
+  if (env.AI && typeof env.AI.run === 'function') {
+    try {
+      const aiPrompt = 'أنت خبير مبيعات وتسويق تنفيذي في وكالة PR Agency بالقاهرة. اكتب رسالة واتساب افتتاحية شديدة الذكاء والاحترافية للعميل المحتمل "' + leadName + '" في مجال "' + synthesis.industry + '".\nالقواعد:\n1. عامية مصرية راقية للأعمال.\n2. ليست رسالة تسويقية مزعجة؛ بل زميل محترف يشارك ملاحظة ذكية لحل مشكلة: "' + synthesis.painSignal + '".\n3. اختصر في 60-80 كلمة.\n4. سؤال ختامي سهل الإجابة بدون ضغط بيعي.';
+
+      const aiRes = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        messages: [
+          { role: 'system', content: 'أنت وكيل المبيعات الذكي لوكالة PR Agency المتخصصة في التسويق المتكامل والإنتاج الإعلاني.' },
+          { role: 'user', content: aiPrompt }
+        ],
+        max_tokens: 300,
+        temperature: 0.7
+      });
+
+      if (aiRes && aiRes.response && aiRes.response.trim().length > 30) {
+        finalDraft = aiRes.response.trim();
+      }
+    } catch (aiErr) {}
+  }
+
+  const actionId = 'act_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
+  const nowIso = new Date().toISOString();
+
+  await db.prepare(
+    "INSERT INTO agent_pending_actions (" +
+    "  id, agent_type, lead_id, lead_name, lead_company," +
+    "  lead_phone, lead_email, action_type, draft_content," +
+    "  status, created_at, updated_at" +
+    ") VALUES (?, 'sales_agent', ?, ?, ?, ?, ?, 'whatsapp_outreach', ?, 'pending_approval', ?, ?)"
+  ).bind(
+    actionId,
+    leadId ? String(leadId) : null,
+    leadName,
+    leadCompany,
+    leadPhone,
+    leadEmail,
+    finalDraft,
+    nowIso,
+    nowIso
+  ).run();
+
+  const tgMsg = 
+    '🤖 <b>وكيل المبيعات الذكي جهز مسودة رسالة جديدة لـ ' + leadName + '</b>\n\n' +
+    '🏢 <b>النشاط / الشركة:</b> ' + (leadCompany || 'غير محدد') + '\n' +
+    '📱 <b>الهاتف:</b> <code>' + leadPhone + '</code>\n' +
+    '🎯 <b>المجال المستهدف:</b> ' + synthesis.industry + '\n' +
+    '⚡ <b>نوع الإجراء:</b> رسالة تواصل أولي (WhatsApp Outreach)\n\n' +
+    '📝 <b>معاينة المسودة:</b>\n<i>"' + finalDraft.slice(0, 160) + '..."</i>\n\n' +
+    '👉 <b>ادخل للموافقة عليها أو تعديلها من لوحة الإدارة (مركز الوكلاء):</b>\n' +
+    'https://pragency.pages.dev/admin-agency.html#tab-agents';
+
+  await sendTelegramNotification(env, tgMsg, {
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '✅ اعتماد وإرسال المسودة', callback_data: 'action:agent:approve:' + actionId },
+          { text: '❌ رفض وتجاهل', callback_data: 'action:agent:reject:' + actionId }
+        ]
+      ]
+    }
+  });
+
+  await logSystemAction(db, {
+    actor_id: 'sales_agent_ai',
+    actor_name: 'Autonomous Sales AI',
+    actor_role: 'ai_agent',
+    action: 'agent_draft_created',
+    target_type: 'agent_pending_actions',
+    targetId: actionId,
+    details: {
       lead_id: leadId,
       lead_name: leadName,
-      status: 'pending_approval',
-      draft: finalDraft
-    });
+      action_type: 'whatsapp_outreach',
+      industry: synthesis.industry
+    }
+  }).catch(() => {});
 
+  return {
+    success: true,
+    action_id: actionId,
+    lead_id: leadId,
+    lead_name: leadName,
+    status: 'pending_approval',
+    draft: finalDraft
+  };
+}
+
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  try {
+    const body = await request.json().catch(() => ({}));
+    const result = await runSalesAgent(env, body);
+    return jsonResponse(result, result.success ? 200 : 500);
   } catch (err) {
     console.error('[Sales Agent Engine Error]:', err);
     return jsonResponse({ success: false, error: err.message || 'Internal Agent Error' }, 500);
+  }
+}
+
+export async function onRequestGet(context) {
+  const { env } = context;
+  try {
+    const result = await runSalesAgent(env);
+    return jsonResponse(result, result.success ? 200 : 500);
+  } catch (err) {
+    return jsonResponse({ success: false, error: err.message }, 500);
   }
 }

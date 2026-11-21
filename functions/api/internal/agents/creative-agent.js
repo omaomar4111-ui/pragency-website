@@ -138,3 +138,76 @@ export async function onRequestPost(context) {
     return jsonResponse({ success: false, error: err.message }, 400);
   }
 }
+
+/**
+ * Proactive Creative Agent:
+ * Scans active clients and recent tasks without briefs, automatically generating ideas and briefs
+ */
+export async function runCreativeAgentProactive(env) {
+  const dbAnalytics = env.ANALYTICS_DB || env.DB;
+  const dbMain = env.DB || env.ANALYTICS_DB;
+
+  const generated = [];
+
+  try {
+    // 1. Look for unassigned/unbriefed tasks in tasks table
+    let tasks = [];
+    try {
+      const pendingTasks = await dbMain.prepare(
+        "SELECT t.id, t.title, t.description, t.project_id " +
+        "FROM tasks t " +
+        "WHERE (t.ai_brief IS NULL OR t.ai_brief = '') " +
+        "  AND t.id NOT IN (SELECT COALESCE(lead_id, '') FROM agent_pending_actions WHERE agent_type = 'creative') " +
+        "ORDER BY t.created_at DESC LIMIT 2"
+      ).all();
+      if (pendingTasks && pendingTasks.results && pendingTasks.results.length) {
+        tasks = pendingTasks.results;
+      }
+    } catch(e) {}
+
+    // Process tasks found
+    for (const t of tasks) {
+      const res = await runCreativeAgent(env, t);
+      if (res && res.success) {
+        generated.push(res);
+      }
+    }
+
+    // 2. If no tasks, pick an active client to proactively suggest a viral hook & reel brief
+    if (generated.length === 0) {
+      try {
+        const client = await dbAnalytics.prepare(
+          "SELECT id, company_name FROM portal_clients ORDER BY RANDOM() LIMIT 1"
+        ).first();
+
+        if (client) {
+          const mockTask = {
+            id: 'auto_idea_' + Date.now().toString(36),
+            title: 'حملة نمو إعلانية مقترحة (Reels) لـ ' + client.company_name,
+            description: 'فيديو ريلز إعلاني عالي الانتشار مصمم خصيصاً لجذب عملاء جدد لـ ' + client.company_name,
+            project_id: client.id
+          };
+          const res = await runCreativeAgent(env, mockTask);
+          if (res && res.success) {
+            generated.push(res);
+          }
+        }
+      } catch(e) {}
+    }
+
+    return {
+      success: true,
+      proactive_generated: generated.length,
+      generated
+    };
+  } catch(err) {
+    console.error('[Creative Agent Proactive Error]:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+export async function onRequestGet(context) {
+  const { env } = context;
+  const res = await runCreativeAgentProactive(env);
+  return jsonResponse(res);
+}
