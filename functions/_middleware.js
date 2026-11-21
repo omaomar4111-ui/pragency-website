@@ -16,6 +16,99 @@ function isBot(userAgent) {
   return bots.some(b => ua.includes(b)) ? 1 : 0;
 }
 
+
+// ── Advanced Device & Client Purchasing Power Profiler ───────────────────────
+function parseDeviceInfo(userAgent) {
+  if (!userAgent) {
+    return {
+      deviceCategory: 'Unknown',
+      deviceModel: 'Unknown Device',
+      tier: 'Standard',
+      tierBadge: '📱 Standard'
+    };
+  }
+
+  const ua = userAgent;
+  let deviceCategory = 'Desktop';
+  let deviceModel = 'Desktop / PC';
+  let tier = 'Standard';
+  let tierBadge = '💻 Desktop (Business/Office)';
+
+  // 1. Apple Ecosystem
+  if (/iPhone/i.test(ua)) {
+    deviceCategory = 'Mobile';
+    deviceModel = 'Apple iPhone';
+    tier = 'High-Value (A/A+)';
+    tierBadge = '💎 iPhone (High Purchasing Power)';
+    
+    // Check specific iPhone versions if present
+    if (/iPhone1[4-7]/i.test(ua) || /iPhone 1[4-7]/i.test(ua)) {
+      deviceModel = 'iPhone 14/15/16 Pro Series';
+      tier = 'Ultra-High (VIP)';
+      tierBadge = '👑 iPhone Flagship (VIP Client)';
+    }
+  } else if (/iPad/i.test(ua) || (/Macintosh/i.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1)) {
+    deviceCategory = 'Tablet';
+    deviceModel = 'Apple iPad';
+    tier = 'High-Value (A+)';
+    tierBadge = '💎 Apple iPad (Decision Maker)';
+  } else if (/Macintosh|Mac OS X/i.test(ua)) {
+    deviceCategory = 'Desktop';
+    deviceModel = 'Apple Mac / MacBook';
+    tier = 'Ultra-High (Business/Corporate)';
+    tierBadge = '💎 MacBook / iMac (Business Owner / Exec)';
+  }
+  // 2. Android Ecosystem
+  else if (/Android/i.test(ua)) {
+    deviceCategory = /Mobile/i.test(ua) ? 'Mobile' : 'Tablet';
+    
+    // Detect High-End Samsung Galaxy (S series, Fold, Flip, Note)
+    if (/SM-S9[0-9]{2}|SM-F[0-9]{3}|SM-N[0-9]{3}|Galaxy S2[0-4]|Ultra|Fold|Flip/i.test(ua)) {
+      deviceModel = 'Samsung Galaxy Flagship (S/Ultra/Fold)';
+      tier = 'High-Value (A/A+)';
+      tierBadge = '💎 Samsung Ultra/Fold Flagship (VIP)';
+    } else if (/SM-[A-Z][0-9]+/i.test(ua)) {
+      deviceModel = 'Samsung Galaxy Device';
+      tier = 'Standard';
+      tierBadge = '📱 Samsung Galaxy (Standard)';
+    } else if (/Pixel/i.test(ua)) {
+      deviceModel = 'Google Pixel';
+      tier = 'High-Value (Tech/Corporate)';
+      tierBadge = '💎 Google Pixel (Tech Savvy / High)';
+    } else if (/Xiaomi|Redmi|POCO/i.test(ua)) {
+      deviceModel = 'Xiaomi / Redmi';
+      tier = 'Standard / Mid-Range';
+      tierBadge = '📱 Xiaomi / Redmi (Mid-Range)';
+    } else if (/Huawei|Honor/i.test(ua)) {
+      deviceModel = 'Huawei / Honor';
+      tier = 'Standard / High';
+      tierBadge = '📱 Huawei / Honor';
+    } else if (/Oppo|Vivo|Realme/i.test(ua)) {
+      deviceModel = 'Oppo / Vivo / Realme';
+      tier = 'Standard / Mid-Range';
+      tierBadge = '📱 BBK (Oppo/Vivo/Realme)';
+    } else {
+      deviceModel = 'Android Smartphone';
+      tier = 'Standard';
+      tierBadge = '📱 Android Device';
+    }
+  }
+  // 3. Windows & PC
+  else if (/Windows NT 10.0/i.test(ua) || /Windows/i.test(ua)) {
+    deviceCategory = 'Desktop';
+    deviceModel = 'Windows PC';
+    tier = 'Business / Corporate';
+    tierBadge = '💻 Windows PC (Office/Workstation)';
+  } else if (/Linux/i.test(ua)) {
+    deviceCategory = 'Desktop';
+    deviceModel = 'Linux Workstation';
+    tier = 'Tech / Dev';
+    tierBadge = '💻 Linux Workstation';
+  }
+
+  return { deviceCategory, deviceModel, tier, tierBadge };
+}
+
 function parseCookies(cookieHeader) {
   const list = {};
   if (!cookieHeader) return list;
@@ -82,7 +175,8 @@ async function sendTelegramAlert(env, data) {
     `🔔 ${visitorLabel} — PR Agency\n` +
     `${geoBlock}\n` +
     `🌐 <b>Page:</b> ${data.path}\n` +
-    `📱 <b>Device:</b> ${data.device}\n` +
+    `📱 <b>Device:</b> ${data.deviceModel || data.device}\n` +
+    `👑 <b>Client Tier:</b> ${data.clientTierBadge || "Standard"}\n` +
     `🔗 <b>Referrer:</b> ${data.referrer || 'Direct'}\n` +
     `🆔 <b>Visitor ID:</b> <code>${data.visitorId.slice(0, 8)}</code>`;
 
@@ -161,7 +255,9 @@ async function logVisit(context, visitorData) {
         visitorId: visitorData.visitorId,
         lang: visitorData.lang,
         region: visitorData.region,
-        coords: visitorData.latitude ? `${visitorData.latitude},${visitorData.longitude}` : null
+        coords: visitorData.latitude ? `${visitorData.latitude},${visitorData.longitude}` : null,
+        deviceModel: visitorData.deviceModel,
+        clientTier: visitorData.clientTier
       }),
       visitorData.path,
       now
