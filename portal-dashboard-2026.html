@@ -1012,11 +1012,82 @@
         <img id="client-logo" class="portal-client-avatar" src="/assets/logos/pr-agency.png" alt=""/>
         <span id="client-company-name" class="portal-client-name">بنجهز البيانات...</span>
       </div>
+      
+      <!-- PWA Install Button for Clients -->
+      <button onclick="triggerPWAInstall()" class="btn-install-portal" style="
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(124, 58, 237, 0.4));
+        border: 1px solid rgba(168, 85, 247, 0.5);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: inherit;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+      " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+        <span>📲</span>
+        <span>تثبيت التطبيق</span>
+      </button>
       <button id="logout-btn" class="btn-logout">تسجيل الخروج</button>
     </div>
   </header>
 
   <main class="portal-container">
+
+    <!-- PWA Install Promo Card for Clients -->
+    <div class="portal-pwa-hero-card" style="
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(16, 12, 28, 0.95));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 18px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    ">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="
+          width: 50px; height: 50px; border-radius: 14px;
+          background: rgba(139, 92, 246, 0.2);
+          border: 1px solid rgba(168, 85, 247, 0.4);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 26px;
+        ">📲</div>
+        <div>
+          <h3 style="margin: 0 0 4px; font-size: 16px; font-weight: 800; color: #fff;">
+            حمّل بوابة عملاء PR Agency كتطبيق على هاتفك أو كمبيوترك
+          </h3>
+          <p style="margin: 0; font-size: 13px; color: #a1a1aa; line-height: 1.5;">
+            لمتابعة التصاميم الجديدة والموافقة على الفيديوهات واستلام الإشعارات أولاً بأول بضغطة واحدة وبدون متصفح.
+          </p>
+        </div>
+      </div>
+      <button onclick="triggerPWAInstall()" style="
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: inherit;
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+      ">
+        <span>تثبيت التطبيق الآن ⚡</span>
+      </button>
+    </div>
+
 
     <!-- Overview Stats -->
     <section class="portal-stats-grid">

@@ -21,6 +21,17 @@
   // 2. Global state for install prompt
   let deferredPrompt = null;
 
+  
+  // Check if current page is an authenticated portal/dashboard or login area
+  function isPortalOrDashboard() {
+    const p = (window.location.pathname || '').toLowerCase();
+    return p.includes('portal') || 
+           p.includes('dashboard') || 
+           p.includes('login') || 
+           p.includes('admin') || 
+           p.includes('team');
+  }
+
   // 3. Early capture of beforeinstallprompt (MUST be registered before other logic)
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent the mini-infobar from appearing on mobile
@@ -36,7 +47,7 @@
     // If banner was previously dismissed in this session, do not force-open
     if (sessionStorage.getItem('pwa_dismissed') === 'true') return;
 
-    showInstallBanner();
+    if (isPortalOrDashboard()) { showInstallBanner(); }
   });
 
   // 4. Handle appinstalled event (Cleanup button and state)
@@ -81,8 +92,8 @@
         <div class="pwa-install-content">
           <img src="/icons/icon-192.png" alt="PR Agency" class="pwa-install-logo" />
           <div class="pwa-install-info">
-            <span class="pwa-install-title">تطبيق PR Agency</span>
-            <span class="pwa-install-subtitle">${isIOS ? 'أضف التطبيق لشاشتك الرئيسية عبر Safari' : 'تثبيت التطبيق للوصول السريع بدون متصفح'}</span>
+            <span class="pwa-install-title">تطبيق بوابة العملاء | PR Agency</span>
+            <span class="pwa-install-subtitle">${isIOS ? 'ثبّت بوابة العملاء على شاشتك لمتابعة مشاريعك فورياً' : 'تثبيت بوابة العملاء كتطبيق لمتابعة تسليماتك وإشعاراتك مباشرة'}</span>
           </div>
         </div>
         <div class="pwa-install-actions">
@@ -128,13 +139,13 @@
             <div class="pwa-modal-header">
               <div style="display:flex; align-items:center; gap:10px;">
                 <img src="/icons/icon-192.png" alt="Logo" style="width:36px; height:36px; border-radius:8px;" />
-                <h3 style="margin:0; font-size:16px; font-weight:800; color:#fff;">تثبيت تطبيق PR Agency على iPhone</h3>
+                <h3 style="margin:0; font-size:16px; font-weight:800; color:#fff;">تثبيت تطبيق بوابة العملاء على iPhone</h3>
               </div>
               <button id="pwa-ios-close" class="pwa-modal-close">✕</button>
             </div>
             <div class="pwa-modal-body">
               <p style="color:#d4d4d8; font-size:13px; margin-bottom:14px;">
-                لتثبيت المنصة كتطبيق أصيل على جهاز الـ iPhone أو iPad بدون متجر App Store، اتبع الخطوات البسيطة التالية:
+                لتثبيت بوابة العملاء كتطبيق مباشر على جهازك لمتابعة التصاميم والفيديوهات والفواتير، اتبع الخطوات التالية:
               </p>
               <div class="pwa-step">
                 <span class="pwa-step-num">1</span>
@@ -369,7 +380,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     injectStyles();
     // If on iOS and not standalone, show the banner with the iOS guide trigger
-    if (isIOS && !isStandalone && sessionStorage.getItem('pwa_dismissed') !== 'true') {
+    if (isIOS && !isStandalone && sessionStorage.getItem('pwa_dismissed') !== 'true' && isPortalOrDashboard()) {
       setTimeout(showInstallBanner, 2000);
     }
   });
