@@ -1774,36 +1774,22 @@
           </button>
         </div>
 
-        <!-- ── AI SALES STUDIO & STRATEGY GENERATOR ── -->
+        <!-- ── PR AGENCY COLLAGE & PROPOSAL EXPORTER ── -->
         <div class="ai-studio-container">
           <div class="ai-studio-header">
             <div>
-              <div class="ai-studio-title">${dict.aiStudioTitle}</div>
-              <div style="font-size:11px;color:var(--text-muted);">${dict.aiStudioSub}</div>
+              <div class="ai-studio-title">📄 مُصدر العرض والكولاج (PR Agency Collage PDF)</div>
+              <div style="font-size:11px;color:var(--text-muted);">اكتب العرض أو المحتوى الخاص بك وسيتم تصديره فوراً بهوية ولوجو PR Agency</div>
             </div>
-            <span id="aiStatusPill" style="font-size:11px;color:#c4b5fd;font-weight:700;">Ready</span>
           </div>
 
-          <textarea id="aiCustomPromptInput" rows="2" placeholder="${dict.aiPromptPlaceholder}"></textarea>
-
-          <div class="ai-quick-chips">
-            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'collage')">${dict.chipCollage}</span>
-            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'proposal')">${dict.chipProposal}</span>
-            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'objection')">${dict.chipObjection}</span>
-            <span class="ai-chip" onclick="setAiPromptPreset('${lead.id}', 'competitor')">${dict.chipCompetitor}</span>
-          </div>
+          <textarea id="aiCustomPromptInput" rows="4" placeholder="اكتب هنا نص العرض، الباقات، أو التفاصيل التي تريد تصديرها في ملف PDF للعميل..."></textarea>
 
           <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-sm btn-primary" onclick="runAiStudio('${lead.id}')">
-              ${dict.btnGenerateAi}
-            </button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="openCollagePdfDeck('${lead.id}')" style="border-color:rgba(139,92,246,0.4);color:#c4b5fd;">
-              ${dict.btnExportCollage}
+            <button type="button" class="btn btn-sm btn-primary" onclick="openCollagePdfDeck('${lead.id}')">
+              تصدير كولاج PDF بهوية PR Agency ↗
             </button>
           </div>
-
-          <!-- AI Output Area -->
-          <div id="aiStudioResult" style="display:none;margin-top:14px;background:#0d0e14;border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.65;color:#f1f5f9;white-space:pre-wrap;max-height:260px;overflow-y:auto;"></div>
         </div>
 
         <!-- Deal Metadata -->
@@ -1899,6 +1885,15 @@
     }
 
     function openCollagePdfDeck(leadId) {
+      const lead = allLeads.find(l => l.id === leadId) || {};
+      const customText = (document.getElementById('aiCustomPromptInput')?.value || '').trim();
+      localStorage.setItem('pr_collage_draft', JSON.stringify({
+        leadId,
+        clientName: lead.name || lead.company || 'عميل PR Agency',
+        company: lead.company || lead.project_name || '',
+        phone: lead.phone || '',
+        content: customText || 'عرض تسويقي وإنتاج إعلاني متكامل من PR Agency.'
+      }));
       window.open('/collage-deck.html?leadId=' + encodeURIComponent(leadId), '_blank');
     }
 
