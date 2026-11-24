@@ -2,7 +2,10 @@ import { verifyPassword } from '../portal/auth.js';
 import { logSystemAction } from '../../lib/audit.js';
 
 function getJwtSecret(env) {
-  const secret = env.JWT_SECRET || env.PORTAL_SECRET || env.PORTAL_JWT_SECRET || 'pr2026_super_secret_jwt_key_agency_os';
+  const secret = env.JWT_SECRET || env.PORTAL_SECRET || env.PORTAL_JWT_SECRET;
+  if (!secret) {
+    throw new Error('Server misconfiguration: JWT_SECRET is not set');
+  }
   return secret;
 }
 

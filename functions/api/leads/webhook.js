@@ -27,7 +27,10 @@ export async function onRequestGet(context) {
   const token = url.searchParams.get('hub.verify_token');
   const challenge = url.searchParams.get('hub.challenge');
 
-  const expectedToken = env.META_WEBHOOK_TOKEN || 'pr_agency_webhook_2026';
+  const expectedToken = env.META_WEBHOOK_TOKEN;
+  if (!expectedToken) {
+    return new Response('Webhook token not configured', { status: 500 });
+  }
 
   if (mode === 'subscribe' && token === expectedToken) {
     return new Response(challenge, {
