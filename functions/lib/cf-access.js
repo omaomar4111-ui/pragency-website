@@ -176,3 +176,5 @@ export async function authenticateCfAccessUser(request, env, db) {
 
   return null;
 }
+
+export { verifyCfAccessJwt as parseCfAccessJwt };
