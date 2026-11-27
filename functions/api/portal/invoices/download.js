@@ -26,7 +26,7 @@ export async function onRequestGet(context) {
     try {
       const decoded = atob(authHeader.slice(6).trim());
       const colon = decoded.indexOf(':');
-      if (colon !== -1 && (decoded.slice(colon + 1) === PASS || decoded.slice(colon + 1) === 'pr_team_2026')) {
+      if (colon !== -1 && PASS && decoded.slice(colon + 1) === PASS) {
         isAuthorized = true;
       }
     } catch (e) {}
