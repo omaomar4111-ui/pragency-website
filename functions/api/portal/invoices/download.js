@@ -2,6 +2,16 @@
 // Route: GET /api/portal/invoices/download?id=xxx
 import { verifyToken } from '../auth.js';
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   const db = env.ANALYTICS_DB || env.DB;
@@ -89,7 +99,7 @@ export async function onRequestGet(context) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>فاتورة رقم ${invoice.invoice_number} — PR Agency</title>
+  <title>فاتورة رقم ${escapeHtml(invoice.invoice_number)} — PR Agency</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -139,7 +149,7 @@ export async function onRequestGet(context) {
         <p style="font-size:12px; color:#71717a;">القاهرة، جمهورية مصر العربية | www.pragency.pages.dev</p>
       </div>
       <div class="inv-badge-wrap">
-        <div class="inv-num">${invoice.invoice_number}</div>
+        <div class="inv-num">${escapeHtml(invoice.invoice_number)}</div>
         <div class="status-badge">${statusText}</div>
       </div>
     </div>
@@ -147,10 +157,10 @@ export async function onRequestGet(context) {
     <div class="meta-grid">
       <div class="meta-col">
         <h3>فاتورة صادرة إلى:</h3>
-        <p><strong>${invoice.company_name || 'العميل'}</strong></p>
-        <p>عناية: ${invoice.contact_name || 'المسؤول'}</p>
-        <p dir="ltr" style="text-align:right;">${invoice.client_email || ''}</p>
-        <p dir="ltr" style="text-align:right;">${invoice.client_phone || ''}</p>
+        <p><strong>${escapeHtml(invoice.company_name || 'العميل')}</strong></p>
+        <p>عناية: ${escapeHtml(invoice.contact_name || 'المسؤول')}</p>
+        <p dir="ltr" style="text-align:right;">${escapeHtml(invoice.client_email || '')}</p>
+        <p dir="ltr" style="text-align:right;">${escapeHtml(invoice.client_phone || '')}</p>
       </div>
       <div class="meta-col">
         <h3>تفاصيل الفاتورة:</h3>
@@ -173,7 +183,7 @@ export async function onRequestGet(context) {
       <tbody>
         ${lineItems.map(item => `
           <tr>
-            <td><strong>${item.description}</strong></td>
+            <td><strong>${escapeHtml(item.description)}</strong></td>
             <td style="text-align:center;">${item.quantity || 1}</td>
             <td>${item.unit_price} ${invoice.currency}</td>
             <td><strong>${item.total_price} ${invoice.currency}</strong></td>

@@ -2,14 +2,19 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    const body = await request.json();
-    const {
-      subject = 'Luxury commercial showcase',
-      camera = body.cameraMove || 'Dolly In',
-      lens = body.lensAngle || '35mm Lens, Eye-Level',
-      lighting = 'Volumetric Cinematic Lighting',
-      ratio = body.aspectRatio || '9:16'
-    } = body;
+    const rawText = await request.text();
+    if (rawText.length > 12288) {
+      return new Response(JSON.stringify({ success: false, error: 'Payload too large (max 12KB)' }), { status: 413, headers: { 'Content-Type': 'application/json' } });
+    }
+    const body = JSON.parse(rawText || '{}');
+    const cleanField = (val, fallback, maxLen = 500) =>
+      typeof val === 'string' && val.trim() ? val.trim().slice(0, maxLen) : fallback;
+
+    const subject = cleanField(body.subject, 'Luxury commercial showcase', 500);
+    const camera = cleanField(body.camera || body.cameraMove, 'Dolly In', 200);
+    const lens = cleanField(body.lens || body.lensAngle, '35mm Lens, Eye-Level', 200);
+    const lighting = cleanField(body.lighting, 'Volumetric Cinematic Lighting', 200);
+    const ratio = cleanField(body.ratio || body.aspectRatio, '9:16', 50);
 
     // 1. بناء الـ System Prompt السينمائي (Seedance Six-Slot)
     const systemPrompt = `You are a senior cinematic director. Write a single, highly detailed cinematic prompt (50-80 words) based on the user inputs. Output ONLY the prompt text, no intro, no outro, no quotes.
