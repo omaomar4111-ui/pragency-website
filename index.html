@@ -1066,6 +1066,56 @@ window.dataLayer = window.dataLayer || [];
 
     <!-- 2-Row Responsive Grid of Elegant Logos -->
     
+    <!-- Dual-Direction Continuous Infinite Marquee (Portfolio + Clients) -->
+    <style>
+      .pr-dual-marquee-wrap { display: flex; flex-direction: column; gap: 18px; width: 100%; overflow: hidden; direction: ltr; margin-bottom: 24px; }
+      .pr-marquee-row { width: 100%; overflow: hidden; position: relative; mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+      .pr-marquee-track { display: inline-flex; gap: 20px; align-items: center; white-space: nowrap; will-change: transform; }
+      .pr-marquee-track.dir-ltr { animation: prMarqueeLTR 28s linear infinite; }
+      .pr-marquee-track.dir-rtl { animation: prMarqueeRTL 32s linear infinite; }
+      .pr-marquee-row:hover .pr-marquee-track, .pr-marquee-row:focus-within .pr-marquee-track { animation-play-state: paused; }
+      .pr-portfolio-pill { padding: 12px 26px; border-radius: 999px; background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(167, 139, 250, 0.35); color: #fff; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px; }
+      .pr-client-marquee-item { display: inline-flex; align-items: center; justify-content: center; width: 140px; height: 64px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; }
+      .pr-client-marquee-item img { max-height: 38px; max-width: 100%; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.85; }
+      @keyframes prMarqueeLTR { 0% { transform: translate3d(-50%, 0, 0); } 100% { transform: translate3d(0, 0, 0); } }
+      @keyframes prMarqueeRTL { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+      @media (prefers-reduced-motion: reduce) { .pr-marquee-track { animation: none !important; } }
+    </style>
+
+    <div class="pr-dual-marquee-wrap" aria-label="معرض الأعمال وشريط العملاء">
+      <!-- الشريط الأول: أعمال البورتفوليو (اتجاه أول) -->
+      <div class="pr-marquee-row">
+        <div class="pr-marquee-track dir-ltr">
+          <span class="pr-portfolio-pill">Branding</span>
+          <span class="pr-portfolio-pill">Campaign</span>
+          <span class="pr-portfolio-pill">Social</span>
+          <span class="pr-portfolio-pill">Motion</span>
+          <span class="pr-portfolio-pill">Web</span>
+          <span class="pr-portfolio-pill">Branding</span>
+          <span class="pr-portfolio-pill">Campaign</span>
+          <span class="pr-portfolio-pill">Social</span>
+          <span class="pr-portfolio-pill">Motion</span>
+          <span class="pr-portfolio-pill">Web</span>
+        </div>
+      </div>
+
+      <!-- الشريط الثاني: لوجوهات العملاء (الاتجاه المعاكس) -->
+      <div class="pr-marquee-row">
+        <div class="pr-marquee-track dir-rtl">
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-01-bliltna.webp" alt="Bliltna" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-02-home-ix.webp" alt="Home IX" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-03-kangaroo.webp" alt="Kangaroo" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-04-al-masria.webp" alt="Al Masria" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-05-aura.webp" alt="Aura" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-01-bliltna.webp" alt="Bliltna" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-02-home-ix.webp" alt="Home IX" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-03-kangaroo.webp" alt="Kangaroo" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-04-al-masria.webp" alt="Al Masria" loading="lazy" /></div>
+          <div class="pr-client-marquee-item"><img src="assets/logos/clients/client-05-aura.webp" alt="Aura" loading="lazy" /></div>
+        </div>
+      </div>
+    </div>
+
     <!-- 2-Row Static Grid of High-Resolution Logos (Reference Spec) -->
         <div class="clients-logos-grid">
       <div class="client-logo-item">
