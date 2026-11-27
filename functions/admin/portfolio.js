@@ -1,7 +1,7 @@
 import { verifyAdminToken } from '../api/admin/login.js';
 
 async function checkAuth(request, env) {
-  const PASS = env.ADMIN_PASSWORD || 'pr2026';
+  const PASS = env.ADMIN_PASSWORD;
   const authHeader = request.headers.get('Authorization') || '';
   const cookieHeader = request.headers.get('Cookie') || '';
 

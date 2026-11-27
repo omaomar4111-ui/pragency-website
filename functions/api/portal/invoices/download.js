@@ -21,7 +21,7 @@ export async function onRequestGet(context) {
   const cookieHeader = request.headers.get('Cookie') || '';
 
   // Check Admin Basic Auth
-  const PASS = env.ADMIN_PASSWORD || 'pr2026';
+  const PASS = env.ADMIN_PASSWORD;
   if (authHeader.startsWith('Basic ')) {
     try {
       const decoded = atob(authHeader.slice(6).trim());

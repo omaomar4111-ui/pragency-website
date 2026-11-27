@@ -26,7 +26,7 @@ export async function onRequestPost(context) {
     }
 
     // ── 1. Check Admin / Owner Login ──
-    const ADMIN_PASS = env.ADMIN_PASSWORD || 'pr2026';
+    const ADMIN_PASS = env.ADMIN_PASSWORD;
     const ADMIN_EMAIL = env.ADMIN_EMAIL || 'admin@pragency.com';
 
     if ((cleanEmail === ADMIN_EMAIL.toLowerCase() || cleanEmail === 'admin') && cleanPass === ADMIN_PASS) {

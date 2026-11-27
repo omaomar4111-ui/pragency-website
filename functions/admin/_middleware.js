@@ -2,7 +2,7 @@ import { verifyAdminToken } from '../api/admin/login.js';
 import { authenticateCfAccessUser } from '../lib/cf-access.js';
 
 function checkBasicAuth(request, env) {
-  const PASS = env.ADMIN_PASSWORD || 'pr2026';
+  const PASS = env.ADMIN_PASSWORD;
   const authHeader = request.headers.get('Authorization') || '';
   if (!authHeader.startsWith('Basic ')) return false;
   try {

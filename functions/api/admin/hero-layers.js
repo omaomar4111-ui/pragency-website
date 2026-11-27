@@ -27,7 +27,7 @@ async function authenticateAdmin(request, env) {
     try {
       const decoded = atob(authHeader.slice(6).trim());
       const idx = decoded.indexOf(':');
-      if (idx !== -1 && decoded.slice(idx + 1) === (env.ADMIN_PASSWORD || 'pr2026')) {
+      if (idx !== -1 && decoded.slice(idx + 1) === (env.ADMIN_PASSWORD)) {
         return { isSuperAdmin: true, name: 'Admin' };
       }
     } catch (e) {}
@@ -35,7 +35,7 @@ async function authenticateAdmin(request, env) {
 
   // If request contains admin_key in query or custom header, permit save for owner
   const url = new URL(request.url);
-  if (url.searchParams.get('admin_key') === (env.ADMIN_PASSWORD || 'pr2026')) {
+  if (url.searchParams.get('admin_key') === (env.ADMIN_PASSWORD)) {
     return { isSuperAdmin: true, name: 'Admin' };
   }
 
@@ -91,7 +91,7 @@ export async function onRequestPost(context) {
 
     // Direct password authentication fallback if JWT is not present in localStorage
     let user = await authenticateAdmin(request, env);
-    if (!user && admin_password && admin_password === (env.ADMIN_PASSWORD || 'pr2026')) {
+    if (!user && admin_password && admin_password === (env.ADMIN_PASSWORD)) {
       user = { isSuperAdmin: true, name: 'Admin' };
     }
 

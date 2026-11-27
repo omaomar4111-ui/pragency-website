@@ -9,7 +9,7 @@ function hashSimpleSha(password) {
 }
 
 async function checkTeamAuth(request, env, db) {
-  const PASS = env.ADMIN_PASSWORD || 'pr2026';
+  const PASS = env.ADMIN_PASSWORD;
   const authHeader = request.headers.get('Authorization') || '';
   const cookieHeader = request.headers.get('Cookie') || '';
 

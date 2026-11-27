@@ -100,8 +100,8 @@ export async function onRequestPost(context) {
 
       // Inline keyboard for approval
       const host = new URL(request.url).origin;
-      const approveUrl = `${host}/api/portal/download-approve?id=${requestId}&action=approve&secret=${env.PORTAL_SECRET || 'pr2026'}`;
-      const rejectUrl = `${host}/api/portal/download-approve?id=${requestId}&action=reject&secret=${env.PORTAL_SECRET || 'pr2026'}`;
+      const approveUrl = `${host}/api/portal/download-approve?id=${requestId}&action=approve&secret=${env.PORTAL_SECRET}`;
+      const rejectUrl = `${host}/api/portal/download-approve?id=${requestId}&action=reject&secret=${env.PORTAL_SECRET}`;
 
       const replyMarkup = {
         inline_keyboard: [

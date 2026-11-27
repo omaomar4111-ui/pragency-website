@@ -11,7 +11,7 @@ export async function onRequestGet(context) {
   const action = url.searchParams.get('action'); // 'approve' | 'reject'
   const secret = url.searchParams.get('secret');
 
-  if (secret !== (env.PORTAL_SECRET || 'pr2026') && secret !== env.JWT_SECRET) {
+  if (secret !== (env.PORTAL_SECRET) && secret !== env.JWT_SECRET) {
     return new Response('Unauthorized secret', { status: 401 });
   }
 

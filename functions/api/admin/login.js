@@ -135,7 +135,7 @@ export async function onRequestPost(context) {
     const normUser = username.trim().toLowerCase();
     const pass = password.trim();
     const ADMIN_USER = (env.ADMIN_USERNAME || 'admin').toLowerCase();
-    const ADMIN_PASS = env.ADMIN_PASSWORD || 'pr2026';
+    const ADMIN_PASS = env.ADMIN_PASSWORD;
 
     let authenticatedUser = null;
 

@@ -1,5 +1,5 @@
 ﻿function checkAuth(request, env) {
-  const PASS = env.ADMIN_PASSWORD || 'pr2026';
+  const PASS = env.ADMIN_PASSWORD;
   const auth = request.headers.get('Authorization') || '';
   if (!auth.startsWith('Basic ')) return false;
   try {
