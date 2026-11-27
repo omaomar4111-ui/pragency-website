@@ -69,7 +69,7 @@ export async function onRequest(context) {
   if (cfAssertion || cfEmailHeader) {
     let email = '';
     if (cfAssertion) {
-      const cfPayload = parseCfAccessJwt(cfAssertion);
+      const cfPayload = await parseCfAccessJwt(cfAssertion, env);
       if (cfPayload) email = (cfPayload.email || '').trim().toLowerCase();
     }
     if (!email && cfEmailHeader) email = cfEmailHeader.trim().toLowerCase();

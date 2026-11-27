@@ -28,9 +28,28 @@ async function runPenetrationAudit() {
     return Buffer.from(str).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  // Helper to create mock CF Access JWT
-  function createMockCfJwt(email, expSeconds = 3600, aud = 'mock-aud-tag') {
-    const header = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  // Generate real RS256 keypair for Zero Trust JWT testing
+  const keyPair = await crypto.subtle.generateKey(
+    { name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' },
+    true,
+    ['sign', 'verify']
+  );
+  const publicJwk = await crypto.subtle.exportKey('jwk', keyPair.publicKey);
+  publicJwk.kid = 'test-kid-01';
+  publicJwk.use = 'sig';
+  publicJwk.alg = 'RS256';
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, opts) => {
+    if (typeof url === 'string' && url.includes('/cdn-cgi/access/certs')) {
+      return new Response(JSON.stringify({ keys: [publicJwk] }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+    return originalFetch(url, opts);
+  };
+
+  // Helper to create real RS256-signed CF Access JWT
+  async function createMockCfJwt(email, expSeconds = 3600, aud = 'mock-aud-tag') {
+    const header = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: 'test-kid-01' }));
     const now = Math.floor(Date.now() / 1000);
     const payload = b64url(JSON.stringify({
       aud: [aud],
@@ -39,7 +58,10 @@ async function runPenetrationAudit() {
       iss: 'https://pragency.cloudflareaccess.com',
       exp: now + expSeconds
     }));
-    return `${header}.${payload}.mockSignatureBytesHere`;
+    const signingInput = new TextEncoder().encode(`${header}.${payload}`);
+    const sigBuf = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', keyPair.privateKey, signingInput);
+    const sigB64 = Buffer.from(sigBuf).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    return `${header}.${payload}.${sigB64}`;
   }
 
   // Mock D1 DB for testing
@@ -103,7 +125,7 @@ async function runPenetrationAudit() {
   );
 
   // Test 1.2: Valid Cloudflare Access Assertion with approved agency domain
-  const validCfToken = createMockCfJwt('omar@pragency.eg', 3600, 'pragency-access-aud-2026');
+  const validCfToken = await createMockCfJwt('omar@pragency.eg', 3600, 'pragency-access-aud-2026');
   const cfReq = new Request('https://pragency.pages.dev/api/admin/invoices', {
     method: 'GET',
     headers: { 'Cf-Access-Jwt-Assertion': validCfToken }
@@ -123,7 +145,7 @@ async function runPenetrationAudit() {
   );
 
   // Test 1.3: Cloudflare Access Assertion with unauthorized external domain -> Must fail authentication
-  const hackerCfToken = createMockCfJwt('attacker@malicious-domain.com', 3600, 'pragency-access-aud-2026');
+  const hackerCfToken = await createMockCfJwt('attacker@malicious-domain.com', 3600, 'pragency-access-aud-2026');
   const hackerReq = new Request('https://pragency.pages.dev/api/admin/invoices', {
     method: 'GET',
     headers: { 'Cf-Access-Jwt-Assertion': hackerCfToken }
@@ -138,7 +160,7 @@ async function runPenetrationAudit() {
   );
 
   // Test 1.4: Expired Cloudflare Access Assertion -> Must fail
-  const expiredCfToken = createMockCfJwt('omar@pragency.eg', -60, 'pragency-access-aud-2026');
+  const expiredCfToken = await createMockCfJwt('omar@pragency.eg', -60, 'pragency-access-aud-2026');
   const expiredReq = new Request('https://pragency.pages.dev/api/admin/invoices', {
     method: 'GET',
     headers: { 'Cf-Access-Jwt-Assertion': expiredCfToken }
@@ -153,7 +175,7 @@ async function runPenetrationAudit() {
   );
 
   // Test 1.5: Portal Client Zero Trust login via Cloudflare Access
-  const clientCfToken = createMockCfJwt('alpha@client.com', 3600, 'pragency-access-aud-2026');
+  const clientCfToken = await createMockCfJwt('alpha@client.com', 3600, 'pragency-access-aud-2026');
   const portalReq = new Request('https://pragency.pages.dev/api/portal/invoices', {
     method: 'GET',
     headers: { 'Cf-Access-Jwt-Assertion': clientCfToken }
@@ -191,7 +213,7 @@ async function runPenetrationAudit() {
   );
 
   // Test 2.2: RBAC checks in Admin - Designer blocked from financial records
-  const designerCfToken = createMockCfJwt('ali@pragency.eg', 3600, 'pragency-access-aud-2026');
+  const designerCfToken = await createMockCfJwt('ali@pragency.eg', 3600, 'pragency-access-aud-2026');
   const designerReq = new Request('https://pragency.pages.dev/api/admin/invoices', {
     method: 'GET',
     headers: { 'Cf-Access-Jwt-Assertion': designerCfToken }
